@@ -6,10 +6,15 @@ importable and unit-test friendly (no heavy GPU or network usage in unit tests).
 from __future__ import annotations
 import json
 from pathlib import Path
-from typing import Iterable, List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple, Dict, Any
 import random
 import shutil
 import logging
+import os
+import time
+import hashlib
+import requests
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -156,6 +161,128 @@ NPC trả lời: """
 
 def render_prompt(state: str, player_utterance: str) -> str:
     return _PROMPT_TEMPLATE.format(state=state, player=player_utterance)
+
+
+def call_groq_api(prompt: str, model_id: str = 'llama-3.1-8b', max_tokens: int = 128, temperature: float = 0.7, api_url: Optional[str] = None, api_key: Optional[str] = None, retries: int = 3) -> str:
+    """Call Groq REST Responses API and return the generated text.
+
+    The function respects environment variables `GROQ_API_URL` and `GROQ_API_KEY`
+    when `api_url` or `api_key` are not provided. It implements basic retry
+    with exponential backoff for HTTP 429 (rate limit) responses and logs
+    progress. Returns the text content or raises on non-recoverable errors.
+    """
+    api_url = api_url or os.environ.get('GROQ_API_URL', 'https://api.groq.com/openai/v1/responses')
+    api_key = api_key or os.environ.get('GROQ_API_KEY')
+
+    headers = {'Content-Type': 'application/json'}
+    if api_key:
+        headers['Authorization'] = f'Bearer {api_key}'
+
+    payload = {
+        'model': model_id,
+        'input': prompt,
+        'max_output_tokens': max_tokens,
+        'temperature': temperature,
+    }
+
+    backoff = 1.0
+    for attempt in range(1, retries + 1):
+        try:
+            logger.debug("Calling Groq API url=%s attempt=%d", api_url, attempt)
+            resp = requests.post(api_url, headers=headers, json=payload, timeout=30)
+        except requests.RequestException as exc:
+            logger.warning("Groq request exception (attempt %d/%d): %s", attempt, retries, exc)
+            if attempt == retries:
+                raise
+            time.sleep(backoff)
+            backoff *= 2
+            continue
+
+        if resp.status_code == 429:
+            logger.warning("Groq rate limited (429). Backing off for %.1fs (attempt %d/%d)", backoff, attempt, retries)
+            if attempt == retries:
+                resp.raise_for_status()
+            time.sleep(backoff)
+            backoff *= 2
+            continue
+
+        if not resp.ok:
+            logger.error("Groq API returned status=%s body=%s", resp.status_code, resp.text)
+            resp.raise_for_status()
+
+        # parse response robustly
+        try:
+            data = resp.json()
+        except ValueError:
+            logger.error("Groq response not JSON: %s", resp.text[:200])
+            return resp.text
+
+        # Possible shapes: {'output': 'text'}, {'output': [{'content': 'text'}]}, {'choices': [...]}
+        text = None
+        if isinstance(data, dict):
+            if 'output' in data:
+                out = data['output']
+                if isinstance(out, str):
+                    text = out
+                elif isinstance(out, list) and out:
+                    # try to pull content fields
+                    first = out[0]
+                    if isinstance(first, dict):
+                        text = first.get('content') or first.get('text') or None
+                    elif isinstance(first, str):
+                        text = first
+            elif 'choices' in data and isinstance(data['choices'], list) and data['choices']:
+                c = data['choices'][0]
+                if isinstance(c, dict):
+                    text = c.get('text') or c.get('message') or None
+        if text is None:
+            # fallback: try to stringify 'data' or specific keys
+            text = str(data)
+        return text
+
+
+def batch_generate_with_groq(prompts: List[str], model_id: str, batch_size: int = 32) -> List[str]:
+    """Batch-generate outputs from Groq with a simple local file cache.
+
+    Cache files are stored under `.cache/groq/` with filenames of the form
+    `<sha256>.json` containing keys: 'prompt','model','output','ts'. If a cached
+    entry exists it will be returned instead of calling the network.
+    """
+    out = []
+    cache_dir = Path('.cache') / 'groq'
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # helper to get cache path
+    def _cache_path(prompt_text: str) -> Path:
+        h = hashlib.sha256((prompt_text + model_id).encode('utf-8')).hexdigest()
+        return cache_dir / f"{h}.json"
+
+    for i in range(0, len(prompts), batch_size):
+        batch = prompts[i:i + batch_size]
+        for p in batch:
+            cp = _cache_path(p)
+            if cp.exists():
+                try:
+                    cdata = json.loads(cp.read_text(encoding='utf-8'))
+                    out.append(cdata.get('output', ''))
+                    continue
+                except Exception:
+                    logger.warning("Failed to read cache file %s, regenerating", cp)
+            # call API and cache result
+            try:
+                txt = call_groq_api(p, model_id=model_id)
+            except Exception as exc:
+                logger.error("Groq generation failed for prompt: %s (%s)", p[:80], exc)
+                txt = ''
+            # write cache
+            try:
+                cp.write_text(json.dumps({'prompt': p, 'model': model_id, 'output': txt, 'ts': datetime.utcnow().isoformat()}), encoding='utf-8')
+            except Exception:
+                logger.warning("Failed to write cache file %s", cp)
+            out.append(txt)
+            # naive rate-limit delay
+            time.sleep(0.05)
+    return out
 
 
 if __name__ == "__main__":
