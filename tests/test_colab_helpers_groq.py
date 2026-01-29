@@ -1,3 +1,4 @@
+"""Tests for Groq integration helpers."""
 import json
 from pathlib import Path
 import os
