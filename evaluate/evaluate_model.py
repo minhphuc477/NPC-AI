@@ -7,11 +7,12 @@ import numpy as np
 def compute_tfidf_cosine(refs: List[str], hyps: List[str]) -> List[float]:
     from sklearn.feature_extraction.text import TfidfVectorizer
     from sklearn.metrics.pairwise import cosine_similarity
-    vec = TfidfVectorizer().fit_transform(refs + hyps)
+    vec = TfidfVectorizer().fit_transform(list(refs) + list(hyps))
     r = vec[:len(refs)]
     h = vec[len(refs):]
     sims = []
-    for i in range(min(len(refs), len(h))):
+    n = min(r.shape[0], h.shape[0])
+    for i in range(n):
         sims.append(float(cosine_similarity(r[i], h[i])[0,0]))
     return sims
 

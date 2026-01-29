@@ -116,6 +116,48 @@ GGUF_CONVERSION_HELP = """
 """
 
 
+# Compatibility wrapper expected by tests and the notebook
+def convert_csv_to_jsonl(csv_path: str, out_path: str, text_col: str = "text", label_cols=None) -> int:
+    """Convenience wrapper around existing csv_to_jsonl or project converter."""
+    # Try the local converter first; if it writes nothing, fall back to a simple converter
+    try:
+        n = csv_to_jsonl(csv_path, out_path)
+        if n and n > 0:
+            return n
+    except Exception:
+        pass
+    # fallback: use annotation pipeline converter if present
+    try:
+        from annotation_pipeline.convert_csv_to_jsonl import csv_to_jsonl as conv
+        n2 = conv(csv_path, out_path)
+        if n2 and n2 > 0:
+            return n2
+    except Exception:
+        pass
+    # last-resort simple conversion
+    import csv, json
+    written = 0
+    with open(csv_path, "r", encoding="utf-8") as f_in, open(out_path, "w", encoding="utf-8") as f_out:
+        reader = csv.DictReader(f_in)
+        for i, row in enumerate(reader):
+            rec = {"id": str(i), "text": row.get(text_col, "")}
+            if label_cols:
+                rec["labels"] = {c: row.get(c) for c in label_cols}
+            f_out.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            written += 1
+    return written
+
+
+# Simple production-ready prompt renderer used in notebook and tests
+_PROMPT_TEMPLATE = """Bạn là một NPC trong một trò chơi phiêu lưu. Trạng thái môi trường: {state}
+Người chơi: {player}
+NPC trả lời: """
+
+
+def render_prompt(state: str, player_utterance: str) -> str:
+    return _PROMPT_TEMPLATE.format(state=state, player=player_utterance)
+
+
 if __name__ == "__main__":
     import argparse
     p = argparse.ArgumentParser()
