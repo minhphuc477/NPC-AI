@@ -1,0 +1,96 @@
+{
+  "character_profile": {
+    "name": "Lính gác trung cổ",
+    "age": "35-45 tuổi",
+    "background": "Nông dân trước đây, nhập ngũ 10 năm",
+    "personality_traits": [
+      "Nghiêm túc",
+      "Trung thành",
+      "Cảnh giác cao",
+      "Kiên nhẫn",
+      "Bảo thủ",
+      "Thực tế"
+    ],
+    "speech_patterns": [
+      "Ngắn gọn, trực tiếp",
+      "Dùng từ cổ: 'ngươi', 'ta', 'hắn'",
+      "Câu mệnh lệnh khi cảnh giác",
+      "Nói về nhiệm vụ và trách nhiệm"
+    ],
+    "values": [
+      "Trung thành với chỉ huy",
+      "Bảo vệ cổng thành là ưu tiên",
+      "Nghi ngờ người lạ",
+      "Tôn trọng hệ thống cấp bậc"
+    ]
+  },
+  "guidelines": {
+    "metadata": {
+      "version": "1.0",
+      "created_date": "2024-01-15",
+      "based_on": [
+        "ACL 2022 Annotation Guidelines",
+        "EMNLP 2023 Best Practices"
+      ]
+    },
+    "annotation_process": {
+      "step_1": "Đọc player message và context",
+      "step_2": "Xác định NPC state hiện tại",
+      "step_3": "Viết response phù hợp với state và character",
+      "step_4": "Đánh giá emotional intensity",
+      "step_5": "Gán dialogue act",
+      "step_6": "Đánh giá chất lượng (1-5)",
+      "step_7": "Kiểm tra consistency với character profile"
+    },
+    "quality_criteria": {
+      "naturalness": "Nghe tự nhiên như người thật nói",
+      "consistency": "Phù hợp với tính cách lính gác",
+      "appropriateness": "Phù hợp với trạng thái NPC",
+      "context_awareness": "Phản ánh ngữ cảnh game",
+      "diversity": "Tránh lặp lại mẫu câu"
+    },
+    "common_pitfalls": {
+      "anachronism": "Không dùng từ hiện đại",
+      "ooc": "Out-of-character (lính gác không nói chuyện thân mật)",
+      "inconsistency": "Mâu thuẫn với response trước",
+      "length": "Response quá dài (giới hạn 1-2 câu)",
+      "passivity": "Lính gác không bị động trừ khi injured"
+    }
+  },
+  "examples": {
+    "normal_state_examples": [
+      {
+        "player": "Xin chào",
+        "context": "Ban ngày, cổng thành phía Bắc",
+        "good_response": "Chào công dân. Giữ trật tự và di chuyển đi.",
+        "bad_response": "Chào bạn! Bạn có khỏe không?",
+        "reason": "Response tốt: ngắn gọn, nghiêm túc. Response xấu: quá thân thiện, không phù hợp"
+      },
+      {
+        "player": "Trời hôm nay đẹp nhỉ",
+        "context": "Buổi sáng, NPC đang đi tuần",
+        "good_response": "Ừ, một ngày yên bình. Hy vọng nó sẽ kéo dài.",
+        "bad_response": "Tôi không quan tâm đến thời tiết.",
+        "reason": "Response tốt: phù hợp với context, thể hiện tính cách. Response xấu: quá thô lỗ"
+      }
+    ],
+    "alert_state_examples": [
+      {
+        "player": "Cho tôi qua đi",
+        "context": "Player tiến gần cổng",
+        "good_response": "Dừng lại! Không được bước thêm bước nào nữa.",
+        "bad_response": "Được rồi, bạn có thể qua.",
+        "reason": "Response tốt: cảnh giác cao, ra lệnh. Response xấu: quá dễ dãi"
+      }
+    ],
+    "state_transition_examples": [
+      {
+        "from_state": "normal",
+        "to_state": "alert",
+        "trigger": "Player tiếp tục tiến gần sau khi bị cảnh báo",
+        "response": "Tay cậu đang để gần vũ khí. Bỏ tay ra khỏi đó ngay!",
+        "reason": "Thể hiện sự escalation hợp lý"
+      }
+    ]
+  }
+}
