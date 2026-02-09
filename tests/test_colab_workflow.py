@@ -33,4 +33,4 @@ def test_evaluate_model_runs_and_writes():
         assert "metrics" in res
         assert Path(res["out_dir"]).exists()
         # check evaluation.md exists
-        assert Path(res["out_dir"]) / "evaluation.md" .exists()
+        assert (Path(res["out_dir"]) / "evaluation.md").exists()

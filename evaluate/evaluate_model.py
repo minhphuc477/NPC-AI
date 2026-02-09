@@ -17,13 +17,15 @@ def compute_tfidf_cosine(refs: List[str], hyps: List[str]) -> List[float]:
     return sims
 
 
-def compute_metrics(refs: List[str], hyps: List[str]) -> Dict:
-    """Compute metrics and return a dict. Uses BERTScore if available else fallback simple token-overlap."""
+def compute_metrics(refs: List[str], hyps: List[str], lang: str = 'vi') -> Dict:
+    """Compute metrics and return a dict. Uses BERTScore if available else fallback simple token-overlap.
+
+    `lang` is passed to `bert_score` when available (e.g., 'vi' or 'en')."""
     out = {}
     # Try BERTScore
     try:
         from bert_score import score as bert_score
-        P, R, F1 = bert_score(hyps, refs, lang='vi', rescale_with_baseline=True)
+        P, R, F1 = bert_score(hyps, refs, lang=lang, rescale_with_baseline=True)
         out['bertscore_f1'] = float(F1.mean().item())
     except Exception:
         # fallback: token overlap
