@@ -154,57 +154,169 @@ def convert_csv_to_jsonl(csv_path: str, out_path: str, text_col: str = "text", l
 
 
 # Simple production-ready prompt renderer used in notebook and tests
-_PROMPT_TEMPLATE = """Bạn là một NPC trong một trò chơi phiêu lưu. Trạng thái môi trường: {state}
-Người chơi: {player}
-NPC trả lời: """
+# BD-NSCA Prompt Formatter
+# Structure: [Persona] + [Fixed Plot] + [Dynamic Context] + [Player Input]
+
+class BDNSCAPromptFormatter:
+    """Formatter for the Behavior-Driven Neuro-Symbolic Cognitive Architecture."""
+    
+    TEMPLATE = """<|system|>
+{persona}
+
+Cốt truyện:
+{plot}
+
+Ngữ cảnh hiện tại:
+{context}
+
+<|user|>
+{player_input}
+<|assistant|>
+"""
+
+    @staticmethod
+    def format(persona: str, plot: str, context: dict, player_input: str) -> str:
+        """Combine the 4 layers into a single prompt.
+        
+        Args:
+            persona: Static character description.
+            plot: Fixed narrative background/scenario.
+            context: Dynamic telemetry from UE5 (Behavior Tree state, Location, etc.)
+            player_input: The player's utterance.
+        """
+        # Format dynamic context into a readable block
+        ctx_str = "\n".join([f"- {k}: {v}" for k, v in context.items()])
+        
+        return BDNSCAPromptFormatter.TEMPLATE.format(
+            persona=persona.strip(),
+            plot=plot.strip(),
+            context=ctx_str,
+            player_input=player_input.strip()
+        )
+
+# Legacy support / Simple wrappers
+def render_prompt(state: str, player_utterance: str, language: str = "vi") -> str:
+    """Legacy wrapper. Adapts simple state string to BD-NSCA format."""
+    return BDNSCAPromptFormatter.format(
+        persona="Bạn là một NPC trong trò chơi.",
+        plot="Không có thông tin cốt truyện.",
+        context={"Môi trường": state},
+        player_input=player_utterance
+    )
 
 
-def render_prompt(state: str, player_utterance: str) -> str:
-    return _PROMPT_TEMPLATE.format(state=state, player=player_utterance)
+# Global API key rotation state
+_GROQ_API_KEYS = []
+_CURRENT_KEY_INDEX = 0
+
+def _get_all_api_keys() -> list:
+    """Get all available API keys from environment."""
+    global _GROQ_API_KEYS
+    if not _GROQ_API_KEYS:
+        # Check for multiple keys in GROQ_API_KEYS (comma separated) or single GROQ_API_KEY
+        keys_str = os.environ.get('GROQ_API_KEYS', '')
+        if keys_str:
+            _GROQ_API_KEYS = [k.strip() for k in keys_str.split(',') if k.strip()]
+        single_key = os.environ.get('GROQ_API_KEY', '')
+        if single_key and single_key not in _GROQ_API_KEYS:
+            _GROQ_API_KEYS.append(single_key)
+    return _GROQ_API_KEYS
+
+def _rotate_api_key() -> str:
+    """Rotate to next available API key."""
+    global _CURRENT_KEY_INDEX
+    keys = _get_all_api_keys()
+    if not keys:
+        raise ValueError("No GROQ_API_KEY(s) set.")
+    _CURRENT_KEY_INDEX = (_CURRENT_KEY_INDEX + 1) % len(keys)
+    logger.info(f"Rotated to API key {_CURRENT_KEY_INDEX + 1}/{len(keys)}")
+    return keys[_CURRENT_KEY_INDEX]
+
+def _get_current_api_key() -> str:
+    """Get current API key."""
+    keys = _get_all_api_keys()
+    if not keys:
+        raise ValueError("No GROQ_API_KEY(s) set.")
+    return keys[_CURRENT_KEY_INDEX % len(keys)]
 
 
-def call_groq_api(prompt: str, model_id: str = 'llama-3.1-8b', max_tokens: int = 128, temperature: float = 0.7, api_url: Optional[str] = None, api_key: Optional[str] = None, retries: int = 3) -> str:
-    """Call Groq REST Responses API and return the generated text.
+def call_groq_api(prompt: str, model_id: str = 'llama-3.3-70b-versatile', max_tokens: int = 128, temperature: float = 0.7, api_url: Optional[str] = None, api_key: Optional[str] = None, retries: int = 3) -> str:
+    """Call Groq Chat Completions API and return the generated text.
 
-    The function respects environment variables `GROQ_API_URL` and `GROQ_API_KEY`
-    when `api_url` or `api_key` are not provided. It implements basic retry
-    with exponential backoff for HTTP 429 (rate limit) responses and logs
-    progress. Returns the text content or raises on non-recoverable errors.
+    Supports multiple API keys via GROQ_API_KEYS env var (comma-separated).
+    Automatically rotates keys on rate limit (429).
+    
+    Supported production models (as of 2026):
+    - llama-3.3-70b-versatile: Best quality, production-ready
+    - llama-3.1-8b-instant: Fast, good for high-volume tasks
     """
-    api_url = api_url or os.environ.get('GROQ_API_URL', 'https://api.groq.com/openai/v1/responses')
-    api_key = api_key or os.environ.get('GROQ_API_KEY')
+    api_url = api_url or os.environ.get('GROQ_API_URL', 'https://api.groq.com/openai/v1/chat/completions')
+    
+    # Use provided key or get from rotation pool
+    current_key = api_key or _get_current_api_key()
 
-    headers = {'Content-Type': 'application/json'}
-    if api_key:
-        headers['Authorization'] = f'Bearer {api_key}'
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {current_key}'
+    }
 
+    # Use Chat Completions format
     payload = {
         'model': model_id,
-        'input': prompt,
-        'max_output_tokens': max_tokens,
+        'messages': [
+            {'role': 'user', 'content': prompt}
+        ],
+        'max_tokens': max_tokens,
         'temperature': temperature,
     }
 
     backoff = 1.0
-    for attempt in range(1, retries + 1):
+    keys_tried = 0
+    max_key_rotations = len(_get_all_api_keys()) if not api_key else 1
+    
+    attempt = 0
+    backoff = 1.0
+    keys_tried = 0
+    max_key_rotations = len(_get_all_api_keys()) if not api_key else 1
+
+    while True:
+        attempt += 1
         try:
             logger.debug("Calling Groq API url=%s attempt=%d", api_url, attempt)
             resp = requests.post(api_url, headers=headers, json=payload, timeout=30)
         except requests.RequestException as exc:
             logger.warning("Groq request exception (attempt %d/%d): %s", attempt, retries, exc)
-            if attempt == retries:
+            if attempt >= retries:
                 raise
             time.sleep(backoff)
             backoff *= 2
             continue
 
         if resp.status_code == 429:
-            logger.warning("Groq rate limited (429). Backing off for %.1fs (attempt %d/%d)", backoff, attempt, retries)
-            if attempt == retries:
-                resp.raise_for_status()
-            time.sleep(backoff)
-            backoff *= 2
+            retry_after = resp.headers.get("retry-after")
+            wait_time = backoff
+            if retry_after:
+                try:
+                    wait_time = float(retry_after) + 1.0
+                except ValueError:
+                    pass
+            
+            logger.warning(f"Groq rate limited (429). Stalling for {wait_time:.1f}s.")
+            
+            # Key rotation
+            if not api_key and keys_tried < max_key_rotations:
+                current_key = _rotate_api_key()
+                headers['Authorization'] = f'Bearer {current_key}'
+                keys_tried += 1
+                time.sleep(0.5)
+                continue
+            
+            # Infinite retry for 429 (don't check attempt count)
+            time.sleep(wait_time)
+            if not retry_after:
+                 backoff = min(backoff * 2, 60.0)
             continue
+
 
         if not resp.ok:
             logger.error("Groq API returned status=%s body=%s", resp.status_code, resp.text)
@@ -217,27 +329,35 @@ def call_groq_api(prompt: str, model_id: str = 'llama-3.1-8b', max_tokens: int =
             logger.error("Groq response not JSON: %s", resp.text[:200])
             return resp.text
 
-        # Possible shapes: {'output': 'text'}, {'output': [{'content': 'text'}]}, {'choices': [...]}
+        # Chat Completions format: {'choices': [{'message': {'content': 'text'}}]}
         text = None
         if isinstance(data, dict):
-            if 'output' in data:
+            if 'choices' in data and isinstance(data['choices'], list) and data['choices']:
+                choice = data['choices'][0]
+                if isinstance(choice, dict):
+                    message = choice.get('message', {})
+                    if isinstance(message, dict):
+                        text = message.get('content', '')
+                    elif isinstance(message, str):
+                        text = message
+                    else:
+                        text = choice.get('text', '')
+            # Fallback for other response formats
+            elif 'output' in data:
                 out = data['output']
                 if isinstance(out, str):
                     text = out
                 elif isinstance(out, list) and out:
-                    # try to pull content fields
                     first = out[0]
                     if isinstance(first, dict):
-                        text = first.get('content') or first.get('text') or None
+                        text = first.get('content') or first.get('text') or ''
                     elif isinstance(first, str):
                         text = first
-            elif 'choices' in data and isinstance(data['choices'], list) and data['choices']:
-                c = data['choices'][0]
-                if isinstance(c, dict):
-                    text = c.get('text') or c.get('message') or None
+        
         if text is None:
-            # fallback: try to stringify 'data' or specific keys
+            logger.warning("Could not parse Groq response: %s", str(data)[:200])
             text = str(data)
+        
         return text
 
 

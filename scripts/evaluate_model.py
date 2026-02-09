@@ -69,7 +69,11 @@ def run_evaluation(hyp_jsonl: str, ref_jsonl: str = None, out_dir: str = "output
     p.mkdir(parents=True, exist_ok=True)
     sims = metrics["tfidf"]["per_example"]
     fig, ax = plt.subplots(figsize=(4, 3))
-    ax.hist(sims, bins=20)
+    try:
+        ax.hist(sims, bins=20)
+    except ValueError:
+        # handle degenerate case where all sims are identical (numpy hist throws)
+        ax.hist(sims, bins=1)
     ax.set_title("TF-IDF cosine similarity distribution")
     ax.set_xlabel("cosine")
     ax.set_ylabel("count")

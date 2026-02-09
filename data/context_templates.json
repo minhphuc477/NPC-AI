@@ -1,0 +1,136 @@
+{
+    "behavior_states": {
+        "idle": {
+            "vi": "Đứng yên, không có hành động cụ thể",
+            "en": "Idle, no specific action"
+        },
+        "patrolling": {
+            "vi": "Đang tuần tra khu vực",
+            "en": "Patrolling the area"
+        },
+        "alert": {
+            "vi": "Đang cảnh giác, phát hiện điều bất thường",
+            "en": "Alert, noticed something unusual"
+        },
+        "combat": {
+            "vi": "Đang chiến đấu",
+            "en": "In combat"
+        },
+        "fleeing": {
+            "vi": "Đang chạy trốn",
+            "en": "Fleeing"
+        },
+        "interacting": {
+            "vi": "Đang tương tác với người chơi",
+            "en": "Interacting with player"
+        },
+        "working": {
+            "vi": "Đang làm việc",
+            "en": "Working"
+        },
+        "resting": {
+            "vi": "Đang nghỉ ngơi",
+            "en": "Resting"
+        }
+    },
+    "health_states": {
+        "healthy": {
+            "vi": "Khỏe mạnh",
+            "en": "Healthy",
+            "hp_range": [
+                80,
+                100
+            ]
+        },
+        "injured": {
+            "vi": "Bị thương nhẹ",
+            "en": "Lightly injured",
+            "hp_range": [
+                50,
+                79
+            ]
+        },
+        "wounded": {
+            "vi": "Bị thương nặng",
+            "en": "Seriously wounded",
+            "hp_range": [
+                20,
+                49
+            ]
+        },
+        "critical": {
+            "vi": "Nguy kịch",
+            "en": "Critical condition",
+            "hp_range": [
+                1,
+                19
+            ]
+        }
+    },
+    "mood_states": {
+        "neutral": {
+            "vi": "Bình thường",
+            "en": "Neutral"
+        },
+        "friendly": {
+            "vi": "Thân thiện",
+            "en": "Friendly"
+        },
+        "suspicious": {
+            "vi": "Nghi ngờ",
+            "en": "Suspicious"
+        },
+        "hostile": {
+            "vi": "Thù địch",
+            "en": "Hostile"
+        },
+        "afraid": {
+            "vi": "Sợ hãi",
+            "en": "Afraid"
+        },
+        "grateful": {
+            "vi": "Biết ơn",
+            "en": "Grateful"
+        }
+    },
+    "nearby_entities": {
+        "player_only": {
+            "vi": "Chỉ có người chơi gần đây",
+            "en": "Only the player nearby"
+        },
+        "crowded": {
+            "vi": "Có nhiều người xung quanh",
+            "en": "Many people around"
+        },
+        "enemies_nearby": {
+            "vi": "Có kẻ địch gần đây",
+            "en": "Enemies nearby"
+        },
+        "allies_present": {
+            "vi": "Có đồng minh bên cạnh",
+            "en": "Allies present"
+        },
+        "alone": {
+            "vi": "Không có ai xung quanh ngoài người chơi",
+            "en": "No one around except player"
+        }
+    },
+    "time_contexts": {
+        "morning": {
+            "vi": "Buổi sáng",
+            "en": "Morning"
+        },
+        "afternoon": {
+            "vi": "Buổi chiều",
+            "en": "Afternoon"
+        },
+        "evening": {
+            "vi": "Buổi tối",
+            "en": "Evening"
+        },
+        "night": {
+            "vi": "Ban đêm",
+            "en": "Night"
+        }
+    }
+}

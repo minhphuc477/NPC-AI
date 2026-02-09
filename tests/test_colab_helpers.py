@@ -17,7 +17,14 @@ def test_convert_csv_to_jsonl(tmp_path):
 def test_render_prompt():
     s = "A room with a chest"
     p = "Open the chest"
-    prompt = colab_helpers.render_prompt(s, p)
-    assert 'NPC' in prompt
-    assert s in prompt
-    assert p in prompt
+    # default (Vietnamese)
+    prompt_vi = colab_helpers.render_prompt(s, p)
+    assert 'NPC' in prompt_vi
+    assert s in prompt_vi
+    assert p in prompt_vi
+    # English
+    prompt_en = colab_helpers.render_prompt(s, p, language='en')
+    assert 'NPC' in prompt_en
+    assert 'Player' in prompt_en
+    assert s in prompt_en
+    assert p in prompt_en

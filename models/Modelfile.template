@@ -1,0 +1,25 @@
+# BD-NSCA Ollama Modelfile Template
+# Use this to create a custom model from fine-tuned weights
+
+# Base model - replace with your fine-tuned GGUF path
+FROM ./phi3-npc-finetuned.gguf
+
+# Set model parameters for NPC dialogue
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER top_k 40
+PARAMETER num_predict 256
+PARAMETER repeat_penalty 1.1
+PARAMETER stop "[/ASSISTANT]"
+PARAMETER stop "[USER]"
+
+# System template for BD-NSCA
+TEMPLATE """{{ .System }}
+
+{{ .Prompt }}"""
+
+# Default system message
+SYSTEM """Ban la mot NPC trong tro choi. Hay tra loi ngan gon va phu hop voi tinh cach cua nhan vat."""
+
+# License and metadata
+LICENSE """MIT License - BD-NSCA NPC AI Project"""
