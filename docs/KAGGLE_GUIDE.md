@@ -47,4 +47,35 @@ Both are significantly faster than your 3050 Ti (4GB)!
 
 **"Out of memory"**: Reduce `batch_size` to 2 in CONFIG
 
-**"Data not found"**: Check the path matches your dataset name
+
+## Using the Adapter Locally
+
+1. **Download**: Get `adapter_multiturn.zip` from Kaggle Output tab
+2. **Extract**: Unzip into your project folder. You should see an `adapter_multiturn` folder containing `adapter_model.safetensors` and `adapter_config.json`.
+3. **Run Test Script**:
+   ```powershell
+   python scripts/test_adapter.py
+   ```
+
+### Troubleshooting
+- **"DynamicCache object has no attribute 'seen_tokens'"**: 
+  - This is a compatibility issue with Phi-3 and PEFT.
+  - Fix: Add `use_cache=False` to `model.generate()`.
+  
+- **"Out of Memory" (CUDA OOM)**:
+  - Reduce `max_new_tokens`
+  - Ensure `load_in_4bit=True` is used
+  - Close other apps using GPU
+
+### Merging Adapter (Optional)
+To merge the adapter into the base model for faster inference (requires ~8GB VRAM for merging):
+```python
+from peft import PeftModel
+from transformers import AutoModelForCausalLM
+
+base_model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
+model = PeftModel.from_pretrained(base_model, "adapter_multiturn")
+model = model.merge_and_unload()
+model.save_pretrained("models/phi3-npc-merged")
+tokenizer.save_pretrained("models/phi3-merged")
+```
