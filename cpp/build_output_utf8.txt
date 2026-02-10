@@ -1,0 +1,230 @@
+﻿MSBuild version 17.14.14+a129329f1 for .NET Framework
+
+  sentencepiece-static.vcxproj -> C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\sentencepiece-build\src\Release\sentencepiece.lib
+  NPCInference.cpp
+C:\Users\MPhuc\Desktop\NPC AI\cpp\include\NPCInference.h(138,10): error C2535: 'bool NPCInference::NPCInferenceEngine::Initialize(const std::string &)': member function already defined or declared [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+  (compiling source file '../src/NPCInference.cpp')
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\include\NPCInference.h(63,10):
+      see declaration of 'NPCInference::NPCInferenceEngine::Initialize'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\NPCInference.cpp(260,30): error C2084: function 'bool NPCInference::NPCInferenceEngine::SaveMemory(void)' already has a body [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\NPCInference.cpp(63,30):
+      see previous definition of 'NPCInference::NPCInferenceEngine::SaveMemory'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\NPCInference.cpp(307,30): error C2084: function 'bool NPCInference::NPCInferenceEngine::Initialize(const std::string &)' already has a body [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\NPCInference.cpp(24,30):
+      see previous definition of 'NPCInference::NPCInferenceEngine::Initialize'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\NPCInference.cpp(313,30): error C2084: function 'bool NPCInference::NPCInferenceEngine::Initialize(const NPCInference::NPCInferenceEngine::InferenceConfig &)' already has a body [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\NPCInference.cpp(30,30):
+      see previous definition of 'NPCInference::NPCInferenceEngine::Initialize'
+  
+  VectorStore.cpp
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(11,18): error C2065: 'cos_t': undeclared identifier [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(11,9): error C2923: 'unum::usearch::index_gt': 'cos_t' is not a valid template type argument for parameter 'distance_at' [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(11,18):
+      see declaration of 'cos_t'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(11,9): error C2976: 'unum::usearch::index_gt': too few template arguments [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(1689,7):
+      see declaration of 'unum::usearch::index_gt'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(11,25): error C2955: 'unum::usearch::index_gt': use of class template requires template argument list [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(1689,7):
+      see declaration of 'unum::usearch::index_gt'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(21,13): error C2065: 'metric_punned_t': undeclared identifier [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(21,29): error C2146: syntax error: missing ';' before identifier 'metric' [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(21,47): error C2653: 'metric_kind_t': is not a class or namespace name [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(21,62): error C2065: 'cos_k': undeclared identifier [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(21,29): error C3861: 'metric': identifier not found [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,37): error C2065: 'cos_t': undeclared identifier [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,28): error C2923: 'unum::usearch::index_gt': 'cos_t' is not a valid template type argument for parameter 'distance_at' [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,37):
+      see declaration of 'cos_t'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,28): error C2976: 'unum::usearch::index_gt': too few template arguments [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(1689,7):
+      see declaration of 'unum::usearch::index_gt'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,45): error C2955: 'unum::usearch::index_gt': use of class template requires template argument list [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(1689,7):
+      see declaration of 'unum::usearch::index_gt'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,45): error C2039: 'make': is not a member of 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>' [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(1689,7):
+      see declaration of 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,50): error C2065: 'metric': undeclared identifier [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,45): error C3861: 'make': identifier not found [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,18): error C2678: binary '=': no operator found which takes a left-hand operand of type 'unum::usearch::index_gt' (or there is no acceptable conversion) [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(1972,15):
+      could be 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::operator =(unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &&) noexcept'
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,18):
+          'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::operator =(unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &&) noexcept': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &'
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,18):
+              Reason: cannot convert from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,18):
+              Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,18):
+      while trying to match the argument list '(unum::usearch::index_gt, <error type>)'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(22,26): error C2582: 'operator =' function is unavailable in 'unum::usearch::index_gt' [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(23,26): error C2662: 'bool unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::reserve(unum::usearch::index_limits_t) noexcept': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &' [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(23,18):
+      Reason: cannot convert from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(23,18):
+      Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2092,10):
+      see declaration of 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::reserve'
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(23,26):
+      while trying to match the argument list '(int)'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(41,26): error C2672: 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::add': no matching overloaded function found [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2285,18):
+      could be 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::add_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::add(key_at,value_at &&,metric_at &&,unum::usearch::index_update_config_t,callback_at &&,prefetch_at &&) noexcept'
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(41,26):
+          'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::add_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::add(key_at,value_at &&,metric_at &&,unum::usearch::index_update_config_t,callback_at &&,prefetch_at &&) noexcept': expects 6 arguments - 2 provided
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(55,48): error C2672: 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::search': no matching overloaded function found [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2464,21):
+      could be 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::search_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::search(value_at &&,size_t,metric_at &&,unum::usearch::index_search_config_t,predicate_at &&,prefetch_at &&) noexcept const'
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(55,48):
+          'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::search_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::search(value_at &&,size_t,metric_at &&,unum::usearch::index_search_config_t,predicate_at &&,prefetch_at &&) noexcept const': expects 6 arguments - 2 provided
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(57,41): error C3536: 'search_results': cannot be used before it is initialized [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(58,47): error C2109: subscript requires array or pointer type [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(59,50): error C2109: subscript requires array or pointer type [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,26): error C2663: 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::save': no overloaded function has valid conversion for 'this' pointer [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2821,28):
+      could be 'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::save<unum::usearch::dummy_progress_t>(unum::usearch::memory_mapped_file_t,size_t,progress_at &&) noexcept const'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,26):
+          'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::save<unum::usearch::dummy_progress_t>(unum::usearch::memory_mapped_file_t,size_t,progress_at &&) noexcept const': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,18):
+              Reason: cannot convert from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,18):
+              Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2798,28):
+      or       'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::save<unum::usearch::dummy_progress_t>(unum::usearch::output_file_t,progress_at &&) noexcept const'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,26):
+          'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::save<unum::usearch::dummy_progress_t>(unum::usearch::output_file_t,progress_at &&) noexcept const': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,18):
+              Reason: cannot convert from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,18):
+              Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2785,28):
+      or       'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::save<unum::usearch::dummy_progress_t>(const char *,progress_at &&) noexcept const'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,26):
+          'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::save<unum::usearch::dummy_progress_t>(const char *,progress_at &&) noexcept const': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,18):
+              Reason: cannot convert from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,18):
+              Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(77,26):
+      while trying to match the argument list '(const _Elem *)'
+          with
+          [
+              _Elem=char
+          ]
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(115,30): error C2662: 'size_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::size(void) noexcept const': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &' [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(115,22):
+      Reason: cannot convert from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(115,22):
+      Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(1946,17):
+      see declaration of 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::size'
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(115,30):
+      while trying to match the argument list '()'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(115,58): error C2662: 'size_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::capacity(void) noexcept const': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &' [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(115,50):
+      Reason: cannot convert from 'unum::usearch::index_gt' to 'const unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(115,50):
+      Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(1945,17):
+      see declaration of 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::capacity'
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(115,58):
+      while trying to match the argument list '()'
+  
+C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,26): error C2663: 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::load': no overloaded function has valid conversion for 'this' pointer [C:\Users\MPhuc\Desktop\NPC AI\cpp\build\npc_inference.vcxproj]
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2871,28):
+      could be 'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::load<unum::usearch::dummy_progress_t>(unum::usearch::memory_mapped_file_t,size_t,progress_at &&) noexcept'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,26):
+          'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::load<unum::usearch::dummy_progress_t>(unum::usearch::memory_mapped_file_t,size_t,progress_at &&) noexcept': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,18):
+              Reason: cannot convert from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,18):
+              Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2847,28):
+      or       'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::load<unum::usearch::dummy_progress_t>(unum::usearch::input_file_t,progress_at &&) noexcept'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,26):
+          'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::load<unum::usearch::dummy_progress_t>(unum::usearch::input_file_t,progress_at &&) noexcept': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,18):
+              Reason: cannot convert from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,18):
+              Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\build\_deps\usearch-src\include\usearch\index.hpp(2790,28):
+      or       'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::load<unum::usearch::dummy_progress_t>(const char *,progress_at &&) noexcept'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+          C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,26):
+          'unum::usearch::serialization_result_t unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>::load<unum::usearch::dummy_progress_t>(const char *,progress_at &&) noexcept': cannot convert 'this' pointer from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at> &'
+          with
+          [
+              progress_at=unum::usearch::dummy_progress_t
+          ]
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,18):
+              Reason: cannot convert from 'unum::usearch::index_gt' to 'unum::usearch::index_gt<distance_at,key_at,compressed_slot_at,dynamic_allocator_at,tape_allocator_at>'
+              C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,18):
+              Conversion requires a second user-defined-conversion operator or constructor
+      C:\Users\MPhuc\Desktop\NPC AI\cpp\src\VectorStore.cpp(125,26):
+      while trying to match the argument list '(const _Elem *)'
+          with
+          [
+              _Elem=char
+          ]
+  
+  Generating Code...
