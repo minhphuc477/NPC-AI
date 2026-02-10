@@ -164,6 +164,11 @@ class ConversationMemory:
             )
 
         new_summary = "; ".join(summaries)
+        
+        # In a real implementation, we would call an LLM here to semantic summarize
+        # For now, we append string summaries
+        # self._consolidate_memory(mem, new_summary)
+        
         if mem.summary:
             combined = f"{mem.summary}; {new_summary}"
         else:
@@ -177,6 +182,30 @@ class ConversationMemory:
                 combined = combined[first_semi + 1:].strip()
 
         mem.summary = combined
+
+    def consolidate_memory(self, npc_id: str, llm_client=None):
+        """
+        [Advanced Codebase Improvement]
+        Uses an LLM to semantically compress the 'summary' string into a concise narrative.
+        This would be termed 'Episodic Memory Consolidation'.
+        
+        Args:
+             npc_id: The NPC to consolidate
+             llm_client: A function or client to call the LLM (e.g. Ollama)
+        """
+        mem = self._memories.get(npc_id)
+        if not mem or not mem.summary:
+            return
+
+        if llm_client:
+            prompt = f"Summarize this conversation history into one concise sentence relevant to the NPC:\n{mem.summary}"
+            try:
+                # Hypothetical synchronous call
+                reduced_summary = llm_client(prompt)
+                mem.summary = reduced_summary.strip()
+            except Exception as e:
+                logger.error(f"Memory consolidation failed: {e}")
+
 
     def get_memory_context(self, npc_id: str, language: str = "vi") -> str:
         """Generate formatted memory context for prompt injection.

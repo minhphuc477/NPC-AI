@@ -39,7 +39,7 @@ class BDNSCAInference:
     def __init__(self, config: Optional[InferenceConfig] = None, base_url: str = OLLAMA_URL):
         self.config = config or InferenceConfig()
         self.base_url = base_url.rstrip("/")
-        self.prompt_builder = PromptBuilder(use_advanced_format=True)
+        self.prompt_builder = PromptBuilder(use_advanced_format=True, use_json_format=True)
     
     def format_prompt(
         self, 
