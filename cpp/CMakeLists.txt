@@ -121,6 +121,7 @@ add_library(npc_inference STATIC
     src/SemanticCache.cpp
     src/PerformanceProfiler.cpp
     src/ToolRegistry.cpp
+    src/SimpleGraph.cpp
 )
 
 target_include_directories(npc_inference

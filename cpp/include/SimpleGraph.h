@@ -1,0 +1,52 @@
+#pragma once
+
+#include <string>
+#include <vector>
+#include <map>
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <set>
+
+namespace NPCInference {
+
+    struct GraphEdge {
+        std::string relation;
+        std::string target;
+        float weight;
+    };
+
+    struct GraphPath {
+        std::vector<std::string> nodes;
+        std::vector<std::string> relations;
+        float totalWeight;
+    };
+
+    class SimpleGraph {
+    public:
+        SimpleGraph() = default;
+        ~SimpleGraph() = default;
+
+        // Add a relationship: Subject -> Relation -> Target
+        void AddRelation(const std::string& subject, const std::string& relation, const std::string& target, float weight = 1.0f);
+
+        // Get all outgoing edges from a node
+        std::vector<GraphEdge> GetRelations(const std::string& subject) const;
+
+        // Find a path between two entities (BFS)
+        // Returns empty path if no connection found within maxDepth
+        GraphPath FindPath(const std::string& start, const std::string& end, int maxDepth = 3) const;
+
+        // Get a textual representation of direct facts about an entity
+        std::string GetKnowledgeContext(const std::string& entity) const;
+
+        // Serialization
+        bool Save(const std::string& filepath) const;
+        bool Load(const std::string& filepath);
+
+    private:
+        // Adjacency list: Node -> List of Edges
+        std::map<std::string, std::vector<GraphEdge>> adjacencyList_;
+    };
+
+} // namespace NPCInference

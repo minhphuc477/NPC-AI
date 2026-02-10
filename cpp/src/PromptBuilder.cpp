@@ -5,7 +5,7 @@
 
 namespace NPCInference {
 
-    PromptBuilder::PromptBuilder(bool useAdvancedFormat) : useAdvancedFormat_(useAdvancedFormat) {}
+    PromptBuilder::PromptBuilder(bool useAdvancedFormat, bool useJsonFormat) : useAdvancedFormat_(useAdvancedFormat), useJsonFormat_(useJsonFormat) {}
 
     std::string PromptBuilder::Build(const json& npcData, const json& gameState, const std::string& playerInput, const std::string& language, const json& tools) {
         if (useAdvancedFormat_) {
@@ -129,6 +129,31 @@ namespace NPCInference {
            << "<|user|>\n"
            << playerInput << "\n"
            << "<|assistant|>\n";
+
+
+        // JSON Output Instruction (Functional Grounding)
+        if (useJsonFormat_) {
+            ss << "\n";
+            if (isVi) {
+                ss << "QUAN TRỌNG: Bạn phải trả lời bằng format JSON. Không trả lời bằng text thường.\n";
+                ss << "Schema:\n{\n";
+                ss << "  \"text\": \"Câu trả lời của bạn (lời thoại)\",\n";
+                ss << "  \"emotion\": \"Cảm xúc hiện tại (Vui/Buồn/Giận/Sợ/Ngạc nhiên)\",\n";
+                ss << "  \"action\": \"Hành động (Ví dụ: Node/Cuoi/Rút kiếm/Bỏ đi)\",\n";
+                ss << "  \"trust_change\": \"Thay đổi mức tin tưởng (-10 đến +10)\"\n";
+                ss << "}\n";
+            } else {
+                ss << "IMPORTANT: You must respond in JSON format. Do not use plain text.\n";
+                ss << "Include a hidden 'thought' field to analyze the situation before speaking.\n";
+                ss << "Schema:\n{\n";
+                ss << "  \"thought\": \"Internal monologue/reasoning about the situation\",\n";
+                ss << "  \"text\": \"Your dialogue response\",\n";
+                ss << "  \"emotion\": \"Current emotion (Joy/Sadness/Anger/Fear/Surprise)\",\n";
+                ss << "  \"action\": \"Action to perform (e.g., Nod/Smile/Draw_Sword/Walk_Away)\",\n";
+                ss << "  \"trust_change\": \"Trust level change (-10 to +10)\"\n";
+                ss << "}\n";
+            }
+        }
 
         return ss.str();
     }

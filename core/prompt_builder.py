@@ -19,8 +19,9 @@ _AST = "<" + "|assistant|" + ">"
 
 
 class PromptBuilder:
-    def __init__(self, use_advanced_format: bool = True):
+    def __init__(self, use_advanced_format: bool = True, use_json_format: bool = False):
         self.use_advanced_format = use_advanced_format
+        self.use_json_format = use_json_format
 
     def build_prompt(
         self,
@@ -132,6 +133,30 @@ class PromptBuilder:
         parts.append("")
         parts.append(L_SCENARIO)
         parts.append(str(scenario))
+        
+        # JSON Output Instruction (Functional Grounding)
+        if self.use_json_format:
+            parts.append("")
+            if is_vi:
+                parts.append("QUAN TRỌNG: Bạn phải trả lời bằng format JSON. Không trả lời bằng text thường.")
+                parts.append("Schema:")
+                parts.append("{")
+                parts.append('  "text": "Câu trả lời của bạn (lời thoại)",')
+                parts.append('  "emotion": "Cảm xúc hiện tại (Vui/Buồn/Giận/Sợ/Ngạc nhiên)",')
+                parts.append('  "action": "Hành động (Ví dụ: Node/Cuoi/Rút kiếm/Bỏ đi)",')
+                parts.append('  "trust_change": "Thay đổi mức tin tưởng (-10 đến +10)"')
+                parts.append("}")
+            else:
+                parts.append("IMPORTANT: You must respond in JSON format. Do not use plain text.")
+                parts.append("Include a hidden 'thought' field to analyze the situation before speaking.")
+                parts.append("Schema:")
+                parts.append("{")
+                parts.append('  "thought": "Internal monologue/reasoning about the situation",')
+                parts.append('  "text": "Your dialogue response",')
+                parts.append('  "emotion": "Current emotion (Joy/Sadness/Anger/Fear/Surprise)",')
+                parts.append('  "action": "Action to perform (e.g., Nod/Smile/Draw_Sword/Walk_Away)",')
+                parts.append('  "trust_change": "Trust level change (-10 to +10)"')
+                parts.append("}")
 
         system_block = "\n".join(parts)
 
