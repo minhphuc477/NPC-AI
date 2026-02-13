@@ -685,6 +685,16 @@ namespace NPCInference {
         // 4. Store Summary
         Remember(summary, {{"type", "summary"}, {"original_count", std::to_string(pending.size())}});
         std::cout << "Sleep Mode: Created summary: " << summary << std::endl;
+
+        // 4.5 Reflection (SOTA "Generative Agents" pattern)
+        if (config_.enable_reflection) {
+            std::string insight = memory_consolidator_->GenerateReflectiveInsight(summary);
+            if (!insight.empty() && insight.length() > 10) {
+                // Store as high-importance "Core Belief"
+                Remember(insight, {{"type", "insight"}, {"importance", "1.0"}, {"source", "reflection"}});
+                std::cout << "Sleep Mode: Generated Deep Insight: " << insight << std::endl;
+            }
+        }
         
         // 5. Prune old memories (Episodic Decay)
         for (uint64_t id : ids_to_remove) {

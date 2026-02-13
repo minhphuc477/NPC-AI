@@ -35,7 +35,16 @@ public:
     /**
      * Rate the importance of a memory (0.0 to 1.0).
      */
+    /**
+     * Rate the importance of a memory (0.0 to 1.0).
+     */
     float AssessImportance(const std::string& memory_text);
+
+    /**
+     * Generate a high-level insight/reflection based on recent memories.
+     * Implements "Generative Agents" Reflection pattern.
+     */
+    std::string GenerateReflectiveInsight(const std::string& recent_memories);
 
 private:
     ModelLoader* model_loader_;
