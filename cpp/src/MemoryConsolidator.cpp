@@ -110,4 +110,24 @@ float MemoryConsolidator::AssessImportance(const std::string& memory_text) {
     return 0.5f; // Default
 }
 
+std::string MemoryConsolidator::GenerateReflectiveInsight(const std::string& recent_memories) {
+    if (recent_memories.empty()) return "";
+
+    std::string prompt = "System: You are an introspective AI. Analyze the recent events and generate a deep insight.\n"
+                         "User: Based on these recent events:\n" + recent_memories + 
+                         "\n\nWhat is one key insight, belief, or lesson I should remember about my life, relationships, or the world? (Max 1 sentence)\n"
+                         "Insight:";
+
+    std::string insight = QueryLLM(prompt, 50);
+    
+    // Cleanup if LLM chatters
+    size_t pos = insight.find("Insight:");
+    if (pos != std::string::npos) insight = insight.substr(pos + 8);
+    
+    // Remove quotes
+    insight.erase(std::remove(insight.begin(), insight.end(), '\"'), insight.end());
+    
+    return insight;
+}
+
 } // namespace NPCInference
