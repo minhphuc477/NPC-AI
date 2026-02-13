@@ -24,20 +24,24 @@ namespace NPCInference {
     class VectorStore {
     public:
         VectorStore();
-        ~VectorStore();
+        virtual ~VectorStore();
 
         // Initialize with dimension (e.g. 384 for MiniLM)
-        bool Initialize(size_t dimension);
+        virtual bool Initialize(size_t dimension);
 
         // Add document
-        void Add(const std::string& text, const std::vector<float>& embedding, const std::map<std::string, std::string>& metadata = {});
+        virtual void Add(const std::string& text, const std::vector<float>& embedding, const std::map<std::string, std::string>& metadata = {});
 
         // Search
-        std::vector<SearchResult> Search(const std::vector<float>& query, size_t k);
+        virtual std::vector<SearchResult> Search(const std::vector<float>& query, size_t k);
 
         // Persistence
-        bool Save(const std::string& path_prefix);
-        bool Load(const std::string& path_prefix);
+        virtual bool Save(const std::string& path_prefix);
+        virtual bool Load(const std::string& path_prefix);
+
+        // Management (Phase 10)
+        virtual std::vector<SearchResult> GetAllMemories();
+        virtual void Remove(uint64_t id);
 
     private:
         struct Impl;

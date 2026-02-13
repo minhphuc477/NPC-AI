@@ -37,8 +37,12 @@ namespace NPCInference {
         // Returns empty path if no connection found within maxDepth
         GraphPath FindPath(const std::string& start, const std::string& end, int maxDepth = 3) const;
 
+        // Check if node exists
+        bool HasNode(const std::string& node) const;
+
         // Get a textual representation of direct facts about an entity
         std::string GetKnowledgeContext(const std::string& entity) const;
+        std::string GetKnowledgeContext(const std::vector<std::string>& entities) const;
 
         // Serialization
         bool Save(const std::string& filepath) const;

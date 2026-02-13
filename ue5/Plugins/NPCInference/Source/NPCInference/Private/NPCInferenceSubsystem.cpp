@@ -62,10 +62,85 @@ FString UNPCInferenceSubsystem::GenerateDialogue(const FString& SystemPrompt, co
 	return ToFString(StdResponse);
 }
 
-FString UNPCInferenceSubsystem::GenerateFromPrompt(const FString& FullPrompt)
+FString UNPCInferenceSubsystem::GenerateStructuredDialogue(const FString& SystemPrompt, const FString& Name, const FString& Context, const FString& PlayerInput)
 {
-	if (!IsEngineReady()) return "Error: Engine not ready";
-	return ToFString(InferenceEngine->Generate(ToString(FullPrompt)));
+    if (!IsEngineReady()) return TEXT("Error: Engine not ready");
+    
+    // Construct prompt manually or use a helper
+    std::string prompt = "System: " + ToString(SystemPrompt) + "\nName: " + ToString(Name) + "\nContext: " + ToString(Context) + "\n\nQuestion: " + ToString(PlayerInput) + "\nAnswer:";
+    
+    std::string response = InferenceEngine->GenerateJSON(prompt);
+    return ToFString(response);
+}
+
+FString UNPCInferenceSubsystem::ExecuteNPCTool(const FString& ToolCallJSON)
+{
+    if (!InferenceEngine) return TEXT("Error: Engine not ready");
+    return ToFString(InferenceEngine->ExecuteAction(ToString(ToolCallJSON)));
+}
+
+void UNPCInferenceSubsystem::GenerateDialogueAsync(const FString& SystemPrompt, const FString& Name, const FString& Context, const FString& PlayerInput, FOnDialogueGenerated OnComplete)
+{
+    if (!IsEngineReady())
+    {
+        OnComplete.ExecuteIfBound(TEXT("Error: Engine not ready"));
+        return;
+    }
+
+    // Use UE5 AsyncTask to run generation on a background thread
+    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this, SystemPrompt, Name, Context, PlayerInput, OnComplete]()
+    {
+        std::string StdResponse = InferenceEngine->GenerateFromContext(
+            ToString(SystemPrompt),
+            ToString(Name),
+            ToString(Context),
+            ToString(PlayerInput)
+        );
+
+        FString FinalResponse = ToFString(StdResponse);
+
+        // Return to Game Thread to execute the delegate
+        AsyncTask(ENamedThreads::GameThread, [OnComplete, FinalResponse]()
+        {
+            OnComplete.ExecuteIfBound(FinalResponse);
+        });
+    });
+}
+
+void UNPCInferenceSubsystem::ReceiveGossip(const FString& GossipText, const FString& SourceNPC)
+{
+    if (InferenceEngine)
+    {
+        InferenceEngine->ReceiveGossip(ToString(GossipText), ToString(SourceNPC));
+    }
+}
+
+FString UNPCInferenceSubsystem::ExtractGossip()
+{
+    if (InferenceEngine)
+    {
+        return ToFString(InferenceEngine->ExtractGossip());
+    }
+    return TEXT("");
+}
+
+void UNPCInferenceSubsystem::TriggerSleepMode()
+{
+    if (InferenceEngine)
+    {
+        InferenceEngine->PerformSleepCycle();
+    }
+}
+
+FString UNPCInferenceSubsystem::AnalyzeScene(const TArray<uint8>& ImageData, int32 Width, int32 Height)
+{
+    if (!InferenceEngine) return TEXT("Error: Engine not ready");
+
+    // Convert TArray to std::vector
+    std::vector<uint8_t> std_data(ImageData.GetData(), ImageData.GetData() + ImageData.Num());
+    
+    std::string desc = InferenceEngine->See(std_data, Width, Height);
+    return ToFString(desc);
 }
 
 bool UNPCInferenceSubsystem::IsEngineReady() const

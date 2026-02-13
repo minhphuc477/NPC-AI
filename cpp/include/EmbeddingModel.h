@@ -15,15 +15,15 @@ namespace NPCInference {
     class EmbeddingModel {
     public:
         EmbeddingModel();
-        ~EmbeddingModel();
+        virtual ~EmbeddingModel();
 
         // Load ONNX model and tokenizer
-        bool Load(const std::string& model_path, const std::string& tokenizer_path);
+        virtual bool Load(const std::string& model_path, const std::string& tokenizer_path);
 
         // Generate embedding for text
-        std::vector<float> Embed(const std::string& text);
+        virtual std::vector<float> Embed(const std::string& text);
 
-        bool IsLoaded() const { return loaded_; }
+        virtual bool IsLoaded() const { return loaded_; }
 
     private:
         struct Impl;

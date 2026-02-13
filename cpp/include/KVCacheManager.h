@@ -71,6 +71,17 @@ public:
     void Remove(const std::string& conversation_id);
 
     /**
+     * Store System Prompt KV separately (Persistent across conversations)
+     */
+    void PutSystemKV(std::vector<Ort::Value>&& kv_tensors, size_t sequence_length);
+    
+    /**
+     * Retrieve System Prompt KV
+     * @return CacheEntry pointer or nullptr
+     */
+    CacheEntry* GetSystemKV();
+
+    /**
      * Clear all caches
      */
     void Clear();
@@ -85,6 +96,11 @@ public:
      */
     void SetMaxMemory(size_t max_memory_mb);
 
+    /**
+     * Deep copy KV Cache tensors
+     */
+    static std::vector<Ort::Value> CloneKV(const std::vector<Ort::Value>& source);
+
 private:
     void EvictLRU();
     size_t EstimateMemoryUsage(const std::vector<Ort::Value>& tensors);
@@ -96,6 +112,9 @@ private:
     // Map from conversation_id to cache entry and LRU iterator
     std::unordered_map<std::string, std::pair<CacheEntry, std::list<std::string>::iterator>> cache_map_;
     
+    // Dedicated System Prompt Cache
+    std::unique_ptr<CacheEntry> system_prompt_cache_;
+
     size_t max_memory_bytes_;
     size_t max_entries_;
     size_t current_memory_bytes_ = 0;

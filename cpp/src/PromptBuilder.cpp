@@ -163,7 +163,98 @@ namespace NPCInference {
         std::string npcId = npcData.value("id", "NPC");
         std::string scenario = gameState.value("scenario", "");
 
-        return "System: " + persona + "\nName: " + npcId + "\nContext: " + scenario + "\n\nQuestion: " + playerInput + "\nAnswer:";
+    }
+
+    std::string PromptBuilder::BuildPlanning(const json& npcData, const json& gameState, const std::string& playerInput, const std::string& language) {
+        bool isVi = (language == "vi");
+        std::string basePrompt = Build(npcData, gameState, playerInput, language);
+        
+        std::string marker = "<|assistant|>\n";
+        size_t pos = basePrompt.find(marker);
+        std::string prefix = (pos != std::string::npos) ? basePrompt.substr(0, pos) : basePrompt;
+
+        if (isVi) {
+            return prefix + marker + "**Suy nghĩ:** Hãy phân tích tình huống và lập kế hoạch câu trả lời.\n";
+        } else {
+            return prefix + marker + "**Thought:** Analyze the situation and plan your response.\n";
+        }
+    }
+
+    std::string PromptBuilder::BuildWithThought(const json& npcData, const json& gameState, const std::string& playerInput, const std::string& thought, const std::string& language, const json& tools) {
+        bool isVi = (language == "vi");
+        std::string basePrompt = Build(npcData, gameState, playerInput, language, tools);
+        
+        std::string marker = "<|assistant|>\n";
+        size_t pos = basePrompt.find(marker);
+        if (pos != std::string::npos) {
+            std::string label = isVi ? "**Suy nghĩ:** " : "**Thought:** ";
+            basePrompt.insert(pos + marker.length(), label + thought + "\n\n");
+        }
+        
+        return basePrompt;
+    }
+
+    std::string PromptBuilder::BuildCritique(const std::string& originalResponse, const json& npcData, const json& gameState, const std::string& language) {
+        bool isVi = (language == "vi");
+        std::stringstream ss;
+        
+        if (isVi) {
+            ss << "<|system|>\nBạn là một nhà phê bình nghiêm túc. Hãy đánh giá câu trả lời sau đây của NPC " << npcData.value("name", "NPC") 
+               << " dựa trên: 1. Tính nhất quán của persona, 2. Độ chính xác của thông tin, 3. Sự tự nhiên của ngôn ngữ.\n\n"
+               << "Câu trả lời của NPC:\n\"" << originalResponse << "\"\n\n"
+               << "Hãy chỉ ra các lỗi hoặc điểm cần cải thiện. Nếu câu trả lời đã hoàn hảo, hãy trả về 'PERFECT'.\n"
+               << "<|end|>\n<|assistant|>\n**Phê bình:** ";
+        } else {
+            ss << "<|system|>\nYou are a critical reviewer. Evaluate the following response from NPC " << npcData.value("name", "NPC")
+               << " based on: 1. Persona consistency, 2. Fact accuracy, 3. Naturalness.\n\n"
+               << "NPC Response:\n\"" << originalResponse << "\"\n\n"
+               << "Point out flaws or areas for improvement. If the response is perfect, return 'PERFECT'.\n"
+               << "<|end|>\n<|assistant|>\n**Critique:** ";
+        }
+        
+        return ss.str();
+    }
+
+    std::string PromptBuilder::BuildRefine(const std::string& originalResponse, const std::string& critique, const json& npcData, const json& gameState, const std::string& language) {
+        bool isVi = (language == "vi");
+        std::stringstream ss;
+        
+        if (isVi) {
+            ss << "<|system|>\nBạn là " << npcData.value("name", "NPC") << ". Dựa trên những nhận xét phê bình sau đây, hãy viết lại câu trả lời của bạn để nó hoàn thiện hơn.\n\n"
+               << "Nhận xét phê bình:\n" << critique << "\n\n"
+               << "Câu trả lời cũ:\n\"" << originalResponse << "\"\n\n"
+               << "Hãy đưa ra câu trả lời mới tinh tế và nhất quán hơn.\n"
+               << "<|end|>\n<|assistant|>\n";
+        } else {
+            ss << "<|system|>\nYou are " << npcData.value("name", "NPC") << ". Based on the following critique, rewrite your response to improve it.\n\n"
+               << "Critique:\n" << critique << "\n\n"
+               << "Old Response:\n\"" << originalResponse << "\"\n\n"
+               << "Provide a newer, more refined and consistent response.\n"
+               << "<|end|>\n<|assistant|>\n";
+        }
+        
+        return ss.str();
+    }
+
+    std::string PromptBuilder::BuildTruthGuardCheck(const std::string& response, const std::string& worldFacts, const std::string& language) {
+        bool isVi = (language == "vi");
+        std::stringstream ss;
+        
+        if (isVi) {
+            ss << "<|system|>\nBạn là một Hệ thống Kiểm chứng Sự thật (Truth Guard). Hãy so sánh câu trả lời của NPC với các Sự thật Thế giới sau đây.\n\n"
+               << "Sự thật Thế giới (Dữ liệu gốc):\n" << worldFacts << "\n\n"
+               << "Câu trả lời của NPC:\n\"" << response << "\"\n\n"
+               << "Nếu câu trả lời mâu thuẫn với Sự thật Thế giới, hãy liệt kê các mâu thuẫn. Nếu không có mâu thuẫn, hãy trả về 'VALID'.\n"
+               << "<|end|>\n<|assistant|>\n**Kiểm chứng:** ";
+        } else {
+            ss << "<|system|>\nYou are a Truth Guard system. Compare the NPC's response with the following World Facts.\n\n"
+               << "World Facts (Symbolic Ground Truth):\n" << worldFacts << "\n\n"
+               << "NPC Response:\n\"" << response << "\"\n\n"
+               << "If the response contradicts World Facts, list the contradictions. If there are no contradictions, return 'VALID'.\n"
+               << "<|end|>\n<|assistant|>\n**Verification:** ";
+        }
+        
+        return ss.str();
     }
 
 } // namespace NPCInference

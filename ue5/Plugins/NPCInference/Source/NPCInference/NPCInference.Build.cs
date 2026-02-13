@@ -91,6 +91,20 @@ public class NPCInference : ModuleRules
 				PublicAdditionalLibraries.Add(SentencePieceLib);
 			}
 			
+			// Link NPC Inference Lib
+			string NPCInferenceLib = Path.Combine(NPCAILibPath, "npc_inference.lib");
+			if (File.Exists(NPCInferenceLib))
+			{
+				PublicAdditionalLibraries.Add(NPCInferenceLib);
+			}
+
+            // Link ONNX Runtime Lib
+			string OnnxRuntimeLib = Path.Combine(NPCAILibPath, "onnxruntime.lib");
+			if (File.Exists(OnnxRuntimeLib))
+			{
+				PublicAdditionalLibraries.Add(OnnxRuntimeLib);
+			}
+
 			// Also need the DLL at runtime
 			string SentencePieceDLL = Path.Combine(NPCAIPath, "build", "_deps", "sentencepiece-build", "src", "Release", "sentencepiece.dll");
 			if (File.Exists(SentencePieceDLL))

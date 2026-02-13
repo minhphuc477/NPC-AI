@@ -1,28 +1,25 @@
 #include "VectorStore.h"
-#include "HalfFloat.h"
-
-// Define macros before including usearch
-#define USEARCH_USE_FP16 0
-#define USEARCH_USE_FP16LIB 0
-
-// Workaround for missing _Float16 support on MSVC
-// We define it as our HalfFloat struct
-#if defined(_MSC_VER) && !defined(__clang__)
-#define _Float16 NPCInference::HalfFloat
-#endif
-#include <usearch/index_dense.hpp>
-#include <fstream>
 #include <iostream>
+#include <fstream>
+#include <cmath>
+#include <algorithm>
+#include <filesystem>
+#include <nlohmann/json.hpp>
 
+// Production Implementation utilizing USearch
+// Only compiled when NPC_USE_MOCKS=OFF
+#include <usearch/index_dense.hpp>
+
+using json = nlohmann::json;
 using namespace unum::usearch;
 
 namespace NPCInference {
 
     struct VectorStore::Impl {
-        // Use index_dense_gt to handle metrics and serialization automatically
-        index_dense_gt<> index;
+        // usearch index for cosine similarity, f32
+        index_dense_gt<uint64_t, uint32_t> idx;
         
-        Impl() : index() {}
+        Impl() {}
     };
 
     VectorStore::VectorStore() : impl_(std::make_unique<Impl>()) {}
@@ -30,17 +27,26 @@ namespace NPCInference {
 
     bool VectorStore::Initialize(size_t dimension) {
         try {
-            // metric_kind_t is defined in index_plugins.hpp which index_dense.hpp includes
-            // we use index_dense_gt<>::metric_t for type safety
-            using metric_t = index_dense_gt<>::metric_t;
+            // Configure metric
+            metric_punned_t metric(dimension, metric_kind_t::cos_k, scalar_kind_t::f32_k);
             
-            metric_t metric(dimension, metric_kind_t::cos_k);
-            impl_->index = index_dense_gt<>::make(metric);
+            // Configure index
+            index_dense_config_t config;
+            config.connectivity = 16;
+            config.expansion_add = 128;
+            config.expansion_search = 64;
+
+            impl_->idx = index_dense_gt<uint64_t, uint32_t>::make(metric, config);
             
-            // reserve not strictly needed for dense index but good practice if available
-            // index_dense_gt might not expose reserve directly?
-            // it has reserve(limits).
-            // impl_->index.reserve(1000); 
+            if (!impl_->idx) {
+                std::cerr << "VectorStore: Failed to create index." << std::endl;
+                return false;
+            }
+
+            // Reserve initial capacity to avoid crashes during Add
+            impl_->idx.reserve(10000);
+            
+            std::cout << "VectorStore: Initialized (Dim=" << dimension << ")." << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "VectorStore Init Error: " << e.what() << std::endl;
@@ -49,112 +55,114 @@ namespace NPCInference {
     }
 
     void VectorStore::Add(const std::string& text, const std::vector<float>& embedding, const std::map<std::string, std::string>& metadata) {
-        if (embedding.empty()) return;
-
         uint64_t id = next_id_++;
+        documents_[id] = {text, metadata};
         
-        try {
-            // index_dense_gt add takes (key, vector)
-            // vector is float* for f32 metric
-            impl_->index.add(id, embedding.data());
-            
-            // Store metadata
-            documents_[id] = {text, metadata};
-        } catch (const std::exception& e) {
-             std::cerr << "VectorStore Add Error: " << e.what() << std::endl;
+        // Add to index
+        if (impl_->idx) {
+            auto result = impl_->idx.add(id, embedding.data());
+            if (!result) {
+                std::cerr << "VectorStore: Failed to add document " << id << ": " << result.error.what() << std::endl;
+            }
         }
     }
 
     std::vector<SearchResult> VectorStore::Search(const std::vector<float>& query, size_t k) {
         std::vector<SearchResult> results;
-        if (query.empty() || documents_.empty()) return results;
-
-        try {
-            auto search_results = impl_->index.search(query.data(), k);
-            
-            for (std::size_t i = 0; i < search_results.size(); ++i) {
-                // search_results[i] returns a match_t which has member.key (if using index_dense_gt?)
-                // Wait, index_dense_gt::search returns search_result_t
-                // search_result_t iteration returns match object with key and distance
-                auto match = search_results[i];
-                uint64_t id = match.member.key; 
-                float distance = match.distance;
-                
-                if (documents_.count(id)) {
-                    const auto& doc = documents_.at(id);
-                    results.push_back({id, doc.text, distance, doc.metadata});
-                }
-            }
-        } catch (const std::exception& e) {
-             std::cerr << "VectorStore Search Error: " << e.what() << std::endl;
-        }
+        if (documents_.empty() || !impl_->idx) return results;
         
+        // Search
+        auto result = impl_->idx.search(query.data(), k);
+        
+        // Iterate results
+        for (std::size_t i = 0; i != result.size(); ++i) {
+            auto match = result[i];
+            uint64_t id = match.member.key;
+            float distance = match.distance;
+            
+            // Cosine distance range [0, 2]. Similarity = 1 - distance
+            // usearch cos: result is distance (1 - cos).
+            float similarity = 1.0f - distance;
+
+            if (documents_.count(id)) {
+                results.push_back({
+                    id,
+                    documents_[id].text,
+                    similarity,
+                    documents_[id].metadata
+                });
+            }
+        }
         return results;
     }
 
     bool VectorStore::Save(const std::string& path_prefix) {
         try {
-            // 1. Save usearch index
-            // index_dense_gt SHOULD have save(path)
-            // If not, we will see compile error and fix it.
-            // Based on other methods, it likely has.
-            // If not, we can use save_to_stream.
-            std::string index_path = path_prefix + ".usearch";
-            impl_->index.save(index_path.c_str());
+            if (!impl_->idx) return false;
             
-            // 2. Save metadata (JSON)
-            std::string meta_path = path_prefix + ".json";
-            nlohmann::json j;
-            j["next_id"] = next_id_;
-            j["docs"] = nlohmann::json::object();
-            
+            // Save Index
+            std::string idx_path = path_prefix + ".usearch";
+            auto res = impl_->idx.save(idx_path.c_str(), unum::usearch::index_dense_serialization_config_t{});
+            if (!res) {
+                std::cerr << "VectorStore: Failed to save index: " << res.error.what() << std::endl;
+                return false;
+            }
+
+            // Save Metadata (JSON)
+            std::string doc_path = path_prefix + ".json";
+            json j;
+            j["version"] = 1;
+            json docs_json;
             for (const auto& [id, doc] : documents_) {
-                j["docs"][std::to_string(id)] = {
+                docs_json[std::to_string(id)] = {
                     {"text", doc.text},
                     {"meta", doc.metadata}
                 };
             }
+            j["docs"] = docs_json;
+            j["next_id"] = next_id_;
             
-            std::ofstream f(meta_path);
-            f << j.dump(4);
-            
+            std::ofstream f(doc_path);
+            f << j.dump(2);
             return true;
         } catch (const std::exception& e) {
-             std::cerr << "VectorStore Save Error: " << e.what() << std::endl;
-             return false;
+            std::cerr << "VectorStore Save Error: " << e.what() << std::endl;
+            return false;
         }
     }
 
     bool VectorStore::Load(const std::string& path_prefix) {
         try {
-            // 1. Load usearch index
-            std::string index_path = path_prefix + ".usearch";
-            std::string meta_path = path_prefix + ".json";
-            
-            // For loading, we might need to know dimension if not in file?
-            // index_dense_gt load checks header.
-            // We can use static make(path) to load?
-            // Or impl_->index.load(path).
-            
-            // If impl_->index is empty/uninit, load() should work if file has header.
-            impl_->index.load(index_path.c_str());
-            
-            // 2. Load metadata
-            std::ifstream f(meta_path);
-            if (!f.is_open()) return false;
-            nlohmann::json j;
-            f >> j;
-            
-            next_id_ = j["next_id"];
-            documents_.clear();
-            
-            for (const auto& el : j["docs"].items()) {
-                uint64_t id = std::stoull(el.key());
-                std::string text = el.value()["text"];
-                std::map<std::string, std::string> meta = el.value()["meta"];
-                documents_[id] = {text, meta};
+            // Load Index
+            std::string idx_path = path_prefix + ".usearch";
+            if (std::filesystem::exists(idx_path)) {
+                 auto res = impl_->idx.load(idx_path.c_str(), unum::usearch::index_dense_serialization_config_t{});
+                 if (!res) {
+                     std::cerr << "VectorStore: Failed to load index: " << res.error.what() << std::endl;
+                 }
             }
+
+            // Load Metadata
+            std::string doc_path = path_prefix + ".json";
+            if (!std::filesystem::exists(doc_path)) return true;
             
+            std::ifstream f(doc_path);
+            json j = json::parse(f);
+            
+            if (j.contains("docs")) {
+                for (const auto& el : j["docs"].items()) {
+                    uint64_t id = std::stoull(el.key());
+                    std::string text = el.value()["text"];
+                    std::map<std::string, std::string> meta;
+                    if (el.value().contains("meta")) {
+                         meta = el.value()["meta"].get<std::map<std::string, std::string>>();
+                    }
+                    documents_[id] = {text, meta};
+                }
+            }
+            if (j.contains("next_id")) {
+                next_id_ = j["next_id"];
+            }
             return true;
         } catch (const std::exception& e) {
              std::cerr << "VectorStore Load Error: " << e.what() << std::endl;
@@ -162,4 +170,18 @@ namespace NPCInference {
         }
     }
 
-} // namespace NPCInference
+    std::vector<SearchResult> VectorStore::GetAllMemories() {
+        std::vector<SearchResult> all_docs;
+         for (const auto& [id, doc] : documents_) {
+            all_docs.push_back({id, doc.text, 1.0f, doc.metadata});
+        }
+        return all_docs;
+    }
+
+    void VectorStore::Remove(uint64_t id) {
+        documents_.erase(id);
+        if (impl_->idx) {
+            impl_->idx.remove(id);
+        }
+    }
+}

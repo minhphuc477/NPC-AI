@@ -21,6 +21,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	
@@ -55,18 +56,49 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "NPC Inference")
 	FOnNPCResponseGenerated OnResponseGenerated;
 
-	/**
-	 * Request a response from the NPC asynchronously
-	 * @param PlayerInput The text the player said
-	 */
-	UFUNCTION(BlueprintCallable, Category = "NPC Inference")
+	/** Request a response from the AI engine */
+	UFUNCTION(BlueprintCallable, Category = "NPC AI")
 	void RequestResponse(const FString& PlayerInput);
+
+	/** Callback for async response received */
+	UFUNCTION()
+	void OnAsyncResponseReceived(const FString& Response);
 
 	/**
 	 * Get current dynamic context as scenario string
 	 */
 	UFUNCTION(BlueprintCallable, Category = "NPC Inference")
 	FString GetDynamicScenario();
+
+	/**
+	 * NPC hears something interesting
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC Gossip")
+	void HearGossip(const FString& GossipText, const FString& SourceName);
+
+	/**
+	 * NPC shares something interesting
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC Gossip")
+	FString ShareGossip();
+
+	/**
+	 * Trigger sleep/memory consolidation
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC Memory")
+	void Sleep();
+
+	/**
+	 * Called by Subsystem when another NPC speaks nearby
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC Society")
+	void ReceiveBroadcast(const FString& SenderName, const FString& Message);
+
+	/**
+	 * Speak to nearby NPCs
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC Society")
+	void BroadcastToNearby(const FString& Message);
 
 private:
 	/** Extract dynamic context from game state */

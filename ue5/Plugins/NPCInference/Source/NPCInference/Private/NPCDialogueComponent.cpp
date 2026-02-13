@@ -1,5 +1,6 @@
 #include "NPCDialogueComponent.h"
 #include "NPCInferenceSubsystem.h"
+#include "NPCConversationSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Async/Async.h"
 #include "AIController.h"
@@ -60,6 +61,52 @@ void UNPCDialogueComponent::BeginPlay()
 			}
 		}
 	}
+
+	// Register with Conversation Subsystem (Phase 13)
+	if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
+	{
+		if (UNPCConversationSubsystem* ConversationSys = GI->GetSubsystem<UNPCConversationSubsystem>())
+		{
+			ConversationSys->RegisterNPC(this);
+		}
+	}
+}
+
+void UNPCDialogueComponent::BroadcastToNearby(const FString& Message)
+{
+	if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
+	{
+		if (UNPCConversationSubsystem* ConversationSys = GI->GetSubsystem<UNPCConversationSubsystem>())
+		{
+			ConversationSys->BroadcastMessage(this, Message, 1000.0f); // Default 10m radius
+		}
+	}
+}
+
+void UNPCDialogueComponent::ReceiveBroadcast(const FString& SenderName, const FString& Message)
+{
+    // 1. Check if we should respond (e.g. if our name is mentioned or if we are idle)
+    // Simple heuristic: if message contains our Name (NPCID), we respond.
+    // Or just store it as a "heard" event.
+    
+    // For now, let's just "Hear" it as gossip so it enters memory.
+    // Assuming HearGossip exists or will be implemented.
+    // HearGossip(Message, SenderName); 
+    
+    // If we want a response, we could auto-trigger RequestResponse?
+    // Let's keep it simple: Just memory for now. Subsystem or BT can trigger response if needed.
+}
+
+void UNPCDialogueComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
+	{
+		if (UNPCConversationSubsystem* ConversationSys = GI->GetSubsystem<UNPCConversationSubsystem>())
+		{
+			ConversationSys->UnregisterNPC(this);
+		}
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 FString UNPCDialogueComponent::ExtractDynamicContext()
@@ -128,34 +175,30 @@ void UNPCDialogueComponent::RequestResponse(const FString& PlayerInput)
 		return;
 	}
 
-	// Get dynamic context (or static if disabled)
+	// Get dynamic context (or static if disabled) 
 	FString ContextToUse = bUseDynamicContext ? ExtractDynamicContext() : Scenario;
 	
-	// Capture values by value for async task
-	FString SafePersona = Persona;
-	FString SafeName = NPCID;
-	FString SafeContext = ContextToUse;
-	FString SafeInput = PlayerInput;
-	
-	UE_LOG(LogTemp, Log, TEXT("NPCDialogueComponent: Generating response with context: %s"), *SafeContext);
-	
-	// Run generation on background thread
-	Async(EAsyncExecution::Thread, [this, Subsystem, SafePersona, SafeName, SafeContext, SafeInput]()
+	// Create delegate for completion
+	FOnDialogueGenerated OnComplete;
+	OnComplete.BindDynamic(this, &UNPCDialogueComponent::OnAsyncResponseReceived);
+
+	Subsystem->GenerateDialogueAsync(Persona, NPCID, ContextToUse, PlayerInput, OnComplete);
+}
+
+void UNPCDialogueComponent::OnAsyncResponseReceived(const FString& Response)
+{
+	if (!Response.Contains(TEXT("Error:")))
 	{
-		if (!Subsystem) return;
-
-		// This runs on background thread
-		FString Response = Subsystem->GenerateDialogue(SafePersona, SafeName, SafeContext, SafeInput);
-
-		// Broadcast on Game Thread
-		AsyncTask(ENamedThreads::GameThread, [this, Response]()
+		// Auto-remember what we said (self-memory)
+		if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
 		{
-			// Verify we are still valid (not destroyed)
-			if (IsValid(this))
+			if (UNPCInferenceSubsystem* Subsystem = GI->GetSubsystem<UNPCInferenceSubsystem>())
 			{
-				OnResponseGenerated.Broadcast(Response);
+				// Subsystem->InferenceEngine->Remember(ToString(Response), {{"role", "npc"}, {"npc_id", ToString(NPCID)}});
 			}
-		});
-	});
+		}
+	}
+	
+	OnResponseGenerated.Broadcast(Response);
 }
 

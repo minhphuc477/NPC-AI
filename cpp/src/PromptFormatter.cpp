@@ -1,7 +1,8 @@
-// PromptFormatter.cpp - Implementation of prompt formatting
-
 #include "PromptFormatter.h"
 #include <sstream>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace NPCInference {
 
@@ -28,22 +29,25 @@ std::string PromptFormatter::FormatFromJSON(
     const std::string& json_context,
     const std::string& player_input
 ) const {
-    // TODO: Parse JSON to extract persona, npc_id, scenario
-    // For now, this is a placeholder that will be implemented
-    // when we add JSON parsing (using nlohmann/json or similar)
-    
-    // Example JSON structure:
-    // {
-    //   "context": {
-    //     "npc_id": "Guard_1",
-    //     "persona": "You are a loyal guard...",
-    //     "scenario": "Village gate"
-    //   },
-    //   "player_input": "Hello..."
-    // }
-    
-    // Will be implemented in next iteration
-    return "";
+    try {
+        auto j = json::parse(json_context);
+        
+        std::string persona = j.value("persona", "You are a helpful NPC.");
+        std::string name = j.value("npc_id", "NPC");
+        std::string scenario = j.value("scenario", "A mysterious land.");
+        
+        // If nested structure exists
+        if (j.contains("context")) {
+            auto& ctx = j["context"];
+            persona = ctx.value("persona", persona);
+            name = ctx.value("npc_id", name);
+            scenario = ctx.value("scenario", scenario);
+        }
+
+        return Format(persona, name, scenario, player_input);
+    } catch (...) {
+        return "System: Error parsing context.\nQuestion: " + player_input + "\nAnswer:";
+    }
 }
 
 } // namespace NPCInference

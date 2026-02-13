@@ -1,3 +1,8 @@
+#ifdef _WIN32
+#include <windows.h>
+#undef GetCurrentTime
+#endif
+
 #include "HybridRetriever.h"
 #include <algorithm>
 #include <cmath>
@@ -23,7 +28,8 @@ void HybridRetriever::AddDocument(const std::string& doc_id, const std::string& 
     // Add to vector store
     if (embedding_model_ && vector_store_) {
         std::vector<float> embedding = embedding_model_->Embed(text);
-        vector_store_->Add(doc_id, embedding);
+        std::cerr << "HybridRetriever: Adding to VectorStore (" << text.length() << " chars, " << embedding.size() << " dims)" << std::endl;
+        vector_store_->Add(text, embedding, {{"doc_id", doc_id}});
     }
 }
 
@@ -45,11 +51,16 @@ std::vector<HybridRetriever::RetrievalResult> HybridRetriever::DenseSearch(
     // Convert to RetrievalResult
     int rank = 1;
     for (const auto& result : search_results) {
-        std::string doc_id = std::to_string(result.id);  // Convert uint64_t to string
+        std::string doc_id;
+        if (result.metadata.count("doc_id")) {
+            doc_id = result.metadata.at("doc_id");
+        } else {
+            doc_id = std::to_string(result.id);
+        }
         
         RetrievalResult r;
         r.doc_id = doc_id;
-        r.text = doc_texts_.count(doc_id) ? doc_texts_[doc_id] : "";
+        r.text = result.text;
         r.dense_score = 1.0 - result.distance;  // Convert distance to similarity score
         r.sparse_score = 0.0;
         r.fused_score = r.dense_score;

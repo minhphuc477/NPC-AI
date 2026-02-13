@@ -22,13 +22,23 @@ except ImportError:
 sys.path.append(str(Path(__file__).parent.parent))
 from core.config import BASE_MODEL, ADAPTER_PATH
 
+# Monkey-patch DynamicCache for ONNX export if needed
+try:
+    from transformers.cache_utils import DynamicCache
+    if not hasattr(DynamicCache, "get_usable_length"):
+        print("Monkey-patching DynamicCache.get_usable_length for compatibility...")
+        def get_usable_length(self, new_seq_length, layer_idx=0):
+            return self.get_seq_length(layer_idx)
+        DynamicCache.get_usable_length = get_usable_length
+except ImportError:
+    pass
+
 
 def export_model_to_onnx(
     base_model_name: str,
     adapter_path: str,
     output_path: str,
-    adapter_path: str,
-    output_path: str,
+
     use_merged: bool = True,
     quantize: bool = False
 ):
@@ -44,11 +54,14 @@ def export_model_to_onnx(
     print(f"Loading base model: {base_model_name}")
     
     # Load base model
+    # Load base model
+    print("Loading model in Float32 for CPU compatibility...")
     base_model = AutoModelForCausalLM.from_pretrained(
         base_model_name,
-        torch_dtype=torch.float16,
-        device_map="cpu",  # Export on CPU for compatibility
-        trust_remote_code=True
+        torch_dtype=torch.float32,
+        device_map="cpu",
+        trust_remote_code=True,
+        attn_implementation="eager"
     )
     
     # Load tokenizer

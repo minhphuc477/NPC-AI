@@ -11,6 +11,35 @@ PerformanceProfiler::PerformanceProfiler()
     : start_time_(std::chrono::high_resolution_clock::now()) {
 }
 
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#pragma comment(lib, "psapi.lib")
+#elif defined(__linux__)
+#include <unistd.h>
+#include <fstream>
+#endif
+
+size_t PerformanceProfiler::GetMemoryUsageMB() {
+#ifdef _WIN32
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc))) {
+        return pmc.WorkingSetSize / (1024 * 1024);
+    }
+    return 0;
+#elif defined(__linux__)
+    long rss = 0;
+    std::ifstream file("/proc/self/statm");
+    if (file >> rss) {
+        return (rss * sysconf(_SC_PAGESIZE)) / (1024 * 1024);
+    }
+    return 0;
+#else
+    return 0;
+#endif
+}
+
+
 PerformanceProfiler::TimingScope PerformanceProfiler::StartTiming(const std::string& operation) {
     return TimingScope(this, operation);
 }
@@ -40,6 +69,17 @@ void PerformanceProfiler::UpdateMemoryUsage(size_t bytes) {
     if (bytes > peak_memory_) {
         peak_memory_ = bytes;
     }
+}
+
+void PerformanceProfiler::RecordSpeculation(int accepted, int total) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    total_accepted_tokens_ += accepted;
+    total_draft_tokens_ += total;
+}
+
+void PerformanceProfiler::RecordColdStart(double latency_ms) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    cold_start_ms_ = latency_ms;
 }
 
 void PerformanceProfiler::CalculatePercentiles(const std::string& operation, Metrics& metrics) const {
@@ -106,9 +146,23 @@ void PerformanceProfiler::PrintSummary() const {
     std::cerr << "\nThroughput:" << std::endl;
     std::cerr << "  Requests/sec: " << metrics.requests_per_second << std::endl;
     std::cerr << "  Tokens/sec:   " << metrics.tokens_per_second << std::endl;
-    std::cerr << "\nMemory:" << std::endl;
+    if (cold_start_ms_ > 0) {
+        std::cerr << "  Cold Start:   " << cold_start_ms_ << " ms" << std::endl;
+    }
     std::cerr << "  Current: " << (metrics.current_memory_bytes / 1024 / 1024) << " MB" << std::endl;
     std::cerr << "  Peak:    " << (metrics.peak_memory_bytes / 1024 / 1024) << " MB" << std::endl;
+    
+    if (total_draft_tokens_ > 0) {
+        float rate = (float)total_accepted_tokens_ / total_draft_tokens_ * 100.0f;
+        std::cerr << "\nSpeculation Efficiency:" << std::endl;
+        std::cerr << "  Acceptance Rate: " << rate << "% (" << total_accepted_tokens_ << "/" << total_draft_tokens_ << ")" << std::endl;
+    }
+
+    if (latencies_.count("planning_phase")) {
+        auto plan_metrics = GetMetrics("planning_phase");
+        std::cerr << "\nPlanner Efficiency (Thinking):" << std::endl;
+        std::cerr << "  Mean Thought Latency: " << plan_metrics.mean_latency << " ms" << std::endl;
+    }
     std::cerr << "==========================\n" << std::endl;
 }
 
@@ -123,6 +177,15 @@ bool PerformanceProfiler::ExportToJSON(const std::string& filepath) const {
         j["total_tokens"] = total_tokens_;
         j["peak_memory_bytes"] = peak_memory_;
         j["current_memory_bytes"] = current_memory_;
+        j["cold_start_ms"] = cold_start_ms_;
+        
+        if (total_draft_tokens_ > 0) {
+            j["speculation_efficiency"] = {
+                {"accepted", total_accepted_tokens_},
+                {"drafted", total_draft_tokens_},
+                {"rate", (float)total_accepted_tokens_ / total_draft_tokens_}
+            };
+        }
 
         // Export per-operation metrics
         json operations = json::object();
