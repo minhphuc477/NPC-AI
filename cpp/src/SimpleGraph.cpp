@@ -131,4 +131,16 @@ namespace NPCInference {
         }
     }
 
+    bool SimpleGraph::HasNode(const std::string& node) const {
+        return adjacencyList_.count(node) > 0;
+    }
+
+    std::string SimpleGraph::GetKnowledgeContext(const std::vector<std::string>& entities) const {
+        std::stringstream ss;
+        for (const auto& entity : entities) {
+            ss << GetKnowledgeContext(entity);
+        }
+        return ss.str();
+    }
+
 } // namespace NPCInference

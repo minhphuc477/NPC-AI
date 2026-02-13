@@ -82,6 +82,8 @@ public:
      * Update memory usage
      */
     void UpdateMemoryUsage(size_t bytes);
+    void RecordSpeculation(int accepted, int total);
+    void RecordColdStart(double latency_ms);
 
     /**
      * Get metrics for an operation
@@ -97,6 +99,11 @@ public:
      * Export metrics to JSON file
      */
     bool ExportToJSON(const std::string& filepath) const;
+
+    /**
+     * Get current memory usage in MB
+     */
+    static size_t GetMemoryUsageMB();
 
     /**
      * Reset all metrics
@@ -117,6 +124,11 @@ private:
     size_t total_tokens_ = 0;
     size_t peak_memory_ = 0;
     size_t current_memory_ = 0;
+    
+    // Speculative metrics
+    long long total_draft_tokens_ = 0;
+    long long total_accepted_tokens_ = 0;
+    double cold_start_ms_ = 0.0;
     
     std::chrono::high_resolution_clock::time_point start_time_;
 };

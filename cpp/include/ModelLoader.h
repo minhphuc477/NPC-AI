@@ -6,13 +6,14 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <cstdint>
 
 // Forward declare ONNX Runtime types
 namespace Ort {
-    class Env;
-    class Session;
-    class SessionOptions;
-    struct Value; // For completeness if needed, though PIMPL handles it
+    struct Env;
+    struct Session;
+    struct SessionOptions;
+    struct Value;
 }
 
 namespace NPCInference {
@@ -23,7 +24,7 @@ namespace NPCInference {
 class ModelLoader {
 public:
     ModelLoader();
-    ~ModelLoader();
+    virtual ~ModelLoader();
     
     /**
      * Load ONNX model from file
@@ -31,7 +32,7 @@ public:
      * @param use_cuda Whether to use CUDA acceleration
      * @return true if loaded successfully
      */
-    bool LoadModel(const std::string& model_path, bool use_cuda = true, int num_threads = 4);
+    virtual bool LoadModel(const std::string& model_path, bool use_cuda = true, int num_threads = 4);
     
     /**
      * Run inference on tokenized input with KV-cache support
@@ -42,28 +43,42 @@ public:
      * @param on_token_callback Optional callback for streaming tokens
      * @return Generated token IDs
      */
-    std::vector<int64_t> Generate(
+    virtual std::vector<int64_t> Generate(
         const std::vector<int64_t>& input_ids,
         const std::vector<int64_t>& attention_mask,
         int max_new_tokens = 150,
         const std::string& conversation_id = "",
-        std::function<void(int64_t)> on_token_callback = nullptr
+        std::function<void(int64_t)> on_token_callback = nullptr,
+        std::function<void(float*, int64_t)> logit_processor = nullptr // Added Phase 12
+    );
+
+    /**
+     * Verify draft tokens for speculative decoding
+     * @param input_ids Context input IDs
+     * @param draft_ids Candidate tokens to verify
+     * @param conversation_id Cache ID
+     * @return Accepted tokens + (optional) one correction token
+     */
+    virtual std::vector<int64_t> VerifyDraft(
+        const std::vector<int64_t>& input_ids,
+        const std::vector<int64_t>& draft_ids,
+        const std::string& conversation_id
     );
     
     /**
      * Clear KV-cache for a specific conversation
      */
-    void ClearCache(const std::string& conversation_id = "");
+    virtual void ClearCache(const std::string& conversation_id = "");
     
     /**
      * Get KV-cache statistics
      */
-    void PrintCacheStats() const;
+    virtual void PrintCacheStats() const;
     
     /**
      * Check if model is loaded
      */
-    bool IsLoaded() const { return is_loaded_; }
+    virtual bool IsLoaded() const { return is_loaded_; }
 
     // Configuration setters
     void SetTemperature(float temp) { temperature_ = temp; }
@@ -74,6 +89,7 @@ private:
     std::unique_ptr<Ort::Session> session_;
     std::unique_ptr<Ort::SessionOptions> session_options_;
     bool is_loaded_ = false;
+    bool is_mock_ = false;
     
     // Model configuration
     float temperature_ = 0.7f;

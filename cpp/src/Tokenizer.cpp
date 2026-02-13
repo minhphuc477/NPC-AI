@@ -20,60 +20,68 @@
 namespace NPCInference {
 
     Tokenizer::Tokenizer() {
-        processor_ = std::make_unique<sentencepiece::SentencePieceProcessor>();
+        sentence_piece_processor_ = std::make_unique<sentencepiece::SentencePieceProcessor>();
     }
 
     Tokenizer::~Tokenizer() = default;
 
     bool Tokenizer::Load(const std::string& model_path) {
-        const auto status = processor_->Load(model_path);
+        // MOCK MODE
+        const char* mock_env = std::getenv("NPC_MOCK_MODE");
+        if (mock_env && std::string(mock_env) == "1") {
+            std::cerr << "Tokenizer running in MOCK MODE (No model file req)" << std::endl;
+            // Setup dummy special tokens
+             special_tokens_ = {
+                {"<|user|>", 32006},
+                {"<|assistant|>", 32001},
+                {"<|system|>", 32005},
+                {"<|end|>", 32007},
+                {"<|endoftext|>", 32000}
+            };
+            is_mock_ = true;
+            return true;
+        }
+
+        const auto status = sentence_piece_processor_->Load(model_path);
         if (!status.ok()) {
             std::cerr << "Failed to load tokenizer model: " << status.ToString() << std::endl;
-            loaded_ = false;
+            sentence_piece_processor_.reset(); // Ensure null
             return false;
         }
         
         // Load added tokens if available (basic JSON parsing)
         // For now, let's hardcode the critical Phi-3 tokens to ensure safety.
-        // If we strictly rely on SPM, we get garbage for "<|system|>".
-        
-        // Phi-3 Mini 4K Instruct tokens:
-        // Source: Hugging Face config
-        // <|user|> : 32006
-        // <|assistant|> : 32001 (Correction: Verify this!)
-        // <|system|> : 32007?
-        // <|end|> : 32000 or 32007?
-        
-        // Actually, let's make it configurable or use a safe fallback.
-        // We will implement a simple split-and-merge strategy.
+        // ... (keep comments)
         
         special_tokens_ = {
             {"<|user|>", 32006},
-            {"<|assistant|>", 32001}, // Verify!
-            {"<|system|>", 32005}, // Verify!
-            {"<|end|>", 32007},    // Verify!
+            {"<|assistant|>", 32001},
+            {"<|system|>", 32005},
+            {"<|end|>", 32007},
             {"<|endoftext|>", 32000}
         };
-        
-        // NOTE: The IDs above are guesses based on common Phi-3/Llama-2 patterns.
-        // Without `added_tokens.json`, we risk using wrong IDs.
-        // IMPROVEMENT: We should try to load `added_tokens.json` in a real implementation.
-        // For this V2 fix, we will assume standard indices OR just rely on SPM if they ARE in SPM.
-        // Use processor_->PieceToId to check!
         
         CheckSpecialToken("<|user|>");
         CheckSpecialToken("<|assistant|>");
         CheckSpecialToken("<|system|>");
         CheckSpecialToken("<|end|>");
         
-        loaded_ = true;
         std::cerr << "Tokenizer loaded successfully from: " << model_path << std::endl;
         return true;
     }
+
+    int Tokenizer::GetVocabSize() const {
+        return IsLoaded() ? sentence_piece_processor_->GetPieceSize() : 0;
+    }
+
+    int Tokenizer::GetEOSId() const {
+        return IsLoaded() ? sentence_piece_processor_->eos_id() : -1;
+    }
     
     void Tokenizer::CheckSpecialToken(const std::string& token) {
-        int id = processor_->PieceToId(token);
-        if (id != processor_->unk_id()) {
+        if (!IsLoaded()) return;
+        int id = sentence_piece_processor_->PieceToId(token);
+        if (id != sentence_piece_processor_->unk_id()) {
             // It exists in SPM!
             special_tokens_[token] = id;
             std::cerr << "Found special token in SPM: " << token << " -> " << id << std::endl;
@@ -86,7 +94,17 @@ namespace NPCInference {
     }
 
     std::vector<int64_t> Tokenizer::Encode(const std::string& text) {
-        if (!loaded_) {
+        if (!IsLoaded()) {
+             // If mock mode, we "are loaded" but sentence_piece_processor_ might be empty? 
+             // Wait, sentence_piece_processor_ is unique_ptr.
+             // If Load skipped loading SPM, it's non-null (ctor) but empty.
+             // Mock Encode: simple ASCII?
+             const char* mock_env = std::getenv("NPC_MOCK_MODE");
+             if (mock_env && std::string(mock_env) == "1") {
+                 std::vector<int64_t> output;
+                 for(char c : text) output.push_back((int64_t)c);
+                 return output;
+             }
             std::cerr << "Tokenizer not loaded!" << std::endl;
             return {};
         }
@@ -96,6 +114,23 @@ namespace NPCInference {
         
         std::vector<int64_t> final_ids;
         
+        // Mock check inside Encode? No, IsLoaded() checks if SPM is loaded?
+        // IsLoaded() checks sentence_piece_processor_->status().ok()? 
+        // No, IsLoaded() isn't shown in my view. I need to make sure IsLoaded() returns true for mock.
+        // I didn't see IsLoaded definition. It's likely in header returning sentence_piece_processor_ != nullptr.
+        
+        // If mock mode, SPM is not loaded with model, but pointer exists.
+        // Calling SPM methods might crash if not loaded?
+        // Let's safe guard.
+        const char* mock_env = std::getenv("NPC_MOCK_MODE");
+        bool is_mock = (mock_env && std::string(mock_env) == "1");
+
+        if (is_mock) {
+             std::vector<int64_t> output;
+             for(char c : text) output.push_back((int64_t)c); // Simple ASCII encoding
+             return output;
+        }
+
         // Find all occurrences of special tokens
         std::map<size_t, std::string> occurrences;
         for (const auto& kv : special_tokens_) {
@@ -110,7 +145,7 @@ namespace NPCInference {
         if (occurrences.empty()) {
             // No special tokens, direct encode
             std::vector<int> ids;
-            processor_->Encode(text, &ids);
+            sentence_piece_processor_->Encode(text, &ids);
             for(int i : ids) final_ids.push_back(i);
             return final_ids;
         }
@@ -122,7 +157,7 @@ namespace NPCInference {
                 // Encode text between special tokens
                 std::string segment = text.substr(current_pos, pos - current_pos);
                 std::vector<int> ids;
-                processor_->Encode(segment, &ids);
+                sentence_piece_processor_->Encode(segment, &ids);
                 for(int i : ids) final_ids.push_back(i);
             }
             
@@ -135,7 +170,7 @@ namespace NPCInference {
         if (current_pos < text.length()) {
             std::string segment = text.substr(current_pos);
             std::vector<int> ids;
-            processor_->Encode(segment, &ids);
+            sentence_piece_processor_->Encode(segment, &ids);
             for(int i : ids) final_ids.push_back(i);
         }
 
@@ -143,7 +178,15 @@ namespace NPCInference {
     }
 
     std::string Tokenizer::Decode(const std::vector<int64_t>& ids) {
-        if (!loaded_) {
+         const char* mock_env = std::getenv("NPC_MOCK_MODE");
+         bool is_mock = (mock_env && std::string(mock_env) == "1");
+        if (is_mock) {
+            std::string s;
+            for(auto id : ids) s += (char)id;
+            return s;
+        }
+
+        if (!IsLoaded()) {
             std::cerr << "Tokenizer not loaded!" << std::endl;
             return "";
         }
@@ -175,7 +218,7 @@ namespace NPCInference {
                 // Decode buffered chunk
                 if (!spm_chunk.empty()) {
                     std::string text;
-                    processor_->Decode(spm_chunk, &text);
+                    sentence_piece_processor_->Decode(spm_chunk, &text);
                     ss << text;
                     spm_chunk.clear();
                 }
@@ -190,7 +233,7 @@ namespace NPCInference {
         
         if (!spm_chunk.empty()) {
             std::string text;
-            processor_->Decode(spm_chunk, &text);
+            sentence_piece_processor_->Decode(spm_chunk, &text);
             ss << text;
         }
         

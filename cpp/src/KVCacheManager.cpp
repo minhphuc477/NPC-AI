@@ -1,3 +1,9 @@
+// NOMINMAX defined in CMake
+#ifdef _WIN32
+#include <windows.h>
+#undef GetCurrentTime
+#endif
+
 #include "KVCacheManager.h"
 #include <chrono>
 #include <iostream>
@@ -101,6 +107,41 @@ KVCacheManager::CacheStats KVCacheManager::GetStats() const {
     return stats_;
 }
 
+void KVCacheManager::PutSystemKV(std::vector<Ort::Value>&& kv_tensors, size_t sequence_length) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    
+    // Create new entry
+    auto entry = std::make_unique<CacheEntry>();
+    entry->memory_bytes = EstimateMemoryUsage(kv_tensors);
+    entry->kv_tensors = std::move(kv_tensors);
+    entry->sequence_length = sequence_length;
+    entry->last_access_time = 0; // Permanent
+    
+    // Add to memory usage? 
+    // Yes, but we don't evict it for now.
+    // If we want to be strict, we might need to evict normal entries to make room.
+    
+    while (current_memory_bytes_ + entry->memory_bytes > max_memory_bytes_ && !cache_map_.empty()) {
+        EvictLRU();
+    }
+    
+    current_memory_bytes_ += entry->memory_bytes;
+    if (system_prompt_cache_) {
+        current_memory_bytes_ -= system_prompt_cache_->memory_bytes;
+    }
+    
+    system_prompt_cache_ = std::move(entry);
+    std::cerr << "KVCache: System Prompt cached (" << (system_prompt_cache_->memory_bytes / 1024) << " KB)" << std::endl;
+}
+
+KVCacheManager::CacheEntry* KVCacheManager::GetSystemKV() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (system_prompt_cache_) {
+         return system_prompt_cache_.get();
+    }
+    return nullptr;
+}
+
 void KVCacheManager::SetMaxMemory(size_t max_memory_mb) {
     std::lock_guard<std::mutex> lock(mutex_);
     max_memory_bytes_ = max_memory_mb * 1024 * 1024;
@@ -199,6 +240,74 @@ void KVCacheManager::UpdateAccessTime(const std::string& conversation_id) {
     it->second.first.last_access_time = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch()
     ).count();
+}
+
+std::vector<Ort::Value> KVCacheManager::CloneKV(const std::vector<Ort::Value>& source) {
+    std::vector<Ort::Value> clones;
+    clones.reserve(source.size());
+    
+    Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(
+        OrtAllocatorType::OrtArenaAllocator, 
+        OrtMemType::OrtMemTypeDefault
+    );
+
+    for (const auto& val : source) {
+        if (!val.IsTensor()) continue;
+        
+        auto type_info = val.GetTensorTypeAndShapeInfo();
+        auto shape = type_info.GetShape();
+        auto element_type = type_info.GetElementType();
+        size_t element_count = type_info.GetElementCount();
+        
+        // Deep copy based on type
+        if (element_type == ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT) {
+             const float* src_data = val.GetTensorData<float>();
+             // Create new tensor (copies data if we pass non-owning pointer? No, CreateTensorWithDataFromOrtAllocator is safest)
+             // Actually `CreateTensor` with user-owned buffer requires us to manage the buffer.
+             // We want `Ort::Value` to own the memory.
+             // The only easy way to get owning Ort::Value is via Allocator or CreateTensor and let it copy?
+             // `Ort::Value::CreateTensor` taking a buffer usually WRAPS it (does not own/copy).
+             // To own, we need to allocate via allocator.
+             // OR: We create a vector, copy data, and then CreateTensor? 
+             // But valid `Ort::Value` must persist after the vector dies if it wraps.
+             // Correct approach: Use `Ort::Allocator` to allocate, copy, then create Value.
+             // BUT `onnxruntime_cxx_api` is limited.
+             
+             // Workaround: We use a custom allocator or just manage std::vector in a wrapper? No.
+             // Simplest: Create a new Ort::Value that wraps a NEW std::vector which we release? leakage.
+             
+             // Let's use the standard "Copy" pattern:
+             // 1. Create Tensor with Shape.
+             // 2. Get mutable pointer.
+             // 3. Memcpy.
+             // How to "Create Tensor without providing buffer"? 
+             // `Ort::Value::CreateTensor<T>(allocator, shape, shape_len)` exists!
+             
+             auto new_val = Ort::Value::CreateTensor<float>(
+                 Ort::AllocatorWithDefaultOptions(), 
+                 shape.data(), 
+                 shape.size()
+             );
+             
+             float* dst_data = new_val.GetTensorMutableData<float>();
+             std::memcpy(dst_data, src_data, element_count * sizeof(float));
+             clones.push_back(std::move(new_val));
+        }
+        else if (element_type == ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16) {
+             // Treat as uint16_t/int16_t for copy purposes
+             const uint16_t* src_data = val.GetTensorData<uint16_t>();
+             auto new_val = Ort::Value::CreateTensor<uint16_t>(
+                 Ort::AllocatorWithDefaultOptions(), 
+                 shape.data(), 
+                 shape.size()
+             );
+             uint16_t* dst_data = new_val.GetTensorMutableData<uint16_t>();
+             std::memcpy(dst_data, src_data, element_count * sizeof(uint16_t));
+             clones.push_back(std::move(new_val));
+        }
+        // Add other types if needed (int64 etc). Usually KV cache is Float or Float16.
+    }
+    return clones;
 }
 
 } // namespace NPCInference

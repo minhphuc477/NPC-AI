@@ -1,3 +1,8 @@
+#ifdef _WIN32
+#include <windows.h>
+#undef GetCurrentTime
+#endif
+
 #include "EmbeddingModel.h"
 #include <onnxruntime_cxx_api.h>
 #include <iostream>

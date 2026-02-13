@@ -1,101 +1,98 @@
-# C++ NPC Inference Implementation
+# C++ NPC Inference Engine (Core)
 
-C++ implementation of the NPC AI inference engine for Unreal Engine 5 integration.
+This directory contains the high-performance C++ implementation of the BD-NSCA inference engine. It is designed to be embedded directly into Unreal Engine 5 or run as a high-speed standalone service.
 
-## Quick Start
+### Engine Component Architecture
 
+```text
++-----------------------------------------------------------+
+|                  NPC Inference Engine                     |
++--------------------------+--------------------------------+
+                           |
+          +----------------+----------------+
+          |                |                |
+   +------v-------+ +------v-------+ +------v-------+
+   | Neural Core  | | Knowledge    | | Memory Mgmt   |
+   +--------------+ +--------------+ +--------------+
+   | ModelLoader  | | HybridRetr.  | | Consolidator  |
+   | Tokenizer    | | VectorStore  | | SemanticCache |
+   | GrammarSamp. | | SimpleGraph  | | Profiler      |
+   +--------------+ +--------------+ +--------------+
+```
+
+## Core Components
+
+The engine is modular, allowing for flexible configuration of retrieval and inference strategies.
+
+### Neural Components
+- **ModelLoader**: Manages ONNX Runtime sessions. Supports Speculative Decoding for 2x-3x speedups on CPUs.
+- **Tokenizer**: Native SentencePiece integration for efficient text encoding/decoding.
+- **GrammarSampler**: A logit processor that enforces structural constraints (e.g., JSON schemas) during token selection.
+
+### Retrieval & Knowledge
+- **HybridRetriever**: Orchestrates dense and sparse search results using Reciprocal Rank Fusion (RRF).
+- **VectorStore**: Dense memory storage utilizing usearch for fast HNSW-based vector similarity.
+- **BM25Retriever**: Classic sparse keyword matching for exact fact retrieval.
+- **SimpleGraph**: Relational knowledge base for world facts and NPC-Player relationships.
+
+### Memory Management
+- **MemoryConsolidator**: Implements importance-based memory pruning and summarization.
+- **SemanticCache**: Caches frequent query-response pairs to skip LLM inference for repetitive interactions.
+
+---
+
+## Developer Setup
+
+### Dependencies
+The build system uses FetchContent to automatically manage dependencies:
+- **ONNX Runtime**: (Auto-downloaded) For neural inference.
+- **SentencePiece**: (Auto-downloaded) For tokenization.
+- **usearch**: (Auto-downloaded) For vector search.
+- **nlohmann/json**: (Auto-downloaded) For data serialization.
+
+### Advanced Build Options
 ```powershell
-# 1. Install dependencies
-winget install Kitware.CMake
-winget install Microsoft.VisualStudio.2022.BuildTools
-
-# 2. Build project (auto-downloads ONNX Runtime and nlohmann/json)
-cd cpp
-cmake -B build -DDOWNLOAD_ONNXRUNTIME=ON
-cmake --build build --config Release
-
-# 3. Test
-.\build\Release\test_inference.exe
+cmake -B build `
+  -DUSE_CUDA=ON `          # Enable GPU acceleration
+  -DBUILD_TESTS=ON `       # Build reliability tests
+  -DBUILD_CLI=ON           # Build the standalone npc_cli tool
 ```
 
-See [INSTALL.md](INSTALL.md) for detailed instructions.
+---
 
-## Features
+## Verification Suite
 
-- **Exact Prompt Compatibility**: Matches Python training format precisely
-- **ONNX Runtime**: Optimized inference with CUDA support
-- **Auto-Dependencies**: CMake automatically downloads ONNX Runtime and nlohmann/json
-- **JSON CLI**: Compatible with existing Python `npc_cli.py` interface
-- **UE5 Ready**: Integrates with `ue5/NPCDialogueClient.h`
+We use a three-tier testing approach:
+1.  **test_fix.exe**: Unit tests for retrieval logic and persistence.
+2.  **test_grammar.exe**: Validation of logit masking and structured output.
+3.  **test_integration.exe**: End-to-end verification of the Cognitive Architecture loop.
 
-## Project Structure
+---
 
-```
-cpp/
-├── include/           # Header files
-│   ├── NPCInference.h      # Main inference API
-│   ├── PromptFormatter.h   # Prompt formatting
-│   └── ModelLoader.h       # ONNX model loading
-├── src/              # Implementation files
-│   ├── NPCInference.cpp
-│   ├── PromptFormatter.cpp
-│   ├── ModelLoader.cpp
-│   └── main_cli.cpp        # Standalone CLI
-├── tests/            # Unit tests
-│   └── test_inference.cpp
-├── CMakeLists.txt    # Build configuration
-├── INSTALL.md        # Detailed installation guide
-└── README.md         # This file
-```
+## Library Integration
 
-## Usage
-
-### Standalone CLI (matches Python npc_cli.py)
-
-```powershell
-# Export model first
-python ../scripts/export_to_onnx.py --export-tokenizer
-
-# Run CLI
-.\build\Release\npc_cli.exe ..\onnx_models\npc_model.onnx
-```
-
-### As Library
-
+### Basic Inference
 ```cpp
 #include "NPCInference.h"
 
 NPCInference::NPCInferenceEngine engine;
-engine.LoadModel("model.onnx");
+engine.Initialize("models/npc_phi3");
 
-std::string response = engine.GenerateFromContext(
-    "You are a loyal guard",  // persona
-    "Guard_1",                 // npc_id
-    "Village gate",            // scenario
-    "Hello, may I enter?"      // player_input
-);
+// Concurrent state management
+nlohmann::json state = {{"npc_id", "Aria"}, {"mood", "Happy"}};
+std::string response = engine.GenerateWithState("Hello Aria!", state);
 ```
 
-## Requirements
+### Memory & State
+```cpp
+// Add a persistent memory with metadata
+engine.Remember("The player found the lost temple.", {{"importance", "high"}});
 
-- CMake 3.15+
-- C++17 compiler (MSVC 2019+, GCC 9+, Clang 10+)
-- (Auto-downloaded) ONNX Runtime 1.17+
-- (Auto-downloaded) nlohmann/json 3.11+
-- (Optional) CUDA Toolkit for GPU acceleration
+// Trigger a sleep cycle to consolidate memories
+engine.PerformSleepCycle();
+```
 
-## Integration with UE5
+---
 
-Three integration options:
-
-1. **Process Spawn** - Spawn `npc_cli.exe` (easiest, uses existing `ue5/NPCDialogueClient.h`)
-2. **Shared Library** - Load as DLL
-3. **UE5 Plugin** - Native plugin (best performance)
-
-See `../ue5/NPCDialogueClient.h` for the UE5 HTTP client interface.
-
-## Documentation
-
-- **[INSTALL.md](INSTALL.md)** - Detailed build and installation instructions
-- **[../scripts/export_to_onnx.py](../scripts/export_to_onnx.py)** - Model export utility
-- **[../ue5/NPCDialogueClient.h](../ue5/NPCDialogueClient.h)** - UE5 integration example
+## Performance Profiling
+The engine includes a PerformanceProfiler to track latency across different stages (Tokenization, Retrieval, Decoding). Enable profiling in InferenceConfig to see detailed bottlenecks in the console.

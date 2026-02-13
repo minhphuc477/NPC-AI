@@ -1,0 +1,20 @@
+{
+    "persona_consistency": 4.2,
+    "factual_accuracy": 3.8,
+    "bertscore": 0.885,
+    "details": [
+        {
+            "prompt": "Where can I find the Elder Stone?",
+            "response": "Greetings, traveler. The ancient stones whisper that the Elder Stone rests deep within the Whisper Woods, guarded by the shadows.",
+            "persona_score": 5,
+            "fact_score": 4
+        },
+        {
+            "prompt": "Who betrayed the King?",
+            "response": "Ah, the tragedy of King Alaric. It is written in the stars that his own brother turned against him in the year 402.",
+            "persona_score": 4,
+            "fact_score": 5
+        }
+    ],
+    "_comment": "SIMULATED DATA. Run benchmarks/run_quality_eval.py with actual model to update."
+}

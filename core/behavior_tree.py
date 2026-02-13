@@ -8,13 +8,26 @@ Enhanced with:
 - State-dependent dialogue modes
 """
 import logging
+from abc import ABC, abstractmethod
+from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
 
-class Node:
-    def tick(self, blackboard):
-        raise NotImplementedError
+class Node(ABC):
+    """Abstract base class for behavior tree nodes."""
+    
+    @abstractmethod
+    def tick(self, blackboard: Dict[str, Any]) -> str:
+        """Execute node logic and return status.
+        
+        Args:
+            blackboard: Shared state dictionary for the behavior tree
+            
+        Returns:
+            Status string: "SUCCESS", "FAILURE", or "RUNNING"
+        """
+        pass
 
 
 class Selector(Node):
