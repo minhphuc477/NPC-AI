@@ -10,6 +10,7 @@ namespace NPCInference {
 
 class ModelLoader;
 class Tokenizer; // Forward declare just in case, though header is included.
+class SimpleGraph; 
 
 struct UnconsolidatedMemory {
     std::string text;
@@ -35,9 +36,6 @@ public:
     /**
      * Rate the importance of a memory (0.0 to 1.0).
      */
-    /**
-     * Rate the importance of a memory (0.0 to 1.0).
-     */
     float AssessImportance(const std::string& memory_text);
 
     /**
@@ -45,6 +43,23 @@ public:
      * Implements "Generative Agents" Reflection pattern.
      */
     std::string GenerateReflectiveInsight(const std::string& recent_memories);
+
+    /**
+     * Summarize graph communities into a global world context.
+     * Implements "GraphRAG" Community Summarization pattern.
+     */
+    std::string SummarizeGraphCommunities(const std::map<int, std::vector<std::string>>& communities, const class SimpleGraph& graph);
+    
+    /**
+     * Summarize a single community of nodes.
+     */
+    std::string SummarizeCommunity(const std::vector<std::string>& nodes, const class SimpleGraph& graph);
+
+    /**
+     * Parse text for Knowledge Graph triples and update the graph dynamically.
+     * Uses Open Information Extraction (OIE) prompting.
+     */
+    void ExtractAndIngestKnowledge(const std::string& text, class SimpleGraph& graph);
 
 private:
     ModelLoader* model_loader_;

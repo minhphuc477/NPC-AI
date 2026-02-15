@@ -13,7 +13,7 @@ int main() {
     // Since it's private, we'll use the initialization mock if we can, or just verify the code compiles and logic runs.
     
     NPCInferenceEngine::InferenceConfig config;
-    config.model_dir = "C:/Users/MPhuc/Desktop/NPC AI/models/phi3_onnx";
+    config.model_dir = "F:/NPC AI/models/phi3_onnx";
     config.enable_truth_guard = true;
     config.enable_planner = false;
     config.enable_reflection = false;

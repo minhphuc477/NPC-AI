@@ -14,7 +14,7 @@ int main() {
     // Test 1: Initialize engine
     std::cout << "\n[Test 1] Initializing engine" << std::endl;
     NPCInferenceEngine::InferenceConfig config;
-    config.model_dir = "C:/Users/MPhuc/Desktop/NPC AI/models/phi3_onnx";
+    config.model_dir = "F:/NPC AI/models/phi3_onnx";
     config.use_cuda = false;
     config.enable_rag = true;
     config.enable_graph = true;

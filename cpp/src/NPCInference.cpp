@@ -11,6 +11,7 @@
 #include "MemoryConsolidator.h"
 #include "VisionLoader.h"
 #include "GrammarSampler.h"
+#include "ConversationManager.h"
 
 using json = nlohmann::json;
 
@@ -57,20 +58,29 @@ namespace NPCInference {
             }
             
             // Load model
-            std::string onnx_path = modelPath + "/model.onnx";
-            try {
-                if (!model_loader_->LoadModel(onnx_path, config.use_cuda, config.num_threads)) {
-                    std::cerr << "Warning: Failed to load native model from " << onnx_path << std::endl;
-                    std::cerr << "  Consider using Python bridge mode as fallback." << std::endl;
-                    // Critical failure for native mode
+            // Load model
+            if (config.enable_python_bridge) {
+                std::cout << "Initializing with Python Bridge (forced via config)..." << std::endl;
+                // Assuming defaults for script and python exe
+                if (!LoadWithBridge("python", "npc_cli.py", modelPath)) {
+                    std::cerr << "Error: Python Bridge initialization failed." << std::endl;
                     ready_ = false;
-                    return false; 
+                    return false;
                 }
-            } catch (const std::exception& e) {
-                std::cerr << "Error loading main model: " << e.what() << std::endl;
-                std::cerr << "  Continuing initialization, but generation will fail." << std::endl;
-                ready_ = false;
-                return false;
+            } else {
+                std::string onnx_path = modelPath + "/model.onnx";
+                try {
+                    if (!model_loader_->LoadModel(onnx_path, config.use_cuda, config.num_threads)) {
+                        std::cerr << "Warning: Failed to load native model from " << onnx_path << std::endl;
+                        std::cerr << "  Continuing initialization with limited functionality (Graph/Memory only)." << std::endl;
+                        // ready_ = false; 
+                    }
+                } catch (const std::exception& e) {
+                    std::cerr << "Error loading main model: " << e.what() << std::endl;
+                    std::cerr << "  Continuing initialization, but generation will fail." << std::endl;
+                    ready_ = false;
+                    return false;
+                }
             }
 
             // Load Draft Model (Speculative Decoding) - Optional
@@ -96,6 +106,7 @@ namespace NPCInference {
                 
                 if (embedding_model_->Load(embed_path, spm_path)) {
                     // Initialize Vector Store (384 dim for MiniLM-L12)
+                    // This works in both real and mock mode
                     if (vector_store_->Initialize(384)) {
                         // Try to load existing vectors
                         vector_store_->Load(modelPath + "/vectors");
@@ -379,8 +390,10 @@ namespace NPCInference {
                      }
                  }
                  
+                 
                  if (!found_entities.empty()) {
-                     graph_context = knowledge_graph_->GetKnowledgeContext(found_entities);
+                     // SOTA Advancement: Use PageRank to prioritize most important graph nodes
+                     graph_context = knowledge_graph_->GetKnowledgeContext(found_entities, 5); 
                      if (local_state.contains("memory_context")) {
                          local_state["memory_context"] = local_state["memory_context"].get<std::string>() + "\n[Knowledge Graph]\n" + graph_context;
                      } else {
@@ -634,6 +647,105 @@ namespace NPCInference {
         Remember(gossip_text, {{"source", "gossip"}, {"from", source_npc}});
     }
 
+    // === Real-Time Conversation Implementation ===
+    
+    std::string NPCInferenceEngine::StartConversation(const std::string& npc_name, const std::string& player_name) {
+        if (!conversation_manager_) {
+            conversation_manager_ = std::make_unique<ConversationManager>();
+            
+            // === Initialize SOTA Innovation Systems ===
+            temporal_memory_ = std::make_unique<TemporalMemorySystem>();
+            social_fabric_network_ = std::make_unique<SocialFabricNetwork>();
+            emotional_continuity_system_ = std::make_unique<EmotionalContinuitySystem>();
+            player_behavior_modeling_ = std::make_unique<PlayerBehaviorModeling>();
+            ambient_awareness_system_ = std::make_unique<AmbientAwarenessSystem>();
+            std::cout << "SOTA: Initialized Temporal Memory, Social Fabric, Emotional Continuity, Player Behavior Modeling, and Ambient Awareness systems." << std::endl;
+            
+            ready_ = true;
+        }
+        return conversation_manager_->CreateSession(npc_name, player_name);
+    }
+
+    std::string NPCInferenceEngine::Chat(const std::string& session_id, const std::string& user_message) {
+        if (!conversation_manager_) return "Error: No conversation manager";
+        
+        auto* ctx = conversation_manager_->GetSession(session_id);
+        if (!ctx) return "Error: Invalid session ID";
+        
+        conversation_manager_->AddMessage(session_id, "user", user_message);
+        
+        // Build RAG context
+        std::string rag_context = "";
+        if (config_.enable_rag && vector_store_ && embedding_model_ && embedding_model_->IsLoaded()) {
+            try {
+                auto embedding = embedding_model_->Embed(user_message);
+                if (!embedding.empty()) {
+                    auto results = vector_store_->Search(embedding, 5);
+                    if (!results.empty()) {
+                        rag_context += "Relevant Memories:\n";
+                        for (const auto& result : results) {
+                            // Distance: lower is better (more similar)
+                            if (result.distance < (1.0f - config_.rag_threshold)) {
+                                rag_context += "- " + result.text + "\n";
+                            }
+                        }
+                    }
+                }
+            } catch (...) {}
+        }
+        
+        // Build graph context
+        std::string graph_context = "";
+        if (config_.enable_graph && knowledge_graph_) {
+            try {
+                std::istringstream iss(user_message);
+                std::string word;
+                while (iss >> word) {
+                    if (!word.empty() && std::isupper(word[0])) {
+                        auto edges = knowledge_graph_->GetRelations(word);
+                        if (!edges.empty()) {
+                            if (graph_context.empty()) graph_context += "Known Facts:\n";
+                            for (const auto& edge : edges) {
+                                graph_context += "- " + word + " " + edge.relation + " " + edge.target + "\n";
+                            }
+                        }
+                    }
+                }
+            } catch (...) {}
+        }
+        
+        // Build conversation history
+        std::string conversation_history = "";
+        auto history = conversation_manager_->GetHistory(session_id, 6);
+        for (const auto& msg : history) {
+            conversation_history += (msg.role == "user" ? ctx->player_name : ctx->npc_name) + ": " + msg.content + "\n";
+        }
+        
+        // Combine contexts
+        std::string full_context = rag_context + graph_context;
+        if (!conversation_history.empty()) full_context += "Conversation:\n" + conversation_history;
+        
+        // Generate response
+        std::string persona = "You are " + ctx->npc_name + ", a character in a fantasy world.";
+        std::string response = GenerateFromContext(persona, ctx->npc_name, full_context, user_message);
+        
+        conversation_manager_->AddMessage(session_id, "assistant", response);
+        
+        // Remember interaction
+        if (config_.enable_rag) {
+            Remember("Conversation with " + ctx->player_name + ": " + user_message + " -> " + response,
+                    {{"type", "conversation"}, {"npc", ctx->npc_name}, {"player", ctx->player_name}});
+        }
+        
+        return response;
+    }
+
+    void NPCInferenceEngine::EndConversation(const std::string& session_id) {
+        if (!conversation_manager_) return;
+        if (config_.enable_reflection) PerformSleepCycle();
+        conversation_manager_->CloseSession(session_id);
+    }
+
     void NPCInferenceEngine::PerformSleepCycle() {
         if (!vector_store_ || !memory_consolidator_) return;
         
@@ -688,14 +800,82 @@ namespace NPCInference {
 
         // 4.5 Reflection (SOTA "Generative Agents" pattern)
         if (config_.enable_reflection) {
-            std::string insight = memory_consolidator_->GenerateReflectiveInsight(summary);
-            if (!insight.empty() && insight.length() > 10) {
-                // Store as high-importance "Core Belief"
-                Remember(insight, {{"type", "insight"}, {"importance", "1.0"}, {"source", "reflection"}});
-                std::cout << "Sleep Mode: Generated Deep Insight: " << insight << std::endl;
+            std::string reflectionJson = memory_consolidator_->GenerateReflectiveInsight(summary);
+            try {
+                auto j = nlohmann::json::parse(reflectionJson);
+                
+                // 1. Store Insight
+                std::string insight = j.value("insight", "");
+                if (!insight.empty()) {
+                    Remember(insight, {{"type", "insight"}, {"importance", "1.0"}, {"source", "reflection"}});
+                    std::cout << "Sleep: Insight: " << insight << std::endl;
+                }
+
+                // 2. Update Trust
+                if (j.contains("trust_delta")) {
+                    int delta = j["trust_delta"];
+                    if (delta != 0) {
+                        int current_trust = current_state_.value("trust_level", 50);
+                        current_trust = std::max(0, std::min(100, current_trust + delta));
+                        current_state_["trust_level"] = current_trust;
+                        std::cout << "Sleep: Trust updated by " << delta << " -> " << current_trust << std::endl;
+                    }
+                }
+
+                // 3. Evolve Persona
+                if (j.contains("persona_update")) {
+                    std::string trait = j["persona_update"];
+                    if (!trait.empty() && trait != "none") {
+                        std::string current_persona = current_state_.value("persona", "");
+                        current_state_["persona"] = current_persona + " [Evolved Trait: " + trait + "]";
+                        std::cout << "Sleep: Persona evolved: " << trait << std::endl;
+                    }
+                }
+                
+                // Save state to disk to persist changes
+                SaveState(config_.model_dir + "/npc_state.json");
+
+            } catch (const std::exception& e) {
+                std::cout << "Sleep: Reflection parse failed: " << e.what() << std::endl;
             }
         }
         
+        // 4.6 Graph Global Summarization (SOTA "GraphRAG" pattern)
+        if (config_.enable_graph && knowledge_graph_) {
+             std::cout << "Sleep: Detecting Graph Communities..." << std::endl;
+             auto communities = knowledge_graph_->DetectCommunities();
+             
+             std::string global_context_accumulator = "Global World State:\n";
+             int communities_indexed = 0;
+
+             for (const auto& [id, nodes] : communities) {
+                 if (nodes.empty()) continue;
+                 
+                 // Generate summary for this specific community
+                 std::string comm_summary = memory_consolidator_->SummarizeCommunity(nodes, *knowledge_graph_);
+                 
+                 if (!comm_summary.empty()) {
+                     // 1. Index into Vector Store (The "GraphRAG" Link)
+                     //    Now we can retrieve "Political Situation" just by asking check
+                     std::string index_text = "Community Context (Cluster " + std::to_string(id) + "): " + comm_summary;
+                     Remember(index_text, {
+                         {"type", "community_summary"}, 
+                         {"cluster_id", std::to_string(id)},
+                         {"source", "graph_analysis"}
+                     });
+                     
+                     // 2. Add to global context string
+                     global_context_accumulator += "- " + comm_summary + "\n";
+                     communities_indexed++;
+                 }
+             }
+
+             if (communities_indexed > 0) {
+                 current_state_["world_context"] = global_context_accumulator;
+                 std::cout << "Sleep: Indexed " << communities_indexed << " community summaries to Vector Store & World Context." << std::endl;
+             }
+        }
+
         // 5. Prune old memories (Episodic Decay)
         for (uint64_t id : ids_to_remove) {
             vector_store_->Remove(id);
@@ -705,6 +885,22 @@ namespace NPCInference {
 
 
 
+
+
+void NPCInferenceEngine::Learn(const std::string& text) {
+    if (!ready_ && !config_.enable_graph) {
+        // std::cerr << "Engine not ready for learning." << std::endl;
+        return;
+    }
+    
+    // Check if graph capabilities are active
+    if (config_.enable_graph && memory_consolidator_ && knowledge_graph_) {
+        std::cout << "Learning from text (OIE): " << text.substr(0, 50) << "..." << std::endl;
+        memory_consolidator_->ExtractAndIngestKnowledge(text, *knowledge_graph_);
+    } else {
+        std::cout << "Graph learning disabled or components missing." << std::endl;
+    }
+}
 
     std::string NPCInferenceEngine::See(const std::vector<uint8_t>& image_data, int width, int height) {
         if (!vision_loader_) return "I cannot see.";
@@ -723,16 +919,20 @@ namespace NPCInference {
         return prompt_formatter_->Format(system, name, context, question);
     }
     
-    // Legacy / Placeholder methods
+    // Legacy / Deprecated methods - Use Initialize() instead
+    // These methods are kept for backward compatibility but will be removed in v2.0
+    [[deprecated("Use Initialize(InferenceConfig) instead")]]
     bool NPCInferenceEngine::LoadModel(const std::string& model_path, const std::string& adapter_path, bool use_cuda, bool bridge_mode) {
          if (bridge_mode) return LoadWithBridge("python", "npc_cli.py", model_path);
          return Initialize(model_path);
     }
 
+    [[deprecated("Use GenerateWithState() instead")]]
     std::string NPCInferenceEngine::Generate(const std::string& prompt, const std::string& npc_name) {
         return Generate(prompt);
     }
 
+    [[deprecated("Access tokenizer_ directly or use GetTokenizer()")]]
     std::vector<int64_t> NPCInferenceEngine::Tokenize(const std::string& text) {
         if (tokenizer_ && tokenizer_->IsLoaded()) {
             return tokenizer_->Encode(text);
@@ -741,6 +941,7 @@ namespace NPCInference {
         return {};
     }
 
+    [[deprecated("Access tokenizer_ directly or use GetTokenizer()")]]
     std::string NPCInferenceEngine::Decode(const std::vector<int64_t>& token_ids) {
         if (tokenizer_ && tokenizer_->IsLoaded()) {
             return tokenizer_->Decode(token_ids);

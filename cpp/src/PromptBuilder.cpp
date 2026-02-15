@@ -257,4 +257,33 @@ namespace NPCInference {
         return ss.str();
     }
 
+    std::string PromptBuilder::BuildOIEPrompt(const std::string& text, const std::string& language) {
+        bool isVi = (language == "vi");
+        std::stringstream ss;
+
+        if (isVi) {
+             ss << "<|system|>\nBạn là một chuyên gia trích xuất thông tin (OIE). Nhiệm vụ của bạn là đọc văn bản và trích xuất các mối quan hệ dưới dạng bộ ba (Chủ ngữ, Quan hệ, Tân ngữ).\n"
+                << "Hãy trả về kết quả dưới dạng JSON:\n"
+                << "[\n"
+                << "  {\"source\": \"Chủ ngữ (Thực thể A)\", \"relation\": \"Mối quan hệ (động từ/tính từ)\", \"target\": \"Tân ngữ (Thực thể B)\", \"weight\": 1.0}\n"
+                << "]\n\n"
+                << "Văn bản:\n\"" << text << "\"\n"
+                << "<|end|>\n<|assistant|>\n```json\n";
+        } else {
+            ss << "<|system|>\nYou are an Open Information Extraction (OIE) expert. Your task is to extract knowledge triples (Source, Relation, Target) from the text.\n"
+               << "Return the result strictly as a JSON array of objects:\n"
+               << "[\n"
+               << "  {\"source\": \"Entity A\", \"relation\": \"relationship_to\", \"target\": \"Entity B\", \"weight\": 1.0}\n"
+               << "]\n"
+               << "Rules:\n"
+               << "1. Use concise, active verbs for relations (e.g., \"loves\", \"attacks\", \"is_located_in\").\n"
+               << "2. Ignore trivial or redundant information.\n"
+               << "3. Weight should be 1.0 for facts, 0.5 for rumors.\n\n"
+               << "Text:\n\"" << text << "\"\n"
+               << "<|end|>\n<|assistant|>\n```json\n";
+        }
+
+        return ss.str();
+    }
+
 } // namespace NPCInference
