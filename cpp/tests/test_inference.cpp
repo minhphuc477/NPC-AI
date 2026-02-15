@@ -91,7 +91,7 @@ void TestTokenizer() {
     
     // Only if we have a real model path can we test Encode special tokens.
     // Assuming user might run this where model exists:
-    std::string model_dir = "C:/Users/MPhuc/Desktop/NPC AI/model_data";
+    std::string model_dir = "F:/NPC AI/model_data";
     NPCInference::NPCInferenceEngine engine_real;
     
     // We suppress error log for test check

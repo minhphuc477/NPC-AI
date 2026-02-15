@@ -23,6 +23,12 @@
 #include <atomic>
 #include <functional>
 #include <nlohmann/json.hpp>
+#include "ConversationManager.h"
+#include "TemporalMemorySystem.h"
+#include "SocialFabricNetwork.h"
+#include "EmotionalContinuitySystem.h"
+#include "PlayerBehaviorModeling.h"
+#include "AmbientAwarenessSystem.h"
 
 namespace NPCInference {
 
@@ -38,6 +44,9 @@ namespace NPCInference {
     class MemoryConsolidator;
     class VisionLoader;
     class GrammarSampler;
+    class TemporalMemorySystem;
+    class SocialFabricNetwork;
+    class EmotionalContinuitySystem;
 
     struct GenerationResult {
         std::string text;
@@ -117,6 +126,63 @@ public:
     bool Remember(const std::string& text, const std::map<std::string, std::string>& metadata = {});
 
     /**
+     * Learn semantic knowledge from text (Dynamic OIE -> Graph)
+     */
+    void Learn(const std::string& text);
+
+    // === Advanced NPC Systems ===
+    
+    /** Get temporal memory system */
+    TemporalMemorySystem* GetTemporalMemory() { return temporal_memory_.get(); }
+    
+    /** Get social fabric network */
+    SocialFabricNetwork* GetSocialFabric() { return social_fabric_network_.get(); }
+    
+    /** Get emotional continuity system */
+    EmotionalContinuitySystem* GetEmotionalContinuity() { return emotional_continuity_system_.get(); }
+    
+    /** Get player behavior modeling system */
+    PlayerBehaviorModeling* GetPlayerBehaviorModeling() { return player_behavior_modeling_.get(); }
+    
+    /** Get ambient awareness system */
+    AmbientAwarenessSystem* GetAmbientAwareness() { return ambient_awareness_system_.get(); }
+    
+    /**
+     * Build context from all advanced systems for NPC response generation
+     * @param npc_id The NPC's identifier
+     * @param query Current conversation query
+     * @return JSON context with memories, relationships, and emotions
+     */
+    nlohmann::json BuildAdvancedContext(const std::string& npc_id, const std::string& query);
+
+    // Get conversation manager for real-time chat
+    ConversationManager* GetConversationManager() { return conversation_manager_.get(); }
+    
+    // === Real-Time Conversation API ===
+    
+    /**
+     * Start a new conversation session
+     * @param npc_name Name of the NPC
+     * @param player_name Name of the player
+     * @return session_id for this conversation
+     */
+    std::string StartConversation(const std::string& npc_name, const std::string& player_name);
+    
+    /**
+     * Send a message in an active conversation
+     * @param session_id Active conversation session
+     * @param user_message Player's message
+     * @return NPC's response
+     */
+    std::string Chat(const std::string& session_id, const std::string& user_message);
+    
+    /**
+     * End conversation and trigger memory consolidation
+     * @param session_id Session to close
+     */
+    void EndConversation(const std::string& session_id);
+
+    /**
      * Social Gossip System
      * Extract interesting memories to share with other NPCs
      */
@@ -172,6 +238,12 @@ protected:
     std::unique_ptr<ToolRegistry> tool_registry_;    // Phase 12
     std::unique_ptr<HybridRetriever> hybrid_retriever_; // Added Phase 2
     std::unique_ptr<PerformanceProfiler> profiler_; // Added
+    std::unique_ptr<ConversationManager> conversation_manager_; // Real-time chat
+    std::unique_ptr<TemporalMemorySystem> temporal_memory_; // Temporal memory with decay
+    std::unique_ptr<SocialFabricNetwork> social_fabric_network_; // Social dynamics network
+    std::unique_ptr<EmotionalContinuitySystem> emotional_continuity_system_; // Persistent emotions
+    std::unique_ptr<PlayerBehaviorModeling> player_behavior_modeling_; // Player behavior tracking
+    std::unique_ptr<AmbientAwarenessSystem> ambient_awareness_system_; // Event inference
 
 public:
     // Configuration Struct
@@ -192,6 +264,7 @@ public:
         bool enable_planner = true;
         bool enable_reflection = true;
         bool enable_truth_guard = true; // Phase 2: Neuro-symbolic Truth Guard
+        bool enable_python_bridge = false; // Fallback to Python Bridge
     };
 
 

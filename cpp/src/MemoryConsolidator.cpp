@@ -1,6 +1,10 @@
 #include "MemoryConsolidator.h"
+#include "ErrorLogger.h"
 #include "ModelLoader.h"
 #include "Tokenizer.h"
+#include "SimpleGraph.h"
+#include "TextChunker.h"
+#include "PromptBuilder.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -16,7 +20,17 @@ MemoryConsolidator::~MemoryConsolidator() {}
 
 std::string MemoryConsolidator::QueryLLM(const std::string& prompt, int max_tokens) {
     if (!model_loader_ || !model_loader_->IsLoaded() || !tokenizer_ || !tokenizer_->IsLoaded()) {
-        std::cerr << "MemoryConsolidator: Engine not ready." << std::endl;
+        // Check for Mock Mode via Env
+        const char* mock_env = std::getenv("NPC_MOCK_MODE");
+        if (mock_env && std::string(mock_env) == "1") {
+            // Mock Response Logic
+            if (prompt.find("OIE") != std::string::npos || prompt.find("Extract") != std::string::npos) {
+                 return R"([{"source": "King Alaric", "relation": "is allied with", "target": "Elves", "weight": 1.0}])";
+            }
+            return "Mock Response";
+        }
+        
+        ErrorLogger::Warning("MemoryConsolidator", "Engine not ready for QueryLLM");
         return "";
     }
 
@@ -113,21 +127,152 @@ float MemoryConsolidator::AssessImportance(const std::string& memory_text) {
 std::string MemoryConsolidator::GenerateReflectiveInsight(const std::string& recent_memories) {
     if (recent_memories.empty()) return "";
 
-    std::string prompt = "System: You are an introspective AI. Analyze the recent events and generate a deep insight.\n"
-                         "User: Based on these recent events:\n" + recent_memories + 
-                         "\n\nWhat is one key insight, belief, or lesson I should remember about my life, relationships, or the world? (Max 1 sentence)\n"
-                         "Insight:";
+    std::string prompt = "System: Analyze internal state changes based on events. Return JSON.\n"
+                         "User: Events:\n" + recent_memories + 
+                         "\n\nJSON Schema:\n"
+                         "{\n"
+                         "  \"insight\": \"Key lesson (max 1 sentence)\",\n"
+                         "  \"trust_delta\": (int, -10 to +10 change in trust),\n"
+                         "  \"persona_update\": \"(optional) New personality trait to add\"\n"
+                         "}\n"
+                         "JSON:";
 
-    std::string insight = QueryLLM(prompt, 50);
+    std::string response = QueryLLM(prompt, 100);
     
-    // Cleanup if LLM chatters
-    size_t pos = insight.find("Insight:");
-    if (pos != std::string::npos) insight = insight.substr(pos + 8);
+    // Extract JSON block if present
+    size_t start = response.find("{");
+    size_t end = response.rfind("}");
+    if (start != std::string::npos && end != std::string::npos) {
+        return response.substr(start, end - start + 1);
+    }
     
-    // Remove quotes
-    insight.erase(std::remove(insight.begin(), insight.end(), '\"'), insight.end());
+    return response;
+}
+
+std::string MemoryConsolidator::SummarizeGraphCommunities(const std::map<int, std::vector<std::string>>& communities, const SimpleGraph& graph) {
+    if (communities.empty()) return "";
     
-    return insight;
+    std::stringstream context_ss;
+    context_ss << "Global World State (Clusters):\n";
+    
+    for (const auto& [id, nodes] : communities) {
+        if (nodes.empty()) continue;
+        
+        // Build a mini-prompt for this cluster
+        std::string nodes_str;
+        for (const auto& node : nodes) nodes_str += node + ", ";
+        
+        // Get relations between these nodes (simplification: just list them)
+        std::string cluster_context = graph.GetKnowledgeContext(nodes);
+        
+        // If cluster is too small, skip detailed summarization
+        if (nodes.size() < 3) {
+            context_ss << "- Cluster " << id << ": " << nodes_str << "\n";
+            continue;
+        }
+
+        std::string prompt = "System: Summarize this group of related entities in 1 sentence.\n"
+                             "User: Entities: " + nodes_str + "\n"
+                             "Facts: " + cluster_context.substr(0, 500) + "\n\n" // Cap context
+                             "Summary:";
+                             
+        std::string summary = QueryLLM(prompt, 50);
+        // Cleanup response
+        summary.erase(std::remove(summary.begin(), summary.end(), '\"'), summary.end());
+        size_t pos = summary.find("Summary:");
+        if (pos != std::string::npos) summary = summary.substr(pos + 8);
+
+        context_ss << "- Cluster " << id << ": " << summary << "\n";
+    }
+    
+    return context_ss.str();
+}
+
+std::string MemoryConsolidator::SummarizeCommunity(const std::vector<std::string>& nodes, const SimpleGraph& graph) {
+    if (nodes.empty()) return "";
+    
+    // Build a mini-prompt for this cluster
+    std::string nodes_str;
+    for (const auto& node : nodes) nodes_str += node + ", ";
+    
+    // Get relations between these nodes
+    std::string cluster_context = graph.GetKnowledgeContext(nodes);
+    
+    if (nodes.size() < 3) {
+        return "Small group: " + nodes_str;
+    }
+
+    std::string prompt = "System: Summarize this group of related entities in 1 sentence.\n"
+                            "User: Entities: " + nodes_str + "\n"
+                            "Facts: " + cluster_context.substr(0, 800) + "\n\n" // Cap context
+                            "Summary:";
+                            
+    std::string summary = QueryLLM(prompt, 60);
+    // Cleanup response
+    summary.erase(std::remove(summary.begin(), summary.end(), '\"'), summary.end());
+    size_t pos = summary.find("Summary:");
+    if (pos != std::string::npos) summary = summary.substr(pos + 8);
+    
+    // Validate summary content
+    if (summary.empty() || summary.length() < 5) return "Group of " + nodes_str;
+
+    return summary;
+}
+
+void MemoryConsolidator::ExtractAndIngestKnowledge(const std::string& text, SimpleGraph& graph) {
+    if (text.empty()) return;
+
+    // 1. Chunk the text
+    auto chunks = TextChunker::SplitText(text);
+
+    PromptBuilder promptBuilder(true, true); // Advanced, Json
+
+    for (const auto& chunk : chunks) {
+        // 2. Build OIE Prompt
+        std::string prompt = promptBuilder.BuildOIEPrompt(chunk, "en"); // Defaulting to EN for now
+
+        // 3. Query LLM
+        std::string response = QueryLLM(prompt, 300); // 300 tokens for triples
+
+        // 4. Parse JSON
+        try {
+            // Cleanup response formatting if needed (remove ```json ... ```)
+            std::string json_str = response;
+            if (json_str.find("```json") != std::string::npos) {
+                size_t start = json_str.find("```json") + 7;
+                size_t end = json_str.rfind("```");
+                if (end > start) {
+                    json_str = json_str.substr(start, end - start);
+                }
+            } else if (json_str.find("```") != std::string::npos) {
+                 // Try to strip generic code blocks
+                size_t start = json_str.find("```") + 3;
+                size_t end = json_str.rfind("```");
+                if (end > start) {
+                    json_str = json_str.substr(start, end - start);
+                }
+            }
+
+            json triples = json::parse(json_str);
+
+            if (triples.is_array()) {
+                for (const auto& item : triples) {
+                    std::string source = item.value("source", "");
+                    std::string relation = item.value("relation", "");
+                    std::string target = item.value("target", "");
+                    float weight = item.value("weight", 1.0f);
+
+                    if (!source.empty() && !relation.empty() && !target.empty()) {
+                        graph.AddRelation(source, relation, target, weight);
+                        // std::cout << "OIE Learned: " << source << " --" << relation << "--> " << target << std::endl;
+                    }
+                }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "MemoryConsolidator::ExtractKnowledge: JSON parse error for chunk: " << e.what() << std::endl;
+            // std::cerr << "Response was: " << response << std::endl;
+        }
+    }
 }
 
 } // namespace NPCInference

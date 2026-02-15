@@ -11,7 +11,7 @@ int main() {
     auto engine = std::make_unique<NPCInferenceEngine>();
     
     NPCInferenceEngine::InferenceConfig config;
-    config.model_dir = "C:/Users/MPhuc/Desktop/NPC AI/models/phi3_onnx";
+    config.model_dir = "F:/NPC AI/models/phi3_onnx";
     config.enable_rag = true;
     config.enable_graph = true;
     

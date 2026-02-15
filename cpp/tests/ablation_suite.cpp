@@ -29,7 +29,6 @@ struct BenchmarkResults {
     double latency_p99_ms;
     double throughput_tokens_per_sec;
     double memory_usage_mb;
-    double memory_usage_mb;
     int total_runs;
 };
 
@@ -44,7 +43,7 @@ BenchmarkResults RunBenchmark(const AblationConfig& config) {
         
         // Configure engine
         NPCInferenceEngine::InferenceConfig inf_config;
-        inf_config.model_dir = "C:/Users/MPhuc/Desktop/NPC AI/models/phi3_onnx";
+        inf_config.model_dir = "F:/NPC AI/models/phi3_onnx";
         inf_config.enable_rag = config.enable_rag;
         inf_config.enable_graph = config.enable_graph;
         inf_config.enable_speculative = config.enable_speculative;
@@ -98,7 +97,7 @@ BenchmarkResults RunBenchmark(const AblationConfig& config) {
         results.throughput_tokens_per_sec = (avg_latency > 0) ? (50.0 / avg_latency) * 1000.0 : 0.0;
     } catch (const std::exception& e) {
         std::cerr << "[Error] Benchmark run failed: " << e.what() << std::endl;
-        BenchmarkResults results = {}; # Zero init
+        BenchmarkResults results = {}; // Zero init
         return results;
     }
 }

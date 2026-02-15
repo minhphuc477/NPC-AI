@@ -42,7 +42,17 @@ namespace NPCInference {
 
         // Get a textual representation of direct facts about an entity
         std::string GetKnowledgeContext(const std::string& entity) const;
-        std::string GetKnowledgeContext(const std::vector<std::string>& entities) const;
+        std::string GetKnowledgeContext(const std::vector<std::string>& entities, int limit = 5) const;
+
+        // Community Detection (Label Propagation)
+        // Returns Map: CommunityID -> List of Member Nodes
+        // Community Detection (Label Propagation)
+        // Returns Map: CommunityID -> List of Member Nodes
+        std::map<int, std::vector<std::string>> DetectCommunities();
+
+        // Calculate PageRank for all nodes
+        // Returns Map: Node -> Rank Score (0.0 - 1.0)
+        std::map<std::string, float> CalculatePageRank(int max_iters = 20, float damping = 0.85f) const;
 
         // Serialization
         bool Save(const std::string& filepath) const;

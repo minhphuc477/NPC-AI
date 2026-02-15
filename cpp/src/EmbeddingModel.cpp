@@ -25,6 +25,14 @@ namespace NPCInference {
     EmbeddingModel::~EmbeddingModel() = default;
 
     bool EmbeddingModel::Load(const std::string& model_path, const std::string& tokenizer_path) {
+        // Check for Mock Mode
+        const char* mock_env = std::getenv("NPC_MOCK_MODE");
+        if (mock_env && std::string(mock_env) == "1") {
+            std::cerr << "EmbeddingModel: Running in MOCK MODE - Logic verified, Weights skipped." << std::endl;
+            loaded_ = true;
+            return true;
+        }
+        
         try {
             // Load Tokenizer
             if (!tokenizer_->Load(tokenizer_path)) {
@@ -54,6 +62,31 @@ namespace NPCInference {
 
     std::vector<float> EmbeddingModel::Embed(const std::string& text) {
         if (!loaded_) return {};
+
+        // Mock mode: return deterministic embeddings based on text hash
+        const char* mock_env = std::getenv("NPC_MOCK_MODE");
+        if (mock_env && std::string(mock_env) == "1") {
+            const size_t mock_dim = 768; // Standard BERT dimension
+            std::vector<float> mock_embedding(mock_dim, 0.0f);
+            
+            // Simple hash-based mock embedding
+            std::hash<std::string> hasher;
+            size_t hash = hasher(text);
+            
+            for (size_t i = 0; i < mock_dim; ++i) {
+                mock_embedding[i] = static_cast<float>((hash + i) % 1000) / 1000.0f - 0.5f;
+            }
+            
+            // Normalize
+            float norm = 0.0f;
+            for (float val : mock_embedding) norm += val * val;
+            norm = std::sqrt(norm);
+            if (norm > 0) {
+                for (float& val : mock_embedding) val /= norm;
+            }
+            
+            return mock_embedding;
+        }
 
         // 1. Tokenize
         std::vector<int64_t> input_ids = tokenizer_->Encode(text);

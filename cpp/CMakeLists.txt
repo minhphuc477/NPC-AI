@@ -149,6 +149,13 @@ add_library(npc_inference STATIC
     src/KVCacheManager.cpp
     src/BM25Retriever.cpp
     src/HybridRetriever.cpp
+    src/TemporalMemorySystem.cpp
+    src/SocialFabricNetwork.cpp
+    src/EmotionalContinuitySystem.cpp
+    src/PlayerBehaviorModeling.cpp
+    src/AmbientAwarenessSystem.cpp
+    src/OllamaClient.cpp
+    src/BuildSOTAContext.cpp
     src/SemanticCache.cpp
     src/PerformanceProfiler.cpp
     src/ToolRegistry.cpp
@@ -229,6 +236,66 @@ if(BUILD_TESTS)
     )
     
     target_link_libraries(test_final
+        PRIVATE
+            npc_inference
+    )
+
+    # Temporal Memory Demo: SOTA innovation demonstration
+    add_executable(demo_temporal_memory
+        src/demo_temporal_memory.cpp
+    )
+    
+    target_link_libraries(demo_temporal_memory
+        PRIVATE
+            npc_inference
+    )
+    
+    # Social Fabric Demo: SOTA social dynamics demonstration
+    add_executable(demo_social_fabric
+        src/demo_social_fabric.cpp
+    )
+    
+    target_link_libraries(demo_social_fabric
+        PRIVATE
+            npc_inference
+    )
+    
+    # Emotional Continuity Demo: SOTA emotional persistence demonstration
+    add_executable(demo_emotional_continuity
+        src/demo_emotional_continuity.cpp
+    )
+    
+    target_link_libraries(demo_emotional_continuity
+        PRIVATE
+            npc_inference
+    )
+    
+    # SOTA Integration Demo: All 3 systems working together
+    add_executable(demo_sota_integration
+        src/demo_sota_integration.cpp
+    )
+    
+    target_link_libraries(demo_sota_integration
+        PRIVATE
+            npc_inference
+    )
+    
+    # Chat Interface: Real-time NPC conversations
+    add_executable(chat_interface
+        src/chat_interface.cpp
+    )
+    
+    target_link_libraries(chat_interface
+        PRIVATE
+            npc_inference
+    )
+    
+    # LLM + Systems Demo: Shows LLM using all 5 NPC systems
+    add_executable(demo_llm_with_systems
+        src/demo_llm_with_systems.cpp
+    )
+    
+    target_link_libraries(demo_llm_with_systems
         PRIVATE
             npc_inference
     )

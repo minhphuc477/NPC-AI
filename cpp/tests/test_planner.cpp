@@ -8,7 +8,7 @@ int main() {
     NPCInferenceEngine engine;
     
     NPCInferenceEngine::InferenceConfig config;
-    config.model_dir = "C:/Users/MPhuc/Desktop/NPC AI/models/phi3_onnx";
+    config.model_dir = "F:/NPC AI/models/phi3_onnx";
     config.enable_planner = true; // Phase 2: Cognitive Evolution
     
     std::cout << "Initializing NPC Engine with Planner-Executor split..." << std::endl;

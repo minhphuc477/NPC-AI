@@ -24,6 +24,9 @@ namespace NPCInference {
         // Phase 2: Neuro-symbolic Truth Guard
         std::string BuildTruthGuardCheck(const std::string& response, const std::string& worldFacts, const std::string& language = "vi");
 
+        // Phase 3: Dynamic Graph OIE
+        std::string BuildOIEPrompt(const std::string& text, const std::string& language = "vi");
+
     private:
         bool useAdvancedFormat_;
         bool useJsonFormat_;

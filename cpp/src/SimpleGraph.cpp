@@ -1,6 +1,11 @@
 #include "SimpleGraph.h"
 #include <fstream>
 #include <sstream>
+#include <algorithm>
+#include <set>
+#include <map>
+#include <vector>
+#include <random>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -135,12 +140,145 @@ namespace NPCInference {
         return adjacencyList_.count(node) > 0;
     }
 
-    std::string SimpleGraph::GetKnowledgeContext(const std::vector<std::string>& entities) const {
-        std::stringstream ss;
+    std::string SimpleGraph::GetKnowledgeContext(const std::vector<std::string>& entities, int limit) const {
+        // 1. Calculate Importance (PageRank)
+        auto ranks = CalculatePageRank(10); // Quick iteration
+
+        // 2. Sort entities by rank
+        std::vector<std::pair<std::string, float>> sorted_entities;
         for (const auto& entity : entities) {
-            ss << GetKnowledgeContext(entity);
+            float score = ranks.count(entity) ? ranks.at(entity) : 0.0f;
+            sorted_entities.push_back({entity, score});
+        }
+        
+        std::sort(sorted_entities.begin(), sorted_entities.end(), 
+            [](const auto& a, const auto& b) { return a.second > b.second; });
+
+        // 3. Select top K and build context
+        std::stringstream ss;
+        int count = 0;
+        for (const auto& [entity, score] : sorted_entities) {
+            if (count >= limit) break;
+            ss << GetKnowledgeContext(entity); // Get edges for this important node
+            count++;
         }
         return ss.str();
+    }
+
+    std::map<int, std::vector<std::string>> SimpleGraph::DetectCommunities() {
+        // Label Propagation Algorithm (LPA)
+        std::map<std::string, int> labels;
+        std::vector<std::string> nodes;
+        int next_label = 0;
+
+        // 1. Initialize unique labels
+        for (const auto& [node, _] : adjacencyList_) {
+            labels[node] = next_label++;
+            nodes.push_back(node);
+        }
+
+        if (nodes.empty()) return {};
+
+        bool changed = true;
+        int max_iters = 10;
+        
+        // 2. Iterate
+        std::random_device rd;
+        std::mt19937 g(rd());
+        
+        for (int i = 0; i < max_iters && changed; ++i) {
+            changed = false;
+            // Shuffle to prevent oscillation
+            std::shuffle(nodes.begin(), nodes.end(), g); 
+
+            for (const auto& node : nodes) {
+                std::map<int, float> label_weights;
+                
+                // Collect neighbor labels
+                if (adjacencyList_.count(node)) {
+                    for (const auto& edge : adjacencyList_.at(node)) {
+                        if (labels.count(edge.target)) {
+                            label_weights[labels[edge.target]] += edge.weight;
+                        }
+                    }
+                }
+
+                if (label_weights.empty()) continue;
+
+                // Find max weight label
+                int best_label = labels[node];
+                float max_w = -1.0f;
+                for (const auto& [l, w] : label_weights) {
+                    if (w > max_w) {
+                        max_w = w;
+                        best_label = l;
+                    }
+                }
+
+                if (best_label != labels[node]) {
+                    labels[node] = best_label;
+                    changed = true;
+                }
+            }
+        }
+
+        // 3. Group by label
+        std::map<int, std::vector<std::string>> communities;
+        for (const auto& [node, label] : labels) {
+            communities[label].push_back(node);
+        }
+        
+        return communities;
+    }
+
+    std::map<std::string, float> SimpleGraph::CalculatePageRank(int max_iters, float damping) const {
+        std::map<std::string, float> ranks;
+        std::set<std::string> nodes;
+        
+        // 1. Collect all nodes
+        for (const auto& [node, edges] : adjacencyList_) {
+            nodes.insert(node);
+            for (const auto& edge : edges) nodes.insert(edge.target);
+        }
+        
+        size_t N = nodes.size();
+        if (N == 0) return {};
+        
+        // 2. Initialize ranks
+        float initial_rank = 1.0f / N;
+        for (const auto& node : nodes) ranks[node] = initial_rank;
+        
+        // 3. Iteration
+        for (int i = 0; i < max_iters; ++i) {
+            std::map<std::string, float> new_ranks;
+            float sink_rank = 0.0f;
+            
+            // Handle sink nodes (no outgoing edges)
+            for (const auto& node : nodes) {
+                if (adjacencyList_.find(node) == adjacencyList_.end() || adjacencyList_.at(node).empty()) {
+                    sink_rank += ranks[node];
+                }
+            }
+            
+            for (const auto& node : nodes) {
+                float rank_sum = 0.0f;
+                
+                // Find incoming edges (inefficient O(E), but valid for SimpleGraph)
+                // Optimization: Pre-calculate reverse graph if performance needed
+                for (const auto& [source, edges] : adjacencyList_) {
+                    for (const auto& edge : edges) {
+                        if (edge.target == node) {
+                            rank_sum += ranks[source] / edges.size();
+                        }
+                    }
+                }
+                
+                new_ranks[node] = (1.0f - damping) / N + damping * (rank_sum + sink_rank / N);
+            }
+            ranks = new_ranks;
+        }
+        
+        return ranks;
     }
 
 } // namespace NPCInference

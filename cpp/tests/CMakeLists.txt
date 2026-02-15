@@ -10,6 +10,8 @@ include_directories(../build/_deps/json-src/single_include)
 include_directories(../build/_deps/json-src/include)
 include_directories(../build/onnxruntime/include)
 include_directories(../build/_deps/usearch-src/include)
+include_directories(../build/_deps/usearch-src/fp16/include)
+include_directories(../build/_deps/usearch-src/simsimd/include)
 include_directories(../build/_deps/sentencepiece-src/src)
 
 # Source files
@@ -58,6 +60,30 @@ add_executable(test_integration
     "test_integration.cpp"
 )
 
+# Create executable for graph rag loop test
+add_executable(test_graph_rag_loop
+    "../src/NPCInference.cpp"
+    "../src/ModelLoader.cpp"
+    "../src/Tokenizer.cpp"
+    "../src/EmbeddingModel.cpp"
+    "../src/VectorStore.cpp"
+    "../src/HybridRetriever.cpp"
+    "../src/BM25Retriever.cpp"
+    "../src/SemanticCache.cpp"
+    "../src/SimpleGraph.cpp"
+    "../src/MemoryConsolidator.cpp"
+    "../src/VisionLoader.cpp"
+    "../src/GrammarSampler.cpp"
+    "../src/PromptBuilder.cpp"
+    "../src/PromptFormatter.cpp"
+    "../src/BehaviorTree.cpp"
+    "../src/PythonBridge.cpp" 
+    "../src/KVCacheManager.cpp"
+    "../src/ToolRegistry.cpp" 
+    "../src/PerformanceProfiler.cpp"
+    "test_graph_rag_loop.cpp"
+)
+
 # Link libraries
 if(WIN32)
     target_link_libraries(test_fix 
@@ -77,6 +103,14 @@ if(WIN32)
         shlwapi
     )
     target_compile_definitions(test_integration PRIVATE NOMINMAX NOGDI)
+
+    target_link_libraries(test_graph_rag_loop
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/onnxruntime/lib/onnxruntime.lib
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/_deps/sentencepiece-build/src/Release/sentencepiece.lib
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/_deps/sentencepiece-build/src/Release/sentencepiece_train.lib
+        shlwapi
+    )
+    target_compile_definitions(test_graph_rag_loop PRIVATE NOMINMAX NOGDI)
 else()
     target_link_libraries(test_fix onnxruntime sentencepiece)
 endif()

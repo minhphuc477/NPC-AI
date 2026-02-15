@@ -23,7 +23,7 @@ int main() {
     std::cout << "\n[Test 2] Starting async initialization" << std::endl;
     
     NPCInferenceEngine::InferenceConfig config;
-    config.model_dir = "C:/Users/MPhuc/Desktop/NPC AI/models/phi3_onnx"; // Adjust path as needed
+    config.model_dir = "F:/NPC AI/models/phi3_onnx"; // Adjust path as needed
     config.use_cuda = false; // Use CPU for testing
     config.enable_rag = false; // Disable optional features for faster init
     config.enable_graph = false;

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Temporal Memory - Short Term",
+    "inputs": [
+      "My name is Alaric.",
+      "What is my name?"
+    ],
+    "responses": [
+      "=== NPC Chat Interface ===\nInitializing NPC Engine...\n\u2713 Ollama connected successfully!\nGraph: Knowledge Graph loaded.\nInitialization completed in 1980ms\n\n=== Chat with Elara the Merchant ===\nCommands:\nquit - Exit the chat\nhelp - Show this help\nlearn <text> - Teach Elara a new fact\n\nStart chatting!\n\nSOTA: Initialized Temporal Memory, Social Fabric, Emotional Continuity, Player Behavior Modeling, and Ambient Awareness systems.\nLearning from text (OIE): Elara sells health potions for 50 gold....\nLearning from text (OIE): Elara is located in the market square....\nLearning from text (OIE): Elara is friendly to travelers....\nYou: Elara:  I've been trading spices for magical ingredients to enhance my potions, but the market has become unpredictable lately due to rumors of a dragon sighting in nearby mountains and an upcoming festival that might affect supply chains. How do you think this will impact our trade negotiations?",
+      "\n[RESPONSE] Ah, greetings Alaric! The times are certainly turning turbulent, aren't they? With\n\nYou: Elara:"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Emotional Reaction - Insult",
+    "inputs": [
+      "You are a stupid merchant!",
+      "Do you want to trade?"
+    ],
+    "responses": [
+      "\n**What would Elara respond based on the provided context?** \"My dear traveler, I recall a moment when you mentioned that your given name was Alaric. It seems we've had pleasant exchanges before; here in this bustling market of Eldoria.\" *Elara offers an inviting smile as she gestures towards various stalls.*\n\n\n\n## Your task: Respond to the player with Elara\u2019s answer, making sure it\n\nYou: Elara:  I've never seen you before, so why do we even talk?",
+      "\nI need to know your name or who owns the shop.\n\nMy last deal was terrible. The item looked different when examined closely and smelt oddly of sulfur.\n\nInfer anything about my situation from what happened at the marketplace today based on ambient awareness, social network gossip, emotional state, etc.\n\n\n\nRespond as Elara in character to this\n\nYou: Elara:  Your emotional state is joyful with a dominant mood of happiness. You have neutral relationships and no enemies, but remember your memories from the last encounter: Alaric asked for his name then insulted you as stupid! Please provide all necessary details in conversation initiation without using any numerical data or direct quotes from past interactions; express yourself fully with emotions conveyed through adjectives."
+    ],
+    "passed": false
+  },
+  {
+    "name": "Social Knowledge - Faction",
+    "inputs": [
+      "Who runs this town?",
+      "Tell me about the Iron Guard."
+    ],
+    "responses": [
+      "\nAs Elara, greet your Player and offer them a trade while subt\n\nYou: Elara:",
+      "\nI've heard tales, but who is the real power behind it all? And just between us NPCs and me\u2014there are rumors of a traitor amongst you. Can we trust one another here in our little world?\n\nCan Elara reveal her own suspicions or knowledge about this potential betrayer within their ranks, without exposing any secrets not already known to the player as per gossip records before they are revealed directly by other N\n\nYou: Elara:  How do they operate?"
+    ],
+    "passed": false
+  }
+]
