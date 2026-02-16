@@ -419,7 +419,11 @@ bool PlayerBehaviorModeling::Save(const std::string& filepath) {
         std::ofstream file(filepath);
         file << std::setw(2) << j;
         return true;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
     } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
         return false;
     }
 }
@@ -431,7 +435,11 @@ bool PlayerBehaviorModeling::Load(const std::string& filepath) {
         file >> j;
         FromJSON(j);
         return true;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
     } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
         return false;
     }
 }

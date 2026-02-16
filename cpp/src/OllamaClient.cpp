@@ -53,7 +53,11 @@ bool OllamaClient::IsReady() {
     try {
         std::string response = HttpPost(base_url_ + "/api/tags", "{}");
         return !response.empty();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
     } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
         return false;
     }
 }
@@ -177,10 +181,43 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     return response_data;
 }
 #else
-// Linux/Mac implementation would use libcurl here
+// Linux/Mac implementation using libcurl
+#include <curl/curl.h>
+
+// Callback function to write response data
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
 std::string OllamaClient::HttpPost(const std::string& url, const std::string& json_data) {
-    std::cerr << "HTTP client not implemented for this platform. Use Windows or add libcurl." << std::endl;
-    return "";
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        std::cerr << "Failed to initialize libcurl" << std::endl;
+        return "";
+    }
+    
+    std::string response_data;
+    struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+    
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_data.c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);  // 30 second timeout
+    
+    CURLcode res = curl_easy_perform(curl);
+    
+    if (res != CURLE_OK) {
+        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+    }
+    
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+    
+    return (res == CURLE_OK) ? response_data : "";
 }
 #endif
 
