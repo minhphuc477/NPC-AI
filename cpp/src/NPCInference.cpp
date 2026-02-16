@@ -1,5 +1,4 @@
 #include "NPCInference.h"
-#include "PythonBridge.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -8,10 +7,29 @@
 #include <cctype>
 #include <algorithm>
 #include <nlohmann/json.hpp>
+
+// Component Headers (Implementation Details)
+#include "ModelLoader.h"
+#include "PromptFormatter.h"
+#include "PythonBridge.h"
+#include "BehaviorTree.h"
+#include "PromptBuilder.h"
+#include "Tokenizer.h"
+#include "VectorStore.h"
+#include "EmbeddingModel.h"
+#include "SimpleGraph.h"
+#include "HybridRetriever.h"
+#include "ToolRegistry.h"
+#include "PerformanceProfiler.h"
 #include "MemoryConsolidator.h"
 #include "VisionLoader.h"
 #include "GrammarSampler.h"
 #include "ConversationManager.h"
+#include "TemporalMemorySystem.h"
+#include "SocialFabricNetwork.h"
+#include "EmotionalContinuitySystem.h"
+#include "PlayerBehaviorModeling.h"
+#include "AmbientAwarenessSystem.h"
 
 using json = nlohmann::json;
 
@@ -156,8 +174,12 @@ namespace NPCInference {
             std::cerr << "CRITICAL: Initialization failed with exception: " << e.what() << std::endl;
             ready_ = false;
             return false;
+        } catch (const std::exception& e) {
+            std::cerr << "[NPCInference::Initialize] Error loading embedding model: " << e.what() << std::endl;
+            ready_ = false;
+            return false;
         } catch (...) {
-            std::cerr << "CRITICAL: Initialization failed with unknown exception" << std::endl;
+            std::cerr << "[NPCInference::Initialize] Unknown error loading embedding model" << std::endl;
             ready_ = false;
             return false;
         }
@@ -276,6 +298,7 @@ namespace NPCInference {
     }
 
     std::string NPCInferenceEngine::UpdateState(const json& gameState) {
+        std::lock_guard<std::mutex> lock(state_mutex_);
         current_state_ = gameState;
         
         // Map json to blackboard for BT
@@ -300,15 +323,17 @@ namespace NPCInference {
 
     std::string NPCInferenceEngine::Generate(const std::string& prompt) {
         // Capture snapshot of current global state for thread-safety in background tasks
-        json state_snapshot = current_state_;
+        json state_snapshot;
+        {
+            std::lock_guard<std::mutex> lock(state_mutex_);
+            state_snapshot = current_state_;
+        }
         return GenerateWithState(prompt, state_snapshot, false);
     }
 
     std::string NPCInferenceEngine::GenerateWithState(const std::string& prompt, const nlohmann::json& state, bool is_json) {
-        std::cout << "DEBUG: GenerateWithState called. Prompt: " << prompt.substr(0, 20) << "..." << std::endl;
-        if (!ready_) {
-            std::cout << "DEBUG: Engine not ready!" << std::endl;
-            return "Error: Engine not ready";
+                if (!ready_) {
+                        return "Error: Engine not ready";
         }
 
         // SUPER MOCK BYPASS (Force non-zero stats)
@@ -580,8 +605,7 @@ namespace NPCInference {
     }
 
     std::string NPCInferenceEngine::GenerateFromContext(const std::string& persona, const std::string& npc_id, const std::string& scenario, const std::string& player_input) {
-        std::cout << "DEBUG: GenerateFromContext enter. NPC=" << npc_id << std::endl;
-        // Build state snapshot
+                // Build state snapshot
         json state;
         state["persona"] = persona;
         state["npc_id"] = npc_id;
@@ -590,12 +614,10 @@ namespace NPCInference {
         /* CRASH FIX: Skip JSON parsing for known string input to avoid exception overhead/issues */
         /*
         try {
-            std::cout << "DEBUG: Parsing scenario..." << std::endl;
-            json context_json = json::parse(scenario);
+                        json context_json = json::parse(scenario);
             state.update(context_json);
         } catch (...) {
-            std::cout << "DEBUG: Scenario not JSON, using as string." << std::endl;
-            state["scenario_plot"] = scenario;
+                        state["scenario_plot"] = scenario;
         }
         */
         state["scenario_plot"] = scenario;
@@ -603,8 +625,7 @@ namespace NPCInference {
         state["is_player_nearby"] = true;
         state["is_player_talking"] = !player_input.empty();
         
-        std::cout << "DEBUG: calling GenerateWithState..." << std::endl;
-        // Return with local context (doesn't modify global state unnecessarily)
+                // Return with local context (doesn't modify global state unnecessarily)
         return GenerateWithState(player_input, state, false);
     }
 
@@ -691,7 +712,11 @@ namespace NPCInference {
                         }
                     }
                 }
-            } catch (...) {}
+            } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
+    }
         }
         
         // Build graph context
@@ -711,7 +736,11 @@ namespace NPCInference {
                         }
                     }
                 }
-            } catch (...) {}
+            } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
+    }
         }
         
         // Build conversation history
@@ -1009,7 +1038,11 @@ void NPCInferenceEngine::Learn(const std::string& text) {
                     auto j = nlohmann::json::parse(json_str);
                     result.tool_call = j.dump(); 
                     return result;
-                } catch (...) {}
+                } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
+    }
             }
         }
 
@@ -1021,7 +1054,11 @@ void NPCInferenceEngine::Learn(const std::string& text) {
                 if (j.contains("tool") || j.contains("function")) {
                     result.tool_call = raw_output;
                 }
-            } catch (...) {}
+            } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
+    }
         }
         
         return result;

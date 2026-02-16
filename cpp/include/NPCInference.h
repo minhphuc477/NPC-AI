@@ -2,18 +2,11 @@
 
 #pragma once
 
-#include "PromptFormatter.h"
-#include "ModelLoader.h"
-#include "PythonBridge.h"
-#include "BehaviorTree.h"
-#include "PromptBuilder.h"
-#include "Tokenizer.h"
-#include "VectorStore.h"
-#include "EmbeddingModel.h"
-#include "SimpleGraph.h"
-#include "HybridRetriever.h" // Added Phase 2
-#include "ToolRegistry.h" // Added for tool execution
-#include "PerformanceProfiler.h" // Added
+// NPCInference.h - Main inference engine combining all components
+
+#pragma once
+
+// Standard Library
 #include <cstdint>
 #include <string>
 #include <memory>
@@ -21,16 +14,12 @@
 #include <map>
 #include <future>
 #include <atomic>
+#include <mutex>
 #include <functional>
 #include <nlohmann/json.hpp>
-#include "ConversationManager.h"
-#include "TemporalMemorySystem.h"
-#include "SocialFabricNetwork.h"
-#include "EmotionalContinuitySystem.h"
-#include "PlayerBehaviorModeling.h"
-#include "AmbientAwarenessSystem.h"
 
 namespace NPCInference {
+
 
     // Forward decls
     class Tokenizer;
@@ -287,6 +276,7 @@ public:
 
 private:
     // Internal State
+    mutable std::mutex state_mutex_;  // Thread safety for shared state
     nlohmann::json current_state_;
     std::string current_action_ = "Idle";
     std::string last_thought_ = "";
