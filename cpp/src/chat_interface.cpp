@@ -23,7 +23,7 @@ int main() {
     
     // Initialize NPC engine (for memory, emotions, social systems)
     NPCInferenceEngine::InferenceConfig config;
-    config.model_dir = "F:/NPC AI/models/phi3_onnx";  // Not used for LLM anymore
+    config.model_dir = "./models/phi3_onnx";  // Use relative path for portability
     config.enable_rag = true;
     config.enable_graph = true;
     config.enable_reflection = false;
@@ -63,6 +63,18 @@ int main() {
         std::getline(std::cin, user_input);
         
         if (user_input.empty()) continue;
+        
+        // Input validation (Issue #7 fix)
+        if (user_input.length() > 1000) {
+            std::cout << "Error: Input too long (max 1000 characters)\\n\\n";
+            continue;
+        }
+        
+        // Sanitize special tokens
+        size_t pos = 0;
+        while ((pos = user_input.find("<|", pos)) != std::string::npos) {
+            user_input.replace(pos, 2, "");
+        }
         
         if (user_input == "quit") {
             std::cout << "\nElara: Safe travels, friend!\n";

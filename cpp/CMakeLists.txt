@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Project options
-# Project options
 option(USE_CUDA "Build with CUDA support" OFF)
 option(BUILD_TESTS "Build test executables" ON)
 option(BUILD_CLI "Build standalone CLI" ON)
@@ -15,6 +14,16 @@ option(NPC_USE_MOCKS "Build with mock implementations for testing" OFF)
 
 if(MSVC)
     add_compile_options(/wd4715) # Suppress "not all control paths return a value"
+endif()
+
+# Find libcurl for Unix platforms (needed for OllamaClient HTTP)
+if(UNIX)
+    find_package(CURL REQUIRED)
+    if(CURL_FOUND)
+        message(STATUS "Found libcurl: ${CURL_LIBRARIES}")
+    else()
+        message(FATAL_ERROR "libcurl is required for Linux/Mac builds. Install with: apt-get install libcurl4-openssl-dev")
+    endif()
 endif()
 
 # Include FetchContent for dependency management
@@ -196,6 +205,11 @@ target_link_libraries(npc_inference
 
 if(WIN32)
     target_link_libraries(npc_inference PRIVATE psapi)
+endif()
+
+# Link libcurl on Unix platforms for OllamaClient HTTP
+if(UNIX)
+    target_link_libraries(npc_inference PRIVATE CURL::libcurl)
 endif()
 
 # Standalone CLI executable

@@ -111,16 +111,25 @@ def main():
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     
     if not args.skip_merge:
+        logger.info("Merging adapter with base model...")
         if not merge_adapter(args.base_model, args.adapter, args.merged_dir):
+            logger.error("❌ Merge failed!")
             return 1
+        logger.info("✓ Merge completed successfully")
     
+    logger.info("Converting to GGUF format...")
     if not convert_to_gguf(args.merged_dir, args.output):
-        logger.warning("Auto-conversion failed. Manual steps:")
+        logger.error("❌ GGUF conversion failed!")
+        logger.warning("Manual steps:")
         logger.info("1. Clone llama.cpp: git clone https://github.com/ggerganov/llama.cpp")
         logger.info("2. Run: python llama.cpp/convert_hf_to_gguf.py outputs/merged --outfile models/npc.gguf")
         logger.info("3. Quantize: ./llama.cpp/llama-quantize models/npc.gguf models/npc-q4.gguf Q4_K_M")
+        return 1
+    logger.info("✓ GGUF conversion completed successfully")
     
+    logger.info("Creating Ollama model...")
     create_ollama_model(args.output)
+    logger.info("✓ All steps completed successfully!")
     return 0
 
 

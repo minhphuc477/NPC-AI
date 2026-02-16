@@ -18,7 +18,13 @@ import logging
 # Add parent dir to path to import core modules
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.prompt_builder import PromptBuilder
+try:
+    from core.prompt_builder import PromptBuilder
+except ImportError as e:
+    logging.error("Failed to import PromptBuilder: %s", e)
+    logging.error("Make sure core/prompt_builder.py exists in the repository")
+    logging.error("Current path: %s", Path(__file__).parent.parent / "core" / "prompt_builder.py")
+    sys.exit(1)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
