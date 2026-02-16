@@ -98,7 +98,9 @@ def extreme_sharded_merge(base_model_id, adapter_path, output_dir):
             else:
                 path = hf_hub_download(repo_id=base_model_id, filename=f)
                 shutil.copy(path, os.path.join(output_dir, f))
-        except: pass
+        except Exception as e:
+        logger.warning(f"Error: {e}")
+        pass
 
     # Save custom index
     with open(os.path.join(output_dir, "model.safetensors.index.json"), "w") as f:

@@ -485,7 +485,11 @@ bool SocialFabricNetwork::Load(const std::string& filepath) {
     nlohmann::json j;
     try {
         file >> j;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
     } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
         return false;
     }
     

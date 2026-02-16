@@ -96,7 +96,7 @@ def manual_merge(base_model_id, adapter_path, output_dir):
             path = hf_hub_download(repo_id=base_model_id, filename=f)
             shutil.copy(path, os.path.join(output_dir, f))
             print(f"✓ Copied {f}")
-        except:
+        except Exception as e:
             pass
             
     # Copy adapter/tokenizer files if they exist locally and are more recent

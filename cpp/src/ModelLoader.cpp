@@ -221,9 +221,11 @@ std::vector<int64_t> ModelLoader::Generate(
              input_shape = {1, 1};
         }
         
+        // Use mutable copy to avoid const_cast
+        std::vector<int64_t> mutable_ids = current_input_ids;
         run_input_values.push_back(Ort::Value::CreateTensor<int64_t>(
             memory_info,
-            const_cast<int64_t*>(current_input_ids.data()),
+            mutable_ids.data(),
             input_shape[1],
             input_shape.data(),
             input_shape.size()
@@ -385,8 +387,10 @@ std::vector<int64_t> ModelLoader::VerifyDraft(
 
     // Create Input Tensor
     std::vector<int64_t> input_shape = {1, static_cast<int64_t>(tokens_to_process.size())};
+    // Use mutable copy to avoid const_cast
+    std::vector<int64_t> mutable_tokens = tokens_to_process;
     run_input_values.push_back(Ort::Value::CreateTensor<int64_t>(
-        memory_info, const_cast<int64_t*>(tokens_to_process.data()),
+        memory_info, mutable_tokens.data(),
         input_shape[1], input_shape.data(), input_shape.size()
     ));
     run_input_names.push_back("input_ids");
@@ -448,7 +452,12 @@ std::vector<int64_t> ModelLoader::VerifyDraft(
 
         for (size_t i = 0; i < draft_ids.size(); ++i) {
             size_t logit_idx = check_start_index + i;
-            if (logit_idx >= seq_len) break;
+            
+            // Bounds checking (Issue #10 fix)
+            if (logit_idx >= seq_len) {
+                std::cerr << "Error: logit index " << logit_idx << " out of bounds (seq_len=" << seq_len << ")" << std::endl;
+                break;
+            }
 
             float* token_logits = logits + (logit_idx * vocab_size);
             int64_t main_token = std::distance(token_logits, std::max_element(token_logits, token_logits + vocab_size));
@@ -702,7 +711,12 @@ std::vector<int64_t> ModelLoader::VerifyDraft(
              // All matched! Cache is valid.
              // Generate one more token from last logits if possible?
              if (draft_ids.size() < seq_len) {
-                  float* last_logits = logits + ((draft_ids.size() - 1) * vocab_size);
+                  // Bounds checking (Issue #10 fix)
+                  size_t last_idx = draft_ids.size() - 1;
+                  if (last_idx >= seq_len) {
+                      std::cerr << "Error: last index out of bounds" << std::endl;
+                  } else {
+                      float* last_logits = logits + (last_idx * vocab_size);
                   correction_token = SampleToken(last_logits, vocab_size);
                   accepted_tokens.push_back(correction_token);
              }
@@ -713,7 +727,11 @@ std::vector<int64_t> ModelLoader::VerifyDraft(
              }
         }
         
+    } catch (const std::exception& e) {
+        std::cerr << "[ModelLoader::VerifyDraft] Error: " << e.what() << std::endl;
+        return {};
     } catch (...) {
+        std::cerr << "[ModelLoader::VerifyDraft] Unknown error occurred" << std::endl;
         return {};
     }
     
