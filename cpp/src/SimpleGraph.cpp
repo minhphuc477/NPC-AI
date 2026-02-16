@@ -105,9 +105,13 @@ namespace NPCInference {
             std::ofstream f(filepath);
             f << j.dump(4);
             return true;
-        } catch (...) {
-            return false;
-        }
+        } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
+    } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
+        return false;
+    }
     }
 
     bool SimpleGraph::Load(const std::string& filepath) {
@@ -131,9 +135,13 @@ namespace NPCInference {
                 adjacencyList_[node] = edges;
             }
             return true;
-        } catch (...) {
-            return false;
-        }
+        } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
+    } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
+        return false;
+    }
     }
 
     bool SimpleGraph::HasNode(const std::string& node) const {
