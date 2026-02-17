@@ -67,8 +67,8 @@ def train():
         dataset_num_proc = 2,
         packing = False, # Can make training 5x faster for short sequences.
         args = TrainingArguments(
-            per_device_train_batch_size = 1,
-            gradient_accumulation_steps = 8, # Increase accumulation
+            per_device_train_batch_size = 2,  # Must be >= 2 for proper tensor handling
+            gradient_accumulation_steps = 4,  # Adjusted for batch size 2
             warmup_steps = 5,
             max_steps = 60, # For demo, or use num_train_epochs
             learning_rate = 2e-4,
