@@ -1,0 +1,15 @@
+# Install Unsloth first (latest)
+!pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git" -q
+
+# Force upgrade/pin dependencies to known working versions
+# We need to ensure trl is updated to a version that supports the new transformers (or vice versa)
+# The error "cannot import name 'top_k_top_p_filtering'" suggests trl is too old for the installed transformers
+!pip install --upgrade --no-cache-dir "trl>=0.19.0" "transformers>=4.46.0" "peft>=0.11.1" "accelerate>=0.34.0" "bitsandbytes>=0.43.3" -q
+
+# Verify installations
+import transformers
+import trl
+import unsloth
+print(f"✓ transformers: {transformers.__version__}")
+print(f"✓ trl: {trl.__version__}")
+print(f"✓ unsloth: {unsloth.__version__}")
