@@ -86,6 +86,9 @@ if IN_KAGGLE or IN_COLAB:
         'trl>=0.12.0', 'transformers>=4.45.0', 'datasets', 'accelerate',
         'bitsandbytes', 'sentencepiece', 'protobuf'])
     print('📦 Installing Ollama...')
+    # Install zstd explicitly as it's required for Ollama extraction and might be missing
+    subprocess.check_call(['apt-get', 'update'])
+    subprocess.check_call(['apt-get', 'install', '-y', 'zstd'])
     os.system('curl -fsSL https://ollama.com/install.sh | sh')
     print('✅ All dependencies installed!')
 else:
@@ -94,7 +97,7 @@ else:
 import torch
 if torch.cuda.is_available():
     gpu_name = torch.cuda.get_device_name(0)
-    gpu_mem = torch.cuda.get_device_properties(0).total_mem / 1e9
+    gpu_mem = torch.cuda.get_device_properties(0).total_memory / 1e9
     print(f'🎮 GPU: {gpu_name} ({gpu_mem:.1f} GB)')
     print(f'   BF16: {torch.cuda.is_bf16_supported()}')
 else:
