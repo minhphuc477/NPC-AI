@@ -33,9 +33,24 @@ namespace NPCInference {
     class MemoryConsolidator;
     class VisionLoader;
     class GrammarSampler;
-    class TemporalMemorySystem;
-    class SocialFabricNetwork;
-    class EmotionalContinuitySystem;
+// New Subsystems
+#include "BehaviorTree.h"
+#include "PromptBuilder.h"
+#include "VectorStore.h"
+#include "EmbeddingModel.h"
+#include "SimpleGraph.h"
+#include "MemoryConsolidator.h"
+#include "VisionLoader.h"
+#include "GrammarSampler.h"
+#include "ToolRegistry.h"
+#include "HybridRetriever.h"
+#include "PerformanceProfiler.h"
+#include "ConversationManager.h"
+#include "TemporalMemorySystem.h"
+#include "SocialFabricNetwork.h"
+#include "EmotionalContinuitySystem.h"
+#include "PlayerBehaviorModeling.h"
+#include "AmbientAwarenessSystem.h"
 
     struct GenerationResult {
         std::string text;
