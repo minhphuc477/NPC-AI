@@ -35,8 +35,6 @@ public:
         int top_k = 5;
         double dense_weight = 0.6;
         double sparse_weight = 0.4;
-        int rrf_k = 60;  // RRF constant
-        bool use_reranking = false;
         double min_score_threshold = 0.0;
     };
 
@@ -56,7 +54,10 @@ public:
      * Hybrid search with RRF fusion
      */
     std::vector<RetrievalResult> Search(const std::string& query,
-                                        const RetrievalConfig& config = RetrievalConfig());
+                                        const RetrievalConfig& config);
+    
+    // Overload for default config
+    std::vector<RetrievalResult> Search(const std::string& query);
 
     /**
      * Dense-only search

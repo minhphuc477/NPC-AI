@@ -178,6 +178,10 @@ std::vector<HybridRetriever::RetrievalResult> HybridRetriever::Search(
     return fused_results;
 }
 
+std::vector<HybridRetriever::RetrievalResult> HybridRetriever::Search(const std::string& query) {
+    return Search(query, RetrievalConfig());
+}
+
 void HybridRetriever::Clear() {
     doc_texts_.clear();
     // Note: VectorStore doesn't have Clear() method
