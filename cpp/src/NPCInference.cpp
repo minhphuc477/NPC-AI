@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cctype>
 #include <algorithm>
+#include <thread>
 #include <nlohmann/json.hpp>
 
 // Component Headers (Implementation Details)

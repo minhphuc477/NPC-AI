@@ -47,12 +47,22 @@ public:
     /**
      * Check if the process is still alive and ready
      */
+#ifdef _WIN32
     bool IsAlive() const { return hProcess != NULL; }
+#else
+    bool IsAlive() const { return hProcess > 0; }
+#endif
 
 private:
+#ifdef _WIN32
     HANDLE hProcess = NULL;
     HANDLE hStdInWrite = NULL;
     HANDLE hStdOutRead = NULL;
+#else
+    int hProcess = -1;      // PID on Linux
+    int hStdInWrite = -1;   // FD on Linux
+    int hStdOutRead = -1;   // FD on Linux
+#endif
 
     // Helper to read a line from a pipe
     std::string ReadLine();
