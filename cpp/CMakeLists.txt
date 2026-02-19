@@ -120,7 +120,31 @@ if(DOWNLOAD_ONNXRUNTIME)
             REQUIRED
         )
     else()
-        message(FATAL_ERROR "Automatic ONNX Runtime download only supported on Windows currently")
+        set(ONNXRUNTIME_VERSION "1.18.0")
+        set(ONNXRUNTIME_URL "https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}.tgz")
+        set(ONNXRUNTIME_DIRNAME "onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}")
+        
+        message(STATUS "Downloading ONNX Runtime for Linux: ${ONNXRUNTIME_URL}")
+        
+        FetchContent_Declare(
+            onnxruntime
+            URL ${ONNXRUNTIME_URL}
+            SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/onnxruntime
+        )
+        FetchContent_GetProperties(onnxruntime)
+        if(NOT onnxruntime_POPULATED)
+            FetchContent_Populate(onnxruntime)
+        endif()
+        
+        set(ONNXRUNTIME_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/include")
+        set(ONNXRUNTIME_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/lib")
+        
+        find_library(ONNXRUNTIME_LIBRARY
+            NAMES onnxruntime
+            PATHS ${ONNXRUNTIME_LIB_DIR}
+            NO_DEFAULT_PATH
+            REQUIRED
+        )
     endif()
 else()
     # Manual ONNX Runtime path
