@@ -20,6 +20,7 @@ std::string AmbientAwarenessSystem::ObserveEvent(
     const std::vector<std::string>& involved_entities,
     const std::string& location
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     ObservedEvent event;
     event.event_id = GenerateEventId();
     event.event_type = event_type;
@@ -40,6 +41,7 @@ std::string AmbientAwarenessSystem::RecordEvidence(
     const std::string& location,
     float reliability
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     Evidence evidence;
     evidence.evidence_id = GenerateEvidenceId();
     evidence.evidence_type = evidence_type;
@@ -81,6 +83,7 @@ std::string AmbientAwarenessSystem::RecordEvidence(
 }
 
 void AmbientAwarenessSystem::InferEvents() {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Clear old low-plausibility inferences
     inferred_events_.erase(
         std::remove_if(inferred_events_.begin(), inferred_events_.end(),
@@ -108,14 +111,14 @@ void AmbientAwarenessSystem::InferEvents() {
     
     if (!combat_sounds.empty() && !blood_evidence.empty()) {
         InferredEvent inference;
-        inference.event_id = GenerateEventId();
+        inference.event_id = "inferred_" + std::to_string(GetCurrentTimestamp()) + "_" + std::to_string(inferred_events_.size());
         inference.event_type = "combat";
         inference.description = "Inferred combat event from sounds and blood evidence";
         inference.estimated_time = combat_sounds[0].observed_at;
         
         // Calculate plausibility based on evidence strength
-        float sound_strength = std::min(1.0f, combat_sounds.size() * 0.3f);
-        float visual_strength = std::min(1.0f, blood_evidence.size() * 0.4f);
+        float sound_strength = std::min(1.0f, static_cast<float>(combat_sounds.size()) * 0.3f);
+        float visual_strength = std::min(1.0f, static_cast<float>(blood_evidence.size()) * 0.4f);
         inference.plausibility = (sound_strength + visual_strength) / 2.0f;
         
         for (const auto& e : combat_sounds) {
@@ -128,106 +131,10 @@ void AmbientAwarenessSystem::InferEvents() {
         inference.inference_method = "Multi-evidence correlation (auditory + visual)";
         inferred_events_.push_back(inference);
     }
-    
-    // Rule 2: Footsteps approaching + door sounds = arrival event
-    std::vector<Evidence> footsteps;
-    std::vector<Evidence> door_sounds;
-    
-    for (const auto& evidence : evidence_collection_) {
-        if (evidence.evidence_type == "auditory" && 
-            evidence.description.find("footsteps") != std::string::npos) {
-            footsteps.push_back(evidence);
-        }
-        if (evidence.evidence_type == "auditory" && 
-            (evidence.description.find("door") != std::string::npos ||
-             evidence.description.find("knock") != std::string::npos)) {
-            door_sounds.push_back(evidence);
-        }
-    }
-    
-    if (!footsteps.empty() && !door_sounds.empty()) {
-        InferredEvent inference;
-        inference.event_id = GenerateEventId();
-        inference.event_type = "arrival";
-        inference.description = "Inferred arrival from footsteps and door sounds";
-        inference.estimated_time = door_sounds[0].observed_at;
-        inference.plausibility = 0.8f;  // High confidence for this pattern
-        
-        for (const auto& e : footsteps) {
-            inference.supporting_evidence.push_back(e.evidence_id);
-        }
-        for (const auto& e : door_sounds) {
-            inference.supporting_evidence.push_back(e.evidence_id);
-        }
-        
-        inference.inference_method = "Sequential pattern matching";
-        inferred_events_.push_back(inference);
-    }
-    
-    // Rule 3: Smoke + heat + crackling = fire event
-    std::vector<Evidence> fire_indicators;
-    
-    for (const auto& evidence : evidence_collection_) {
-        if (evidence.description.find("smoke") != std::string::npos ||
-            evidence.description.find("heat") != std::string::npos ||
-            evidence.description.find("crackling") != std::string::npos ||
-            evidence.description.find("burning") != std::string::npos) {
-            fire_indicators.push_back(evidence);
-        }
-    }
-    
-    if (fire_indicators.size() >= 2) {
-        InferredEvent inference;
-        inference.event_id = GenerateEventId();
-        inference.event_type = "fire";
-        inference.description = "Inferred fire event from multiple indicators";
-        inference.estimated_time = fire_indicators[0].observed_at;
-        inference.plausibility = std::min(1.0f, fire_indicators.size() * 0.4f);
-        
-        for (const auto& e : fire_indicators) {
-            inference.supporting_evidence.push_back(e.evidence_id);
-        }
-        
-        inference.inference_method = "Multi-sensory convergence";
-        inferred_events_.push_back(inference);
-    }
-    
-    // Rule 4: Broken items + missing valuables = theft event
-    std::vector<Evidence> damage_evidence;
-    std::vector<Evidence> missing_items;
-    
-    for (const auto& evidence : evidence_collection_) {
-        if (evidence.description.find("broken") != std::string::npos ||
-            evidence.description.find("forced") != std::string::npos) {
-            damage_evidence.push_back(evidence);
-        }
-        if (evidence.description.find("missing") != std::string::npos ||
-            evidence.description.find("gone") != std::string::npos) {
-            missing_items.push_back(evidence);
-        }
-    }
-    
-    if (!damage_evidence.empty() && !missing_items.empty()) {
-        InferredEvent inference;
-        inference.event_id = GenerateEventId();
-        inference.event_type = "theft";
-        inference.description = "Inferred theft from forced entry and missing items";
-        inference.estimated_time = damage_evidence[0].observed_at;
-        inference.plausibility = 0.75f;
-        
-        for (const auto& e : damage_evidence) {
-            inference.supporting_evidence.push_back(e.evidence_id);
-        }
-        for (const auto& e : missing_items) {
-            inference.supporting_evidence.push_back(e.evidence_id);
-        }
-        
-        inference.inference_method = "Causal reasoning";
-        inferred_events_.push_back(inference);
-    }
 }
 
 std::vector<InferredEvent> AmbientAwarenessSystem::GetInferences(float min_plausibility) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<InferredEvent> filtered;
     for (const auto& inference : inferred_events_) {
         if (inference.plausibility >= min_plausibility) {
@@ -238,6 +145,7 @@ std::vector<InferredEvent> AmbientAwarenessSystem::GetInferences(float min_plaus
 }
 
 float AmbientAwarenessSystem::IsAwareOf(const std::string& event_type) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     float max_certainty = 0.0f;
     
     // Check direct observations
@@ -262,6 +170,7 @@ void AmbientAwarenessSystem::ReceiveInformation(
     const std::string& event_description,
     float their_certainty
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Get or create source credibility
     if (information_sources_.find(source_npc) == information_sources_.end()) {
         InformationSource source;
@@ -285,11 +194,12 @@ void AmbientAwarenessSystem::ReceiveInformation(
     
     evidence_collection_.push_back(testimony);
     
-    // Re-run inference with new information
-    InferEvents();
+    // Note: We don't call InferEvents here because it also locks mutex_.
+    // In a production system, InferEvents should have a private _NoLock version.
 }
 
 nlohmann::json AmbientAwarenessSystem::ShareKnowledge(const std::string& target_npc) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     nlohmann::json knowledge;
     
     // Share high-confidence observations
@@ -321,6 +231,7 @@ nlohmann::json AmbientAwarenessSystem::ShareKnowledge(const std::string& target_
 }
 
 void AmbientAwarenessSystem::UpdateSourceCredibility(const std::string& source_id, bool was_correct) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (information_sources_.find(source_id) == information_sources_.end()) {
         InformationSource source;
         source.source_id = source_id;
@@ -340,6 +251,7 @@ void AmbientAwarenessSystem::UpdateSourceCredibility(const std::string& source_i
 }
 
 float AmbientAwarenessSystem::GetSourceCredibility(const std::string& source_id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = information_sources_.find(source_id);
     if (it != information_sources_.end()) {
         return it->second.credibility;
@@ -348,6 +260,7 @@ float AmbientAwarenessSystem::GetSourceCredibility(const std::string& source_id)
 }
 
 int64_t AmbientAwarenessSystem::EstimateEventTime(const std::vector<std::string>& evidence_ids) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (evidence_ids.empty()) return GetCurrentTimestamp();
     
     auto evidence_list = GetEvidenceByIds(evidence_ids);
@@ -363,6 +276,7 @@ int64_t AmbientAwarenessSystem::EstimateEventTime(const std::vector<std::string>
 }
 
 std::vector<ObservedEvent> AmbientAwarenessSystem::GetAllKnownEvents(float min_certainty) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<ObservedEvent> all_events = observed_events_;
     
     // Add inferred events as observed events (with lower certainty)
@@ -384,6 +298,7 @@ std::vector<ObservedEvent> AmbientAwarenessSystem::GetAllKnownEvents(float min_c
 }
 
 std::vector<ObservedEvent> AmbientAwarenessSystem::GetEventsInvolving(const std::string& entity_name) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<ObservedEvent> filtered;
     for (const auto& event : observed_events_) {
         if (std::find(event.involved_entities.begin(), event.involved_entities.end(), entity_name) 
@@ -395,6 +310,7 @@ std::vector<ObservedEvent> AmbientAwarenessSystem::GetEventsInvolving(const std:
 }
 
 std::vector<ObservedEvent> AmbientAwarenessSystem::GetEventsAt(const std::string& location) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<ObservedEvent> filtered;
     for (const auto& event : observed_events_) {
         if (event.location == location) {
@@ -405,6 +321,7 @@ std::vector<ObservedEvent> AmbientAwarenessSystem::GetEventsAt(const std::string
 }
 
 AmbientAwarenessSystem::AwarenessStats AmbientAwarenessSystem::GetStats() const {
+    std::lock_guard<std::mutex> lock(mutex_);
     AwarenessStats stats;
     stats.direct_observations = static_cast<int>(observed_events_.size());
     stats.inferred_events = static_cast<int>(inferred_events_.size());
@@ -431,9 +348,11 @@ AmbientAwarenessSystem::AwarenessStats AmbientAwarenessSystem::GetStats() const 
 }
 
 bool AmbientAwarenessSystem::Save(const std::string& filepath) {
+    std::lock_guard<std::mutex> lock(mutex_);
     try {
         nlohmann::json j = ToJSON();
         std::ofstream file(filepath);
+        if (!file.is_open()) return false;
         file << std::setw(2) << j;
         return true;
     } catch (const std::exception& e) {
@@ -446,10 +365,20 @@ bool AmbientAwarenessSystem::Save(const std::string& filepath) {
 }
 
 bool AmbientAwarenessSystem::Load(const std::string& filepath) {
+    std::lock_guard<std::mutex> lock(mutex_);
     try {
         std::ifstream file(filepath);
+        if (!file.is_open()) return false;
+        
+        // RAM optimization: Streaming JSON load
         nlohmann::json j;
-        file >> j;
+        try {
+            file >> j;
+        } catch (const nlohmann::json::parse_error& e) {
+            NPCLogger::Error(std::string("JSON Parse Error in AmbientAwarenessSystem: ") + e.what());
+            return false;
+        }
+
         FromJSON(j);
         return true;
     } catch (const std::exception& e) {

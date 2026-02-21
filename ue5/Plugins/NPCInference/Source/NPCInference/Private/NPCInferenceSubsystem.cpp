@@ -14,6 +14,7 @@ void UNPCInferenceSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UNPCInferenceSubsystem::Deinitialize()
 {
+	bIsDeinitializing = true;
 	InferenceEngine.reset();
 	Super::Deinitialize();
 }
@@ -76,10 +77,18 @@ FString UNPCInferenceSubsystem::GenerateStructuredDialogue(const FString& System
 
 void UNPCInferenceSubsystem::CancelGeneration(const FString& ConversationID)
 {
+    // Fix: C++ engine CancelGeneration() takes no arguments - signature mismatch corrected
     if (InferenceEngine)
     {
-        InferenceEngine->CancelGeneration(ToString(ConversationID));
+        InferenceEngine->CancelGeneration();
     }
+}
+
+FString UNPCInferenceSubsystem::GenerateFromPrompt(const FString& FullPrompt)
+{
+    if (!IsEngineReady()) return TEXT("Error: Engine not ready");
+    std::string response = InferenceEngine->Generate(ToString(FullPrompt));
+    return ToFString(response);
 }
 
 FString UNPCInferenceSubsystem::ExecuteNPCTool(const FString& ToolCallJSON)
@@ -99,6 +108,8 @@ void UNPCInferenceSubsystem::GenerateDialogueAsync(const FString& SystemPrompt, 
     // Use UE5 AsyncTask to run generation on a background thread
     AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this, SystemPrompt, Name, Context, PlayerInput, OnComplete]()
     {
+        if (bIsDeinitializing || !InferenceEngine) return;
+
         std::string StdResponse = InferenceEngine->GenerateFromContext(
             ToString(SystemPrompt),
             ToString(Name),
@@ -109,6 +120,30 @@ void UNPCInferenceSubsystem::GenerateDialogueAsync(const FString& SystemPrompt, 
         FString FinalResponse = ToFString(StdResponse);
 
         // Return to Game Thread to execute the delegate
+        AsyncTask(ENamedThreads::GameThread, [OnComplete, FinalResponse]()
+        {
+            OnComplete.ExecuteIfBound(FinalResponse);
+        });
+    });
+}
+
+void UNPCInferenceSubsystem::GenerateStructuredDialogueAsync(const FString& SystemPrompt, const FString& Name, const FString& Context, const FString& PlayerInput, FOnDialogueGenerated OnComplete)
+{
+    if (!IsEngineReady())
+    {
+        OnComplete.ExecuteIfBound(TEXT("Error: Engine not ready"));
+        return;
+    }
+
+    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this, SystemPrompt, Name, Context, PlayerInput, OnComplete]()
+    {
+        if (bIsDeinitializing || !InferenceEngine) return;
+
+        std::string prompt = "System: " + ToString(SystemPrompt) + "\nName: " + ToString(Name) + "\nContext: " + ToString(Context) + "\n\nQuestion: " + ToString(PlayerInput) + "\nAnswer:";
+        
+        std::string response = InferenceEngine->GenerateJSON(prompt);
+        FString FinalResponse = ToFString(response);
+
         AsyncTask(ENamedThreads::GameThread, [OnComplete, FinalResponse]()
         {
             OnComplete.ExecuteIfBound(FinalResponse);
@@ -130,6 +165,8 @@ void UNPCInferenceSubsystem::GenerateDialogueStreamAsync(const FString& SystemPr
     
     AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [StreamClient, this, SystemPrompt, Name, Context, PlayerInput, OnActionChunk, OnComplete]()
     {
+        if (bIsDeinitializing) return;
+        
         FPlatformProcess::SetThreadPriority(TPri_BelowNormal);
 
         // Build the raw prompt
@@ -149,9 +186,8 @@ void UNPCInferenceSubsystem::GenerateDialogueStreamAsync(const FString& SystemPr
             });
         };
         
-        // Block and run stream
-        std::future<std::string> stream_fut = StreamClient->GenerateStreamAsync(prompt, TokenCallback, ActionCallback, 150, 0.7f);
-        std::string FinalResult = stream_fut.get();
+        // Block and run stream (Fix 4: Remove std::async explosion, run sync here inside UE5 task)
+        std::string FinalResult = StreamClient->GenerateStream(prompt, TokenCallback, ActionCallback, 150, 0.7f);
         FString FinalResponse = UNPCInferenceSubsystem::ToFString(FinalResult);
         
         // Return to Game Thread for completion
@@ -175,6 +211,8 @@ void UNPCInferenceSubsystem::GenerateDialogueLocalStreamAsync(const FString& Sys
 
     AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this, prompt, OnTokenStream, OnActionChunk, OnComplete]()
     {
+        if (bIsDeinitializing || !InferenceEngine) return;
+
         // Phase 8 Resource Contention Fix:
         // Lower LLM evaluation thread priority so UE5 Game/Render threads take precedence
         FPlatformProcess::SetThreadPriority(TPri_BelowNormal);
@@ -207,7 +245,14 @@ void UNPCInferenceSubsystem::ReceiveGossip(const FString& GossipText, const FStr
 {
     if (InferenceEngine)
     {
-        InferenceEngine->ReceiveGossip(ToString(GossipText), ToString(SourceNPC));
+        // Offload to background thread as ReceiveGossip triggers LLM ingestion (fact extraction)
+        AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this, GossipText, SourceNPC]()
+        {
+            if (InferenceEngine && !bIsDeinitializing)
+            {
+                InferenceEngine->ReceiveGossip(ToString(GossipText), ToString(SourceNPC));
+            }
+        });
     }
 }
 
@@ -224,7 +269,14 @@ void UNPCInferenceSubsystem::TriggerSleepMode()
 {
     if (InferenceEngine)
     {
-        InferenceEngine->PerformSleepCycle();
+        // Offload to background thread as memory consolidation (reflection) can take seconds
+        AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this]()
+        {
+            if (InferenceEngine && !bIsDeinitializing)
+            {
+                InferenceEngine->PerformSleepCycle();
+            }
+        });
     }
 }
 

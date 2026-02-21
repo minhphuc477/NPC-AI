@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <list>
 #include <mutex>
+#include <optional>
 
 namespace NPCInference {
 
@@ -51,9 +52,9 @@ public:
     /**
      * Get cache for a conversation ID
      * @param conversation_id Unique identifier for conversation
-     * @return Pointer to cache entry or nullptr if not found
+     * @return Optional CacheEntry (Copied for safety)
      */
-    CacheEntry* Get(const std::string& conversation_id);
+    std::optional<CacheEntry> Get(const std::string& conversation_id);
 
     /**
      * Store or update cache for a conversation
@@ -77,9 +78,9 @@ public:
     
     /**
      * Retrieve System Prompt KV
-     * @return CacheEntry pointer or nullptr
+     * @return Optional CacheEntry (Copied for safety)
      */
-    CacheEntry* GetSystemKV();
+    std::optional<CacheEntry> GetSystemKV();
 
     /**
      * Clear all caches

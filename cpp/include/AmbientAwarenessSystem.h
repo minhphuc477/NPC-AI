@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <mutex>
 #include <deque>
 #include <chrono>
 #include <nlohmann/json.hpp>
@@ -253,6 +254,8 @@ private:
     float CalculateEvidenceStrength(const std::vector<std::string>& evidence_ids) const;
     std::vector<Evidence> GetEvidenceByIds(const std::vector<std::string>& ids) const;
     bool EvidenceSupportsEvent(const Evidence& evidence, const std::string& event_type) const;
+    
+    mutable std::mutex mutex_;
 };
 
 } // namespace NPCInference

@@ -8,6 +8,7 @@
 #include <list>
 #include <mutex>
 #include <chrono>
+#include <optional>
 
 namespace NPCInference {
 
@@ -60,9 +61,9 @@ public:
 
     /**
      * Get cached result for a query
-     * Returns nullptr if no similar query found or entry expired
+     * Returns std::nullopt if no similar query found or entry expired
      */
-    const CacheEntry* Get(const std::string& query);
+    std::optional<CacheEntry> Get(const std::string& query);
 
     /**
      * Put query result in cache

@@ -120,7 +120,7 @@ def evaluate_rag_metrics(mock_queries=[("Who is the King?", "Alaric")]):
     mrr = 0.85       # Mean Reciprocal Rank
     
     print(f"Total Test Queries: 100")
-    print(f"Top-K Hit Rate: {hit_rate * 100}% (Industry SOTA target > 85%)")
+    print(f"Top-K Hit Rate: {hit_rate * 100}% (Industry target > 85%)")
     print(f"Mean Reciprocal Rank (MRR): {mrr:.2f}")
 
 def main():
@@ -147,7 +147,7 @@ def main():
         
     print(f"Time To First Token (TTFT): {perf['ttft_ms']:.2f} ms")
     if perf['ttft_ms'] < 500:
-         print(" -> PASS: TTFT is < 500ms (AAA SOTA Standard)")
+         print(" -> PASS: TTFT is < 500ms (AAA Industry Standard)")
     else:
          print(" -> WARN: TTFT is > 500ms")
          

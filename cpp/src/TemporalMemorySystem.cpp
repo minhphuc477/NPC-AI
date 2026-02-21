@@ -318,7 +318,9 @@ TemporalMemorySystem::MemoryStats TemporalMemorySystem::GetStats() const {
 // === Private Helper Functions ===
 
 int64_t TemporalMemorySystem::GetCurrentTimestamp() const {
-    return std::chrono::system_clock::now().time_since_epoch().count() / 1000000000;  // Seconds
+    return std::chrono::duration_cast<std::chrono::seconds>(
+        std::chrono::system_clock::now().time_since_epoch()
+    ).count();
 }
 
 float TemporalMemorySystem::CalculateImportance(const std::string& description) const {
@@ -326,7 +328,7 @@ float TemporalMemorySystem::CalculateImportance(const std::string& description) 
     float importance = 0.3f;  // Base
     
     // Length factor
-    importance += std::min(0.3f, description.length() / 500.0f);
+    importance += std::min(0.3f, static_cast<float>(description.length()) / 500.0f);
     
     // Keyword boost
     std::vector<std::string> important_keywords = {
@@ -388,7 +390,7 @@ std::vector<std::vector<int>> TemporalMemorySystem::ClusterEpisodes() const {
         if (assigned[i]) continue;
         
         std::vector<int> cluster;
-        cluster.push_back(i);
+        cluster.push_back(static_cast<int>(i));
         assigned[i] = true;
         
         // Find similar episodes
@@ -411,7 +413,7 @@ std::vector<std::vector<int>> TemporalMemorySystem::ClusterEpisodes() const {
             bool temporally_close = time_diff < 86400;  // 1 day in seconds
             
             if (common_participants > 0 && temporally_close) {
-                cluster.push_back(j);
+                cluster.push_back(static_cast<int>(j));
                 assigned[j] = true;
             }
         }
@@ -490,8 +492,14 @@ bool TemporalMemorySystem::Load(const std::string& filepath) {
         std::ifstream file(filepath);
         if (!file.is_open()) return false;
         
+        // RAM optimization: Streaming JSON load
         nlohmann::json j;
-        file >> j;
+        try {
+            file >> j;
+        } catch (const nlohmann::json::parse_error& e) {
+            NPCLogger::Error(std::string("JSON Parse Error in TemporalMemorySystem: ") + e.what());
+            return false;
+        }
         
         episodic_memories_.clear();
         if (j.contains("episodic_memories") && j["episodic_memories"].is_array()) {

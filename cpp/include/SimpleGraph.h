@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <queue>
 #include <set>
+#include <mutex>
 
 namespace NPCInference {
 
@@ -61,6 +62,7 @@ namespace NPCInference {
     private:
         // Adjacency list: Node -> List of Edges
         std::map<std::string, std::vector<GraphEdge>> adjacencyList_;
+        mutable std::recursive_mutex mutex_;
     };
 
 } // namespace NPCInference

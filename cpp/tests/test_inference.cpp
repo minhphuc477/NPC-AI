@@ -195,7 +195,7 @@ void TestDynamicMemory() {
 }
 
 void TestOutputParsing() {
-    std::cout << "\nTesting Output Parsing (SOTA)..." << std::endl;
+    std::cout << "\nTesting Output Parsing (Advanced)..." << std::endl;
     NPCInference::NPCInferenceEngine engine;
     
     // Test 1: Plain text
