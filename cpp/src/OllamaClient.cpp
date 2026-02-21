@@ -49,6 +49,12 @@ std::string OllamaClient::Generate(const std::string& prompt, int max_tokens, fl
     return "[Error: Unexpected response from Ollama]";
 }
 
+std::future<std::string> OllamaClient::GenerateAsync(const std::string& prompt, int max_tokens, float temperature) {
+    return std::async(std::launch::async, [this, prompt, max_tokens, temperature]() {
+        return this->Generate(prompt, max_tokens, temperature);
+    });
+}
+
 bool OllamaClient::IsReady() {
     try {
         std::string response = HttpPost(base_url_ + "/api/tags", "{}");
@@ -63,6 +69,16 @@ bool OllamaClient::IsReady() {
 }
 
 #ifdef _WIN32
+// RAII wrapper for WinHTTP HINTERNET handles
+struct WinHttpDeleter {
+    void operator()(void* handle) const {
+        if (handle) {
+            WinHttpCloseHandle(handle);
+        }
+    }
+};
+using unique_hinternet = std::unique_ptr<void, WinHttpDeleter>;
+
 std::string OllamaClient::HttpPost(const std::string& url, const std::string& json_data) {
     // Parse URL
     std::wstring wurl(url.begin(), url.end());
@@ -83,43 +99,43 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     }
     
     // Initialize WinHTTP
-    HINTERNET hSession = WinHttpOpen(
+    unique_hinternet hSession(WinHttpOpen(
         L"OllamaClient/1.0",
         WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
         WINHTTP_NO_PROXY_NAME,
         WINHTTP_NO_PROXY_BYPASS,
         0
-    );
+    ));
     
     if (!hSession) return "";
     
+    // Set Timeouts: Resolve=10s, Connect=10s, Send=30s, Receive=120s (2 minutes)
+    WinHttpSetTimeouts(hSession.get(), 10000, 10000, 30000, 120000);
+    
     // Connect
-    HINTERNET hConnect = WinHttpConnect(
-        hSession,
+    unique_hinternet hConnect(WinHttpConnect(
+        hSession.get(),
         hostname,
         urlComp.nPort,
         0
-    );
+    ));
     
     if (!hConnect) {
-        WinHttpCloseHandle(hSession);
         return "";
     }
     
     // Open request
-    HINTERNET hRequest = WinHttpOpenRequest(
-        hConnect,
+    unique_hinternet hRequest(WinHttpOpenRequest(
+        hConnect.get(),
         L"POST",
         path,
         NULL,
         WINHTTP_NO_REFERER,
         WINHTTP_DEFAULT_ACCEPT_TYPES,
         0
-    );
+    ));
     
     if (!hRequest) {
-        WinHttpCloseHandle(hConnect);
-        WinHttpCloseHandle(hSession);
         return "";
     }
     
@@ -128,7 +144,7 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     
     // Send request
     BOOL result = WinHttpSendRequest(
-        hRequest,
+        hRequest.get(),
         headers.c_str(),
         -1,
         (LPVOID)json_data.c_str(),
@@ -138,18 +154,12 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     );
     
     if (!result) {
-        WinHttpCloseHandle(hRequest);
-        WinHttpCloseHandle(hConnect);
-        WinHttpCloseHandle(hSession);
         return "";
     }
     
     // Receive response
-    result = WinHttpReceiveResponse(hRequest, NULL);
+    result = WinHttpReceiveResponse(hRequest.get(), NULL);
     if (!result) {
-        WinHttpCloseHandle(hRequest);
-        WinHttpCloseHandle(hConnect);
-        WinHttpCloseHandle(hSession);
         return "";
     }
     
@@ -161,22 +171,19 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     
     do {
         bytesAvailable = 0;
-        if (!WinHttpQueryDataAvailable(hRequest, &bytesAvailable)) {
+        if (!WinHttpQueryDataAvailable(hRequest.get(), &bytesAvailable)) {
             break;
         }
         
         if (bytesAvailable > 0) {
             DWORD toRead = (std::min)(bytesAvailable, (DWORD)sizeof(buffer));
-            if (WinHttpReadData(hRequest, buffer, toRead, &bytesRead)) {
+            if (WinHttpReadData(hRequest.get(), buffer, toRead, &bytesRead)) {
                 response_data.append(buffer, bytesRead);
             }
         }
     } while (bytesAvailable > 0);
     
-    // Cleanup
-    WinHttpCloseHandle(hRequest);
-    WinHttpCloseHandle(hConnect);
-    WinHttpCloseHandle(hSession);
+    // Resources are automatically cleaned up by unique_hinternet
     
     return response_data;
 }
