@@ -29,43 +29,70 @@ void UAsyncGenerateDialogue::Activate()
 		return;
 	}
 
-	// Execute on background thread
-	Async(EAsyncExecution::Thread, [this]()
+	UWorld* World = WorldContext->GetWorld();
+	if (!World)
 	{
-		ExecuteGeneration();
-	});
-}
+		OnFailed.Broadcast(TEXT("Invalid World"));
+		return;
+	}
 
-void UAsyncGenerateDialogue::ExecuteGeneration()
-{
-	// Get subsystem on game thread
-	UGameInstance* GameInstance = WorldContext->GetWorld()->GetGameInstance();
+	// 1. Fetch UObjects safely on the Game Thread
+	UGameInstance* GameInstance = World->GetGameInstance();
 	if (!GameInstance)
 	{
-		AsyncTask(ENamedThreads::GameThread, [this]()
-		{
-			OnFailed.Broadcast(TEXT("No Game Instance"));
-		});
+		OnFailed.Broadcast(TEXT("No Game Instance"));
 		return;
 	}
 
 	UNPCInferenceSubsystem* Subsystem = GameInstance->GetSubsystem<UNPCInferenceSubsystem>();
 	if (!Subsystem || !Subsystem->IsEngineReady())
 	{
-		AsyncTask(ENamedThreads::GameThread, [this]()
+		OnFailed.Broadcast(TEXT("NPC Engine not ready"));
+		return;
+	}
+
+	// 2. Capture weak pointer to pass to background thread
+	TWeakObjectPtr<UNPCInferenceSubsystem> WeakSubsystem(Subsystem);
+	TWeakObjectPtr<UAsyncGenerateDialogue> WeakThis(this);
+
+	// 3. Execute on background thread
+	Async(EAsyncExecution::Thread, [WeakThis, WeakSubsystem]()
+	{
+		if (WeakThis.IsValid())
 		{
-			OnFailed.Broadcast(TEXT("NPC Engine not ready"));
+			WeakThis->ExecuteGeneration(WeakSubsystem);
+		}
+	});
+}
+
+void UAsyncGenerateDialogue::ExecuteGeneration(TWeakObjectPtr<UNPCInferenceSubsystem> WeakSubsystem)
+{
+	// 4. Validate weak pointer safely *inside* the background thread
+	if (!WeakSubsystem.IsValid())
+	{
+		TWeakObjectPtr<UAsyncGenerateDialogue> WeakThis(this);
+		AsyncTask(ENamedThreads::GameThread, [WeakThis]()
+		{
+			if (WeakThis.IsValid())
+			{
+				WeakThis->OnFailed.Broadcast(TEXT("Subsystem destroyed during generation"));
+			}
 		});
 		return;
 	}
 
 	// Generate dialogue (this is the slow part, runs on background thread)
-	FString Response = Subsystem->GenerateDialogue(Prompt_System, Prompt_Name, Prompt_Context, Prompt_Input);
+	FString Response = WeakSubsystem->GenerateDialogue(Prompt_System, Prompt_Name, Prompt_Context, Prompt_Input);
 
-	// Return to game thread for callback
-	AsyncTask(ENamedThreads::GameThread, [this, Response]()
+	// Phase 9 Fix: AAA Dangling Pointer Protection
+	// Return to game thread for callback safely using WeakPtr
+	TWeakObjectPtr<UAsyncGenerateDialogue> WeakThis(this);
+	AsyncTask(ENamedThreads::GameThread, [WeakThis, Response]()
 	{
-		OnGenerationComplete(Response);
+		if (WeakThis.IsValid())
+		{
+			WeakThis->OnGenerationComplete(Response);
+		}
 	});
 }
 

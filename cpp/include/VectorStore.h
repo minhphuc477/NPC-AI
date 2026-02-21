@@ -40,7 +40,6 @@ namespace NPCInference {
 
         // Persistence
         virtual bool Save(const std::string& path_prefix);
-        virtual std::future<bool> SaveAsync(const std::string& path_prefix);
         virtual bool Load(const std::string& path_prefix);
 
         // Management (Phase 10)

@@ -34,6 +34,9 @@ ModelLoader::ModelLoader()
     // Shared ONNX Runtime environment is managed by OrtEnvironmentManager
     kv_cache_ = std::make_unique<KVCache>();
     cache_manager_ = std::make_shared<KVCacheManager>(512, 100); // 512MB, 100 conversations
+    
+    std::random_device rd;
+    gen_.seed(rd());
 }
 
 ModelLoader::~ModelLoader() = default;
@@ -175,19 +178,19 @@ std::vector<int64_t> ModelLoader::Generate(
     std::vector<Ort::Value> current_kv_tensors;
     
     if (!conversation_id.empty() && cache_manager_) {
-        auto* cached = cache_manager_->Get(conversation_id);
+        auto cached = cache_manager_->Get(conversation_id);
         if (cached) {
-            // Restore cached KV tensors (Deep Copy)
-            current_kv_tensors = KVCacheManager::CloneKV(cached->kv_tensors);
+            // Restore cached KV tensors
+            current_kv_tensors = std::move(cached->kv_tensors);
             cached_seq_len = cached->sequence_length;
             using_cache = true;
             std::cerr << "KVCache: Restored cache for '" << conversation_id 
                       << "', seq_len=" << cached_seq_len << std::endl;
         } else {
              // Try System Prompt Cache (Optimization)
-             auto* system_cache = cache_manager_->GetSystemKV();
+             auto system_cache = cache_manager_->GetSystemKV();
              if (system_cache) {
-                 current_kv_tensors = KVCacheManager::CloneKV(system_cache->kv_tensors);
+                 current_kv_tensors = std::move(system_cache->kv_tensors);
                  cached_seq_len = system_cache->sequence_length;
                  using_cache = true;
              }
@@ -203,10 +206,6 @@ std::vector<int64_t> ModelLoader::Generate(
     std::vector<int64_t> current_input_ids = input_ids;
     std::vector<int64_t> generated_ids = input_ids;
     
-    // Random number generator for sampling
-    std::random_device rd;
-    std::mt19937 gen(rd());
-
     // MOCK MODE: Return dummy tokens if session is null
     if (!session_) {
         // Simulate processing time
@@ -242,6 +241,8 @@ std::vector<int64_t> ModelLoader::Generate(
         // Prepare inputs
         std::vector<const char*> run_input_names;
         std::vector<Ort::Value> run_input_values; 
+        
+        std::lock_guard<std::mutex> kv_lock(kv_mutex_);
         
         // 1. input_ids
         std::vector<int64_t> input_shape = {1, static_cast<int64_t>(current_input_ids.size())};
@@ -378,17 +379,18 @@ std::vector<int64_t> ModelLoader::VerifyDraft(
         return draft_ids;
     }
 
-    // 1. Initial Cache Load
     bool using_cache = false;
     if (!conversation_id.empty() && cache_manager_) {
-        auto* cached = cache_manager_->Get(conversation_id);
+        auto cached = cache_manager_->Get(conversation_id);
         if (cached) {
-            kv_cache_->values = KVCacheManager::CloneKV(cached->kv_tensors);
+            kv_cache_->values = std::move(cached->kv_tensors);
             using_cache = true;
         }
     }
     
     if (!using_cache) kv_cache_->values.clear();
+
+    std::lock_guard<std::mutex> kv_lock(kv_mutex_);
 
     // 2. Prepare Inputs for Verification
     Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(
@@ -499,9 +501,9 @@ std::vector<int64_t> ModelLoader::VerifyDraft(
         // 4. Correct Cache State
         if (!all_matched || mismatch_idx != -1) {
              if (!conversation_id.empty() && cache_manager_) {
-                  auto* clean = cache_manager_->Get(conversation_id);
+                  auto clean = cache_manager_->Get(conversation_id);
                   if (clean) {
-                       kv_cache_->values = KVCacheManager::CloneKV(clean->kv_tensors);
+                       kv_cache_->values = std::move(clean->kv_tensors);
                   }
              }
         } else {
@@ -528,6 +530,7 @@ std::vector<int64_t> ModelLoader::VerifyDraft(
 }
 
 void ModelLoader::ClearCache(const std::string& conversation_id) {
+    std::lock_guard<std::mutex> lock(kv_mutex_);
     if (!cache_manager_) return;
     
     if (conversation_id.empty()) {
@@ -538,6 +541,7 @@ void ModelLoader::ClearCache(const std::string& conversation_id) {
 }
 
 void ModelLoader::PrintCacheStats() const {
+    std::lock_guard<std::mutex> lock(kv_mutex_);
     if (!cache_manager_) return;
     
     auto stats = cache_manager_->GetStats();
@@ -583,10 +587,12 @@ int64_t ModelLoader::SampleToken(float* logits, int64_t vocab_size) {
             new_sum += prob_indices[i].first;
         }
         
-        std::random_device rd;
-        std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis(0.0, new_sum);
-        float r = dis(gen);
+        float r;
+        {
+            std::lock_guard<std::mutex> lock(gen_mutex_);
+            r = dis(gen_);
+        }
         float acc = 0.0f;
         for (size_t i = 0; i < filtered_probs.size(); ++i) {
             acc += filtered_probs[i];
@@ -598,8 +604,6 @@ int64_t ModelLoader::SampleToken(float* logits, int64_t vocab_size) {
     return std::distance(probs.begin(), std::max_element(probs.begin(), probs.end()));
 }
 
-} // namespace NPCInference
-
 void ModelLoader::Cancel(const std::string& conversation_id) {
     std::lock_guard<std::mutex> lock(cancel_mutex_);
     if (conversation_id.empty()) {
@@ -610,3 +614,5 @@ void ModelLoader::Cancel(const std::string& conversation_id) {
         cancel_flags_[conversation_id] = true;
     }
 }
+
+} // namespace NPCInference

@@ -180,11 +180,24 @@ void UNPCContextExtractor::ExtractNearbyEntities(
     FVector NPCLocation = NPCActor->GetActorLocation();
     OutContext.NearestPlayerDistance = -1.0f;
 
-    // Find all actors in radius
+    // Phase 9 Fix: AAA FPS Protection
+    // Replace GetAllActorsOfClass with spatial overlap query
     TArray<AActor*> NearbyActors;
-    UGameplayStatics::GetAllActorsOfClass(
+    TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+    ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+    ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
+    ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+    
+    TArray<AActor*> ActorsToIgnore;
+    ActorsToIgnore.Add(NPCActor);
+
+    UKismetSystemLibrary::SphereOverlapActors(
         World,
+        NPCLocation,
+        ScanRadius,
+        ObjectTypes,
         AActor::StaticClass(),
+        ActorsToIgnore,
         NearbyActors
     );
 
@@ -387,20 +400,28 @@ FString UNPCContextExtractor::DetectZoneName(
         return TEXT("Unknown");
     }
 
-    // Try to find zone volumes or triggers
+    // Phase 9 Fix: AAA FPS Protection
+    // Instead of scanning the whole world for 'Zone' tags, do a local sphere overlap
     TArray<AActor*> ZoneActors;
-    UGameplayStatics::GetAllActorsWithTag(
+    TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+    ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+    ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+
+    TArray<AActor*> ActorsToIgnore;
+
+    UKismetSystemLibrary::SphereOverlapActors(
         World,
-        FName(TEXT("Zone")),
+        Position,
+        5000.0f, // 50 meters
+        ObjectTypes,
+        AActor::StaticClass(),
+        ActorsToIgnore,
         ZoneActors
     );
 
     for (AActor* ZoneActor : ZoneActors)
     {
-        // Check if position is inside zone
-        // This is simplified - you may need to check actual volume bounds
-        float Distance = FVector::Dist(Position, ZoneActor->GetActorLocation());
-        if (Distance < 5000.0f)  // 50 meters
+        if (ZoneActor && ZoneActor->ActorHasTag(FName(TEXT("Zone"))))
         {
             return ZoneActor->GetName();
         }

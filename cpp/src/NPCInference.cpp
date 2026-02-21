@@ -176,7 +176,7 @@ namespace NPCInference {
             ready_ = false;
             return false;
         } catch (...) {
-            std::cerr << "[NPCInference::Initialize] Unknown error loading embedding model" << std::endl;
+            std::cerr << "[NPCInference::Initialize] Unknown error" << std::endl;
             ready_ = false;
             return false;
         }
@@ -238,7 +238,7 @@ namespace NPCInference {
             }
             f << state_bundle.dump(4);
             
-            // SOTA State Serialization (External Files)
+            // Engine State Serialization (External Files)
             std::string base_dir = filepath.substr(0, filepath.find_last_of("\\/"));
             if (base_dir == filepath) base_dir = "."; // Fallback to current dir if no path provided
             
@@ -284,7 +284,7 @@ namespace NPCInference {
                 last_thought_ = state_bundle["last_thought"].get<std::string>();
             }
             
-            // SOTA State Deserialization (External Files)
+            // Engine State Deserialization (External Files)
             std::string base_dir = filepath.substr(0, filepath.find_last_of("\\/"));
             if (base_dir == filepath) base_dir = ".";
             
@@ -447,7 +447,7 @@ namespace NPCInference {
                  
                  
                  if (!found_entities.empty()) {
-                     // SOTA Advancement: Use PageRank to prioritize most important graph nodes
+                     // Engine Advancement: Use PageRank to prioritize most important graph nodes
                      graph_context = knowledge_graph_->GetKnowledgeContext(found_entities, 5); 
                      if (local_state.contains("memory_context")) {
                          local_state["memory_context"] = local_state["memory_context"].get<std::string>() + "\n[Knowledge Graph]\n" + graph_context;
@@ -665,13 +665,13 @@ namespace NPCInference {
         if (!conversation_manager_) {
             conversation_manager_ = std::make_unique<ConversationManager>();
             
-            // === Initialize SOTA Innovation Systems ===
+            // === Initialize Engine Cognitive Systems ===
             temporal_memory_ = std::make_unique<TemporalMemorySystem>();
             social_fabric_network_ = std::make_unique<SocialFabricNetwork>();
             emotional_continuity_system_ = std::make_unique<EmotionalContinuitySystem>();
             player_behavior_modeling_ = std::make_unique<PlayerBehaviorModeling>();
             ambient_awareness_system_ = std::make_unique<AmbientAwarenessSystem>();
-            std::cout << "SOTA: Initialized Temporal Memory, Social Fabric, Emotional Continuity, Player Behavior Modeling, and Ambient Awareness systems." << std::endl;
+            std::cout << "Engine: Initialized Temporal Memory, Social Fabric, Emotional Continuity, Player Behavior Modeling, and Ambient Awareness systems." << std::endl;
             
             ready_ = true;
         }
@@ -681,13 +681,13 @@ namespace NPCInference {
     std::string NPCInferenceEngine::Chat(const std::string& session_id, const std::string& user_message) {
         if (!conversation_manager_) return "Error: No conversation manager";
         
-        auto* ctx = conversation_manager_->GetSession(session_id);
+        auto ctx = conversation_manager_->GetSession(session_id);
         if (!ctx) return "Error: Invalid session ID";
         
         // 1. Log the player message
         conversation_manager_->AddMessage(session_id, "user", user_message);
         
-        // 2. Build Advanced Cognitive Context (SOTA Integrated)
+        // 2. Build Advanced Cognitive Context (Engine Integrated)
         json advanced_context = BuildAdvancedContext(ctx->npc_name, user_message);
         
         // 2.5 Restore Sliding Window History (Critical for dialogue flow)
@@ -773,7 +773,7 @@ namespace NPCInference {
         Remember(summary, {{"type", "summary"}, {"original_count", std::to_string(pending.size())}});
         std::cout << "Sleep Mode: Created summary: " << summary << std::endl;
 
-        // 4.5 Reflection (SOTA "Generative Agents" pattern)
+        // 4.5 Reflection (Advanced "Generative Agents" pattern)
         if (config_.enable_reflection) {
             std::string reflectionJson = memory_consolidator_->GenerateReflectiveInsight(summary);
             try {
@@ -801,6 +801,7 @@ namespace NPCInference {
                 if (j.contains("persona_update")) {
                     std::string trait = j["persona_update"];
                     if (!trait.empty() && trait != "none") {
+                        std::lock_guard<std::mutex> lock(state_mutex_);
                         std::string current_persona = current_state_.value("persona", "");
                         current_state_["persona"] = current_persona + " [Evolved Trait: " + trait + "]";
                         std::cout << "Sleep: Persona evolved: " << trait << std::endl;
@@ -815,7 +816,7 @@ namespace NPCInference {
             }
         }
         
-        // 4.6 Graph Global Summarization (SOTA "GraphRAG" pattern)
+        // 4.6 Graph Global Summarization (Engine "GraphRAG" pattern)
         if (config_.enable_graph && knowledge_graph_) {
              std::cout << "Sleep: Detecting Graph Communities..." << std::endl;
              auto communities = knowledge_graph_->DetectCommunities();
@@ -976,39 +977,7 @@ void NPCInferenceEngine::Learn(const std::string& text) {
         return Initialize(config);
     }
 
-    void NPCInferenceEngine::InitializeAsync(const InferenceConfig& config, std::function<void(bool)> callback) {
-        // Prevent multiple simultaneous async initializations
-        if (is_loading_.exchange(true)) {
-            std::cerr << "Warning: Initialization already in progress" << std::endl;
-            if (callback) callback(false);
-            return;
-        }
 
-        // Launch initialization in background thread
-        loading_future_ = std::async(std::launch::async, [this, config, callback]() {
-            bool success = false;
-            try {
-                success = this->Initialize(config);
-            } catch (const std::exception& e) {
-                std::cerr << "Async initialization error: " << e.what() << std::endl;
-                success = false;
-            }
-
-            // Mark loading complete
-            is_loading_.store(false);
-
-            // Invoke callback if provided
-            if (callback) {
-                callback(success);
-            }
-
-            return success;
-        });
-    }
-
-    bool NPCInferenceEngine::IsLoading() const {
-        return is_loading_.load();
-    }
 
 
     // ... Remember/SaveMemory ...

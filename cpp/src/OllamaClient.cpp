@@ -52,80 +52,79 @@ std::string OllamaClient::Generate(const std::string& prompt, int max_tokens, fl
     return "[Error: Unexpected response from Ollama]";
 }
 
-std::future<std::string> OllamaClient::GenerateAsync(const std::string& prompt, int max_tokens, float temperature) {
-    return std::async(std::launch::async, [this, prompt, max_tokens, temperature]() {
-        return this->Generate(prompt, max_tokens, temperature);
-    });
-}
-
-std::future<std::string> OllamaClient::GenerateStreamAsync(
+std::string OllamaClient::GenerateStream(
     const std::string& prompt,
     std::function<void(const std::string&)> on_token_callback,
     std::function<void(const std::string&)> on_action_callback,
     int max_tokens,
     float temperature
 ) {
-    return std::async(std::launch::async, [this, prompt, max_tokens, temperature, on_token_callback, on_action_callback]() {
-        nlohmann::json request;
-        request["model"] = model_name_;
-        request["prompt"] = prompt;
-        request["stream"] = true; // Enable streaming
-        request["options"]["num_predict"] = max_tokens;
-        request["options"]["temperature"] = temperature;
+    nlohmann::json request;
+    request["model"] = model_name_;
+    request["prompt"] = prompt;
+    request["stream"] = true; // Enable streaming
+    request["options"]["num_predict"] = max_tokens;
+    request["options"]["temperature"] = temperature;
+    
+    std::string json_str = request.dump();
+    
+    std::string full_response = "";
+    std::string action_buffer = "";
+    bool in_action = false;
+    std::string leftover_buffer = "";
+    
+    auto chunk_parser = [&](const std::string& chunk_raw) {
+        // Fix 1: Leftover buffer for robust NDJSON parsing across TCP chunks
+        leftover_buffer += chunk_raw;
+        size_t newline_pos;
         
-        std::string json_str = request.dump();
-        
-        std::string full_response = "";
-        std::string action_buffer = "";
-        bool in_action = false;
-        
-        auto chunk_parser = [&](const std::string& chunk_raw) {
-            // Ollama sends chunks of NDJSON (Newline Delimited JSON)
-            std::stringstream ss(chunk_raw);
-            std::string line;
-            while (std::getline(ss, line)) {
-                if (line.empty()) continue;
-                try {
-                    nlohmann::json j = nlohmann::json::parse(line);
-                    if (j.contains("response")) {
-                        std::string token = j["response"].get<std::string>();
-                        full_response += token;
-                        
-                        // Action Streaming FSM: Look for *action*
-                        for (char c : token) {
-                            if (c == '*') {
-                                if (in_action) {
-                                    // End of action
-                                    in_action = false;
-                                    if (on_action_callback && !action_buffer.empty()) {
-                                        on_action_callback(action_buffer);
-                                    }
-                                    action_buffer.clear();
-                                } else {
-                                    // Start of action
-                                    in_action = true;
-                                    action_buffer.clear();
+        while ((newline_pos = leftover_buffer.find('\n')) != std::string::npos) {
+            std::string line = leftover_buffer.substr(0, newline_pos);
+            leftover_buffer.erase(0, newline_pos + 1);
+            
+            if (line.empty()) continue;
+            
+            try {
+                nlohmann::json j = nlohmann::json::parse(line);
+                if (j.contains("response")) {
+                    std::string token = j["response"].get<std::string>();
+                    full_response += token;
+                    
+                    // Action Streaming FSM: Look for *action*
+                    for (char c : token) {
+                        if (c == '*') {
+                            if (in_action) {
+                                // End of action
+                                in_action = false;
+                                if (on_action_callback && !action_buffer.empty()) {
+                                    on_action_callback(action_buffer);
                                 }
-                            } else if (in_action) {
-                                action_buffer += c;
+                                action_buffer.clear();
+                            } else {
+                                // Start of action
+                                in_action = true;
+                                action_buffer.clear();
                             }
-                        }
-                        
-                        if (on_token_callback && !in_action && token.find('*') == std::string::npos) {
-                            on_token_callback(token);
+                        } else if (in_action) {
+                            action_buffer += c;
                         }
                     }
-                } catch (...) {
-                    // Ignore partial json lines if they occur
+                    
+                    if (on_token_callback && !in_action && token.find('*') == std::string::npos) {
+                        on_token_callback(token);
+                    }
                 }
+            } catch (...) {
+                // If parsing fails despite having a \n, it might be truly malformed 
+                // or we are in a middle of a multibyte character? (unlikely for NDJSON)
             }
-        };
+        }
+    };
 
-        HttpPost(base_url_ + "/api/generate", json_str, &cancel_flag_, chunk_parser);
-        cancel_flag_ = false;
+    HttpPost(base_url_ + "/api/generate", json_str, &cancel_flag_, chunk_parser);
+    cancel_flag_ = false;
 
-        return full_response;
-    });
+    return full_response;
 }
 
 bool OllamaClient::IsReady() {

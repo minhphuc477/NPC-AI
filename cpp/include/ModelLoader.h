@@ -8,6 +8,8 @@
 #include <functional>
 #include <cstdint>
 #include <atomic>
+#include <mutex>
+#include <unordered_map>
 
 // Forward declare ONNX Runtime types
 namespace Ort {
@@ -108,12 +110,16 @@ private:
     // KV Cache (PIMPL to avoid exposing Ort::Value in header)
     struct KVCache;
     std::unique_ptr<KVCache> kv_cache_;
+    std::mutex kv_mutex_; // Protects kv_cache_ state
     
     // Persistent KV-cache manager
     std::shared_ptr<KVCacheManager> cache_manager_;
     
     // Helper for sampling
     int64_t SampleToken(float* logits, int64_t vocab_size);
+
+    mutable std::mt19937 gen_;
+    mutable std::mutex gen_mutex_; // Protects random generator
 };
 
 } // namespace NPCInference

@@ -74,6 +74,12 @@ public:
 	FString GenerateStructuredDialogue(const FString& SystemPrompt, const FString& Name, const FString& Context, const FString& PlayerInput);
 
 	/**
+	 * Async version of GenerateStructuredDialogue
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC Inference")
+	void GenerateStructuredDialogueAsync(const FString& SystemPrompt, const FString& Name, const FString& Context, const FString& PlayerInput, FOnDialogueGenerated OnComplete);
+
+	/**
 	 * Async version of GenerateDialogue to prevent Game Thread freeze
 	 */
 	UFUNCTION(BlueprintCallable, Category = "NPC Inference")
@@ -116,6 +122,8 @@ private:
 	// Since we include NPCInference.h, we can use the class directly or via pointer
 	// Using pointer to avoid strict dependency in header if possible, but here we included it.
 	std::unique_ptr<NPCInference::NPCInferenceEngine> InferenceEngine;
+
+	std::atomic<bool> bIsDeinitializing{false};
 
 	// Helper to convert FString to std::string
 	std::string ToString(const FString& InStr);

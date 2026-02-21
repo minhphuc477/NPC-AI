@@ -58,7 +58,7 @@ The current architecture is **highly efficient for CPU deployment**.
 - **Opportunity**: Quantization can halve memory usage with neglible accuracy loss.
 
 ### 3.2 Implemented Upgrades
-We have implemented the following upgrades to reach State-of-the-Art (SOTA):
+We have implemented the following architectural upgrades:
 
 1.  **Flash Attention 2**:
     - **Implementation**: Integrated logic in `FlashAttention2Integration.cpp`.
@@ -80,7 +80,7 @@ We verified the system's performance metrics against relevant literature:
 | Metric | Our System | Reference Paper | Comparison |
 |--------|------------|-----------------|------------|
 | **Speculative Speedup** | **1.7x** | Leviathan et al. (2023) | Matches theoretical max for small draft models. |
-| **Retrieval Hit@1** | **92%** | Wang et al. (2023) | Competitive with SOTA dense retrievers. |
+| **Retrieval Hit@1** | **92%** | Wang et al. (2023) | Competitive with top-tier dense retrievers. |
 | **Hallucination Rate** | **<0.1%** | Park et al. (2023) | Significantly lower due to Truth Guard & Knowledge Graph. |
 
 ### 4.2 Documented Metrics Verification
