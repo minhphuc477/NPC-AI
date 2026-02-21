@@ -31,9 +31,9 @@ Evaluated against `test_samples.jsonl` using `evaluate_bertscore.py`.
 
 ## 5. Literature Benchmarking (Comparative Proof)
 
-To "prove" system validity, we compare BD-NSCA metrics against the primary results reported in SOTA literature.
+To "prove" system validity, we compare BD-NSCA metrics against the primary results reported in research literature.
 
-| Metric Area | SOTA Reference | Reported SOTA Result | BD-NSCA Result (Current) | Variance |
+| Metric Area | Research Reference | Reported Baseline | BD-NSCA Result (Current) | Variance |
 |-------------|----------------|----------------------|-----------------------|----------|
 | **Speedup** | Leviathan et al.| 2.0x - 3.4x | **1.7x** | -15% (Mock Draft overhead) |
 | **Retrieval**| Wang et al. | 96.5% (Top-5 Accuracy)| **92.0% (Hit@1)** | **+5%** (Normalized to Top-1) |

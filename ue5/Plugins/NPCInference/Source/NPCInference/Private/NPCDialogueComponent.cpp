@@ -115,16 +115,48 @@ void UNPCDialogueComponent::BroadcastToNearby(const FString& Message)
 
 void UNPCDialogueComponent::ReceiveBroadcast(const FString& SenderName, const FString& Message)
 {
-    // 1. Check if we should respond (e.g. if our name is mentioned or if we are idle)
-    // Simple heuristic: if message contains our Name (NPCID), we respond.
-    // Or just store it as a "heard" event.
+    // Fix: Route heard speech into the NPC's memory so it influences future dialogue
+    HearGossip(Message, SenderName);
     
-    // For now, let's just "Hear" it as gossip so it enters memory.
-    // Assuming HearGossip exists or will be implemented.
-    // HearGossip(Message, SenderName); 
+    UE_LOG(LogTemp, Log, TEXT("NPC %s heard '%s' say: %s"), *NPCID, *SenderName, *Message);
+}
+
+void UNPCDialogueComponent::HearGossip(const FString& GossipText, const FString& SourceName)
+{
+    if (GossipText.IsEmpty()) return;
     
-    // If we want a response, we could auto-trigger RequestResponse?
-    // Let's keep it simple: Just memory for now. Subsystem or BT can trigger response if needed.
+    if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
+    {
+        if (UNPCInferenceSubsystem* Subsystem = GI->GetSubsystem<UNPCInferenceSubsystem>())
+        {
+            Subsystem->ReceiveGossip(GossipText, SourceName);
+            UE_LOG(LogTemp, Log, TEXT("NPC %s ingested gossip from %s into memory."), *NPCID, *SourceName);
+        }
+    }
+}
+
+FString UNPCDialogueComponent::ShareGossip()
+{
+    if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
+    {
+        if (UNPCInferenceSubsystem* Subsystem = GI->GetSubsystem<UNPCInferenceSubsystem>())
+        {
+            return Subsystem->ExtractGossip();
+        }
+    }
+    return TEXT("");
+}
+
+void UNPCDialogueComponent::Sleep()
+{
+    if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
+    {
+        if (UNPCInferenceSubsystem* Subsystem = GI->GetSubsystem<UNPCInferenceSubsystem>())
+        {
+            UE_LOG(LogTemp, Log, TEXT("NPC %s: Triggering sleep/memory consolidation..."), *NPCID);
+            Subsystem->TriggerSleepMode();
+        }
+    }
 }
 
 void UNPCDialogueComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -227,16 +259,12 @@ void UNPCDialogueComponent::OnAsyncResponseReceived(const FString& Response)
 {
 	bIsGeneratingResponse = false;
 	SetComponentTickEnabled(false);
+	
 	if (!Response.Contains(TEXT("Error:")))
 	{
-		// Auto-remember what we said (self-memory)
-		if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
-		{
-			if (UNPCInferenceSubsystem* Subsystem = GI->GetSubsystem<UNPCInferenceSubsystem>())
-			{
-				// Subsystem->InferenceEngine->Remember(ToString(Response), {{"role", "npc"}, {"npc_id", ToString(NPCID)}});
-			}
-		}
+		// Fix: Auto-remember what the NPC said to give it memory of its own dialogue
+		FString GossipEntry = FString::Printf(TEXT("[%s said]: %s"), *NPCID, *Response);
+		HearGossip(GossipEntry, NPCID);
 	}
 	
 	OnResponseGenerated.Broadcast(Response);

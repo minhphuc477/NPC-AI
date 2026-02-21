@@ -39,7 +39,7 @@ struct ConversationContext {
 
 class ConversationManager {
 private:
-    std::map<std::string, ConversationContext> active_sessions_;
+    std::map<std::string, std::shared_ptr<ConversationContext>> active_sessions_;
     std::mutex sessions_mutex_;
     
     std::string GenerateSessionId() {
@@ -59,22 +59,22 @@ public:
     std::string CreateSession(const std::string& npc_name, const std::string& player_name) {
         std::lock_guard<std::mutex> lock(sessions_mutex_);
         
-        ConversationContext ctx;
-        ctx.session_id = GenerateSessionId();
-        ctx.npc_name = npc_name;
-        ctx.player_name = player_name;
+        auto ctx = std::make_shared<ConversationContext>();
+        ctx->session_id = GenerateSessionId();
+        ctx->npc_name = npc_name;
+        ctx->player_name = player_name;
         
-        active_sessions_[ctx.session_id] = ctx;
-        return ctx.session_id;
+        active_sessions_[ctx->session_id] = ctx;
+        return ctx->session_id;
     }
     
-    ConversationContext* GetSession(const std::string& session_id) {
+    std::shared_ptr<ConversationContext> GetSession(const std::string& session_id) {
         std::lock_guard<std::mutex> lock(sessions_mutex_);
         
         auto it = active_sessions_.find(session_id);
         if (it != active_sessions_.end()) {
-            it->second.last_active = std::chrono::system_clock::now().time_since_epoch().count();
-            return &(it->second);
+            it->second->last_active = std::chrono::system_clock::now().time_since_epoch().count();
+            return it->second;
         }
         return nullptr;
     }
@@ -84,8 +84,8 @@ public:
         
         auto it = active_sessions_.find(session_id);
         if (it != active_sessions_.end()) {
-            it->second.history.emplace_back(role, content);
-            it->second.last_active = std::chrono::system_clock::now().time_since_epoch().count();
+            it->second->history.emplace_back(role, content);
+            it->second->last_active = std::chrono::system_clock::now().time_since_epoch().count();
         }
     }
     
@@ -94,7 +94,7 @@ public:
         
         auto it = active_sessions_.find(session_id);
         if (it != active_sessions_.end()) {
-            const auto& history = it->second.history;
+            const auto& history = it->second->history;
             if (history.size() <= static_cast<size_t>(max_messages)) {
                 return history;
             }
@@ -111,6 +111,19 @@ public:
     void CloseSession(const std::string& session_id) {
         std::lock_guard<std::mutex> lock(sessions_mutex_);
         active_sessions_.erase(session_id);
+    }
+
+    void PruneSessions(int64_t older_than_seconds) {
+        std::lock_guard<std::mutex> lock(sessions_mutex_);
+        int64_t now = std::chrono::system_clock::now().time_since_epoch().count();
+        
+        for (auto it = active_sessions_.begin(); it != active_sessions_.end(); ) {
+            if (now - it->second->last_active > older_than_seconds) {
+                it = active_sessions_.erase(it);
+            } else {
+                ++it;
+            }
+        }
     }
     
     size_t GetActiveSessionCount() {

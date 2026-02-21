@@ -155,7 +155,13 @@ std::string MemoryConsolidator::GenerateReflectiveInsight(const std::string& rec
         try {
             // Validate via parsing
             auto parsed = nlohmann::json::parse(json_str);
-            return json_str; // Successfully parsed, return clean string
+            
+            // Fix 3: JSON Schema Validation
+            if (!parsed.contains("insight") || !parsed.contains("trust_delta")) {
+                throw std::runtime_error("Missing required JSON keys: insight or trust_delta");
+            }
+            
+            return json_str; // Successfully parsed and validated
         } catch (const std::exception& e) {
             attempts++;
             std::cerr << "GenerateReflectiveInsight: JSON parse error (Attempt " << attempts << "/3): " << e.what() << std::endl;
@@ -282,9 +288,14 @@ void MemoryConsolidator::ExtractAndIngestKnowledge(const std::string& text, Simp
 
                 if (triples.is_array()) {
                     for (const auto& item : triples) {
-                        std::string source = item.value("source", "");
-                        std::string relation = item.value("relation", "");
-                        std::string target = item.value("target", "");
+                        // Fix 3: JSON Schema Validation
+                        if (!item.contains("source") || !item.contains("relation") || !item.contains("target")) {
+                            continue; // Skip malformed triples
+                        }
+                        
+                        std::string source = item["source"].get<std::string>();
+                        std::string relation = item["relation"].get<std::string>();
+                        std::string target = item["target"].get<std::string>();
                         float weight = item.value("weight", 1.0f);
 
                         if (!source.empty() && !relation.empty() && !target.empty()) {

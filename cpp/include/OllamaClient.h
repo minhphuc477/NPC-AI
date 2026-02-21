@@ -30,27 +30,15 @@ public:
     );
     
     /**
-     * Generate text completion asynchronously
-     * @param prompt The prompt to send
-     * @param max_tokens Maximum tokens to generate
-     * @param temperature Sampling temperature (0.0-1.0)
-     * @return Future containing the generated text
-     */
-    std::future<std::string> GenerateAsync(
-        const std::string& prompt,
-        int max_tokens = 150,
-        float temperature = 0.7f
-    );
-
-    /**
-     * Generate text completion asynchronously with stream events
+     * Generate text completion synchronously with stream events
      * @param prompt The prompt to send
      * @param on_token_callback Callback fired when a new token arrives
      * @param on_action_callback Callback fired when a complete *action* string is parsed out
      * @param max_tokens Maximum tokens to generate
      * @param temperature Sampling temperature (0.0-1.0)
+     * @return Full generated text (blocks until stream ends)
      */
-    std::future<std::string> GenerateStreamAsync(
+    std::string GenerateStream(
         const std::string& prompt,
         std::function<void(const std::string&)> on_token_callback,
         std::function<void(const std::string&)> on_action_callback,

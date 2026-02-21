@@ -54,6 +54,6 @@ private:
 	FString Prompt_Context;
 	FString Prompt_Input;
 
-	void ExecuteGeneration();
+	void ExecuteGeneration(TWeakObjectPtr<class UNPCInferenceSubsystem> WeakSubsystem);
 	void OnGenerationComplete(const FString& Response);
 };

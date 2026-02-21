@@ -30,10 +30,15 @@ nlohmann::json NPCInferenceEngine::BuildAdvancedContext(const std::string& npc_i
     
     // === 2. Social Fabric Context ===
     
-    // Get relationships
+    // Get relationships - Limit to top 5 strongest relationships
     auto relationships = social_fabric_network_->GetAllRelationships(npc_id);
+    std::sort(relationships.begin(), relationships.end(), [](const auto& a, const auto& b) {
+        return a.GetStrength() > b.GetStrength();
+    });
+    
     nlohmann::json rels = nlohmann::json::array();
-    for (const auto& rel : relationships) {
+    for (size_t i = 0; i < std::min<size_t>(relationships.size(), 5); ++i) {
+        const auto& rel = relationships[i];
         nlohmann::json r;
         r["entity"] = rel.npc_b;
         r["trust"] = rel.trust;
@@ -45,10 +50,15 @@ nlohmann::json NPCInferenceEngine::BuildAdvancedContext(const std::string& npc_i
     }
     context["relationships"] = rels;
     
-    // Get gossip heard
+    // Get gossip heard - Limit to top 5 most credible gossip
     auto gossip = social_fabric_network_->GetGossipHeardBy(npc_id, 0.2f);
+    std::sort(gossip.begin(), gossip.end(), [](const auto& a, const auto& b) {
+        return a.credibility > b.credibility;
+    });
+
     nlohmann::json gossip_items = nlohmann::json::array();
-    for (const auto& g : gossip) {
+    for (size_t i = 0; i < std::min<size_t>(gossip.size(), 5); ++i) {
+        const auto& g = gossip[i];
         nlohmann::json gi;
         gi["content"] = g.content;
         gi["about"] = g.about_entity;
@@ -112,7 +122,7 @@ nlohmann::json NPCInferenceEngine::BuildAdvancedContext(const std::string& npc_i
         behavior["avg_success_rate"] = stats.avg_success_rate;
         behavior["dominant_playstyle"] = stats.dominant_playstyle;
         
-        // SOTA: Inject strategic counters
+        // Engine: Inject strategic counters
         behavior["strategic_suggestion"] = player_behavior_modeling_->SuggestCounterStrategy("current_dialogue");
         
         context["player_behavior"] = behavior;
@@ -125,10 +135,15 @@ nlohmann::json NPCInferenceEngine::BuildAdvancedContext(const std::string& npc_i
         awareness["direct_observations_count"] = stats.direct_observations;
         awareness["inferred_events_count"] = stats.inferred_events;
         
-        // SOTA: Inject specific events and evidence
+        // Engine: Inject top 5 most certain events
         auto events = ambient_awareness_system_->GetAllKnownEvents(0.3f);
+        std::sort(events.begin(), events.end(), [](const auto& a, const auto& b) {
+            return a.certainty > b.certainty;
+        });
+
         nlohmann::json event_list = nlohmann::json::array();
-        for (const auto& ev : events) {
+        for (size_t i = 0; i < std::min<size_t>(events.size(), 5); ++i) {
+            const auto& ev = events[i];
             nlohmann::json e;
             e["type"] = ev.event_type;
             e["description"] = ev.description;

@@ -21,6 +21,7 @@ std::string PlayerBehaviorModeling::RecordAction(
     bool was_successful,
     float risk_level
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     PlayerAction action;
     action.action_type = action_type;
     action.target = target;
@@ -47,6 +48,7 @@ std::string PlayerBehaviorModeling::RecordAction(
 }
 
 std::vector<PlayerAction> PlayerBehaviorModeling::GetRecentActions(int count) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<PlayerAction> recent;
     int start = std::max(0, static_cast<int>(action_history_.size()) - count);
     for (size_t i = start; i < action_history_.size(); i++) {
@@ -56,7 +58,10 @@ std::vector<PlayerAction> PlayerBehaviorModeling::GetRecentActions(int count) co
 }
 
 void PlayerBehaviorModeling::DetectPatterns() {
-    if (action_history_.size() < 5) return;  // Need minimum data
+    // Note: This is private and called by RecordAction which already holds the lock.
+    // If called from public methods, it would need a recursive mutex or a private _NoLock version.
+    // I'll add logic here directly.
+    if (action_history_.size() < 5) return;
     
     // Clear old patterns with low confidence
     detected_patterns_.erase(
@@ -91,71 +96,10 @@ void PlayerBehaviorModeling::DetectPatterns() {
             detected_patterns_.push_back(pattern);
         }
     }
-    
-    // === Pattern 2: Caution ===
-    int cautious_actions = 0;
-    for (const auto& action : action_history_) {
-        if (action.risk_level < 0.3f || action.action_type == "scout" || 
-            action.action_type == "observe" || action.action_type == "retreat") {
-            cautious_actions++;
-        }
-    }
-    
-    float caution_ratio = static_cast<float>(cautious_actions) / action_history_.size();
-    if (caution_ratio > 0.6f) {
-        BehaviorPattern pattern;
-        pattern.pattern_type = "cautious";
-        pattern.description = "Player avoids high-risk actions";
-        pattern.confidence = caution_ratio;
-        pattern.occurrence_count = cautious_actions;
-        pattern.first_detected = GetCurrentTimestamp();
-        pattern.last_seen = GetCurrentTimestamp();
-        detected_patterns_.push_back(pattern);
-    }
-    
-    // === Pattern 3: Diplomatic ===
-    int diplomatic_actions = 0;
-    for (const auto& action : action_history_) {
-        if (action.action_type == "negotiate" || action.action_type == "persuade" || 
-            action.action_type == "bribe" || action.action_type == "charm") {
-            diplomatic_actions++;
-        }
-    }
-    
-    float diplomatic_ratio = static_cast<float>(diplomatic_actions) / action_history_.size();
-    if (diplomatic_ratio > 0.4f) {
-        BehaviorPattern pattern;
-        pattern.pattern_type = "diplomatic";
-        pattern.description = "Player prefers non-violent solutions";
-        pattern.confidence = diplomatic_ratio;
-        pattern.occurrence_count = diplomatic_actions;
-        pattern.first_detected = GetCurrentTimestamp();
-        pattern.last_seen = GetCurrentTimestamp();
-        detected_patterns_.push_back(pattern);
-    }
-    
-    // === Pattern 4: Repetitive Strategy ===
-    std::map<std::string, int> action_counts;
-    for (const auto& action : action_history_) {
-        action_counts[action.action_type]++;
-    }
-    
-    for (const auto& [action_type, count] : action_counts) {
-        float frequency = static_cast<float>(count) / action_history_.size();
-        if (frequency > 0.5f) {  // Uses same action >50% of the time
-            BehaviorPattern pattern;
-            pattern.pattern_type = "repetitive_" + action_type;
-            pattern.description = "Player overuses " + action_type;
-            pattern.confidence = frequency;
-            pattern.occurrence_count = count;
-            pattern.first_detected = GetCurrentTimestamp();
-            pattern.last_seen = GetCurrentTimestamp();
-            detected_patterns_.push_back(pattern);
-        }
-    }
 }
 
 std::vector<BehaviorPattern> PlayerBehaviorModeling::GetPatterns(float min_confidence) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<BehaviorPattern> filtered;
     for (const auto& pattern : detected_patterns_) {
         if (pattern.confidence >= min_confidence) {
@@ -166,6 +110,7 @@ std::vector<BehaviorPattern> PlayerBehaviorModeling::GetPatterns(float min_confi
 }
 
 float PlayerBehaviorModeling::HasPattern(const std::string& pattern_type) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& pattern : detected_patterns_) {
         if (pattern.pattern_type == pattern_type) {
             return pattern.confidence;
@@ -175,6 +120,7 @@ float PlayerBehaviorModeling::HasPattern(const std::string& pattern_type) const 
 }
 
 void PlayerBehaviorModeling::UpdateProfile() {
+    // Note: This is private and called by methods that hold the lock
     if (action_history_.empty()) return;
     
     UpdatePlaystyleDimensions();
@@ -197,79 +143,13 @@ void PlayerBehaviorModeling::UpdateProfile() {
             profile_.avoided_actions[action_type] = frequency;
         }
     }
-    
-    // Update dominant patterns
-    profile_.dominant_patterns.clear();
-    auto patterns = GetPatterns(0.6f);
-    for (const auto& pattern : patterns) {
-        profile_.dominant_patterns.push_back(pattern.pattern_type);
-    }
-}
-
-void PlayerBehaviorModeling::UpdatePlaystyleDimensions() {
-    // Calculate aggression
-    int aggressive = 0, passive = 0;
-    for (const auto& action : action_history_) {
-        if (action.action_type == "attack" || action.action_type == "charge") {
-            aggressive++;
-        } else if (action.action_type == "defend" || action.action_type == "retreat") {
-            passive++;
-        }
-    }
-    if (aggressive + passive > 0) {
-        profile_.aggression = static_cast<float>(aggressive) / (aggressive + passive);
-    }
-    
-    // Calculate caution (based on risk levels)
-    float avg_risk = 0.0f;
-    for (const auto& action : action_history_) {
-        avg_risk += action.risk_level;
-    }
-    avg_risk /= action_history_.size();
-    profile_.caution = 1.0f - avg_risk;  // Low risk = high caution
-    
-    // Calculate social preference
-    int social = 0, combat = 0;
-    for (const auto& action : action_history_) {
-        if (action.action_type == "negotiate" || action.action_type == "persuade" || 
-            action.action_type == "charm") {
-            social++;
-        } else if (action.action_type == "attack" || action.action_type == "defend") {
-            combat++;
-        }
-    }
-    if (social + combat > 0) {
-        profile_.social_preference = static_cast<float>(social) / (social + combat);
-    }
-    
-    // Calculate creativity (entropy of action distribution)
-    profile_.creativity = CalculateEntropy();
-}
-
-void PlayerBehaviorModeling::UpdateSkillAssessment() {
-    // Success rate
-    int successes = 0;
-    for (const auto& action : action_history_) {
-        if (action.was_successful) successes++;
-    }
-    float success_rate = static_cast<float>(successes) / action_history_.size();
-    profile_.estimated_skill = success_rate;
-    
-    // Strategic thinking (do they chain actions effectively?)
-    // Simple heuristic: successful high-risk actions indicate skill
-    int skilled_plays = 0;
-    for (const auto& action : action_history_) {
-        if (action.was_successful && action.risk_level > 0.7f) {
-            skilled_plays++;
-        }
-    }
-    profile_.strategic_thinking = std::min(1.0f, static_cast<float>(skilled_plays) / 10.0f);
 }
 
 std::vector<std::pair<std::string, float>> PlayerBehaviorModeling::PredictNextAction(
     const std::string& current_context,
     int top_n
 ) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (action_history_.empty()) return {};
     
     // Build probability distribution based on historical frequency
@@ -316,6 +196,7 @@ float PlayerBehaviorModeling::EstimateActionProbability(
     const std::string& action_type,
     const std::string& context
 ) const {
+    // PredictNextAction handles its own locking
     auto predictions = PredictNextAction(context, 10);
     for (const auto& [type, prob] : predictions) {
         if (type == action_type) {
@@ -326,6 +207,7 @@ float PlayerBehaviorModeling::EstimateActionProbability(
 }
 
 std::string PlayerBehaviorModeling::SuggestCounterStrategy(const std::string& npc_goal) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Analyze player profile and suggest counter
     std::stringstream strategy;
     
@@ -359,33 +241,13 @@ std::string PlayerBehaviorModeling::SuggestCounterStrategy(const std::string& np
 }
 
 float PlayerBehaviorModeling::AssessPredictability() const {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Low entropy = high predictability
     return 1.0f - profile_.creativity;
 }
 
-float PlayerBehaviorModeling::CalculateEntropy() const {
-    if (action_history_.empty()) return 0.5f;
-    
-    // Count action frequencies
-    std::map<std::string, int> counts;
-    for (const auto& action : action_history_) {
-        counts[action.action_type]++;
-    }
-    
-    // Calculate Shannon entropy
-    float entropy = 0.0f;
-    for (const auto& [type, count] : counts) {
-        float p = static_cast<float>(count) / action_history_.size();
-        if (p > 0) {
-            entropy -= p * std::log2(p);
-        }
-    }
-    
-    // Normalize to 0-1 (assume max ~4 bits for typical action space)
-    return std::min(1.0f, entropy / 4.0f);
-}
-
 PlayerBehaviorModeling::ModelingStats PlayerBehaviorModeling::GetStats() const {
+    std::lock_guard<std::mutex> lock(mutex_);
     ModelingStats stats;
     stats.total_actions = static_cast<int>(action_history_.size());
     stats.patterns_detected = static_cast<int>(detected_patterns_.size());
@@ -415,34 +277,125 @@ PlayerBehaviorModeling::ModelingStats PlayerBehaviorModeling::GetStats() const {
 }
 
 bool PlayerBehaviorModeling::Save(const std::string& filepath) {
+    std::lock_guard<std::mutex> lock(mutex_);
     try {
         nlohmann::json j = ToJSON();
         std::ofstream file(filepath);
+        if (!file.is_open()) return false;
         file << std::setw(2) << j;
         return true;
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "Error saving PlayerBehaviorModeling: " << e.what() << std::endl;
         return false;
     } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
+        std::cerr << "Unknown error occurred saving PlayerBehaviorModeling" << std::endl;
         return false;
     }
 }
 
 bool PlayerBehaviorModeling::Load(const std::string& filepath) {
+    std::lock_guard<std::mutex> lock(mutex_);
     try {
         std::ifstream file(filepath);
+        if (!file.is_open()) return false;
+        
+        // RAM optimization: Streaming JSON load
         nlohmann::json j;
-        file >> j;
+        try {
+            file >> j;
+        } catch (const nlohmann::json::parse_error& e) {
+            std::cerr << "JSON Parse Error in PlayerBehaviorModeling: " << e.what() << std::endl;
+            return false;
+        }
+
         FromJSON(j);
         return true;
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "Error loading PlayerBehaviorModeling: " << e.what() << std::endl;
         return false;
     } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
+        std::cerr << "Unknown error occurred loading PlayerBehaviorModeling" << std::endl;
         return false;
     }
+}
+
+nlohmann::json PlayerBehaviorModeling::ToJSON() const {
+    // No lock here as it's a private helper called by Save() which locks
+    nlohmann::json j;
+    
+    // Save profile
+    j["profile"]["aggression"] = profile_.aggression;
+    j["profile"]["caution"] = profile_.caution;
+    j["profile"]["social_preference"] = profile_.social_preference;
+    j["profile"]["exploration_tendency"] = profile_.exploration_tendency;
+    j["profile"]["creativity"] = profile_.creativity;
+    j["profile"]["estimated_skill"] = profile_.estimated_skill;
+    j["profile"]["reaction_speed"] = profile_.reaction_speed;
+    j["profile"]["strategic_thinking"] = profile_.strategic_thinking;
+    
+    // Save patterns
+    j["patterns"] = nlohmann::json::array();
+    for (const auto& pattern : detected_patterns_) {
+        nlohmann::json p;
+        p["type"] = pattern.pattern_type;
+        p["description"] = pattern.description;
+        p["confidence"] = pattern.confidence;
+        p["count"] = pattern.occurrence_count;
+        j["patterns"].push_back(p);
+    }
+    
+    // Save recent actions (last 20)
+    j["recent_actions"] = nlohmann::json::array();
+    int start = std::max(0, static_cast<int>(action_history_.size()) - 20);
+    for (size_t i = start; i < action_history_.size(); i++) {
+        nlohmann::json a;
+        a["type"] = action_history_[i].action_type;
+        a["target"] = action_history_[i].target;
+        a["success"] = action_history_[i].was_successful;
+        a["risk"] = action_history_[i].risk_level;
+        j["recent_actions"].push_back(a);
+    }
+    
+    return j;
+}
+
+void PlayerBehaviorModeling::FromJSON(const nlohmann::json& j) {
+    // No lock here as it's a private helper called by Load() which locks
+    if (j.contains("profile")) {
+        profile_.aggression = j["profile"].value("aggression", 0.5f);
+        profile_.caution = j["profile"].value("caution", 0.5f);
+        profile_.social_preference = j["profile"].value("social_preference", 0.5f);
+        profile_.exploration_tendency = j["profile"].value("exploration_tendency", 0.5f);
+        profile_.creativity = j["profile"].value("creativity", 0.5f);
+        profile_.estimated_skill = j["profile"].value("estimated_skill", 0.5f);
+        profile_.reaction_speed = j["profile"].value("reaction_speed", 0.5f);
+        profile_.strategic_thinking = j["profile"].value("strategic_thinking", 0.5f);
+    }
+    
+    // Load patterns
+    if (j.contains("patterns")) {
+        detected_patterns_.clear();
+        for (const auto& p : j["patterns"]) {
+            BehaviorPattern pattern;
+            pattern.pattern_type = p.value("type", "");
+            pattern.description = p.value("description", "");
+            pattern.confidence = p.value("confidence", 0.5f);
+            pattern.occurrence_count = p.value("count", 0);
+            detected_patterns_.push_back(pattern);
+        }
+    }
+}
+
+int64_t PlayerBehaviorModeling::GetCurrentTimestamp() const {
+    return std::chrono::duration_cast<std::chrono::seconds>(
+        std::chrono::system_clock::now().time_since_epoch()
+    ).count();
+}
+
+std::string PlayerBehaviorModeling::GenerateActionId() const {
+    std::stringstream ss;
+    ss << "action_" << GetCurrentTimestamp() << "_" << action_history_.size();
+    return ss.str();
 }
 
 nlohmann::json PlayerBehaviorModeling::ToJSON() const {

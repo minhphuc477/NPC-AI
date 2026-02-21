@@ -72,7 +72,7 @@ namespace NPCInference {
             cognitive_context["recent_dialogue"] = gameState["recent_history"];
         }
 
-        // SOTA: Dynamic Tool Observations
+        // Engine: Dynamic Tool Observations
         if (gameState.contains("tool_results") && !gameState["tool_results"].empty()) {
             cognitive_context["tool_observations"] = gameState["tool_results"];
         }

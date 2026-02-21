@@ -111,24 +111,39 @@ namespace NPCInference {
     }
 
     bool VectorStore::Save(const std::string& path_prefix) {
-        std::shared_lock<std::shared_mutex> lock(impl_->rw_mutex);
+        // Phase 9 Fix: "Fake Background Save" Bottleneck
+        // 1. Acquire Read-Lock to safely Snapshot data
+        impl_->rw_mutex.lock_shared();
+        
+        if (!impl_->idx) {
+            impl_->rw_mutex.unlock_shared();
+            return false;
+        }
+
+        // Snapshot Documents Map
+        std::unordered_map<uint64_t, DocData> docs_snapshot = documents_;
+        uint64_t current_next_id = next_id_.load();
+
         try {
-            if (!impl_->idx) return false;
-            
-            // Save Index
+            // Save Index (uSearch handles its own internal safety for concurrent reads, but NOT against concurrent WRITES during SAVE)
+            // Phase 9 Fix: Keep the lock held for uSearch I/O to prevent corruption if Add() is called
             std::string idx_path = path_prefix + ".usearch";
             auto res = impl_->idx.save(unum::usearch::output_file_t(idx_path.c_str()), unum::usearch::index_dense_serialization_config_t{}, unum::usearch::dummy_progress_t{});
+            
+            // RELEASE LOCK after index is saved but BEFORE big msgpack serialization
+            impl_->rw_mutex.unlock_shared();
+
             if (!res) {
                 std::cerr << "VectorStore: Failed to save index: " << res.error.what() << std::endl;
                 return false;
             }
 
-            // Save Metadata (Binary MessagePack)
+            // Save Metadata (Binary MessagePack) using Snapshot
             std::string doc_path = path_prefix + ".msgpack";
             json j;
             j["version"] = 2; // version 2 uses msgpack
             json docs_json;
-            for (const auto& [id, doc] : documents_) {
+            for (const auto& [id, doc] : docs_snapshot) {
                 docs_json[std::to_string(id)] = {
                     {"text", doc.text},
                     {"meta", doc.metadata},
@@ -137,7 +152,7 @@ namespace NPCInference {
                 };
             }
             j["docs"] = docs_json;
-            j["next_id"] = next_id_.load();
+            j["next_id"] = current_next_id;
             
             std::vector<uint8_t> msgpack_data = json::to_msgpack(j);
             std::ofstream f(doc_path, std::ios::binary);
@@ -150,14 +165,7 @@ namespace NPCInference {
         }
     }
 
-    std::future<bool> VectorStore::SaveAsync(const std::string& path_prefix) {
-        // Return a future that runs the existing Save function asynchronously.
-        // Save uses std::shared_lock, so it won't block Search operations.
-        // It will only temporarily block Add operations until the background I/O completes.
-        return std::async(std::launch::async, [this, path_prefix]() {
-            return this->Save(path_prefix);
-        });
-    }
+    /* std::future<bool> VectorStore::SaveAsync removed for Fix 4 (Thread Explosion) */
 
     bool VectorStore::Load(const std::string& path_prefix) {
         std::unique_lock<std::shared_mutex> lock(impl_->rw_mutex);
@@ -245,8 +253,8 @@ namespace NPCInference {
             
             if (std::filesystem::exists(msgpack_path)) {
                 std::ifstream f(msgpack_path, std::ios::binary);
-                std::vector<uint8_t> buffer((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-                json::sax_parse(buffer, &sax_handler, json::input_format_t::msgpack);
+                // Fix 2: Direct stream parsing to avoid RAM spike
+                json::sax_parse(f, &sax_handler, json::input_format_t::msgpack);
             } else if (std::filesystem::exists(json_path)) {
                 std::ifstream f(json_path);
                 json::sax_parse(f, &sax_handler);

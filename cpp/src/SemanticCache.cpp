@@ -42,15 +42,15 @@ float SemanticCache::CosineSimilarity(const std::vector<float>& a, const std::ve
     return 1.0f - distance;
 }
 
-const SemanticCache::CacheEntry* SemanticCache::Get(const std::string& query) {
+std::optional<SemanticCache::CacheEntry> SemanticCache::Get(const std::string& query) {
     if (!embedding_model_) {
-        return nullptr;
+        return std::nullopt;
     }
 
     // Generate query embedding WITHOUT LOCK
     std::vector<float> query_embedding = embedding_model_->Embed(query);
     if (query_embedding.empty()) {
-        return nullptr;
+        return std::nullopt;
     }
 
     std::lock_guard<std::mutex> lock(mutex_);
@@ -59,58 +59,50 @@ const SemanticCache::CacheEntry* SemanticCache::Get(const std::string& query) {
     if (cache_map_.empty() || !impl_->idx) {
         stats_.misses++;
         // Do not spam stdout std::cerr << "SemanticCache: MISS (query='" << query << "')" << std::endl;
-        return nullptr;
+        return std::nullopt;
     }
 
-    // Search in index
-    auto matches = impl_->idx.search(query_embedding.data(), 1);
+    // Search in index for Top 5 candidates
+    auto matches = impl_->idx.search(query_embedding.data(), 5);
     if (matches.size() == 0) {
         stats_.misses++;
-        return nullptr;
+        return std::nullopt;
     }
     
-    uint64_t best_id = matches[0].member.key;
-    float best_distance = matches[0].distance;
-    float best_similarity = 1.0f - best_distance; // usearch cos_k distance is essentially 1 - cos_sim
-    
-    // Fallback manual similarity calculation if we need exactly cosine (usearch matches closely)
-    // Actually best_similarity is perfectly correlated
-    
-    std::string best_query;
-    auto id_it = id_to_query_.find(best_id);
-    if (id_it != id_to_query_.end()) {
-        best_query = id_it->second;
-    } else {
-        stats_.misses++;
-        return nullptr;
-    }
-
-    auto cache_it = cache_map_.find(best_query);
-    if (cache_it == cache_map_.end()) {
-        stats_.misses++;
-        return nullptr;
-    }
-
-    auto& entryNode = cache_it->second;
-
     int64_t current_time = GetCurrentTimestamp();
-    // Check if expired
-    if (entryNode.entry.ttl_seconds > 0 && 
-        (current_time - entryNode.entry.timestamp) > entryNode.entry.ttl_seconds) {
-        // Lazy Garland Collection: Object has expired. Remove it immediately.
-        lru_list_.erase(entryNode.lru_it);
-        if (impl_->idx) impl_->idx.remove(best_id);
-        id_to_query_.erase(best_id);
-        cache_map_.erase(cache_it);
-        stats_.expired++;
-        stats_.total_entries = cache_map_.size();
-        
-        stats_.misses++;
-        return nullptr;
-    }
 
-    // Check if best match exceeds threshold
-    if (best_similarity >= similarity_threshold_) {
+    // Iterate through candidates to find the first valid match and GC expired ones
+    for (std::size_t i = 0; i < matches.size(); ++i) {
+        uint64_t candidate_id = matches[i].member.key;
+        float candidate_distance = matches[i].distance;
+        float candidate_similarity = 1.0f - candidate_distance;
+
+        // Skip immediately if below threshold
+        if (candidate_similarity < similarity_threshold_) continue;
+
+        auto id_it = id_to_query_.find(candidate_id);
+        if (id_it == id_to_query_.end()) continue;
+
+        std::string candidate_query = id_it->second;
+        auto cache_it = cache_map_.find(candidate_query);
+        if (cache_it == cache_map_.end()) continue;
+
+        auto& entryNode = cache_it->second;
+
+        // Check if expired
+        if (entryNode.entry.ttl_seconds > 0 && 
+            (current_time - entryNode.entry.timestamp) > entryNode.entry.ttl_seconds) {
+            // Lazy Garbage Collection: Object has expired. Remove it immediately.
+            lru_list_.erase(entryNode.lru_it);
+            if (impl_->idx) impl_->idx.remove(candidate_id);
+            id_to_query_.erase(candidate_id);
+            cache_map_.erase(cache_it);
+            stats_.expired++;
+            stats_.total_entries = cache_map_.size();
+            continue; // Continue searching next candidates
+        }
+
+        // We found the best valid match!
         stats_.hits++;
 
         // Update LRU
@@ -119,13 +111,11 @@ const SemanticCache::CacheEntry* SemanticCache::Get(const std::string& query) {
         entryNode.lru_it = lru_list_.begin();
         entryNode.entry.hit_count++;
 
-        // Optional log: std::cerr << "SemanticCache: HIT (similarity=" << best_similarity << ")\n";
-
-        return &(entryNode.entry);
+        return entryNode.entry;
     }
 
     stats_.misses++;
-    return nullptr;
+    return std::nullopt;
 }
 
 void SemanticCache::Put(const std::string& query, const std::string& result, int64_t ttl_seconds) {

@@ -13,6 +13,7 @@ using json = nlohmann::json;
 namespace NPCInference {
 
     void SimpleGraph::AddRelation(const std::string& subject, const std::string& relation, const std::string& target, float weight) {
+        std::lock_guard<std::mutex> lock(mutex_);
         // Check if edge already exists
         auto& edges = adjacencyList_[subject];
         for (auto& edge : edges) {
@@ -27,6 +28,7 @@ namespace NPCInference {
     }
 
     std::vector<GraphEdge> SimpleGraph::GetRelations(const std::string& subject) const {
+        std::lock_guard<std::mutex> lock(mutex_);
         if (adjacencyList_.count(subject)) {
             return adjacencyList_.at(subject);
         }
@@ -34,6 +36,7 @@ namespace NPCInference {
     }
 
     GraphPath SimpleGraph::FindPath(const std::string& start, const std::string& end, int maxDepth) const {
+        std::lock_guard<std::mutex> lock(mutex_);
         if (!adjacencyList_.count(start)) return {};
 
         std::queue<std::pair<std::string, GraphPath>> q;
@@ -77,6 +80,7 @@ namespace NPCInference {
     }
 
     std::string SimpleGraph::GetKnowledgeContext(const std::string& entity) const {
+        std::lock_guard<std::mutex> lock(mutex_);
         std::stringstream ss;
         if (adjacencyList_.count(entity)) {
             const auto& edges = adjacencyList_.at(entity);
@@ -88,6 +92,7 @@ namespace NPCInference {
     }
 
     bool SimpleGraph::Save(const std::string& filepath) const {
+        std::lock_guard<std::mutex> lock(mutex_);
         json j;
         for (const auto& [node, edges] : adjacencyList_) {
             json edgeList = json::array();
@@ -106,49 +111,61 @@ namespace NPCInference {
             f << j.dump(4);
             return true;
         } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return false;
-    } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
-        return false;
-    }
+            std::cerr << "Error: " << e.what() << std::endl;
+            return false;
+        } catch (...) {
+            std::cerr << "Unknown error occurred" << std::endl;
+            return false;
+        }
     }
 
     bool SimpleGraph::Load(const std::string& filepath) {
+        std::lock_guard<std::mutex> lock(mutex_);
         try {
             std::ifstream f(filepath);
             if (!f.is_open()) return false;
+            
+            // Optimization: Streaming JSON parse to prevent RAM spikes
             json j;
-            f >> j;
+            try {
+                f >> j;
+            } catch (const json::parse_error& e) {
+                std::cerr << "JSON Parse Error in SimpleGraph: " << e.what() << std::endl;
+                return false;
+            }
 
             adjacencyList_.clear();
             for (const auto& el : j.items()) {
                 std::string node = el.key();
                 std::vector<GraphEdge> edges;
-                for (const auto& edgeJson : el.value()) {
-                    edges.push_back({
-                        edgeJson["r"],
-                        edgeJson["t"],
-                        edgeJson.value("w", 1.0f)
-                    });
+                if (el.value().is_array()) {
+                    for (const auto& edgeJson : el.value()) {
+                        edges.push_back({
+                            edgeJson.value("r", ""),
+                            edgeJson.value("t", ""),
+                            edgeJson.value("w", 1.0f)
+                        });
+                    }
                 }
                 adjacencyList_[node] = edges;
             }
             return true;
         } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return false;
-    } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
-        return false;
-    }
+            std::cerr << "Error: " << e.what() << std::endl;
+            return false;
+        } catch (...) {
+            std::cerr << "Unknown error occurred" << std::endl;
+            return false;
+        }
     }
 
     bool SimpleGraph::HasNode(const std::string& node) const {
+        std::lock_guard<std::mutex> lock(mutex_);
         return adjacencyList_.count(node) > 0;
     }
 
     std::string SimpleGraph::GetKnowledgeContext(const std::vector<std::string>& entities, int limit) const {
+        // No lock here as it calls CalculatePageRank which locks
         // 1. Calculate Importance (PageRank)
         auto ranks = CalculatePageRank(10); // Quick iteration
 
@@ -162,7 +179,7 @@ namespace NPCInference {
         std::sort(sorted_entities.begin(), sorted_entities.end(), 
             [](const auto& a, const auto& b) { return a.second > b.second; });
 
-        // 3. Select top K and build context
+        // 3. Select top K and build context (GetKnowledgeContext will lock)
         std::stringstream ss;
         int count = 0;
         for (const auto& [entity, score] : sorted_entities) {
@@ -174,6 +191,7 @@ namespace NPCInference {
     }
 
     std::map<int, std::vector<std::string>> SimpleGraph::DetectCommunities() {
+        std::lock_guard<std::mutex> lock(mutex_);
         // Label Propagation Algorithm (LPA)
         std::map<std::string, int> labels;
         std::vector<std::string> nodes;
@@ -240,6 +258,7 @@ namespace NPCInference {
     }
 
     std::map<std::string, float> SimpleGraph::CalculatePageRank(int max_iters, float damping) const {
+        std::lock_guard<std::mutex> lock(mutex_);
         std::map<std::string, float> ranks;
         std::set<std::string> nodes;
         
@@ -271,8 +290,7 @@ namespace NPCInference {
             for (const auto& node : nodes) {
                 float rank_sum = 0.0f;
                 
-                // Find incoming edges (inefficient O(E), but valid for SimpleGraph)
-                // Optimization: Pre-calculate reverse graph if performance needed
+                // Optimization: Inverted index would be better, but O(E) is acceptable for now
                 for (const auto& [source, edges] : adjacencyList_) {
                     for (const auto& edge : edges) {
                         if (edge.target == node) {

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <deque>
+#include <mutex>
 #include <chrono>
 #include <nlohmann/json.hpp>
 
@@ -213,6 +214,8 @@ private:
     void UpdatePlaystyleDimensions();
     void UpdateSkillAssessment();
     float CalculateEntropy() const;  // For predictability assessment
+    
+    mutable std::mutex mutex_;
 };
 
 } // namespace NPCInference

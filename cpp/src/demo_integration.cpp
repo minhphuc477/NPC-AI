@@ -6,15 +6,15 @@
 using namespace NPCInference;
 
 int main() {
-    std::cout << "=== SOTA NPC AI Integration Demo ===\n";
+    std::cout << "=== NPC AI Integration Demo ===\n";
     std::cout << "Demonstrating all 3 innovations working together\n\n";
     
     // Create NPC engine
     NPCInferenceEngine engine;
     
-    // Start a conversation to initialize SOTA systems
+    // Start a conversation to initialize cognitive systems
     std::string session_id = engine.StartConversation("Elara", "Player");
-    std::cout << "✓ Initialized NPC 'Elara' with SOTA systems\n\n";
+    std::cout << "✓ Initialized NPC 'Elara' with cognitive systems\n\n";
     
     // === Setup NPC Personality ===
     std::cout << "SETUP: Configuring Elara's personality\n";
@@ -56,7 +56,7 @@ int main() {
     
     // Build context
     auto context1 = engine.BuildAdvancedContext("Elara", "Who is the Player?");
-    std::cout << "\n📊 SOTA Context Generated:\n";
+    std::cout << "\n📊 Advanced Context Generated:\n";
     std::cout << "  Memories: " << context1["memories"].size() << "\n";
     std::cout << "  Relationships: " << context1["relationships"].size() << "\n";
     std::cout << "  Current emotion: " << context1["current_emotion"]["description"].get<std::string>() << "\n";
@@ -104,7 +104,7 @@ int main() {
     }
     
     auto context2 = engine.BuildAdvancedContext("Elara", "How do you feel about the Player?");
-    std::cout << "\n📊 SOTA Context After Rescue:\n";
+    std::cout << "\n📊 Advanced Context After Rescue:\n";
     std::cout << "  Memories: " << context2["memories"].size() << "\n";
     std::cout << "  Relationships: " << context2["relationships"].size() << "\n";
     if (!context2["relationships"].empty()) {
@@ -182,7 +182,7 @@ int main() {
     std::cout << "\n";
     
     std::cout << "✅ INTEGRATION DEMO COMPLETE\n\n";
-    std::cout << "All 3 SOTA systems working together:\n";
+    std::cout << "All 3 innovation systems working together:\n";
     std::cout << "1. ✅ Temporal Memory: Memories decay realistically\n";
     std::cout << "2. ✅ Social Fabric: Relationships and gossip tracked\n";
     std::cout << "3. ✅ Emotional Continuity: Persistent emotions with personality\n\n";

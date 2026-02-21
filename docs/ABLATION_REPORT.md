@@ -16,19 +16,19 @@ The system is designed with modular controls to isolate the impact of its core c
 
 ### A. Persona Consistency (vs. Park et al., 2023)
 **Paper**: *"Generative Agents: Interactive Simulacra of Human Behavior"*
-- **SOTA Approach**: Uses a "Memory Stream" and calculates importance scores to prune memories.
+- **Literature Approach**: Uses a "Memory Stream" and calculates importance scores to prune memories.
 - **BD-NSCA Approach**: Implements `MemoryConsolidator` with importance-based pruning and `HybridRetriever` (Sparse + Dense).
 - **Comparison**: Our C++ implementation focuses on **latency reduction** for real-time games, whereas the Smallville paper focuses on multi-agent simulation with higher latency tolerance.
 
 ### B. Inference Speedup (vs. Leviathan et al., 2023)
 **Paper**: *"Fast Inference from Transformers via Speculative Decoding"*
-- **SOTA Metric**: Acceptance Rate of draft tokens (target 60-80%).
+- **Baseline Metric**: Acceptance Rate of draft tokens (target 60-80%).
 - **BD-NSCA Implementation**: Instrumented with `RecordSpeculation`.
 - **Target Comparison**: The paper achieves 2x-3x speedup on high-end GPUs. Our system matches the logic, allowing the user to track `speculation_efficiency` in `benchmark_results.json`.
 
 ### C. Context Relevance (vs. Wang et al., 2023)
 **Paper**: *"Voyager: An Open-Ended Embodied Agent with Large Language Models"*
-- **SOTA Approach**: Uses RAG to retrieve skills and environment state.
+- **Literature Approach**: Uses RAG to retrieve skills and environment state.
 - **BD-NSCA Approach**: Integrates a **Knowledge Graph** (`SimpleGraph`) with Vector RAG to ensure symbolic state (e.g., "The dragon is dead") is prioritized over semantic search.
 - **Comparison**: Voyager focuses on Minecraft task completion; BD-NSCA focuses on **Conversational Coherence** in RPG environments.
 
@@ -56,4 +56,4 @@ Based on the `PerformanceProfiler` metrics:
 Our **Speculative Decoding** follows the algorithm in **Leviathan et al. (Section 3)**, where the target model $P$ verifies $k$ tokens from draft model $q$. Our `profiler_->RecordSpeculation(accepted, drafted)` maps directly to the **$\alpha$ (acceptance rate)** metric used to prove speedup in the original paper.
 
 ## 6. Conclusion
-The BD-NSCA architecture is not merely "inspired" by these papers; it is a **high-performance C++ realization** of these theoretical models, verified by the automated benchmarking suite to meet or exceed SOTA efficiency targets.
+The BD-NSCA architecture is not merely "inspired" by these papers; it is a **high-performance C++ realization** of these theoretical models, verified by the automated benchmarking suite to meet or exceed efficiency targets.

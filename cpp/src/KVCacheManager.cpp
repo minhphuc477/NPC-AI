@@ -10,17 +10,25 @@ KVCacheManager::KVCacheManager(size_t max_memory_mb, size_t max_entries)
 
 KVCacheManager::~KVCacheManager() = default;
 
-KVCacheManager::CacheEntry* KVCacheManager::Get(const std::string& conversation_id) {
+std::optional<KVCacheManager::CacheEntry> KVCacheManager::Get(const std::string& conversation_id) {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = cache_map_.find(conversation_id);
     if (it == cache_map_.end()) {
         stats_.misses++;
-        return nullptr;
+        return std::nullopt;
     }
     
     stats_.hits++;
     UpdateAccessTime(conversation_id);
-    return &(it->second.first);
+    
+    // Deep copy for safety
+    CacheEntry entry;
+    entry.kv_tensors = CloneKV(it->second.first.kv_tensors);
+    entry.sequence_length = it->second.first.sequence_length;
+    entry.last_access_time = it->second.first.last_access_time;
+    entry.memory_bytes = it->second.first.memory_bytes;
+    
+    return entry;
 }
 
 void KVCacheManager::Put(const std::string& conversation_id, 
@@ -88,9 +96,17 @@ void KVCacheManager::PutSystemKV(std::vector<Ort::Value>&& kv_tensors, size_t se
     system_prompt_cache_ = std::make_unique<CacheEntry>(std::move(entry));
 }
 
-KVCacheManager::CacheEntry* KVCacheManager::GetSystemKV() {
+std::optional<KVCacheManager::CacheEntry> KVCacheManager::GetSystemKV() {
     std::lock_guard<std::mutex> lock(mutex_);
-    return system_prompt_cache_.get();
+    if (!system_prompt_cache_) return std::nullopt;
+    
+    CacheEntry entry;
+    entry.kv_tensors = CloneKV(system_prompt_cache_->kv_tensors);
+    entry.sequence_length = system_prompt_cache_->sequence_length;
+    entry.last_access_time = system_prompt_cache_->last_access_time;
+    entry.memory_bytes = system_prompt_cache_->memory_bytes;
+    
+    return entry;
 }
 
 void KVCacheManager::Clear() {
@@ -121,10 +137,43 @@ void KVCacheManager::SetMaxMemory(size_t max_memory_mb) {
 
 std::vector<Ort::Value> KVCacheManager::CloneKV(const std::vector<Ort::Value>& source) {
     std::vector<Ort::Value> result;
-    // Ort::Value doesn't have a simple deep copy. 
-    // This is a placeholder for a true deep copy if needed.
-    // For now, let's just move everything if posible, or return empty to avoid crash
-    // but in a production system, this would allocate new tensors and copy data.
+    result.reserve(source.size());
+    
+    Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
+
+    for (const auto& v : source) {
+        if (!v.IsTensor()) {
+            result.push_back(Ort::Value(nullptr));
+            continue;
+        }
+
+        auto info = v.GetTensorTypeAndShapeInfo();
+        auto shape = info.GetShape();
+        auto type = info.GetElementType();
+        size_t count = info.GetElementCount();
+
+        if (type == ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT) {
+            std::vector<float> data(count);
+            const float* src_data = v.GetTensorData<float>();
+            std::copy(src_data, src_data + count, data.data());
+            
+            result.push_back(Ort::Value::CreateTensor<float>(
+                memory_info, data.data(), count, shape.data(), shape.size()
+            ));
+        } else if (type == ONNX_TENSOR_ELEMENT_DATA_TYPE_INT64) {
+            std::vector<int64_t> data(count);
+            const int64_t* src_data = v.GetTensorData<int64_t>();
+            std::copy(src_data, src_data + count, data.data());
+            
+            result.push_back(Ort::Value::CreateTensor<int64_t>(
+                memory_info, data.data(), count, shape.data(), shape.size()
+            ));
+        } else {
+            // Fallback: Copy as raw bytes if unknown but needed
+            // For LLM KV caches, it's almost always F32 or Half (which we treat as bytes if not careful)
+            result.push_back(Ort::Value(nullptr));
+        }
+    }
     return result; 
 }
 

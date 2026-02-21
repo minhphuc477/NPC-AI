@@ -213,11 +213,11 @@ public:
     std::vector<int64_t> Tokenize(const std::string& text);
     std::string Decode(const std::vector<int64_t>& token_ids);
 
+    // Phase 12: Tool Execution (public so subsystem can route tool calls)
+    std::string ExecuteAction(const std::string& tool_call_json);
+
 private:    // Helper to formatting prompt
     std::string FormatPrompt(const std::string& system, const std::string& name, const std::string& context, const std::string& question);
-    
-    // Phase 12: Tool Execution
-    std::string ExecuteAction(const std::string& tool_call_json);
 
     // Context Parsing
     // ParseOutput moved to public
@@ -279,14 +279,11 @@ public:
 
     // Initialize with Config
     bool Initialize(const InferenceConfig& config);
-    // Asynchronous Initialization
-    void InitializeAsync(const InferenceConfig& config, std::function<void(bool)> callback = nullptr);
     
     // Legacy Init (keeps compatibility)
     bool Initialize(const std::string& modelPath);
 
-    // Check loading status
-    bool IsLoading() const;
+
 
     // Output Parser
     GenerationResult ParseOutput(const std::string& raw_output);
@@ -301,10 +298,6 @@ private:
     std::string current_action_ = "Idle";
     std::string last_thought_ = "";
     InferenceConfig config_;
-    
-    // Async State
-    std::future<bool> loading_future_;
-    std::atomic<bool> is_loading_{false};
 
 public:
     void SetRagThreshold(float threshold) { config_.rag_threshold = threshold; }
