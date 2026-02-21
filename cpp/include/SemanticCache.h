@@ -39,6 +39,12 @@ public:
             return (hits + misses > 0) ? static_cast<float>(hits) / (hits + misses) : 0.0f;
         }
     };
+    
+    struct CacheNode {
+        CacheEntry entry;
+        std::list<std::string>::iterator lru_it;
+        uint64_t usearch_id;
+    };
 
     /**
      * Constructor
@@ -62,6 +68,8 @@ public:
      * Put query result in cache
      */
     void Put(const std::string& query, const std::string& result, int64_t ttl_seconds = -1);
+
+    ~SemanticCache();
 
     /**
      * Clear all cache entries
@@ -101,8 +109,14 @@ private:
     // LRU tracking: list of query strings in access order (front = most recent)
     std::list<std::string> lru_list_;
     
-    // Map from query to cache entry and LRU iterator
-    std::unordered_map<std::string, std::pair<CacheEntry, std::list<std::string>::iterator>> cache_map_;
+    // Map from query to CacheNode
+    std::unordered_map<std::string, CacheNode> cache_map_;
+    // Map from ID to query string
+    std::unordered_map<uint64_t, std::string> id_to_query_;
+    
+    struct Impl;
+    std::unique_ptr<Impl> impl_;
+    uint64_t next_id_ = 1;
     
     mutable std::mutex mutex_;
     CacheStats stats_;

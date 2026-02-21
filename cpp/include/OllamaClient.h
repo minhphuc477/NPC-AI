@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <future>
 #include <nlohmann/json.hpp>
 
 namespace NPCInference {
@@ -23,6 +24,19 @@ public:
      * @return Generated text
      */
     std::string Generate(
+        const std::string& prompt,
+        int max_tokens = 150,
+        float temperature = 0.7f
+    );
+    
+    /**
+     * Generate text completion asynchronously
+     * @param prompt The prompt to send
+     * @param max_tokens Maximum tokens to generate
+     * @param temperature Sampling temperature (0.0-1.0)
+     * @return Future containing the generated text
+     */
+    std::future<std::string> GenerateAsync(
         const std::string& prompt,
         int max_tokens = 150,
         float temperature = 0.7f

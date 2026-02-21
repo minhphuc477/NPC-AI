@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <atomic>
 #include <nlohmann/json.hpp>
 
 // Forward declare usearch index type to avoid pulling heavy headers into public interface if possible
@@ -48,8 +49,8 @@ namespace NPCInference {
         std::unique_ptr<Impl> impl_;
         
         // Metadata storage (ID -> Data)
-        // We use a simple counter for IDs
-        uint64_t next_id_ = 1;
+        // We use a simple atomic counter for IDs
+        std::atomic<uint64_t> next_id_{1};
         
         struct DocData {
             std::string text;
