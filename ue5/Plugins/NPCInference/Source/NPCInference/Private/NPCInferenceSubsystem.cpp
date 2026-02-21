@@ -1,6 +1,7 @@
 #include "NPCInferenceSubsystem.h"
 #include "Misc/Paths.h"
 #include "HAL/PlatformFilemanager.h"
+#include "OllamaClient.h"
 
 void UNPCInferenceSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -73,6 +74,14 @@ FString UNPCInferenceSubsystem::GenerateStructuredDialogue(const FString& System
     return ToFString(response);
 }
 
+void UNPCInferenceSubsystem::CancelGeneration(const FString& ConversationID)
+{
+    if (InferenceEngine)
+    {
+        InferenceEngine->CancelGeneration(ToString(ConversationID));
+    }
+}
+
 FString UNPCInferenceSubsystem::ExecuteNPCTool(const FString& ToolCallJSON)
 {
     if (!InferenceEngine) return TEXT("Error: Engine not ready");
@@ -100,6 +109,93 @@ void UNPCInferenceSubsystem::GenerateDialogueAsync(const FString& SystemPrompt, 
         FString FinalResponse = ToFString(StdResponse);
 
         // Return to Game Thread to execute the delegate
+        AsyncTask(ENamedThreads::GameThread, [OnComplete, FinalResponse]()
+        {
+            OnComplete.ExecuteIfBound(FinalResponse);
+        });
+    });
+}
+
+void UNPCInferenceSubsystem::GenerateDialogueStreamAsync(const FString& SystemPrompt, const FString& Name, const FString& Context, const FString& PlayerInput, FOnDialogueGenerated OnActionChunk, FOnDialogueGenerated OnComplete)
+{
+    // AAA Production: Streaming Action Parser Endpoint
+    // Bypasses the internal multi-step Reasoner for direct raw speed & structural parsing
+    
+    // Default to the Phi-3 endpoint currently in use
+    FString EndpointModel = TEXT("phi3:mini"); 
+    
+    // We instantiate OllamaClient temporarily for the background task
+    // Using TSharedPtr for safe cross-thread lifecycle
+    TSharedPtr<NPCInference::OllamaClient> StreamClient = MakeShared<NPCInference::OllamaClient>(ToString(EndpointModel), "http://localhost:11434");
+    
+    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [StreamClient, this, SystemPrompt, Name, Context, PlayerInput, OnActionChunk, OnComplete]()
+    {
+        FPlatformProcess::SetThreadPriority(TPri_BelowNormal);
+
+        // Build the raw prompt
+        std::string prompt = "System: " + ToString(SystemPrompt) + "\nName: " + ToString(Name) + "\nContext: " + ToString(Context) + "\n\nQuestion: " + ToString(PlayerInput) + "\nAnswer:";
+        
+        // Define our Callbacks
+        auto TokenCallback = [](const std::string& token) {
+            // We can ignore pure token streams for now, unless we want a typewriter effect.
+        };
+        
+        auto ActionCallback = [OnActionChunk](const std::string& action) {
+            FString ActionStr = UNPCInferenceSubsystem::ToFString(action);
+            
+            // Firing the delegate on the Game Thread synchronously so Blueprints can trigger Animations immediately
+            AsyncTask(ENamedThreads::GameThread, [OnActionChunk, ActionStr]() {
+                OnActionChunk.ExecuteIfBound(ActionStr);
+            });
+        };
+        
+        // Block and run stream
+        std::future<std::string> stream_fut = StreamClient->GenerateStreamAsync(prompt, TokenCallback, ActionCallback, 150, 0.7f);
+        std::string FinalResult = stream_fut.get();
+        FString FinalResponse = UNPCInferenceSubsystem::ToFString(FinalResult);
+        
+        // Return to Game Thread for completion
+        AsyncTask(ENamedThreads::GameThread, [OnComplete, FinalResponse]()
+        {
+            OnComplete.ExecuteIfBound(FinalResponse);
+        });
+    });
+}
+
+void UNPCInferenceSubsystem::GenerateDialogueLocalStreamAsync(const FString& SystemPrompt, const FString& Name, const FString& Context, const FString& PlayerInput, FOnDialogueGenerated OnTokenStream, FOnDialogueGenerated OnActionChunk, FOnDialogueGenerated OnComplete)
+{
+    if (!IsEngineReady())
+    {
+        OnComplete.ExecuteIfBound(TEXT("Error: Engine not ready"));
+        return;
+    }
+
+    // Capture variables
+    std::string prompt = "System: " + ToString(SystemPrompt) + "\nName: " + ToString(Name) + "\nContext: " + ToString(Context) + "\n\nQuestion: " + ToString(PlayerInput) + "\nAnswer:";
+
+    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this, prompt, OnTokenStream, OnActionChunk, OnComplete]()
+    {
+        // Phase 8 Resource Contention Fix:
+        // Lower LLM evaluation thread priority so UE5 Game/Render threads take precedence
+        FPlatformProcess::SetThreadPriority(TPri_BelowNormal);
+
+        auto TokenCallback = [OnTokenStream](const std::string& token) {
+            FString TokenStr = UNPCInferenceSubsystem::ToFString(token);
+            AsyncTask(ENamedThreads::GameThread, [OnTokenStream, TokenStr]() {
+                OnTokenStream.ExecuteIfBound(TokenStr);
+            });
+        };
+        
+        auto ActionCallback = [OnActionChunk](const std::string& action) {
+            FString ActionStr = UNPCInferenceSubsystem::ToFString(action);
+            AsyncTask(ENamedThreads::GameThread, [OnActionChunk, ActionStr]() {
+                OnActionChunk.ExecuteIfBound(ActionStr);
+            });
+        };
+
+        std::string FinalResult = InferenceEngine->GenerateStreamLocal(prompt, TokenCallback, ActionCallback);
+        FString FinalResponse = UNPCInferenceSubsystem::ToFString(FinalResult);
+        
         AsyncTask(ENamedThreads::GameThread, [OnComplete, FinalResponse]()
         {
             OnComplete.ExecuteIfBound(FinalResponse);

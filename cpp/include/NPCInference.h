@@ -114,6 +114,18 @@ public:
     // Convenience method for chat format
     std::string GenerateFromContext(const std::string& persona, const std::string& npc_id, const std::string& scenario, const std::string& player_input);
 
+    // Phase 7: Local Zero-Latency Streaming Direct Link
+    std::string GenerateStreamLocal(
+        const std::string& prompt, 
+        std::function<void(const std::string&)> on_token_callback, 
+        std::function<void(const std::string&)> on_action_callback
+    );
+
+    /**
+     * Instantly abort any ongoing generation processes (Ollama/Local)
+     */
+    void CancelGeneration();
+
     /**
      * Store new memory in VectorStore
      * @param text content to remember

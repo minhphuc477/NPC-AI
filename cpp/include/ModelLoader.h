@@ -7,6 +7,7 @@
 #include <memory>
 #include <functional>
 #include <cstdint>
+#include <atomic>
 
 // Forward declare ONNX Runtime types
 namespace Ort {
@@ -84,11 +85,20 @@ public:
     void SetTemperature(float temp) { temperature_ = temp; }
     void SetTopP(float top_p) { top_p_ = top_p; }
 
+    /**
+     * Cancel the ongoing Native Generation loop
+     */
+    void Cancel(const std::string& conversation_id = "");
+
 private:
     std::unique_ptr<Ort::Session> session_;
     std::unique_ptr<Ort::SessionOptions> session_options_;
     bool is_loaded_ = false;
     bool is_mock_ = false;
+    
+    // Cancellation mapping (Phase 8 Multi-Agent)
+    std::mutex cancel_mutex_;
+    std::unordered_map<std::string, bool> cancel_flags_;
     
     // Model configuration
     float temperature_ = 0.7f;

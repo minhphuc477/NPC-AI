@@ -56,7 +56,16 @@ bool ModelLoader::LoadModel(const std::string& model_path, bool use_cuda, int nu
     try {
         // Create session options
         session_options_ = std::make_unique<Ort::SessionOptions>();
-        session_options_->SetIntraOpNumThreads(num_threads > 0 ? num_threads : 4);
+        
+        // Phase 8 Resource Contention Fix: Clamp threads
+        // Reserve at least half the CPU cores for Unreal Engine (Physics, Render, Game threads)
+        int hw_cores = std::thread::hardware_concurrency();
+        int safe_threads = std::max(1, hw_cores > 4 ? hw_cores / 2 : hw_cores - 1);
+        int final_threads = (num_threads > 0) ? std::min(num_threads, safe_threads) : std::min(4, safe_threads);
+        
+        session_options_->SetIntraOpNumThreads(final_threads);
+        session_options_->SetInterOpNumThreads(1); // Keep inter-op logic strictly linear to avoid cache thrash
+        
         session_options_->SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
         
         // Enable CUDA if requested
@@ -210,7 +219,26 @@ std::vector<int64_t> ModelLoader::Generate(
         return generated_ids;
     }
 
+    // Reset flag at start
+    {
+        std::lock_guard<std::mutex> lock(cancel_mutex_);
+        cancel_flags_[conversation_id] = false;
+    }
+
     for (int i = 0; i < max_new_tokens; ++i) {
+        
+        // Immediate termination point
+        bool is_cancelled = false;
+        {
+            std::lock_guard<std::mutex> lock(cancel_mutex_);
+            is_cancelled = cancel_flags_[conversation_id];
+        }
+        
+        if (is_cancelled) {
+            std::cerr << "ModelLoader: Generation cancelled internally for conv: " << conversation_id << std::endl;
+            break;
+        }
+
         // Prepare inputs
         std::vector<const char*> run_input_names;
         std::vector<Ort::Value> run_input_values; 
@@ -425,6 +453,14 @@ std::vector<int64_t> ModelLoader::VerifyDraft(
         int64_t seq_len = shape[1]; 
         int64_t vocab_size = shape[2];
         
+        // --- PHASE 7: SPECULATIVE MISMATCH GUARD ---
+        for (int64_t d_id : draft_ids) {
+            if (d_id < 0 || d_id >= vocab_size) {
+                std::cerr << "Speculative Mismatch Guard: Draft model token (" << d_id << ") exceeds Target vocab size (" << vocab_size << "). Different architectures detected! Aborting draft." << std::endl;
+                return {};
+            }
+        }
+        
         int64_t check_start_index = 0;
         if (!using_cache && !input_ids.empty()) {
             check_start_index = input_ids.size() - 1;
@@ -563,3 +599,14 @@ int64_t ModelLoader::SampleToken(float* logits, int64_t vocab_size) {
 }
 
 } // namespace NPCInference
+
+void ModelLoader::Cancel(const std::string& conversation_id) {
+    std::lock_guard<std::mutex> lock(cancel_mutex_);
+    if (conversation_id.empty()) {
+        for (auto& pair : cancel_flags_) {
+            pair.second = true;
+        }
+    } else {
+        cancel_flags_[conversation_id] = true;
+    }
+}

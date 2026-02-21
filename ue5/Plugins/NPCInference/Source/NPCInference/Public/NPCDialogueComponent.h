@@ -8,6 +8,7 @@
 class AAIController;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNPCResponseGenerated, const FString&, Response);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNPCSpeechChunkGenerated, const FString&, SpeechChunk);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NPCINFERENCE_API UNPCDialogueComponent : public UActorComponent
@@ -22,6 +23,10 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+public:	
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:	
 	
@@ -55,6 +60,10 @@ public:
 	/** Event fired when response is generated */
 	UPROPERTY(BlueprintAssignable, Category = "NPC Inference")
 	FOnNPCResponseGenerated OnResponseGenerated;
+
+	/** Phase 7: Event fired when a chunk of text is generated (for TTS/Lipsync Multimodal hooks) */
+	UPROPERTY(BlueprintAssignable, Category = "NPC Inference")
+	FOnNPCSpeechChunkGenerated OnSpeechChunkGenerated;
 
 	/** Request a response from the AI engine */
 	UFUNCTION(BlueprintCallable, Category = "NPC AI")
@@ -103,5 +112,11 @@ public:
 private:
 	/** Extract dynamic context from game state */
 	FString ExtractDynamicContext();
+
+	/** Phase 8: Stale Context Prevention state */
+	bool bIsGeneratingResponse = false;
+	FVector GenerationStartLocation;
+	UPROPERTY(Transient)
+	AActor* CurrentInteractingPlayer = nullptr;
 };
 

@@ -349,6 +349,18 @@ namespace NPCInference {
         return GenerateWithState(prompt, state_snapshot, "", false);
     }
 
+    void NPCInferenceEngine::CancelGeneration() {
+        // NOTE: Since the current architecture routes out to external LLM clients usually inside Prompts,
+        // and we are upgrading OllamaClient to support this, we need to pass this signal.
+        // For the PythonBridge / Local Llama.cpp, we would route Cancel down here too.
+        std::cout << "NPCInferenceEngine: Cancelling ongoing generation..." << std::endl;
+        
+        // If there's an active model loader (llama.cpp wrapper) processing tokens, we signal it
+        if (model_loader_) {
+             model_loader_->Cancel();
+        }
+    }
+
     std::string NPCInferenceEngine::GenerateWithState(const std::string& prompt, nlohmann::json& state, const std::string& last_thought, bool is_json) {
                 if (!ready_) {
                         return "Error: Engine not ready";
@@ -843,7 +855,52 @@ namespace NPCInference {
         for (uint64_t id : ids_to_remove) {
             vector_store_->Remove(id);
         }
-        std::cout << "Sleep Mode: Pruned " << ids_to_remove.size() << " old memories." << std::endl;
+        
+        // Phase 7: Automated Memory Decay Validation
+        vector_store_->Prune(0.95f, 0.1f);
+        
+        std::cout << "Sleep Mode: Pruned " << ids_to_remove.size() << " old memories and applied global decay." << std::endl;
+    }
+
+    std::string NPCInferenceEngine::GenerateStreamLocal(const std::string& prompt, std::function<void(const std::string&)> on_token_callback, std::function<void(const std::string&)> on_action_callback) {
+        if (!ready_ || !model_loader_ || !tokenizer_) return "Error: Engine not ready";
+        
+        std::vector<int64_t> input_ids = tokenizer_->Encode(prompt);
+        std::vector<int64_t> output_ids;
+        std::vector<int64_t> attention_mask(input_ids.size(), 1);
+        
+        std::string current_action = "";
+        bool in_action = false;
+        
+        auto wrapper_callback = [&](int64_t token) {
+            std::string text_chunk = tokenizer_->Decode({token});
+            
+            // Basic State Machine for *actions*
+            for (char c : text_chunk) {
+                if (c == '*') {
+                    if (in_action) {
+                        if (on_action_callback) on_action_callback(current_action);
+                        current_action = "";
+                        in_action = false;
+                    } else {
+                        in_action = true;
+                    }
+                } else if (in_action) {
+                    current_action += c;
+                } else {
+                    if (on_token_callback) on_token_callback(std::string(1, c));
+                }
+            }
+        };
+
+        output_ids = model_loader_->Generate(input_ids, attention_mask, 150, "stream_local", wrapper_callback);
+        
+        if (output_ids.size() > input_ids.size()) {
+            std::vector<int64_t> new_tokens(output_ids.begin() + input_ids.size(), output_ids.end());
+            return tokenizer_->Decode(new_tokens);
+        }
+        
+        return "";
     }
 
 
