@@ -1,4 +1,6 @@
 #include "NPCInference.h"
+#include "ModelLoader.h"
+#include "Tokenizer.h"
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -44,7 +46,7 @@ public:
 int main() {
     std::cout << "=== NPC AI Performance Benchmark ===" << std::endl;
 
-    InferenceConfig config;
+    NPCInferenceEngine::InferenceConfig config;
     auto engine = std::make_unique<NPCInferenceEngine>();
     
     // Wire up for benchmarking

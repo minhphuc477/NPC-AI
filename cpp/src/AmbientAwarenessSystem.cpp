@@ -4,6 +4,9 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <iostream>
+#include "NPCLogger.h"
+#include <iostream>
 
 namespace NPCInference {
 
@@ -43,7 +46,10 @@ std::string AmbientAwarenessSystem::RecordEvidence(
     evidence.description = description;
     evidence.location = location;
     evidence.observed_at = GetCurrentTimestamp();
-    evidence.reliability = std::clamp(reliability, 0.0f, 1.0f);
+    float rel_clamped = reliability;
+    if (rel_clamped < 0.0f) rel_clamped = 0.0f;
+    if (rel_clamped > 1.0f) rel_clamped = 1.0f;
+    evidence.reliability = rel_clamped;
     
     // Determine possible causes based on evidence type and description
     if (evidence_type == "auditory") {
@@ -431,10 +437,10 @@ bool AmbientAwarenessSystem::Save(const std::string& filepath) {
         file << std::setw(2) << j;
         return true;
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        NPCLogger::Error(std::string("Error saving AmbientAwarenessSystem: ") + e.what());
         return false;
     } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
+        NPCLogger::Error("Unknown error occurred saving AmbientAwarenessSystem");
         return false;
     }
 }
@@ -447,10 +453,10 @@ bool AmbientAwarenessSystem::Load(const std::string& filepath) {
         FromJSON(j);
         return true;
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        NPCLogger::Error(std::string("Error loading AmbientAwarenessSystem: ") + e.what());
         return false;
     } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
+        NPCLogger::Error("Unknown error occurred loading AmbientAwarenessSystem");
         return false;
     }
 }
@@ -462,11 +468,15 @@ nlohmann::json AmbientAwarenessSystem::ToJSON() const {
     j["observations"] = nlohmann::json::array();
     for (const auto& event : observed_events_) {
         nlohmann::json e;
+        e["event_id"] = event.event_id;
         e["type"] = event.event_type;
         e["description"] = event.description;
+        e["involved_entities"] = event.involved_entities;
         e["location"] = event.location;
+        e["timestamp"] = event.timestamp;
         e["certainty"] = event.certainty;
         e["direct"] = event.directly_witnessed;
+        e["evidence_ids"] = event.evidence_ids;
         j["observations"].push_back(e);
     }
     
@@ -474,10 +484,14 @@ nlohmann::json AmbientAwarenessSystem::ToJSON() const {
     j["inferences"] = nlohmann::json::array();
     for (const auto& inference : inferred_events_) {
         nlohmann::json i;
+        i["event_id"] = inference.event_id;
         i["type"] = inference.event_type;
         i["description"] = inference.description;
+        i["estimated_time"] = inference.estimated_time;
         i["plausibility"] = inference.plausibility;
+        i["supporting_evidence"] = inference.supporting_evidence;
         i["method"] = inference.inference_method;
+        i["confirmed"] = inference.confirmed;
         j["inferences"].push_back(i);
     }
     
@@ -485,17 +499,102 @@ nlohmann::json AmbientAwarenessSystem::ToJSON() const {
     j["evidence"] = nlohmann::json::array();
     for (const auto& evidence : evidence_collection_) {
         nlohmann::json ev;
+        ev["evidence_id"] = evidence.evidence_id;
         ev["type"] = evidence.evidence_type;
         ev["description"] = evidence.description;
+        ev["location"] = evidence.location;
+        ev["observed_at"] = evidence.observed_at;
         ev["reliability"] = evidence.reliability;
+        ev["possible_causes"] = evidence.possible_causes;
         j["evidence"].push_back(ev);
+    }
+    
+    // Save information sources
+    j["information_sources"] = nlohmann::json::array();
+    for (const auto& [id, source] : information_sources_) {
+        nlohmann::json s;
+        s["source_id"] = source.source_id;
+        s["credibility"] = source.credibility;
+        s["correct_predictions"] = source.correct_predictions;
+        s["total_predictions"] = source.total_predictions;
+        s["known_biases"] = source.known_biases;
+        j["information_sources"].push_back(s);
     }
     
     return j;
 }
 
 void AmbientAwarenessSystem::FromJSON(const nlohmann::json& j) {
-    // Load would go here - simplified for now
+    if (j.contains("observations") && j["observations"].is_array()) {
+        observed_events_.clear();
+        for (const auto& item : j["observations"]) {
+            ObservedEvent e;
+            e.event_id = item.value("event_id", "");
+            e.event_type = item.value("type", "");
+            e.description = item.value("description", "");
+            if (item.contains("involved_entities") && item["involved_entities"].is_array()) {
+                e.involved_entities = item["involved_entities"].get<std::vector<std::string>>();
+            }
+            e.location = item.value("location", "");
+            e.timestamp = item.value("timestamp", 0LL);
+            e.certainty = item.value("certainty", 1.0f);
+            e.directly_witnessed = item.value("direct", false);
+            if (item.contains("evidence_ids") && item["evidence_ids"].is_array()) {
+                e.evidence_ids = item["evidence_ids"].get<std::vector<std::string>>();
+            }
+            observed_events_.push_back(e);
+        }
+    }
+    
+    if (j.contains("inferences") && j["inferences"].is_array()) {
+        inferred_events_.clear();
+        for (const auto& item : j["inferences"]) {
+            InferredEvent i;
+            i.event_id = item.value("event_id", "");
+            i.event_type = item.value("type", "");
+            i.description = item.value("description", "");
+            i.estimated_time = item.value("estimated_time", 0LL);
+            i.plausibility = item.value("plausibility", 0.5f);
+            if (item.contains("supporting_evidence") && item["supporting_evidence"].is_array()) {
+                i.supporting_evidence = item["supporting_evidence"].get<std::vector<std::string>>();
+            }
+            i.inference_method = item.value("method", "");
+            i.confirmed = item.value("confirmed", false);
+            inferred_events_.push_back(i);
+        }
+    }
+    
+    if (j.contains("evidence") && j["evidence"].is_array()) {
+        evidence_collection_.clear();
+        for (const auto& item : j["evidence"]) {
+            Evidence ev;
+            ev.evidence_id = item.value("evidence_id", "");
+            ev.evidence_type = item.value("type", "");
+            ev.description = item.value("description", "");
+            ev.location = item.value("location", "");
+            ev.observed_at = item.value("observed_at", 0LL);
+            ev.reliability = item.value("reliability", 0.8f);
+            if (item.contains("possible_causes") && item["possible_causes"].is_array()) {
+                ev.possible_causes = item["possible_causes"].get<std::vector<std::string>>();
+            }
+            evidence_collection_.push_back(ev);
+        }
+    }
+    
+    if (j.contains("information_sources") && j["information_sources"].is_array()) {
+        information_sources_.clear();
+        for (const auto& item : j["information_sources"]) {
+            InformationSource s;
+            s.source_id = item.value("source_id", "");
+            s.credibility = item.value("credibility", 0.7f);
+            s.correct_predictions = item.value("correct_predictions", 0);
+            s.total_predictions = item.value("total_predictions", 0);
+            if (item.contains("known_biases") && item["known_biases"].is_array()) {
+                s.known_biases = item["known_biases"].get<std::vector<std::string>>();
+            }
+            information_sources_[s.source_id] = s;
+        }
+    }
 }
 
 void AmbientAwarenessSystem::InitializeInferenceRules() {

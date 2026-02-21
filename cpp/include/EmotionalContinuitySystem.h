@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <mutex>
 #include <nlohmann/json.hpp>
 
 namespace NPCInference {
@@ -210,6 +211,7 @@ public:
     void SetReactionThreshold(float threshold) { reaction_threshold_ = threshold; }
     
 private:
+    mutable std::mutex mutex_;
     PersonalityProfile personality_;
     EmotionalState current_emotion_;
     EmotionalState baseline_mood_;

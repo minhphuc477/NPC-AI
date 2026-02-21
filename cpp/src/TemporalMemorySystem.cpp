@@ -1,4 +1,5 @@
 #include "TemporalMemorySystem.h"
+#include "NPCLogger.h"
 #include <algorithm>
 #include <random>
 #include <sstream>
@@ -21,12 +22,13 @@ std::string TemporalMemorySystem::AddEpisode(
     const std::vector<std::string>& participants,
     const std::string& location
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     EpisodicMemory memory;
     memory.event_id = GenerateMemoryId();
     memory.description = description;
     memory.timestamp = GetCurrentTimestamp();
-    memory.emotional_valence = std::clamp(emotional_valence, -1.0f, 1.0f);
-    memory.emotional_arousal = std::clamp(emotional_arousal, 0.0f, 1.0f);
+    memory.emotional_valence = (emotional_valence < -1.0f) ? -1.0f : ((emotional_valence > 1.0f) ? 1.0f : emotional_valence);
+    memory.emotional_arousal = (emotional_arousal < 0.0f) ? 0.0f : ((emotional_arousal > 1.0f) ? 1.0f : emotional_arousal);
     memory.participants = participants;
     memory.location = location;
     
@@ -34,7 +36,7 @@ std::string TemporalMemorySystem::AddEpisode(
     if (importance <= 0.0f) {
         memory.importance = CalculateImportance(description);
     } else {
-        memory.importance = std::clamp(importance, 0.0f, 1.0f);
+        memory.importance = (importance < 0.0f) ? 0.0f : ((importance > 1.0f) ? 1.0f : importance);
     }
     
     memory.current_strength = 1.0f;  // Fresh memory
@@ -50,6 +52,7 @@ std::vector<EpisodicMemory> TemporalMemorySystem::RetrieveEpisodes(
     int max_results,
     float min_strength
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     UpdateMemoryStrengths();
     
     // Score each memory by relevance * strength
@@ -97,6 +100,7 @@ std::vector<EpisodicMemory> TemporalMemorySystem::GetEpisodesWithEntity(
     const std::string& entity_name,
     int max_results
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     UpdateMemoryStrengths();
     
     std::vector<EpisodicMemory> results;
@@ -136,6 +140,7 @@ std::string TemporalMemorySystem::AddSemanticKnowledge(
     float confidence,
     const std::string& source_episode
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Check if similar knowledge already exists
     for (auto& semantic : semantic_memories_) {
         float similarity = CalculateSimilarity(knowledge, semantic.knowledge);
@@ -154,7 +159,7 @@ std::string TemporalMemorySystem::AddSemanticKnowledge(
     SemanticMemory semantic;
     semantic.concept_id = GenerateMemoryId();
     semantic.knowledge = knowledge;
-    semantic.confidence = std::clamp(confidence, 0.0f, 1.0f);
+    semantic.confidence = (confidence < 0.0f) ? 0.0f : ((confidence > 1.0f) ? 1.0f : confidence);
     semantic.first_learned = GetCurrentTimestamp();
     semantic.last_updated = semantic.first_learned;
     
@@ -171,6 +176,7 @@ std::vector<SemanticMemory> TemporalMemorySystem::RetrieveSemanticKnowledge(
     const std::string& query,
     int max_results
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     struct ScoredSemantic {
         SemanticMemory memory;
         float score;
@@ -201,6 +207,7 @@ std::vector<SemanticMemory> TemporalMemorySystem::RetrieveSemanticKnowledge(
 void TemporalMemorySystem::ConsolidateMemories(
     std::function<std::string(const std::string&)> llm_callback
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!llm_callback) return;
     
     // Find clusters of related episodes
@@ -268,10 +275,12 @@ float TemporalMemorySystem::CalculateMemoryStrength(
     
     float strength = base_strength * emotional_factor * importance_factor * retrieval_factor;
     
-    return std::clamp(strength, 0.0f, 1.0f);
+    return (strength < 0.0f) ? 0.0f : ((strength > 1.0f) ? 1.0f : strength);
 }
 
 void TemporalMemorySystem::UpdateMemoryStrengths() {
+    // Note: This is a helper usually called from within a locked method.
+    // If called directly, it should be locked.
     int64_t current_time = GetCurrentTimestamp();
     
     for (auto& memory : episodic_memories_) {
@@ -279,115 +288,9 @@ void TemporalMemorySystem::UpdateMemoryStrengths() {
     }
 }
 
-bool TemporalMemorySystem::Save(const std::string& filepath) {
-    nlohmann::json j;
-    
-    // Save episodic memories
-    nlohmann::json episodes = nlohmann::json::array();
-    for (const auto& ep : episodic_memories_) {
-        nlohmann::json ep_json;
-        ep_json["id"] = ep.event_id;
-        ep_json["description"] = ep.description;
-        ep_json["timestamp"] = ep.timestamp;
-        ep_json["valence"] = ep.emotional_valence;
-        ep_json["arousal"] = ep.emotional_arousal;
-        ep_json["importance"] = ep.importance;
-        ep_json["participants"] = ep.participants;
-        ep_json["location"] = ep.location;
-        ep_json["strength"] = ep.current_strength;
-        ep_json["retrieval_count"] = ep.retrieval_count;
-        episodes.push_back(ep_json);
-    }
-    j["episodes"] = episodes;
-    
-    // Save semantic memories
-    nlohmann::json semantics = nlohmann::json::array();
-    for (const auto& sem : semantic_memories_) {
-        nlohmann::json sem_json;
-        sem_json["id"] = sem.concept_id;
-        sem_json["knowledge"] = sem.knowledge;
-        sem_json["confidence"] = sem.confidence;
-        sem_json["sources"] = sem.source_episodes;
-        sem_json["first_learned"] = sem.first_learned;
-        sem_json["last_updated"] = sem.last_updated;
-        semantics.push_back(sem_json);
-    }
-    j["semantics"] = semantics;
-    
-    // Save config
-    j["config"]["decay_rate"] = decay_rate_;
-    j["config"]["emotional_boost"] = emotional_boost_factor_;
-    j["config"]["retrieval_boost"] = retrieval_boost_;
-    
-    std::ofstream file(filepath);
-    if (!file.is_open()) return false;
-    
-    file << std::setw(2) << j << std::endl;
-    return true;
-}
-
-bool TemporalMemorySystem::Load(const std::string& filepath) {
-    std::ifstream file(filepath);
-    if (!file.is_open()) return false;
-    
-    nlohmann::json j;
-    try {
-        file >> j;
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return false;
-    } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
-        return false;
-    }
-    
-    episodic_memories_.clear();
-    semantic_memories_.clear();
-    
-    // Load episodes
-    if (j.contains("episodes")) {
-        for (const auto& ep_json : j["episodes"]) {
-            EpisodicMemory ep;
-            ep.event_id = ep_json.value("id", "");
-            ep.description = ep_json.value("description", "");
-            ep.timestamp = ep_json.value("timestamp", 0L);
-            ep.emotional_valence = ep_json.value("valence", 0.0f);
-            ep.emotional_arousal = ep_json.value("arousal", 0.0f);
-            ep.importance = ep_json.value("importance", 0.5f);
-            ep.participants = ep_json.value("participants", std::vector<std::string>{});
-            ep.location = ep_json.value("location", "");
-            ep.current_strength = ep_json.value("strength", 1.0f);
-            ep.retrieval_count = ep_json.value("retrieval_count", 0);
-            episodic_memories_.push_back(ep);
-        }
-    }
-    
-    // Load semantics
-    if (j.contains("semantics")) {
-        for (const auto& sem_json : j["semantics"]) {
-            SemanticMemory sem;
-            sem.concept_id = sem_json.value("id", "");
-            sem.knowledge = sem_json.value("knowledge", "");
-            sem.confidence = sem_json.value("confidence", 0.5f);
-            sem.source_episodes = sem_json.value("sources", std::vector<std::string>{});
-            sem.first_learned = sem_json.value("first_learned", 0L);
-            sem.last_updated = sem_json.value("last_updated", 0L);
-            semantic_memories_.push_back(sem);
-        }
-    }
-    
-    // Load config
-    if (j.contains("config")) {
-        decay_rate_ = j["config"].value("decay_rate", 0.0001f);
-        emotional_boost_factor_ = j["config"].value("emotional_boost", 2.0f);
-        retrieval_boost_ = j["config"].value("retrieval_boost", 0.1f);
-    }
-    
-    UpdateMemoryStrengths();
-    return true;
-}
 
 TemporalMemorySystem::MemoryStats TemporalMemorySystem::GetStats() const {
+    std::lock_guard<std::mutex> lock(mutex_);
     MemoryStats stats;
     stats.total_episodes = episodic_memories_.size();
     stats.total_semantic = semantic_memories_.size();
@@ -437,7 +340,7 @@ float TemporalMemorySystem::CalculateImportance(const std::string& description) 
         }
     }
     
-    return std::clamp(importance, 0.0f, 1.0f);
+    return (importance < 0.0f) ? 0.0f : ((importance > 1.0f) ? 1.0f : importance);
 }
 
 std::string TemporalMemorySystem::GenerateMemoryId() const {
@@ -536,6 +439,101 @@ std::string TemporalMemorySystem::ExtractPattern(
     prompt << "\nGeneral pattern or belief (one sentence):";
     
     return llm(prompt.str());
+}
+
+bool TemporalMemorySystem::Save(const std::string& filepath) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    try {
+        nlohmann::json j;
+        
+        j["episodic_memories"] = nlohmann::json::array();
+        for (const auto& mem : episodic_memories_) {
+            nlohmann::json m;
+            m["event_id"] = mem.event_id;
+            m["description"] = mem.description;
+            m["timestamp"] = mem.timestamp;
+            m["emotional_valence"] = mem.emotional_valence;
+            m["emotional_arousal"] = mem.emotional_arousal;
+            m["importance"] = mem.importance;
+            m["participants"] = mem.participants;
+            m["location"] = mem.location;
+            m["current_strength"] = mem.current_strength;
+            m["retrieval_count"] = mem.retrieval_count;
+            j["episodic_memories"].push_back(m);
+        }
+        
+        j["semantic_memories"] = nlohmann::json::array();
+        for (const auto& mem : semantic_memories_) {
+            nlohmann::json m;
+            m["concept_id"] = mem.concept_id;
+            m["knowledge"] = mem.knowledge;
+            m["confidence"] = mem.confidence;
+            m["source_episodes"] = mem.source_episodes;
+            m["first_learned"] = mem.first_learned;
+            m["last_updated"] = mem.last_updated;
+            j["semantic_memories"].push_back(m);
+        }
+        
+        std::ofstream file(filepath);
+        if (!file.is_open()) return false;
+        file << std::setw(4) << j << std::endl;
+        return true;
+    } catch (const std::exception& e) {
+        NPCLogger::Error(std::string("Error saving TemporalMemorySystem: ") + e.what());
+        return false;
+    }
+}
+
+bool TemporalMemorySystem::Load(const std::string& filepath) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    try {
+        std::ifstream file(filepath);
+        if (!file.is_open()) return false;
+        
+        nlohmann::json j;
+        file >> j;
+        
+        episodic_memories_.clear();
+        if (j.contains("episodic_memories") && j["episodic_memories"].is_array()) {
+            for (const auto& item : j["episodic_memories"]) {
+                EpisodicMemory mem;
+                mem.event_id = item.value("event_id", "");
+                mem.description = item.value("description", "");
+                mem.timestamp = item.value("timestamp", 0LL);
+                mem.emotional_valence = item.value("emotional_valence", 0.0f);
+                mem.emotional_arousal = item.value("emotional_arousal", 0.0f);
+                mem.importance = item.value("importance", 0.0f);
+                if (item.contains("participants") && item["participants"].is_array()) {
+                    mem.participants = item["participants"].get<std::vector<std::string>>();
+                }
+                mem.location = item.value("location", "");
+                mem.current_strength = item.value("current_strength", 1.0f);
+                mem.retrieval_count = item.value("retrieval_count", 0);
+                episodic_memories_.push_back(mem);
+            }
+        }
+        
+        semantic_memories_.clear();
+        if (j.contains("semantic_memories") && j["semantic_memories"].is_array()) {
+            for (const auto& item : j["semantic_memories"]) {
+                SemanticMemory mem;
+                mem.concept_id = item.value("concept_id", "");
+                mem.knowledge = item.value("knowledge", "");
+                mem.confidence = item.value("confidence", 0.0f);
+                if (item.contains("source_episodes") && item["source_episodes"].is_array()) {
+                    mem.source_episodes = item["source_episodes"].get<std::vector<std::string>>();
+                }
+                mem.first_learned = item.value("first_learned", 0LL);
+                mem.last_updated = item.value("last_updated", 0LL);
+                semantic_memories_.push_back(mem);
+            }
+        }
+        
+        return true;
+    } catch (const std::exception& e) {
+        NPCLogger::Error(std::string("Error loading TemporalMemorySystem: ") + e.what());
+        return false;
+    }
 }
 
 } // namespace NPCInference

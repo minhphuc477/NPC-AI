@@ -52,7 +52,7 @@ int main() {
         // Generate with a mock logic that returns the state.
         nlohmann::json state;
         state["language"] = "en";
-        engine->GenerateWithState(state, test.query);
+        engine->GenerateWithState(test.query, state);
         
         std::string retrieved = state.value("memory_context", "");
         

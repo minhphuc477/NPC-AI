@@ -85,7 +85,6 @@ public:
     void SetTopP(float top_p) { top_p_ = top_p; }
 
 private:
-    std::unique_ptr<Ort::Env> env_;
     std::unique_ptr<Ort::Session> session_;
     std::unique_ptr<Ort::SessionOptions> session_options_;
     bool is_loaded_ = false;

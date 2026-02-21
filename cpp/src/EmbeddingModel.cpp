@@ -4,6 +4,8 @@
 #endif
 
 #include "EmbeddingModel.h"
+#include "OrtEnvironmentManager.h"
+#include "NPCLogger.h"
 #include <onnxruntime_cxx_api.h>
 #include <iostream>
 #include <vector>
@@ -11,14 +13,12 @@
 namespace NPCInference {
 
     struct EmbeddingModel::Impl {
-        std::unique_ptr<Ort::Env> env;
         std::unique_ptr<Ort::Session> session;
         std::unique_ptr<Ort::SessionOptions> session_options;
         Ort::AllocatorWithDefaultOptions allocator;
     };
 
     EmbeddingModel::EmbeddingModel() : impl_(std::make_unique<Impl>()) {
-        impl_->env = std::make_unique<Ort::Env>(ORT_LOGGING_LEVEL_WARNING, "NPCEmbedding");
         tokenizer_ = std::make_unique<Tokenizer>();
     }
 
@@ -28,7 +28,7 @@ namespace NPCInference {
         // Check for Mock Mode
         const char* mock_env = std::getenv("NPC_MOCK_MODE");
         if (mock_env && std::string(mock_env) == "1") {
-            std::cerr << "EmbeddingModel: Running in MOCK MODE - Logic verified, Weights skipped." << std::endl;
+            NPCLogger::Info("EmbeddingModel: Running in MOCK MODE - Weights skipped.");
             loaded_ = true;
             return true;
         }
@@ -45,11 +45,12 @@ namespace NPCInference {
             impl_->session_options->SetIntraOpNumThreads(1);
             impl_->session_options->SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 
+            Ort::Env& env = OrtEnvironmentManager::Instance().GetEnv();
 #ifdef _WIN32
             std::wstring wide_path(model_path.begin(), model_path.end());
-            impl_->session = std::make_unique<Ort::Session>(*impl_->env, wide_path.c_str(), *impl_->session_options);
+            impl_->session = std::make_unique<Ort::Session>(env, wide_path.c_str(), *impl_->session_options);
 #else
-            impl_->session = std::make_unique<Ort::Session>(*impl_->env, model_path.c_str(), *impl_->session_options);
+            impl_->session = std::make_unique<Ort::Session>(env, model_path.c_str(), *impl_->session_options);
 #endif
             loaded_ = true;
             return true;
