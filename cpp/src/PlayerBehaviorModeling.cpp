@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <iostream>
 #include <random>
 
 namespace NPCInference {
@@ -26,7 +27,7 @@ std::string PlayerBehaviorModeling::RecordAction(
     action.context = context;
     action.timestamp = GetCurrentTimestamp();
     action.was_successful = was_successful;
-    action.risk_level = std::clamp(risk_level, 0.0f, 1.0f);
+    action.risk_level = (risk_level < 0.0f) ? 0.0f : ((risk_level > 1.0f) ? 1.0f : risk_level);
     
     // Add to history (maintain max size)
     action_history_.push_back(action);

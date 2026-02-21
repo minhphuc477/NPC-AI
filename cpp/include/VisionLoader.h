@@ -103,7 +103,6 @@ private:
     std::string DecodeEmbeddings(const std::vector<float>& embeddings) const;
 
     // ONNX Runtime
-    Ort::Env env_;
     std::unique_ptr<Ort::Session> session_;
     bool loaded_ = false;
     

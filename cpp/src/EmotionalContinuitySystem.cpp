@@ -1,4 +1,5 @@
 #include "EmotionalContinuitySystem.h"
+#include "NPCLogger.h"
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -32,6 +33,7 @@ EmotionalContinuitySystem::EmotionalContinuitySystem(const PersonalityProfile& p
 }
 
 void EmotionalContinuitySystem::SetPersonality(const PersonalityProfile& personality) {
+    std::lock_guard<std::mutex> lock(mutex_);
     personality_ = personality;
     
     // Adjust baseline mood based on personality
@@ -54,6 +56,7 @@ void EmotionalContinuitySystem::ApplyEmotionalStimulus(
     float intensity,
     float inertia_override
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Calculate inertia (resistance to change)
     float inertia = (inertia_override >= 0.0f) ? inertia_override : CalculateInertia();
     
@@ -71,6 +74,7 @@ void EmotionalContinuitySystem::ApplyEmotionalStimulus(
 }
 
 void EmotionalContinuitySystem::DecayTowardBaseline(float delta_time) {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Emotions gradually return to baseline
     float decay_factor = decay_rate_ * delta_time;
     current_emotion_ = BlendEmotions(current_emotion_, baseline_mood_, decay_factor);
@@ -86,19 +90,20 @@ void EmotionalContinuitySystem::UpdateSentiment(
     float intensity_delta,
     const std::string& event_id
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     EntitySentiment& sentiment = sentiments_[entity_id];
     sentiment.entity_id = entity_id;
     
     // Update sentiment with inertia
     float current_sentiment = sentiment.sentiment;
-    float target_sentiment = std::clamp(current_sentiment + sentiment_delta, -1.0f, 1.0f);
+    float target_sentiment = (current_sentiment + sentiment_delta < -1.0f) ? -1.0f : ((current_sentiment + sentiment_delta > 1.0f) ? 1.0f : current_sentiment + sentiment_delta);
     
     // Emotional inertia applies to sentiment changes too
     float inertia = CalculateInertia();
     sentiment.sentiment = current_sentiment * inertia + target_sentiment * (1.0f - inertia);
     
     // Update intensity
-    sentiment.intensity = std::clamp(sentiment.intensity + intensity_delta, 0.0f, 1.0f);
+    sentiment.intensity = (sentiment.intensity + intensity_delta < 0.0f) ? 0.0f : ((sentiment.intensity + intensity_delta > 1.0f) ? 1.0f : sentiment.intensity + intensity_delta);
     
     sentiment.last_updated = GetCurrentTimestamp();
     
@@ -108,6 +113,7 @@ void EmotionalContinuitySystem::UpdateSentiment(
 }
 
 EntitySentiment EmotionalContinuitySystem::GetSentiment(const std::string& entity_id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = sentiments_.find(entity_id);
     if (it != sentiments_.end()) {
         return it->second;
@@ -122,6 +128,7 @@ EntitySentiment EmotionalContinuitySystem::GetSentiment(const std::string& entit
 }
 
 std::vector<EntitySentiment> EmotionalContinuitySystem::GetAllSentiments() const {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<EntitySentiment> results;
     for (const auto& [id, sentiment] : sentiments_) {
         results.push_back(sentiment);
@@ -134,6 +141,7 @@ EmotionalState EmotionalContinuitySystem::GenerateReaction(
     float event_intensity,
     const std::string& involving_entity
 ) {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Get base emotional response for event type
     EmotionalState reaction = GetEmotionForEventType(event_type);
     
@@ -181,12 +189,14 @@ bool EmotionalContinuitySystem::WouldReactTo(
     const std::string& event_type,
     float event_intensity
 ) const {
+    std::lock_guard<std::mutex> lock(mutex_);
     // Neurotic personalities react to weaker stimuli
     float threshold = reaction_threshold_ * (1.0f - personality_.neuroticism * 0.5f);
     return event_intensity >= threshold;
 }
 
 std::string EmotionalContinuitySystem::DescribeEmotion() const {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::string dominant = GetDominantEmotion();
     float intensity = GetEmotionalIntensity();
     
@@ -245,134 +255,9 @@ float EmotionalContinuitySystem::GetEmotionalIntensity() const {
     return total / 8.0f;
 }
 
-bool EmotionalContinuitySystem::Save(const std::string& filepath) {
-    nlohmann::json j;
-    
-    // Save personality
-    j["personality"]["openness"] = personality_.openness;
-    j["personality"]["conscientiousness"] = personality_.conscientiousness;
-    j["personality"]["extraversion"] = personality_.extraversion;
-    j["personality"]["agreeableness"] = personality_.agreeableness;
-    j["personality"]["neuroticism"] = personality_.neuroticism;
-    
-    // Save current emotion
-    j["current_emotion"]["joy"] = current_emotion_.joy;
-    j["current_emotion"]["trust"] = current_emotion_.trust;
-    j["current_emotion"]["fear"] = current_emotion_.fear;
-    j["current_emotion"]["surprise"] = current_emotion_.surprise;
-    j["current_emotion"]["sadness"] = current_emotion_.sadness;
-    j["current_emotion"]["disgust"] = current_emotion_.disgust;
-    j["current_emotion"]["anger"] = current_emotion_.anger;
-    j["current_emotion"]["anticipation"] = current_emotion_.anticipation;
-    
-    // Save baseline mood
-    j["baseline_mood"]["joy"] = baseline_mood_.joy;
-    j["baseline_mood"]["trust"] = baseline_mood_.trust;
-    j["baseline_mood"]["fear"] = baseline_mood_.fear;
-    j["baseline_mood"]["surprise"] = baseline_mood_.surprise;
-    j["baseline_mood"]["sadness"] = baseline_mood_.sadness;
-    j["baseline_mood"]["disgust"] = baseline_mood_.disgust;
-    j["baseline_mood"]["anger"] = baseline_mood_.anger;
-    j["baseline_mood"]["anticipation"] = baseline_mood_.anticipation;
-    
-    // Save sentiments
-    nlohmann::json sentiments = nlohmann::json::array();
-    for (const auto& [id, sentiment] : sentiments_) {
-        nlohmann::json s_json;
-        s_json["entity_id"] = sentiment.entity_id;
-        s_json["sentiment"] = sentiment.sentiment;
-        s_json["intensity"] = sentiment.intensity;
-        s_json["last_updated"] = sentiment.last_updated;
-        s_json["events"] = sentiment.contributing_events;
-        sentiments.push_back(s_json);
-    }
-    j["sentiments"] = sentiments;
-    
-    // Save config
-    j["config"]["emotional_inertia"] = emotional_inertia_;
-    j["config"]["decay_rate"] = decay_rate_;
-    j["config"]["reaction_threshold"] = reaction_threshold_;
-    
-    std::ofstream file(filepath);
-    if (!file.is_open()) return false;
-    
-    file << std::setw(2) << j << std::endl;
-    return true;
-}
-
-bool EmotionalContinuitySystem::Load(const std::string& filepath) {
-    std::ifstream file(filepath);
-    if (!file.is_open()) return false;
-    
-    nlohmann::json j;
-    try {
-        file >> j;
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return false;
-    } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
-        return false;
-    }
-    
-    // Load personality
-    if (j.contains("personality")) {
-        personality_.openness = j["personality"].value("openness", 0.5f);
-        personality_.conscientiousness = j["personality"].value("conscientiousness", 0.5f);
-        personality_.extraversion = j["personality"].value("extraversion", 0.5f);
-        personality_.agreeableness = j["personality"].value("agreeableness", 0.5f);
-        personality_.neuroticism = j["personality"].value("neuroticism", 0.5f);
-    }
-    
-    // Load current emotion
-    if (j.contains("current_emotion")) {
-        current_emotion_.joy = j["current_emotion"].value("joy", 0.5f);
-        current_emotion_.trust = j["current_emotion"].value("trust", 0.5f);
-        current_emotion_.fear = j["current_emotion"].value("fear", 0.0f);
-        current_emotion_.surprise = j["current_emotion"].value("surprise", 0.0f);
-        current_emotion_.sadness = j["current_emotion"].value("sadness", 0.0f);
-        current_emotion_.disgust = j["current_emotion"].value("disgust", 0.0f);
-        current_emotion_.anger = j["current_emotion"].value("anger", 0.0f);
-        current_emotion_.anticipation = j["current_emotion"].value("anticipation", 0.5f);
-    }
-    
-    // Load baseline mood
-    if (j.contains("baseline_mood")) {
-        baseline_mood_.joy = j["baseline_mood"].value("joy", 0.5f);
-        baseline_mood_.trust = j["baseline_mood"].value("trust", 0.5f);
-        baseline_mood_.fear = j["baseline_mood"].value("fear", 0.0f);
-        baseline_mood_.surprise = j["baseline_mood"].value("surprise", 0.0f);
-        baseline_mood_.sadness = j["baseline_mood"].value("sadness", 0.0f);
-        baseline_mood_.disgust = j["baseline_mood"].value("disgust", 0.0f);
-        baseline_mood_.anger = j["baseline_mood"].value("anger", 0.0f);
-        baseline_mood_.anticipation = j["baseline_mood"].value("anticipation", 0.5f);
-    }
-    
-    // Load sentiments
-    sentiments_.clear();
-    if (j.contains("sentiments")) {
-        for (const auto& s_json : j["sentiments"]) {
-            EntitySentiment sentiment;
-            sentiment.entity_id = s_json.value("entity_id", "");
-            sentiment.sentiment = s_json.value("sentiment", 0.0f);
-            sentiment.intensity = s_json.value("intensity", 0.0f);
-            sentiment.last_updated = s_json.value("last_updated", 0L);
-            sentiment.contributing_events = s_json.value("events", std::vector<std::string>{});
-            sentiments_[sentiment.entity_id] = sentiment;
-        }
-    }
-    
-    // Load config
-    if (j.contains("config")) {
-        emotional_inertia_ = j["config"].value("emotional_inertia", 0.7f);
-        decay_rate_ = j["config"].value("decay_rate", 0.1f);
-        reaction_threshold_ = j["config"].value("reaction_threshold", 0.3f);
-    }
-    
-    return true;
-}
 
 EmotionalContinuitySystem::EmotionalStats EmotionalContinuitySystem::GetStats() const {
+    std::lock_guard<std::mutex> lock(mutex_);
     EmotionalStats stats;
     
     // Calculate average valence and arousal
@@ -421,7 +306,7 @@ EmotionalState EmotionalContinuitySystem::BlendEmotions(
 ) const {
     EmotionalState result;
     
-    blend_factor = std::clamp(blend_factor, 0.0f, 1.0f);
+    blend_factor = (blend_factor < 0.0f) ? 0.0f : ((blend_factor > 1.0f) ? 1.0f : blend_factor);
     float keep_factor = 1.0f - blend_factor;
     
     result.joy = current.joy * keep_factor + target.joy * blend_factor;
@@ -446,7 +331,7 @@ float EmotionalContinuitySystem::CalculateInertia() const {
     // Conscientious personalities have more inertia (more stable)
     inertia *= (1.0f + personality_.conscientiousness * 0.2f);
     
-    return std::clamp(inertia, 0.0f, 0.95f);
+    return (inertia < 0.0f) ? 0.0f : ((inertia > 0.95f) ? 0.95f : inertia);
 }
 
 int64_t EmotionalContinuitySystem::GetCurrentTimestamp() const {
@@ -487,6 +372,121 @@ EmotionalState EmotionalContinuitySystem::GetEmotionForEventType(const std::stri
     }
     
     return emotion;
+}
+
+bool EmotionalContinuitySystem::Save(const std::string& filepath) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    try {
+        nlohmann::json j;
+        
+        j["personality"]["openness"] = personality_.openness;
+        j["personality"]["conscientiousness"] = personality_.conscientiousness;
+        j["personality"]["extraversion"] = personality_.extraversion;
+        j["personality"]["agreeableness"] = personality_.agreeableness;
+        j["personality"]["neuroticism"] = personality_.neuroticism;
+        
+        j["current_emotion"]["joy"] = current_emotion_.joy;
+        j["current_emotion"]["trust"] = current_emotion_.trust;
+        j["current_emotion"]["fear"] = current_emotion_.fear;
+        j["current_emotion"]["surprise"] = current_emotion_.surprise;
+        j["current_emotion"]["sadness"] = current_emotion_.sadness;
+        j["current_emotion"]["disgust"] = current_emotion_.disgust;
+        j["current_emotion"]["anger"] = current_emotion_.anger;
+        j["current_emotion"]["anticipation"] = current_emotion_.anticipation;
+        
+        j["baseline_mood"]["joy"] = baseline_mood_.joy;
+        j["baseline_mood"]["trust"] = baseline_mood_.trust;
+        j["baseline_mood"]["fear"] = baseline_mood_.fear;
+        j["baseline_mood"]["surprise"] = baseline_mood_.surprise;
+        j["baseline_mood"]["sadness"] = baseline_mood_.sadness;
+        j["baseline_mood"]["disgust"] = baseline_mood_.disgust;
+        j["baseline_mood"]["anger"] = baseline_mood_.anger;
+        j["baseline_mood"]["anticipation"] = baseline_mood_.anticipation;
+        
+        j["sentiments"] = nlohmann::json::array();
+        for (const auto& [entity_id, sentiment] : sentiments_) {
+            nlohmann::json s;
+            s["entity_id"] = sentiment.entity_id;
+            s["sentiment"] = sentiment.sentiment;
+            s["intensity"] = sentiment.intensity;
+            s["last_updated"] = sentiment.last_updated;
+            s["contributing_events"] = sentiment.contributing_events;
+            j["sentiments"].push_back(s);
+        }
+        
+        std::ofstream file(filepath);
+        if (!file.is_open()) return false;
+        file << std::setw(4) << j << std::endl;
+        return true;
+    } catch (const std::exception& e) {
+        NPCLogger::Error(std::string("Error saving EmotionalContinuitySystem: ") + e.what());
+        return false;
+    }
+}
+
+bool EmotionalContinuitySystem::Load(const std::string& filepath) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    try {
+        std::ifstream file(filepath);
+        if (!file.is_open()) return false;
+        
+        nlohmann::json j;
+        file >> j;
+        
+        if (j.contains("personality")) {
+            personality_.openness = j["personality"].value("openness", 0.5f);
+            personality_.conscientiousness = j["personality"].value("conscientiousness", 0.5f);
+            personality_.extraversion = j["personality"].value("extraversion", 0.5f);
+            personality_.agreeableness = j["personality"].value("agreeableness", 0.5f);
+            personality_.neuroticism = j["personality"].value("neuroticism", 0.5f);
+        }
+        
+        if (j.contains("current_emotion")) {
+            current_emotion_.joy = j["current_emotion"].value("joy", 0.5f);
+            current_emotion_.trust = j["current_emotion"].value("trust", 0.5f);
+            current_emotion_.fear = j["current_emotion"].value("fear", 0.0f);
+            current_emotion_.surprise = j["current_emotion"].value("surprise", 0.0f);
+            current_emotion_.sadness = j["current_emotion"].value("sadness", 0.0f);
+            current_emotion_.disgust = j["current_emotion"].value("disgust", 0.0f);
+            current_emotion_.anger = j["current_emotion"].value("anger", 0.0f);
+            current_emotion_.anticipation = j["current_emotion"].value("anticipation", 0.5f);
+        }
+        
+        if (j.contains("baseline_mood")) {
+            baseline_mood_.joy = j["baseline_mood"].value("joy", 0.5f);
+            baseline_mood_.trust = j["baseline_mood"].value("trust", 0.5f);
+            baseline_mood_.fear = j["baseline_mood"].value("fear", 0.0f);
+            baseline_mood_.surprise = j["baseline_mood"].value("surprise", 0.0f);
+            baseline_mood_.sadness = j["baseline_mood"].value("sadness", 0.0f);
+            baseline_mood_.disgust = j["baseline_mood"].value("disgust", 0.0f);
+            baseline_mood_.anger = j["baseline_mood"].value("anger", 0.0f);
+            baseline_mood_.anticipation = j["baseline_mood"].value("anticipation", 0.5f);
+        }
+        
+        sentiments_.clear();
+        if (j.contains("sentiments") && j["sentiments"].is_array()) {
+            for (const auto& item : j["sentiments"]) {
+                EntitySentiment s;
+                s.entity_id = item.value("entity_id", "");
+                s.sentiment = item.value("sentiment", 0.0f);
+                s.intensity = item.value("intensity", 0.0f);
+                s.last_updated = item.value("last_updated", 0LL);
+                if (item.contains("contributing_events") && item["contributing_events"].is_array()) {
+                    s.contributing_events = item["contributing_events"].get<std::vector<std::string>>();
+                }
+                sentiments_[s.entity_id] = s;
+            }
+        }
+        
+        // Clear history on load to prevent jumping
+        emotion_history_.clear();
+        emotion_history_.push_back(current_emotion_);
+        
+        return true;
+    } catch (const std::exception& e) {
+        NPCLogger::Error(std::string("Error loading EmotionalContinuitySystem: ") + e.what());
+        return false;
+    }
 }
 
 } // namespace NPCInference
