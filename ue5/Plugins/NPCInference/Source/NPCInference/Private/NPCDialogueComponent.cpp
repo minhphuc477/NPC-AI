@@ -14,7 +14,8 @@
 // Sets default values for this component's properties
 UNPCDialogueComponent::UNPCDialogueComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bStartWithTickEnabled = false; // Phase 8: Only tick when generating
 	
 	// Auto-generate NPCID from actor name (will be set in BeginPlay)
 	NPCID = TEXT("");
@@ -22,6 +23,35 @@ UNPCDialogueComponent::UNPCDialogueComponent()
 	Scenario = TEXT("");  // Will be dynamically extracted
 	bUseDynamicContext = true;
 	ContextScanRadius = 1000.0f;  // 10 meters
+}
+
+void UNPCDialogueComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// Phase 8: Stale Context Prevention (Late Binding Check)
+	if (bIsGeneratingResponse && CurrentInteractingPlayer)
+	{
+		if (AActor* Owner = GetOwner())
+		{
+			float Distance = FVector::Dist(Owner->GetActorLocation(), CurrentInteractingPlayer->GetActorLocation());
+			if (Distance > ContextScanRadius * 1.5f) // Add a little buffer
+			{
+				UE_LOG(LogTemp, Warning, TEXT("NPC %s: Player walked away. Canceling generation to prevent stale context."), *NPCID);
+				
+				if (UGameInstance* GI = UGameplayStatics::GetGameInstance(this))
+				{
+					if (UNPCInferenceSubsystem* Subsystem = GI->GetSubsystem<UNPCInferenceSubsystem>())
+					{
+						Subsystem->CancelGeneration(NPCID);
+					}
+				}
+				
+				bIsGeneratingResponse = false;
+				SetComponentTickEnabled(false);
+			}
+		}
+	}
 }
 
 
@@ -178,6 +208,14 @@ void UNPCDialogueComponent::RequestResponse(const FString& PlayerInput)
 	// Get dynamic context (or static if disabled) 
 	FString ContextToUse = bUseDynamicContext ? ExtractDynamicContext() : Scenario;
 	
+	// Phase 8: Setup for Late Binding Check
+	CurrentInteractingPlayer = UGameplayStatics::GetPlayerPawn(this, 0); // Assuming local player 0
+	if (CurrentInteractingPlayer)
+	{
+		bIsGeneratingResponse = true;
+		SetComponentTickEnabled(true);
+	}
+
 	// Create delegate for completion
 	FOnDialogueGenerated OnComplete;
 	OnComplete.BindDynamic(this, &UNPCDialogueComponent::OnAsyncResponseReceived);
@@ -187,6 +225,8 @@ void UNPCDialogueComponent::RequestResponse(const FString& PlayerInput)
 
 void UNPCDialogueComponent::OnAsyncResponseReceived(const FString& Response)
 {
+	bIsGeneratingResponse = false;
+	SetComponentTickEnabled(false);
 	if (!Response.Contains(TEXT("Error:")))
 	{
 		// Auto-remember what we said (self-memory)

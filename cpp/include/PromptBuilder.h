@@ -33,6 +33,9 @@ namespace NPCInference {
 
         std::string BuildAdvanced(const json& npcData, const json& gameState, const std::string& playerInput, const std::string& language, const json& tools);
         std::string BuildLegacy(const json& npcData, const json& gameState, const std::string& playerInput);
+        
+        // Phase 6: Jailbreak/Prompt Injection Prevention
+        static std::string SanitizeInput(const std::string& input);
     };
 
 } // namespace NPCInference

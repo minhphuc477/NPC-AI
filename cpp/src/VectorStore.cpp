@@ -59,7 +59,17 @@ namespace NPCInference {
     void VectorStore::Add(const std::string& text, const std::vector<float>& embedding, const std::map<std::string, std::string>& metadata) {
         std::unique_lock<std::shared_mutex> lock(impl_->rw_mutex);
         uint64_t id = next_id_++;
-        documents_[id] = {text, metadata};
+        
+        DocData newDoc;
+        newDoc.text = text;
+        newDoc.metadata = metadata;
+        
+        // AAA Production: Initialize decay metadata
+        auto now = std::chrono::system_clock::now();
+        newDoc.timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+        newDoc.importance = metadata.count("importance") ? std::stof(metadata.at("importance")) : 1.0f;
+        
+        documents_[id] = newDoc;
         
         // Add to index
         if (impl_->idx) {
@@ -121,7 +131,9 @@ namespace NPCInference {
             for (const auto& [id, doc] : documents_) {
                 docs_json[std::to_string(id)] = {
                     {"text", doc.text},
-                    {"meta", doc.metadata}
+                    {"meta", doc.metadata},
+                    {"timestamp", doc.timestamp},
+                    {"importance", doc.importance}
                 };
             }
             j["docs"] = docs_json;
@@ -138,6 +150,15 @@ namespace NPCInference {
         }
     }
 
+    std::future<bool> VectorStore::SaveAsync(const std::string& path_prefix) {
+        // Return a future that runs the existing Save function asynchronously.
+        // Save uses std::shared_lock, so it won't block Search operations.
+        // It will only temporarily block Add operations until the background I/O completes.
+        return std::async(std::launch::async, [this, path_prefix]() {
+            return this->Save(path_prefix);
+        });
+    }
+
     bool VectorStore::Load(const std::string& path_prefix) {
         std::unique_lock<std::shared_mutex> lock(impl_->rw_mutex);
         try {
@@ -150,36 +171,90 @@ namespace NPCInference {
                  }
             }
 
-            // Load Metadata (try msgpack first, fallback to JSON)
+            // SAX Parser to prevent json::parse DOM memory blowout
+            class VectorStoreSAX : public json::json_sax_t {
+            public:
+                std::unordered_map<uint64_t, DocData>& docs;
+                uint64_t& next_id;
+                
+                int depth = 0;
+                std::string current_key;
+                uint64_t current_doc_id = 0;
+                std::string current_text;
+                std::map<std::string, std::string> current_meta;
+                std::string current_meta_key;
+                unsigned long long current_timestamp = 0;
+                float current_importance = 1.0f;
+                bool in_docs = false;
+                bool in_doc_meta = false;
+
+                VectorStoreSAX(std::unordered_map<uint64_t, DocData>& d, uint64_t& nid) : docs(d), next_id(nid) {}
+
+                bool null() override { return true; }
+                bool boolean(bool val) override { return true; }
+                bool number_integer(number_integer_t val) override { 
+                    if (depth == 1 && current_key == "next_id") next_id = val; 
+                    else if (in_docs && depth == 3 && current_key == "timestamp") current_timestamp = val;
+                    return true; 
+                }
+                bool number_unsigned(number_unsigned_t val) override { 
+                    if (depth == 1 && current_key == "next_id") next_id = val; 
+                    else if (in_docs && depth == 3 && current_key == "timestamp") current_timestamp = val;
+                    return true; 
+                }
+                bool number_float(number_float_t val, const string_t& s) override { 
+                    if (in_docs && depth == 3 && current_key == "importance") current_importance = val;
+                    return true; 
+                }
+                bool string(string_t& val) override { 
+                    if (in_docs) {
+                        if (depth == 3 && current_key == "text") current_text = val;
+                        else if (in_doc_meta && depth == 4) current_meta[current_meta_key] = val;
+                    }
+                    return true; 
+                }
+                bool binary(json::binary_t& val) override { return true; }
+                bool start_object(std::size_t elements) override { depth++; return true; }
+                bool key(string_t& val) override { 
+                    if (depth == 1) { current_key = val; if (val == "docs") in_docs = true; }
+                    else if (depth == 2 && in_docs) { 
+                        current_doc_id = std::stoull(val); 
+                        current_text.clear(); current_meta.clear(); 
+                        current_timestamp = 0; current_importance = 1.0f;
+                    }
+                    else if (depth == 3 && in_docs) { current_key = val; if (val == "meta") in_doc_meta = true; }
+                    else if (depth == 4 && in_doc_meta) { current_meta_key = val; }
+                    return true; 
+                }
+                bool end_object() override { 
+                    if (depth == 4 && in_doc_meta) in_doc_meta = false;
+                    else if (depth == 3 && in_docs) docs[current_doc_id] = {current_text, current_meta, current_timestamp, current_importance}; // Commit doc
+                    else if (depth == 2 && in_docs) in_docs = false;
+                    depth--; return true; 
+                }
+                bool start_array(std::size_t elements) override { return true; }
+                bool end_array() override { return true; }
+                bool parse_error(std::size_t pos, const std::string& token, const json::exception& ex) override { return false; }
+            };
+
+            uint64_t loaded_next_id = next_id_.load();
+            VectorStoreSAX sax_handler(documents_, loaded_next_id);
+            
             std::string msgpack_path = path_prefix + ".msgpack";
             std::string json_path = path_prefix + ".json";
-            json j;
             
             if (std::filesystem::exists(msgpack_path)) {
                 std::ifstream f(msgpack_path, std::ios::binary);
                 std::vector<uint8_t> buffer((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-                j = json::from_msgpack(buffer);
+                json::sax_parse(buffer, &sax_handler, json::input_format_t::msgpack);
             } else if (std::filesystem::exists(json_path)) {
                 std::ifstream f(json_path);
-                j = json::parse(f);
+                json::sax_parse(f, &sax_handler);
             } else {
                 return true; // No metadata, clean state
             }
             
-            if (j.contains("docs")) {
-                for (const auto& el : j["docs"].items()) {
-                    uint64_t id = std::stoull(el.key());
-                    std::string text = el.value()["text"];
-                    std::map<std::string, std::string> meta;
-                    if (el.value().contains("meta")) {
-                         meta = el.value()["meta"].get<std::map<std::string, std::string>>();
-                    }
-                    documents_[id] = {text, meta};
-                }
-            }
-            if (j.contains("next_id")) {
-                next_id_.store(j["next_id"]);
-            }
+            next_id_.store(loaded_next_id);
             return true;
         } catch (const std::exception& e) {
              std::cerr << "VectorStore Load Error: " << e.what() << std::endl;
@@ -202,5 +277,34 @@ namespace NPCInference {
         if (impl_->idx) {
             impl_->idx.remove(id);
         }
+    }
+
+    int VectorStore::Prune(float decay_rate, float min_importance) {
+        std::unique_lock<std::shared_mutex> lock(impl_->rw_mutex);
+        int pruned_count = 0;
+        
+        std::vector<uint64_t> to_remove;
+        
+        for (auto& [id, doc] : documents_) {
+            // Memory Decay: exponential decay of importance
+            doc.importance *= decay_rate;
+            
+            // Delete if faded
+            if (doc.importance < min_importance) {
+                to_remove.push_back(id);
+            }
+        }
+        
+        for (uint64_t id : to_remove) {
+            documents_.erase(id);
+            if (impl_->idx) impl_->idx.remove(id);
+            pruned_count++;
+        }
+        
+        if (pruned_count > 0) {
+            std::cout << "Memory Decay: Pruned " << pruned_count << " faded memories." << std::endl;
+        }
+        
+        return pruned_count;
     }
 }

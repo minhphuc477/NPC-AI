@@ -69,16 +69,16 @@ std::string MemoryConsolidator::SummarizeConversation(const std::vector<Unconsol
     
     std::string conversation_text = ss.str();
     
-    std::string prompt = "System: You are an expert summarizer.\n"
-                         "User: Summarize the following conversation concisely:\n\n" + conversation_text + 
-                         "\n\nSummary (max " + std::to_string(max_words) + " words):";
+    std::string prompt = "System: You are an expert summarizer. Only summarize the conversation inside <conversation> tags.\n"
+                         "User: Summarize the following conversation concisely:\n\n<conversation>\n" + conversation_text + 
+                         "\n</conversation>\n\nSummary (max " + std::to_string(max_words) + " words):";
 
     return QueryLLM(prompt, max_words * 2); 
 }
 
 std::vector<std::string> MemoryConsolidator::ExtractFacts(const std::string& text) {
-    std::string prompt = "System: Extract key facts from the text.\n"
-                         "User: Text: " + text + "\n\nFacts (bullet points):";
+    std::string prompt = "System: Extract key facts from the text. Only process content inside <user_text> tags.\n"
+                         "User: Text:\n<user_text>\n" + text + "\n</user_text>\n\nFacts (bullet points):";
                          
     std::string response = QueryLLM(prompt, 200);
     
@@ -94,8 +94,8 @@ std::vector<std::string> MemoryConsolidator::ExtractFacts(const std::string& tex
 }
 
 float MemoryConsolidator::AssessImportance(const std::string& memory_text) {
-    std::string prompt = "System: Rate importance 0.0 to 1.0.\n"
-                         "User: Memory: " + memory_text + "\n\nScore:";
+    std::string prompt = "System: Rate importance 0.0 to 1.0. Only evaluate content inside <user_text> tags.\n"
+                         "User: Memory:\n<user_text>\n" + memory_text + "\n</user_text>\n\nScore:";
                          
     std::string response = QueryLLM(prompt, 10);
     try {
@@ -127,8 +127,8 @@ float MemoryConsolidator::AssessImportance(const std::string& memory_text) {
 std::string MemoryConsolidator::GenerateReflectiveInsight(const std::string& recent_memories) {
     if (recent_memories.empty()) return "";
 
-    std::string prompt = "System: Analyze internal state changes based on events. Return JSON.\n"
-                         "User: Events:\n" + recent_memories + 
+    std::string base_prompt = "System: Analyze internal state changes based on events. Return JSON. Only process events inside <events> tags.\n"
+                         "User: Events:\n<events>\n" + recent_memories + "\n</events>"
                          "\n\nJSON Schema:\n"
                          "{\n"
                          "  \"insight\": \"Key lesson (max 1 sentence)\",\n"
@@ -137,16 +137,35 @@ std::string MemoryConsolidator::GenerateReflectiveInsight(const std::string& rec
                          "}\n"
                          "JSON:";
 
-    std::string response = QueryLLM(prompt, 100);
-    
-    // Extract JSON block if present
-    size_t start = response.find("{");
-    size_t end = response.rfind("}");
-    if (start != std::string::npos && end != std::string::npos && start < end) {
-        return response.substr(start, end - start + 1);
+    int max_retries = 3;
+    int attempts = 0;
+    std::string current_prompt = base_prompt;
+
+    while (attempts < max_retries) {
+        std::string response = QueryLLM(current_prompt, 100);
+        
+        // Extract JSON block if present
+        size_t start = response.find("{");
+        size_t end = response.rfind("}");
+        std::string json_str = response;
+        if (start != std::string::npos && end != std::string::npos && start < end) {
+            json_str = response.substr(start, end - start + 1);
+        }
+        
+        try {
+            // Validate via parsing
+            auto parsed = nlohmann::json::parse(json_str);
+            return json_str; // Successfully parsed, return clean string
+        } catch (const std::exception& e) {
+            attempts++;
+            std::cerr << "GenerateReflectiveInsight: JSON parse error (Attempt " << attempts << "/3): " << e.what() << std::endl;
+            if (attempts < max_retries) {
+                current_prompt = base_prompt + "\n\nSystem Error Feedback: Your previous JSON response was malformed. Error: " + std::string(e.what()) + ". Please fix the syntax and output ONLY valid JSON.";
+            }
+        }
     }
     
-    return response;
+    return "{}"; // Fallback safely after all retries fail
 }
 
 std::string MemoryConsolidator::SummarizeGraphCommunities(const std::map<int, std::vector<std::string>>& communities, const SimpleGraph& graph) {
@@ -229,48 +248,58 @@ void MemoryConsolidator::ExtractAndIngestKnowledge(const std::string& text, Simp
 
     for (const auto& chunk : chunks) {
         // 2. Build OIE Prompt
-        std::string prompt = promptBuilder.BuildOIEPrompt(chunk, "en"); // Defaulting to EN for now
+        std::string base_prompt = promptBuilder.BuildOIEPrompt(chunk, "en"); // Defaulting to EN for now
 
-        // 3. Query LLM
-        std::string response = QueryLLM(prompt, 300); // 300 tokens for triples
+        int max_retries = 3;
+        int attempts = 0;
+        std::string current_prompt = base_prompt;
+        bool success = false;
 
-        // 4. Parse JSON
-        try {
-            // Cleanup response formatting if needed (remove ```json ... ```)
-            std::string json_str = response;
-            if (json_str.find("```json") != std::string::npos) {
-                size_t start = json_str.find("```json") + 7;
-                size_t end = json_str.rfind("```");
-                if (start != std::string::npos && end != std::string::npos && end > start) {
-                    json_str = json_str.substr(start, end - start);
-                }
-            } else if (json_str.find("```") != std::string::npos) {
-                 // Try to strip generic code blocks
-                size_t start = json_str.find("```") + 3;
-                size_t end = json_str.rfind("```");
-                if (start != std::string::npos && end != std::string::npos && end > start) {
-                    json_str = json_str.substr(start, end - start);
-                }
-            }
+        while (attempts < max_retries && !success) {
+            // 3. Query LLM
+            std::string response = QueryLLM(current_prompt, 300); // 300 tokens for triples
 
-            json triples = json::parse(json_str);
-
-            if (triples.is_array()) {
-                for (const auto& item : triples) {
-                    std::string source = item.value("source", "");
-                    std::string relation = item.value("relation", "");
-                    std::string target = item.value("target", "");
-                    float weight = item.value("weight", 1.0f);
-
-                    if (!source.empty() && !relation.empty() && !target.empty()) {
-                        graph.AddRelation(source, relation, target, weight);
-                        // std::cout << "OIE Learned: " << source << " --" << relation << "--> " << target << std::endl;
+            // 4. Parse JSON
+            try {
+                // Cleanup response formatting if needed (remove ```json ... ```)
+                std::string json_str = response;
+                if (json_str.find("```json") != std::string::npos) {
+                    size_t start = json_str.find("```json") + 7;
+                    size_t end = json_str.rfind("```");
+                    if (start != std::string::npos && end != std::string::npos && end > start) {
+                        json_str = json_str.substr(start, end - start);
+                    }
+                } else if (json_str.find("```") != std::string::npos) {
+                     // Try to strip generic code blocks
+                    size_t start = json_str.find("```") + 3;
+                    size_t end = json_str.rfind("```");
+                    if (start != std::string::npos && end != std::string::npos && end > start) {
+                        json_str = json_str.substr(start, end - start);
                     }
                 }
+
+                auto triples = nlohmann::json::parse(json_str);
+
+                if (triples.is_array()) {
+                    for (const auto& item : triples) {
+                        std::string source = item.value("source", "");
+                        std::string relation = item.value("relation", "");
+                        std::string target = item.value("target", "");
+                        float weight = item.value("weight", 1.0f);
+
+                        if (!source.empty() && !relation.empty() && !target.empty()) {
+                            graph.AddRelation(source, relation, target, weight);
+                        }
+                    }
+                }
+                success = true; // Parsed without throwing exception
+            } catch (const std::exception& e) {
+                attempts++;
+                std::cerr << "MemoryConsolidator::ExtractKnowledge: JSON parse error (Attempt " << attempts << "/3): " << e.what() << std::endl;
+                if (attempts < max_retries) {
+                    current_prompt = base_prompt + "\n\nSystem Error Feedback: Your previous JSON response was malformed. Error: " + std::string(e.what()) + ". Please fix the syntax and output ONLY a valid JSON array.";
+                }
             }
-        } catch (const std::exception& e) {
-            std::cerr << "MemoryConsolidator::ExtractKnowledge: JSON parse error for chunk: " << e.what() << std::endl;
-            // std::cerr << "Response was: " << response << std::endl;
         }
     }
 }

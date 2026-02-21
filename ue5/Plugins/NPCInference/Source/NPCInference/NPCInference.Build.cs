@@ -111,6 +111,18 @@ public class NPCInference : ModuleRules
 			{
 				RuntimeDependencies.Add(SentencePieceDLL);
 			}
+
+			// Deploy ONNX Runtime DLL for packaged Game Builds
+			string OnnxRuntimeDLL = Path.Combine(NPCAILibPath, "onnxruntime", "lib", "onnxruntime.dll");
+			if (!File.Exists(OnnxRuntimeDLL)) 
+			{
+				// Fallback to build dir
+				OnnxRuntimeDLL = Path.Combine(NPCAIPath, "build", "Release", "onnxruntime.dll");
+			}
+			if (File.Exists(OnnxRuntimeDLL))
+			{
+				RuntimeDependencies.Add(OnnxRuntimeDLL);
+			}
 		}
 		
 		// Disable warnings from third-party headers

@@ -31,4 +31,11 @@ public:
      */
     UFUNCTION(BlueprintPure, Category = "NPC Inference")
     static FString GetDefaultModelPath();
+
+    /**
+     * Run an automated Benchmark from a JSON file to a JSONL log file.
+     * Operates purely on background threads to prevent UE5 Game Thread freezing.
+     */
+    UFUNCTION(BlueprintCallable, Category = "NPC Inference|Benchmark", meta = (WorldContext = "WorldContextObject"))
+    static void RunMockBenchmark(const UObject* WorldContextObject, FString InputJsonPath, FString OutputLogPath);
 };
