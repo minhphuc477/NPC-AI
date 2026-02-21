@@ -100,7 +100,7 @@ float MemoryConsolidator::AssessImportance(const std::string& memory_text) {
     std::string response = QueryLLM(prompt, 10);
     try {
         // Parse float from LLM response with validation
-        std::regex float_regex("[0-9]*\\.[0-9]+");
+        std::regex float_regex("-?\\d+(\\.\\d+)?");
         std::smatch match;
         if (std::regex_search(response, match, float_regex)) {
             float score = std::stof(match.str());
@@ -142,7 +142,7 @@ std::string MemoryConsolidator::GenerateReflectiveInsight(const std::string& rec
     // Extract JSON block if present
     size_t start = response.find("{");
     size_t end = response.rfind("}");
-    if (start != std::string::npos && end != std::string::npos) {
+    if (start != std::string::npos && end != std::string::npos && start < end) {
         return response.substr(start, end - start + 1);
     }
     
@@ -241,14 +241,14 @@ void MemoryConsolidator::ExtractAndIngestKnowledge(const std::string& text, Simp
             if (json_str.find("```json") != std::string::npos) {
                 size_t start = json_str.find("```json") + 7;
                 size_t end = json_str.rfind("```");
-                if (end > start) {
+                if (start != std::string::npos && end != std::string::npos && end > start) {
                     json_str = json_str.substr(start, end - start);
                 }
             } else if (json_str.find("```") != std::string::npos) {
                  // Try to strip generic code blocks
                 size_t start = json_str.find("```") + 3;
                 size_t end = json_str.rfind("```");
-                if (end > start) {
+                if (start != std::string::npos && end != std::string::npos && end > start) {
                     json_str = json_str.substr(start, end - start);
                 }
             }

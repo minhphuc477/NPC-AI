@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <nlohmann/json.hpp>
+#include <shared_mutex>
 
 // Production Implementation utilizing USearch
 // Only compiled when NPC_USE_MOCKS=OFF
@@ -18,6 +19,7 @@ namespace NPCInference {
     struct VectorStore::Impl {
         // usearch index for cosine similarity, f32
         index_dense_gt<uint64_t, uint32_t> idx;
+        std::shared_mutex rw_mutex;
         
         Impl() {}
     };
@@ -55,6 +57,7 @@ namespace NPCInference {
     }
 
     void VectorStore::Add(const std::string& text, const std::vector<float>& embedding, const std::map<std::string, std::string>& metadata) {
+        std::unique_lock<std::shared_mutex> lock(impl_->rw_mutex);
         uint64_t id = next_id_++;
         documents_[id] = {text, metadata};
         
@@ -68,6 +71,7 @@ namespace NPCInference {
     }
 
     std::vector<SearchResult> VectorStore::Search(const std::vector<float>& query, size_t k) {
+        std::shared_lock<std::shared_mutex> lock(impl_->rw_mutex);
         std::vector<SearchResult> results;
         if (documents_.empty() || !impl_->idx) return results;
         
@@ -97,6 +101,7 @@ namespace NPCInference {
     }
 
     bool VectorStore::Save(const std::string& path_prefix) {
+        std::shared_lock<std::shared_mutex> lock(impl_->rw_mutex);
         try {
             if (!impl_->idx) return false;
             
@@ -108,10 +113,10 @@ namespace NPCInference {
                 return false;
             }
 
-            // Save Metadata (JSON)
-            std::string doc_path = path_prefix + ".json";
+            // Save Metadata (Binary MessagePack)
+            std::string doc_path = path_prefix + ".msgpack";
             json j;
-            j["version"] = 1;
+            j["version"] = 2; // version 2 uses msgpack
             json docs_json;
             for (const auto& [id, doc] : documents_) {
                 docs_json[std::to_string(id)] = {
@@ -120,10 +125,12 @@ namespace NPCInference {
                 };
             }
             j["docs"] = docs_json;
-            j["next_id"] = next_id_;
+            j["next_id"] = next_id_.load();
             
-            std::ofstream f(doc_path);
-            f << j.dump(2);
+            std::vector<uint8_t> msgpack_data = json::to_msgpack(j);
+            std::ofstream f(doc_path, std::ios::binary);
+            f.write(reinterpret_cast<const char*>(msgpack_data.data()), msgpack_data.size());
+            
             return true;
         } catch (const std::exception& e) {
             std::cerr << "VectorStore Save Error: " << e.what() << std::endl;
@@ -132,6 +139,7 @@ namespace NPCInference {
     }
 
     bool VectorStore::Load(const std::string& path_prefix) {
+        std::unique_lock<std::shared_mutex> lock(impl_->rw_mutex);
         try {
             // Load Index
             std::string idx_path = path_prefix + ".usearch";
@@ -142,12 +150,21 @@ namespace NPCInference {
                  }
             }
 
-            // Load Metadata
-            std::string doc_path = path_prefix + ".json";
-            if (!std::filesystem::exists(doc_path)) return true;
+            // Load Metadata (try msgpack first, fallback to JSON)
+            std::string msgpack_path = path_prefix + ".msgpack";
+            std::string json_path = path_prefix + ".json";
+            json j;
             
-            std::ifstream f(doc_path);
-            json j = json::parse(f);
+            if (std::filesystem::exists(msgpack_path)) {
+                std::ifstream f(msgpack_path, std::ios::binary);
+                std::vector<uint8_t> buffer((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+                j = json::from_msgpack(buffer);
+            } else if (std::filesystem::exists(json_path)) {
+                std::ifstream f(json_path);
+                j = json::parse(f);
+            } else {
+                return true; // No metadata, clean state
+            }
             
             if (j.contains("docs")) {
                 for (const auto& el : j["docs"].items()) {
@@ -161,7 +178,7 @@ namespace NPCInference {
                 }
             }
             if (j.contains("next_id")) {
-                next_id_ = j["next_id"];
+                next_id_.store(j["next_id"]);
             }
             return true;
         } catch (const std::exception& e) {
@@ -171,6 +188,7 @@ namespace NPCInference {
     }
 
     std::vector<SearchResult> VectorStore::GetAllMemories() {
+        std::shared_lock<std::shared_mutex> lock(impl_->rw_mutex);
         std::vector<SearchResult> all_docs;
          for (const auto& [id, doc] : documents_) {
             all_docs.push_back({id, doc.text, 1.0f, doc.metadata});
@@ -179,6 +197,7 @@ namespace NPCInference {
     }
 
     void VectorStore::Remove(uint64_t id) {
+        std::unique_lock<std::shared_mutex> lock(impl_->rw_mutex);
         documents_.erase(id);
         if (impl_->idx) {
             impl_->idx.remove(id);
