@@ -1,0 +1,113 @@
+﻿=== NPC AI Ablation Study Suite ===
+Testing 8 configurations to measure component contributions
+
+[1/8] Starting: Baseline
+
+=== Running Ablation: Baseline ===
+cpp\build\Release\ablat
+ion_suite.exe : 
+GrammarSampler: 
+Resolved token IDs - 
+{:-1 }:-1 [:-1 ]:-1 
+":-1
+At line:1 char:1
++ cpp\build\Release\abl
+ation_suite.exe > 
+ablation_log.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (GrammarSample   
+ r:... [:-1 ]:-1 ":    
+-1:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+ToolRegistry: 
+Registered tool 
+'get_current_time'
+ToolRegistry: 
+Registered tool 
+'get_weather'
+ToolRegistry: 
+Registered tool 
+'search_knowledge'
+ToolRegistry: 
+Registered tool 
+'recall_memory'
+Initializing engine...
+Failed to load 
+tokenizer model: Not 
+found: "F:/NPC AI/model
+s/phi3_onnx/tokenizer.m
+odel": No such file or 
+directory Error #2
+Warning: Failed to 
+load tokenizer from 
+F:/NPC AI/models/phi3_o
+nnx/tokenizer.model
+  Inference will not 
+work without 
+tokenizer. Please 
+check model directory.
+CUDA not available, 
+falling back to CPU: C:
+\a\_work\1\s\onnxruntim
+e\core\session\provider
+_bridge_ort.cc:1375 onn
+xruntime::ProviderShare
+dLibrary::Ensure 
+[ONNXRuntimeError] : 1 
+: FAIL : LoadLibrary 
+failed with error 126 
+"" when trying to load 
+"F:\NPC AI\cpp\build\Re
+lease\onnxruntime_provi
+ders_shared.dll"
+
+[22:22:11.973] [INFO ] Initializing Global ONNX Runtime Environment...
+ONNX Runtime error: 
+Could not find an 
+implementation for 
+Trilu(14) node with 
+name '/model/Trilu'
+Warning: Failed to 
+load native model from 
+F:/NPC AI/models/phi3_o
+nnx/model.onnx
+  Continuing 
+initialization with 
+limited functionality 
+(Graph/Memory only).
+Failed to load 
+tokenizer model: Not 
+found: "F:/NPC AI/model
+s/phi3_onnx/tokenizer_e
+mbedding/sentencepiece.
+bpe.model": No such 
+file or directory 
+Error #2
+Failed to load 
+tokenizer for 
+embeddings.
+RAG: Embedding model 
+not loaded. RAG 
+features will be 
+disabled.
+Graph: Knowledge Graph 
+not found. Symbolic 
+reasoning will be 
+limited.
+Initialization completed in 1351ms
+BM25: Failed to open 
+file for reading: 
+F:/NPC AI/models/phi3_o
+nnx/hybrid_index_bm25.j
+son
+Engine initialized successfully.
+Running prompt: Tell me about the an...
+  Prompt: Tell me about the ancient ruin... -> 0.0247ms

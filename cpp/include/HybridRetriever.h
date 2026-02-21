@@ -36,6 +36,7 @@ public:
         double dense_weight = 0.6;
         double sparse_weight = 0.4;
         double min_score_threshold = 0.0;
+        int rrf_k = 60;
     };
 
     /**

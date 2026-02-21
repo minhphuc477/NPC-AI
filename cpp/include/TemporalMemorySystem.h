@@ -5,6 +5,7 @@
 #include <map>
 #include <chrono>
 #include <cmath>
+#include <mutex>
 #include <nlohmann/json.hpp>
 
 namespace NPCInference {
@@ -192,6 +193,7 @@ private:
     float decay_rate_ = 0.0001f;           // How fast memories fade (per second)
     float emotional_boost_factor_ = 2.0f;  // Multiplier for emotional memories
     float retrieval_boost_ = 0.1f;         // Strength increase per retrieval
+    mutable std::mutex mutex_;
     
     // Helper functions
     int64_t GetCurrentTimestamp() const;

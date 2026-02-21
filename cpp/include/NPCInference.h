@@ -2,10 +2,6 @@
 
 #pragma once
 
-// NPCInference.h - Main inference engine combining all components
-
-#pragma once
-
 // Standard Library
 #include <cstdint>
 #include <string>
@@ -16,23 +12,10 @@
 #include <atomic>
 #include <mutex>
 #include <functional>
+
+// Third-party
 #include <nlohmann/json.hpp>
 
-namespace NPCInference {
-
-
-    // Forward decls
-    class Tokenizer;
-    class ModelLoader;
-    class PromptFormatter;
-    class PythonBridge;
-    class PromptBuilder;
-    class VectorStore;
-    class EmbeddingModel;
-    class SimpleGraph;
-    class MemoryConsolidator;
-    class VisionLoader;
-    class GrammarSampler;
 // New Subsystems
 #include "BehaviorTree.h"
 #include "PromptBuilder.h"
@@ -51,6 +34,16 @@ namespace NPCInference {
 #include "EmotionalContinuitySystem.h"
 #include "PlayerBehaviorModeling.h"
 #include "AmbientAwarenessSystem.h"
+
+namespace NPCInference {
+
+    using json = nlohmann::json;
+
+    // Forward decls (kept for clarity/minimal dependency if needed)
+    class Tokenizer;
+    class ModelLoader;
+    class PromptFormatter;
+    class PythonBridge;
 
     struct GenerationResult {
         std::string text;
@@ -112,7 +105,7 @@ public:
     // Generate response based on current state (shared)
     std::string Generate(const std::string& prompt);
     // Thread-safe internal generation with state snapshot
-    std::string GenerateWithState(const std::string& prompt, const nlohmann::json& state, bool is_json = false);
+    std::string GenerateWithState(const std::string& prompt, nlohmann::json& state, const std::string& last_thought = "", bool is_json = false);
     std::string Generate(const std::string& prompt, const std::string& npc_name);
     
     // Phase 12: Structured Generation

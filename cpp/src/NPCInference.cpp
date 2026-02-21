@@ -175,10 +175,6 @@ namespace NPCInference {
             std::cerr << "CRITICAL: Initialization failed with exception: " << e.what() << std::endl;
             ready_ = false;
             return false;
-        } catch (const std::exception& e) {
-            std::cerr << "[NPCInference::Initialize] Error loading embedding model: " << e.what() << std::endl;
-            ready_ = false;
-            return false;
         } catch (...) {
             std::cerr << "[NPCInference::Initialize] Unknown error loading embedding model" << std::endl;
             ready_ = false;
@@ -241,6 +237,17 @@ namespace NPCInference {
                 return false;
             }
             f << state_bundle.dump(4);
+            
+            // SOTA State Serialization (External Files)
+            std::string base_dir = filepath.substr(0, filepath.find_last_of("\\/"));
+            if (base_dir == filepath) base_dir = "."; // Fallback to current dir if no path provided
+            
+            if (temporal_memory_) temporal_memory_->Save(base_dir + "/temporal_memory.json");
+            if (emotional_continuity_system_) emotional_continuity_system_->Save(base_dir + "/emotional_continuity.json");
+            if (ambient_awareness_system_) ambient_awareness_system_->Save(base_dir + "/ambient_awareness.json");
+            if (social_fabric_network_) social_fabric_network_->Save(base_dir + "/social_fabric.json");
+            if (player_behavior_modeling_) player_behavior_modeling_->Save(base_dir + "/player_behavior.json");
+            
             std::cout << "State saved to: " << filepath << std::endl;
             return true;
         } catch (const std::exception& e) {
@@ -276,6 +283,16 @@ namespace NPCInference {
             if (state_bundle.contains("last_thought")) {
                 last_thought_ = state_bundle["last_thought"].get<std::string>();
             }
+            
+            // SOTA State Deserialization (External Files)
+            std::string base_dir = filepath.substr(0, filepath.find_last_of("\\/"));
+            if (base_dir == filepath) base_dir = ".";
+            
+            if (temporal_memory_) temporal_memory_->Load(base_dir + "/temporal_memory.json");
+            if (emotional_continuity_system_) emotional_continuity_system_->Load(base_dir + "/emotional_continuity.json");
+            if (ambient_awareness_system_) ambient_awareness_system_->Load(base_dir + "/ambient_awareness.json");
+            if (social_fabric_network_) social_fabric_network_->Load(base_dir + "/social_fabric.json");
+            if (player_behavior_modeling_) player_behavior_modeling_->Load(base_dir + "/player_behavior.json");
             
             // Note: Configuration is not overwritten during LoadState
             // Use Initialize() to change configuration
@@ -329,10 +346,10 @@ namespace NPCInference {
             std::lock_guard<std::mutex> lock(state_mutex_);
             state_snapshot = current_state_;
         }
-        return GenerateWithState(prompt, state_snapshot, false);
+        return GenerateWithState(prompt, state_snapshot, "", false);
     }
 
-    std::string NPCInferenceEngine::GenerateWithState(const std::string& prompt, const nlohmann::json& state, bool is_json) {
+    std::string NPCInferenceEngine::GenerateWithState(const std::string& prompt, nlohmann::json& state, const std::string& last_thought, bool is_json) {
                 if (!ready_) {
                         return "Error: Engine not ready";
         }
@@ -428,111 +445,74 @@ namespace NPCInference {
                  }
              }
 
-             // 2. Build Prompt
-             std::string full_prompt;
-             std::string lang = local_state.is_object() ? local_state.value("language", "vi") : "vi";
-             nlohmann::json tools = (local_state.is_object() && local_state.contains("tools")) ? local_state["tools"] : nlohmann::json::array();
-             
-             if (config_.enable_planner && !is_json) {
-                 auto plan_scope = profiler_->StartTiming("planning_phase");
-                 std::string planning_prompt = prompt_builder_->BuildPlanning(local_state, local_state, prompt, lang);
-                 std::vector<int64_t> plan_input = tokenizer_->Encode(planning_prompt);
-                 
-                 if (!plan_input.empty()) {
-                     // Generate thought (limit to 100 tokens)
-                     std::vector<int64_t> thought_ids;
-                     std::vector<int64_t> attn(plan_input.size(), 1);
-                     thought_ids = model_loader_->Generate(plan_input, attn, 100, "thought_gen", nullptr, nullptr);
-                     
-                     if (!thought_ids.empty()) {
-                         last_thought_ = tokenizer_->Decode(thought_ids);
-                         // Trim markers if LLM repeats them
-                         size_t tpos = last_thought_.find("**");
-                         if (tpos != std::string::npos) last_thought_ = last_thought_.substr(tpos);
-                     }
-                 }
-                 full_prompt = prompt_builder_->BuildWithThought(local_state, local_state, prompt, last_thought_, lang, tools);
-             } else {
-                 auto prompt_scope = profiler_->StartTiming("prompt_building");
-                 try {
-                     full_prompt = prompt_builder_->Build(local_state, local_state, prompt, lang, tools);
-                 } catch (const std::exception& e) {
-                     std::cerr << "PromptBuilder Error: " << e.what() << std::endl;
-                     full_prompt = prompt; // Fallback to raw prompt
-                 }
-             }
-             
-             std::string conv_id = local_state.is_object() ? local_state.value("conversation_id", local_state.value("npc_id", "default")) : "default";
-             
-             std::vector<int64_t> input_ids;
-             {
-                 auto token_scope = profiler_->StartTiming("tokenization");
-                 input_ids = tokenizer_->Encode(full_prompt);
-             }
-             
-             if (input_ids.empty()) return "Error: Tokenization failed";
+             // 2. Build Prompt (MULTI-TURN REASONING LOOP)
+                std::string current_prompt = prompt;
+                std::string final_output = "";
+                
+                try {
+                    std::string lang = local_state.is_object() ? local_state.value("language", "vi") : "vi";
+                    for (int reasoning_step = 0; reasoning_step < 3; ++reasoning_step) {
+                    std::string full_prompt;
+                    nlohmann::json tools = (local_state.is_object() && local_state.contains("tools")) ? local_state["tools"] : nlohmann::json::array();
+                    
+                    if (config_.enable_planner && !is_json) {
+                        // Inherit last_thought_ from previous turn if available
+                        full_prompt = prompt_builder_->BuildWithThought(local_state, local_state, current_prompt, last_thought_, lang, tools);
+                    } else {
+                        try {
+                            full_prompt = prompt_builder_->Build(local_state, local_state, current_prompt, lang, tools);
+                        } catch (const std::exception& e) {
+                            std::cerr << "PromptBuilder Error: " << e.what() << std::endl;
+                            full_prompt = current_prompt; 
+                        }
+                    }
+                    
+                    std::string conv_id = local_state.is_object() ? local_state.value("conversation_id", local_state.value("npc_id", "default")) : "default";
+                    std::vector<int64_t> input_ids = tokenizer_->Encode(full_prompt);
+                    if (input_ids.empty()) break;
 
-             // 3. Prepare Grammar Sampler (isolated per call)
-             std::unique_ptr<GrammarSampler> local_sampler;
-             if (config_.enable_grammar && is_json) {
-                 local_sampler = std::make_unique<GrammarSampler>(tokenizer_.get());
-                 local_sampler->Reset();
-             }
+                    std::unique_ptr<GrammarSampler> local_sampler;
+                    if (config_.enable_grammar && (is_json || reasoning_step < 2)) {
+                        local_sampler = std::make_unique<GrammarSampler>(tokenizer_.get());
+                        local_sampler->Reset();
+                    }
 
-             auto logit_processor = [&](float* logits, int64_t vocab_size) {
-                 if (local_sampler) local_sampler->FilterLogits(logits, vocab_size);
-             };
-             
-             auto token_callback = [&](int64_t token) {
-                 if (local_sampler) local_sampler->AcceptToken(token);
-             };
+                    auto logit_processor = [&](float* logits, int64_t vocab_size) {
+                        if (local_sampler) local_sampler->FilterLogits(logits, vocab_size);
+                    };
+                    auto token_callback = [&](int64_t token) {
+                        if (local_sampler) local_sampler->AcceptToken(token);
+                    };
 
-             try {
-                 std::vector<int64_t> output_ids;
-                 std::vector<int64_t> attention_mask(input_ids.size(), 1);
-                 
-                 bool use_speculative = config_.enable_speculative && !is_json && draft_model_loader_->IsLoaded() && !config_.draft_model_dir.empty();
-                 auto infer_scope = profiler_->StartTiming("inference");
-                 
-                 if (use_speculative) {
-                     // Speculative Decoding (Async/Shared Safe)
-                     output_ids = input_ids;
-                     int tokens_generated = 0;
-                     while (tokens_generated < 150) {
-                         auto draft_tokens = draft_model_loader_->Generate(output_ids, attention_mask, 4, conv_id + "_draft", nullptr, nullptr);
-                         if (draft_tokens.size() <= output_ids.size()) break;
-                         
-                         std::vector<int64_t> pure_draft(draft_tokens.begin() + output_ids.size(), draft_tokens.end());
-                         std::vector<int64_t> verification_input = {output_ids.back()};
-                         verification_input.insert(verification_input.end(), pure_draft.begin(), pure_draft.end());
-                         
-                         auto accepted = model_loader_->VerifyDraft(input_ids, verification_input, conv_id);
-                         profiler_->RecordSpeculation(accepted.size(), pure_draft.size());
-                         if (accepted.empty()) {
-                             auto fallback = model_loader_->Generate(output_ids, attention_mask, 1, conv_id, nullptr, logit_processor);
-                             if (fallback.size() > output_ids.size()) {
-                                 output_ids.push_back(fallback.back());
-                                 token_callback(fallback.back());
-                                 tokens_generated++;
-                             } else break;
-                         } else {
-                             for (auto tok : accepted) {
-                                 output_ids.push_back(tok);
-                                 token_callback(tok);
-                                 tokens_generated++;
-                             }
-                         }
-                         if (output_ids.back() == tokenizer_->GetEOSId()) break;
-                     }
-                 } else {
-                     // Main Model Generation
-                     output_ids = model_loader_->Generate(input_ids, attention_mask, 150, conv_id, token_callback, logit_processor);
-                 }
-                 
-                 if (output_ids.size() > input_ids.size()) {
-                     std::vector<int64_t> new_tokens(output_ids.begin() + input_ids.size(), output_ids.end());
-                     profiler_->RecordTokens(new_tokens.size());
-                     std::string final_output = tokenizer_->Decode(new_tokens);
+                    std::vector<int64_t> output_ids;
+                    std::vector<int64_t> attention_mask(input_ids.size(), 1);
+                    
+                    output_ids = model_loader_->Generate(input_ids, attention_mask, 150, conv_id + "_step_" + std::to_string(reasoning_step), token_callback, logit_processor);
+                    
+                    if (output_ids.size() > input_ids.size()) {
+                        std::vector<int64_t> new_tokens(output_ids.begin() + input_ids.size(), output_ids.end());
+                        std::string step_output = tokenizer_->Decode(new_tokens);
+                        
+                        GenerationResult parse_res = ParseOutput(step_output);
+                    if (parse_res.tool_call.has_value()) {
+                        std::cout << "Reasoning Step " << reasoning_step << ": Executing Tool..." << std::endl;
+                        std::string observation = ExecuteAction(*parse_res.tool_call);
+                            
+                            json tool_obs;
+                            tool_obs["step"] = reasoning_step;
+                            tool_obs["call"] = *parse_res.tool_call;
+                            tool_obs["observation"] = observation;
+                            local_state["tool_results"].push_back(tool_obs);
+                            
+                            current_prompt = prompt; 
+                            continue; 
+                        }
+
+                        final_output = step_output;
+                        profiler_->RecordTokens(new_tokens.size());
+                        break;
+                    } else break;
+                }
                      
                      // Phase 2: Reflection Engine (Self-Correction)
                      if (config_.enable_reflection && !is_json) {
@@ -590,9 +570,7 @@ namespace NPCInference {
                      }
 
                      return final_output;
-                 }
-                 return "";
-             } catch (const std::exception& e) {
+                 } catch (const std::exception& e) {
                  std::cerr << "Engine Error: " << e.what() << std::endl;
                  return std::string("Error: ") + e.what();
              }
@@ -602,7 +580,7 @@ namespace NPCInference {
 
 
     std::string NPCInferenceEngine::GenerateJSON(const std::string& prompt) {
-        return GenerateWithState(prompt, current_state_, true); // true = is_json
+        return GenerateWithState(prompt, current_state_, "", true); // true = is_json
     }
 
     std::string NPCInferenceEngine::GenerateFromContext(const std::string& persona, const std::string& npc_id, const std::string& scenario, const std::string& player_input) {
@@ -627,7 +605,7 @@ namespace NPCInference {
         state["is_player_talking"] = !player_input.empty();
         
                 // Return with local context (doesn't modify global state unnecessarily)
-        return GenerateWithState(player_input, state, false);
+        return GenerateWithState(player_input, state, "", false);
     }
 
     bool NPCInferenceEngine::Remember(const std::string& text, const std::map<std::string, std::string>& metadata) {
@@ -694,78 +672,33 @@ namespace NPCInference {
         auto* ctx = conversation_manager_->GetSession(session_id);
         if (!ctx) return "Error: Invalid session ID";
         
+        // 1. Log the player message
         conversation_manager_->AddMessage(session_id, "user", user_message);
         
-        // Build RAG context
-        std::string rag_context = "";
-        if (config_.enable_rag && vector_store_ && embedding_model_ && embedding_model_->IsLoaded()) {
-            try {
-                auto embedding = embedding_model_->Embed(user_message);
-                if (!embedding.empty()) {
-                    auto results = vector_store_->Search(embedding, 5);
-                    if (!results.empty()) {
-                        rag_context += "Relevant Memories:\n";
-                        for (const auto& result : results) {
-                            // Distance: lower is better (more similar)
-                            if (result.distance < (1.0f - config_.rag_threshold)) {
-                                rag_context += "- " + result.text + "\n";
-                            }
-                        }
-                    }
-                }
-            } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
-    }
-        }
+        // 2. Build Advanced Cognitive Context (SOTA Integrated)
+        json advanced_context = BuildAdvancedContext(ctx->npc_name, user_message);
         
-        // Build graph context
-        std::string graph_context = "";
-        if (config_.enable_graph && knowledge_graph_) {
-            try {
-                std::istringstream iss(user_message);
-                std::string word;
-                while (iss >> word) {
-                    if (!word.empty() && std::isupper(word[0])) {
-                        auto edges = knowledge_graph_->GetRelations(word);
-                        if (!edges.empty()) {
-                            if (graph_context.empty()) graph_context += "Known Facts:\n";
-                            for (const auto& edge : edges) {
-                                graph_context += "- " + word + " " + edge.relation + " " + edge.target + "\n";
-                            }
-                        }
-                    }
-                }
-            } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    } catch (...) {
-        std::cerr << "Unknown error occurred" << std::endl;
-    }
-        }
-        
-        // Build conversation history
-        std::string conversation_history = "";
+        // 2.5 Restore Sliding Window History (Critical for dialogue flow)
+        std::string history_str = "";
         auto history = conversation_manager_->GetHistory(session_id, 6);
         for (const auto& msg : history) {
-            conversation_history += (msg.role == "user" ? ctx->player_name : ctx->npc_name) + ": " + msg.content + "\n";
+            history_str += (msg.role == "user" ? ctx->player_name : ctx->npc_name) + ": " + msg.content + "\n";
         }
+        advanced_context["recent_history"] = history_str;
         
-        // Combine contexts
-        std::string full_context = rag_context + graph_context;
-        if (!conversation_history.empty()) full_context += "Conversation:\n" + conversation_history;
+        // Persist session info
+        advanced_context["npc_id"] = ctx->npc_name;
+        advanced_context["player_id"] = ctx->player_name;
+        advanced_context["conversation_id"] = session_id;
         
-        // Generate response
-        std::string persona = "You are " + ctx->npc_name + ", a character in a fantasy world.";
-        std::string response = GenerateFromContext(persona, ctx->npc_name, full_context, user_message);
+        // 3. Generate response
+        std::string response = GenerateWithState(user_message, advanced_context, "", false);
         
+        // 4. Log the NPC response
         conversation_manager_->AddMessage(session_id, "assistant", response);
         
-        // Remember interaction
-        if (config_.enable_rag) {
-            Remember("Conversation with " + ctx->player_name + ": " + user_message + " -> " + response,
-                    {{"type", "conversation"}, {"npc", ctx->npc_name}, {"player", ctx->player_name}});
-        }
+        // 5. Update systems (Learning / Emotional Stimulus)
+        if (config_.enable_graph) Learn(user_message);
         
         return response;
     }

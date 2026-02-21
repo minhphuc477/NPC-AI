@@ -102,7 +102,7 @@ namespace NPCInference {
             
             // Save Index
             std::string idx_path = path_prefix + ".usearch";
-            auto res = impl_->idx.save(idx_path.c_str(), unum::usearch::index_dense_serialization_config_t{});
+            auto res = impl_->idx.save(unum::usearch::output_file_t(idx_path.c_str()), unum::usearch::index_dense_serialization_config_t{}, unum::usearch::dummy_progress_t{});
             if (!res) {
                 std::cerr << "VectorStore: Failed to save index: " << res.error.what() << std::endl;
                 return false;
@@ -136,7 +136,7 @@ namespace NPCInference {
             // Load Index
             std::string idx_path = path_prefix + ".usearch";
             if (std::filesystem::exists(idx_path)) {
-                 auto res = impl_->idx.load(idx_path.c_str(), unum::usearch::index_dense_serialization_config_t{});
+                 auto res = impl_->idx.load(unum::usearch::input_file_t(idx_path.c_str()), unum::usearch::index_dense_serialization_config_t{}, unum::usearch::dummy_progress_t{});
                  if (!res) {
                      std::cerr << "VectorStore: Failed to load index: " << res.error.what() << std::endl;
                  }

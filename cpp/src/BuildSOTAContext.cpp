@@ -111,6 +111,10 @@ nlohmann::json NPCInferenceEngine::BuildAdvancedContext(const std::string& npc_i
         behavior["patterns_detected"] = stats.patterns_detected;
         behavior["avg_success_rate"] = stats.avg_success_rate;
         behavior["dominant_playstyle"] = stats.dominant_playstyle;
+        
+        // SOTA: Inject strategic counters
+        behavior["strategic_suggestion"] = player_behavior_modeling_->SuggestCounterStrategy("current_dialogue");
+        
         context["player_behavior"] = behavior;
     }
     
@@ -118,9 +122,23 @@ nlohmann::json NPCInferenceEngine::BuildAdvancedContext(const std::string& npc_i
     if (ambient_awareness_system_) {
         auto stats = ambient_awareness_system_->GetStats();
         nlohmann::json awareness;
-        awareness["direct_observations"] = stats.direct_observations;
-        awareness["inferred_events"] = stats.inferred_events;
-        awareness["inference_accuracy"] = stats.inference_accuracy;
+        awareness["direct_observations_count"] = stats.direct_observations;
+        awareness["inferred_events_count"] = stats.inferred_events;
+        
+        // SOTA: Inject specific events and evidence
+        auto events = ambient_awareness_system_->GetAllKnownEvents(0.3f);
+        nlohmann::json event_list = nlohmann::json::array();
+        for (const auto& ev : events) {
+            nlohmann::json e;
+            e["type"] = ev.event_type;
+            e["description"] = ev.description;
+            e["witnessed"] = ev.directly_witnessed;
+            e["certainty"] = ev.certainty;
+            e["location"] = ev.location;
+            event_list.push_back(e);
+        }
+        awareness["current_events"] = event_list;
+        
         context["ambient_awareness"] = awareness;
     }
     
