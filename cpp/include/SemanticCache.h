@@ -42,7 +42,7 @@ public:
     
     struct CacheNode {
         CacheEntry entry;
-        std::list<std::string>::iterator lru_it;
+        std::list<uint64_t>::iterator lru_it;
         uint64_t usearch_id;
     };
 
@@ -106,8 +106,8 @@ private:
     size_t max_entries_;
     int64_t default_ttl_seconds_;
 
-    // LRU tracking: list of query strings in access order (front = most recent)
-    std::list<std::string> lru_list_;
+    // LRU tracking: list of usearch_id in access order (front = most recent)
+    std::list<uint64_t> lru_list_;
     
     // Map from query to CacheNode
     std::unordered_map<std::string, CacheNode> cache_map_;

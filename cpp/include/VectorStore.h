@@ -3,8 +3,10 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include <atomic>
+#include <future>
 #include <nlohmann/json.hpp>
 
 // Forward declare usearch index type to avoid pulling heavy headers into public interface if possible
@@ -38,11 +40,17 @@ namespace NPCInference {
 
         // Persistence
         virtual bool Save(const std::string& path_prefix);
+        virtual std::future<bool> SaveAsync(const std::string& path_prefix);
         virtual bool Load(const std::string& path_prefix);
 
         // Management (Phase 10)
         virtual std::vector<SearchResult> GetAllMemories();
         virtual void Remove(uint64_t id);
+
+        // AAA Phase 5: Memory Decay & Pruning
+        // @param decay_rate multiplier to simulate time passing (e.g. importance *= decay_rate)
+        // @param min_importance threshold below which memory is deleted
+        virtual int Prune(float decay_rate = 0.95f, float min_importance = 0.1f);
 
     private:
         struct Impl;
@@ -55,9 +63,13 @@ namespace NPCInference {
         struct DocData {
             std::string text;
             std::map<std::string, std::string> metadata;
+            
+            // For Memory Decay
+            unsigned long long timestamp = 0;
+            float importance = 1.0f; 
         };
         
-        std::map<uint64_t, DocData> documents_;
+        std::unordered_map<uint64_t, DocData> documents_;
     };
 
 } // namespace NPCInference

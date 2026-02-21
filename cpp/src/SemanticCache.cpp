@@ -115,7 +115,7 @@ const SemanticCache::CacheEntry* SemanticCache::Get(const std::string& query) {
 
         // Update LRU
         lru_list_.erase(entryNode.lru_it);
-        lru_list_.push_front(best_query);
+        lru_list_.push_front(entryNode.usearch_id);
         entryNode.lru_it = lru_list_.begin();
         entryNode.entry.hit_count++;
 
@@ -172,7 +172,7 @@ void SemanticCache::Put(const std::string& query, const std::string& result, int
 
         // Move to front of LRU
         lru_list_.erase(it->second.lru_it);
-        lru_list_.push_front(query);
+        lru_list_.push_front(it->second.usearch_id);
         it->second.lru_it = lru_list_.begin();
 
         return;
@@ -201,7 +201,7 @@ void SemanticCache::Put(const std::string& query, const std::string& result, int
     }
 
     // Add to LRU front
-    lru_list_.push_front(query);
+    lru_list_.push_front(new_id);
     node.lru_it = lru_list_.begin();
 
     cache_map_[query] = std::move(node);
@@ -213,15 +213,18 @@ void SemanticCache::EvictLRU() {
     if (lru_list_.empty()) return;
 
     // Remove least recently used (back of list)
-    std::string victim = lru_list_.back();
+    uint64_t vid = lru_list_.back();
     lru_list_.pop_back();
 
-    auto it = cache_map_.find(victim);
-    if (it != cache_map_.end()) {
-        uint64_t vid = it->second.usearch_id;
-        if (impl_->idx) impl_->idx.remove(vid);
-        id_to_query_.erase(vid);
-        cache_map_.erase(it);
+    auto qt = id_to_query_.find(vid);
+    if (qt != id_to_query_.end()) {
+        std::string victim = qt->second;
+        auto it = cache_map_.find(victim);
+        if (it != cache_map_.end()) {
+            if (impl_->idx) impl_->idx.remove(vid);
+            id_to_query_.erase(vid);
+            cache_map_.erase(it);
+        }
     }
 
     stats_.evictions++;

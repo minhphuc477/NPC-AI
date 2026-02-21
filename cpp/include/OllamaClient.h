@@ -41,6 +41,22 @@ public:
         int max_tokens = 150,
         float temperature = 0.7f
     );
+
+    /**
+     * Generate text completion asynchronously with stream events
+     * @param prompt The prompt to send
+     * @param on_token_callback Callback fired when a new token arrives
+     * @param on_action_callback Callback fired when a complete *action* string is parsed out
+     * @param max_tokens Maximum tokens to generate
+     * @param temperature Sampling temperature (0.0-1.0)
+     */
+    std::future<std::string> GenerateStreamAsync(
+        const std::string& prompt,
+        std::function<void(const std::string&)> on_token_callback,
+        std::function<void(const std::string&)> on_action_callback,
+        int max_tokens = 150,
+        float temperature = 0.7f
+    );
     
     /**
      * Check if Ollama is running and model is available
@@ -54,11 +70,25 @@ public:
      */
     void SetModel(const std::string& model_name) { model_name_ = model_name; }
     
+    /**
+     * Cancel the ongoing generate request on background threads
+     */
+    void Cancel();
+
 private:
     std::string model_name_;
     std::string base_url_;
     
-    std::string HttpPost(const std::string& url, const std::string& json_data);
+    // Cancellation atomic flag
+    std::atomic<bool> cancel_flag_{false};
+    
+    // Windows specifically needs the WinHttp Request handle exposed to cancel reliably
+#ifdef _WIN32
+    void* active_request_handle_ = nullptr;
+    std::mutex handle_mutex_;
+#endif
+    
+    std::string HttpPost(const std::string& url, const std::string& json_data, std::atomic<bool>* local_cancel = nullptr, std::function<void(const std::string&)> on_chunk_received = nullptr);
 };
 
 } // namespace NPCInference

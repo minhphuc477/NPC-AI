@@ -29,7 +29,10 @@ std::string OllamaClient::Generate(const std::string& prompt, int max_tokens, fl
     std::string json_str = request.dump();
     
     // Call Ollama API
-    std::string response = HttpPost(base_url_ + "/api/generate", json_str);
+    std::string response = HttpPost(base_url_ + "/api/generate", json_str, &cancel_flag_);
+    
+    // Soft reset cancel flag afterwards
+    cancel_flag_ = false;
     
     if (response.empty()) {
         return "[Error: Failed to connect to Ollama. Make sure 'ollama serve' is running.]";
@@ -52,6 +55,76 @@ std::string OllamaClient::Generate(const std::string& prompt, int max_tokens, fl
 std::future<std::string> OllamaClient::GenerateAsync(const std::string& prompt, int max_tokens, float temperature) {
     return std::async(std::launch::async, [this, prompt, max_tokens, temperature]() {
         return this->Generate(prompt, max_tokens, temperature);
+    });
+}
+
+std::future<std::string> OllamaClient::GenerateStreamAsync(
+    const std::string& prompt,
+    std::function<void(const std::string&)> on_token_callback,
+    std::function<void(const std::string&)> on_action_callback,
+    int max_tokens,
+    float temperature
+) {
+    return std::async(std::launch::async, [this, prompt, max_tokens, temperature, on_token_callback, on_action_callback]() {
+        nlohmann::json request;
+        request["model"] = model_name_;
+        request["prompt"] = prompt;
+        request["stream"] = true; // Enable streaming
+        request["options"]["num_predict"] = max_tokens;
+        request["options"]["temperature"] = temperature;
+        
+        std::string json_str = request.dump();
+        
+        std::string full_response = "";
+        std::string action_buffer = "";
+        bool in_action = false;
+        
+        auto chunk_parser = [&](const std::string& chunk_raw) {
+            // Ollama sends chunks of NDJSON (Newline Delimited JSON)
+            std::stringstream ss(chunk_raw);
+            std::string line;
+            while (std::getline(ss, line)) {
+                if (line.empty()) continue;
+                try {
+                    nlohmann::json j = nlohmann::json::parse(line);
+                    if (j.contains("response")) {
+                        std::string token = j["response"].get<std::string>();
+                        full_response += token;
+                        
+                        // Action Streaming FSM: Look for *action*
+                        for (char c : token) {
+                            if (c == '*') {
+                                if (in_action) {
+                                    // End of action
+                                    in_action = false;
+                                    if (on_action_callback && !action_buffer.empty()) {
+                                        on_action_callback(action_buffer);
+                                    }
+                                    action_buffer.clear();
+                                } else {
+                                    // Start of action
+                                    in_action = true;
+                                    action_buffer.clear();
+                                }
+                            } else if (in_action) {
+                                action_buffer += c;
+                            }
+                        }
+                        
+                        if (on_token_callback && !in_action && token.find('*') == std::string::npos) {
+                            on_token_callback(token);
+                        }
+                    }
+                } catch (...) {
+                    // Ignore partial json lines if they occur
+                }
+            }
+        };
+
+        HttpPost(base_url_ + "/api/generate", json_str, &cancel_flag_, chunk_parser);
+        cancel_flag_ = false;
+
+        return full_response;
     });
 }
 
@@ -79,7 +152,7 @@ struct WinHttpDeleter {
 };
 using unique_hinternet = std::unique_ptr<void, WinHttpDeleter>;
 
-std::string OllamaClient::HttpPost(const std::string& url, const std::string& json_data) {
+std::string OllamaClient::HttpPost(const std::string& url, const std::string& json_data, std::atomic<bool>* local_cancel, std::function<void(const std::string&)> on_chunk_received) {
     // Parse URL
     std::wstring wurl(url.begin(), url.end());
     
@@ -138,6 +211,12 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     if (!hRequest) {
         return "";
     }
+
+    // Safely store handle for asynchronous cancellation
+    {
+        std::lock_guard<std::mutex> lock(handle_mutex_);
+        active_request_handle_ = hRequest.get();
+    }
     
     // Set headers
     std::wstring headers = L"Content-Type: application/json\r\n";
@@ -170,6 +249,11 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     char buffer[4096];
     
     do {
+        if (local_cancel && local_cancel->load()) {
+            response_data = "[Cancelled by Player]";
+            break;
+        }
+
         bytesAvailable = 0;
         if (!WinHttpQueryDataAvailable(hRequest.get(), &bytesAvailable)) {
             break;
@@ -178,11 +262,20 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
         if (bytesAvailable > 0) {
             DWORD toRead = (std::min)(bytesAvailable, (DWORD)sizeof(buffer));
             if (WinHttpReadData(hRequest.get(), buffer, toRead, &bytesRead)) {
+                if (on_chunk_received && bytesRead > 0) {
+                    on_chunk_received(std::string(buffer, bytesRead));
+                }
                 response_data.append(buffer, bytesRead);
             }
         }
     } while (bytesAvailable > 0);
     
+    // Clear the active handle lock
+    {
+        std::lock_guard<std::mutex> lock(handle_mutex_);
+        active_request_handle_ = nullptr;
+    }
+
     // Resources are automatically cleaned up by unique_hinternet
     
     return response_data;
@@ -197,7 +290,7 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
     return size * nmemb;
 }
 
-std::string OllamaClient::HttpPost(const std::string& url, const std::string& json_data) {
+std::string OllamaClient::HttpPost(const std::string& url, const std::string& json_data, std::atomic<bool>* local_cancel, std::function<void(const std::string&)> on_chunk_received) {
     CURL* curl = curl_easy_init();
     if (!curl) {
         std::cerr << "Failed to initialize libcurl" << std::endl;
@@ -215,7 +308,11 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);  // 30 second timeout
     
+    // We don't fully support live callbacks in libcurl in this simplified build yet,
+    // but the functionality is wrapped here for cross-platform compatibility.
+    
     CURLcode res = curl_easy_perform(curl);
+    
     
     if (res != CURLE_OK) {
         std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
@@ -227,5 +324,19 @@ std::string OllamaClient::HttpPost(const std::string& url, const std::string& js
     return (res == CURLE_OK) ? response_data : "";
 }
 #endif
+
+void OllamaClient::Cancel() {
+    cancel_flag_ = true;
+
+#ifdef _WIN32
+    // If we are actively blocking on a WinHTTP request, we force close it from this thread 
+    // to instantly unblock the HTTP Receiver.
+    std::lock_guard<std::mutex> lock(handle_mutex_);
+    if (active_request_handle_) {
+        WinHttpCloseHandle(active_request_handle_);
+        active_request_handle_ = nullptr;
+    }
+#endif
+}
 
 } // namespace NPCInference
