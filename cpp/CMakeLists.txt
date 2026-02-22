@@ -39,41 +39,43 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(usearch)
 
 # Download ONNX Runtime
+set(ONNXRUNTIME_VERSION "1.18.0")
 if(WIN32)
-    set(ONNXRUNTIME_VERSION "1.18.0")
     set(ONNXRUNTIME_URL "https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/onnxruntime-win-x64-${ONNXRUNTIME_VERSION}.zip")
-    set(ONNXRUNTIME_ZIP "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime.zip")
-    
-    if(NOT EXISTS "${ONNXRUNTIME_ZIP}")
-        message(STATUS "Downloading ONNX Runtime ${ONNXRUNTIME_VERSION}...")
-        file(DOWNLOAD "${ONNXRUNTIME_URL}" "${ONNXRUNTIME_ZIP}" SHOW_PROGRESS)
-    endif()
-
-    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime")
-        message(STATUS "Extracting ONNX Runtime...")
-        file(ARCHIVE_EXTRACT INPUT "${ONNXRUNTIME_ZIP}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime")
-        # Releases extract into a subfolder like onnxruntime-win-x64-1.18.0
-        file(GLOB EXTRACTED_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/onnxruntime-win-x64-*")
-        if(EXTRACTED_DIR)
-            file(RENAME "${EXTRACTED_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/include")
-            file(RENAME "${EXTRACTED_DIR}/lib" "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/lib")
-        endif()
-    endif()
-
-    set(ONNXRUNTIME_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/include")
-    set(ONNXRUNTIME_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/lib")
-    
-    find_library(ONNXRUNTIME_LIBRARY
-        NAMES onnxruntime
-        PATHS ${ONNXRUNTIME_LIB_DIR}
-        NO_DEFAULT_PATH
-        REQUIRED
-    )
+    set(ONNXRUNTIME_ARCHIVE "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime.zip")
+elseif(APPLE)
+    set(ONNXRUNTIME_URL "https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/onnxruntime-osx-universal2-${ONNXRUNTIME_VERSION}.tgz")
+    set(ONNXRUNTIME_ARCHIVE "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime.tgz")
 else()
-    # Path for Linux/other
-    find_path(ONNXRUNTIME_INCLUDE_DIR NAMES onnxruntime_cxx_api.h REQUIRED)
-    find_library(ONNXRUNTIME_LIBRARY NAMES onnxruntime REQUIRED)
+    set(ONNXRUNTIME_URL "https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}.tgz")
+    set(ONNXRUNTIME_ARCHIVE "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime.tgz")
 endif()
+
+if(NOT EXISTS "${ONNXRUNTIME_ARCHIVE}")
+    message(STATUS "Downloading ONNX Runtime ${ONNXRUNTIME_VERSION}...")
+    file(DOWNLOAD "${ONNXRUNTIME_URL}" "${ONNXRUNTIME_ARCHIVE}" SHOW_PROGRESS)
+endif()
+
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime")
+    message(STATUS "Extracting ONNX Runtime...")
+    file(ARCHIVE_EXTRACT INPUT "${ONNXRUNTIME_ARCHIVE}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime")
+    # Releases extract into a subfolder like onnxruntime-win-x64-1.18.0 or onnxruntime-linux-x64-1.18.0
+    file(GLOB EXTRACTED_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/onnxruntime-*")
+    if(EXTRACTED_DIR)
+        file(RENAME "${EXTRACTED_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/include")
+        file(RENAME "${EXTRACTED_DIR}/lib" "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/lib")
+    endif()
+endif()
+
+set(ONNXRUNTIME_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/include")
+set(ONNXRUNTIME_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/lib")
+
+find_library(ONNXRUNTIME_LIBRARY
+    NAMES onnxruntime
+    PATHS ${ONNXRUNTIME_LIB_DIR}
+    NO_DEFAULT_PATH
+    REQUIRED
+)
 
 # Library Target
 add_library(npc_inference STATIC
