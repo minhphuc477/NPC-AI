@@ -105,7 +105,7 @@ add_library(npc_inference STATIC
     src/MemoryConsolidator.cpp
     src/PlayerBehaviorModeling.cpp
     src/OllamaClient.cpp
-    src/BuildSOTAContext.cpp
+    src/BuildAdvancedContext.cpp
 )
 
 target_include_directories(npc_inference
@@ -163,7 +163,7 @@ if(BUILD_TESTS)
     npc_add_test(demo_temporal_memory src/demo_temporal_memory.cpp)
     npc_add_test(demo_social_fabric src/demo_social_fabric.cpp)
     npc_add_test(demo_emotional_continuity src/demo_emotional_continuity.cpp)
-    npc_add_test(demo_sota_integration src/demo_sota_integration.cpp)
+    npc_add_test(demo_advanced_integration src/demo_integration.cpp)
     npc_add_test(chat_interface src/chat_interface.cpp)
     npc_add_test(demo_llm_with_systems src/demo_llm_with_systems.cpp)
     npc_add_test(bench_engine tests/bench_engine.cpp)
