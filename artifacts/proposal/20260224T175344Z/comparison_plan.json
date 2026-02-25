@@ -1,0 +1,68 @@
+{
+  "target_arm_for_external": "proposed_contextual_controlled",
+  "baseline_arm_ids": [
+    "baseline_no_context",
+    "baseline_no_context_phi3_latest"
+  ],
+  "comparisons": [
+    {
+      "comparison_id": "proposed_vs_candidate_no_context",
+      "target_arm": "proposed_contextual",
+      "baseline_arm": "candidate_no_context"
+    },
+    {
+      "comparison_id": "proposed_vs_baseline_no_context",
+      "target_arm": "proposed_contextual",
+      "baseline_arm": "baseline_no_context"
+    },
+    {
+      "comparison_id": "proposed_vs_baseline_no_context_phi3_latest",
+      "target_arm": "proposed_contextual",
+      "baseline_arm": "baseline_no_context_phi3_latest"
+    },
+    {
+      "comparison_id": "controlled_vs_proposed_raw",
+      "target_arm": "proposed_contextual_controlled",
+      "baseline_arm": "proposed_contextual"
+    },
+    {
+      "comparison_id": "controlled_vs_candidate_no_context",
+      "target_arm": "proposed_contextual_controlled",
+      "baseline_arm": "candidate_no_context"
+    },
+    {
+      "comparison_id": "controlled_vs_baseline_no_context",
+      "target_arm": "proposed_contextual_controlled",
+      "baseline_arm": "baseline_no_context"
+    },
+    {
+      "comparison_id": "controlled_vs_baseline_no_context_phi3_latest",
+      "target_arm": "proposed_contextual_controlled",
+      "baseline_arm": "baseline_no_context_phi3_latest"
+    },
+    {
+      "comparison_id": "proposed_contextual_controlled_vs_baseline_no_context",
+      "target_arm": "proposed_contextual_controlled",
+      "baseline_arm": "baseline_no_context"
+    },
+    {
+      "comparison_id": "proposed_contextual_controlled_vs_baseline_no_context_phi3_latest",
+      "target_arm": "proposed_contextual_controlled",
+      "baseline_arm": "baseline_no_context_phi3_latest"
+    }
+  ],
+  "metrics": [
+    "context_relevance",
+    "persona_consistency",
+    "naturalness",
+    "context_keyword_coverage",
+    "context_overlap",
+    "persona_keyword_coverage",
+    "persona_style",
+    "distinct1",
+    "length_score",
+    "sentence_score",
+    "bertscore_f1",
+    "overall_quality"
+  ]
+}

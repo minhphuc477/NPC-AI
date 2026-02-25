@@ -1,0 +1,1243 @@
+{
+  "ok": true,
+  "command": [
+    "C:\\Python313\\python.exe",
+    "scripts/train_retrieval_reranker.py",
+    "--pairs",
+    "data\\retrieval_reranker_pairs_wide.jsonl",
+    "--retrieval-corpus",
+    "data\\retrieval_corpus.jsonl",
+    "--retrieval-gold",
+    "data\\retrieval_gold.jsonl",
+    "--output-dir",
+    "artifacts\\publication\\20260225T061400Z\\retrieval\\reranker",
+    "--predictions-out",
+    "artifacts\\publication\\20260225T061400Z\\retrieval\\predictions_reranker.jsonl",
+    "--train-frac",
+    "0.85",
+    "--bm25-candidate-k",
+    "24",
+    "--hit-k",
+    "5",
+    "--seed",
+    "7"
+  ],
+  "returncode": 0,
+  "stdout_tail": "Reranker model: artifacts\\publication\\20260225T061400Z\\retrieval\\reranker\\reranker_model.joblib\nReranker summary: artifacts\\publication\\20260225T061400Z\\retrieval\\reranker\\summary.json\nReranker predictions: artifacts\\publication\\20260225T061400Z\\retrieval\\predictions_reranker.jsonl\nPairs: train=2856 eval=504 total=3360\n",
+  "stderr_tail": "",
+  "pairs_path": "data\\retrieval_reranker_pairs_wide.jsonl",
+  "summary_path": "artifacts\\publication\\20260225T061400Z\\retrieval\\reranker\\summary.json",
+  "predictions_path": "artifacts\\publication\\20260225T061400Z\\retrieval\\predictions_reranker.jsonl",
+  "summary": {
+    "pairs_path": "data\\retrieval_reranker_pairs_wide.jsonl",
+    "retrieval_corpus_path": "data\\retrieval_corpus.jsonl",
+    "retrieval_gold_path": "data\\retrieval_gold.jsonl",
+    "pair_rows_total": 3360,
+    "train_rows": 2856,
+    "eval_rows": 504,
+    "train_query_count": 204,
+    "eval_query_count": 36,
+    "train_frac": 0.85,
+    "bm25_candidate_k": 24,
+    "hit_k": 5,
+    "seed": 7,
+    "train_metrics": {
+      "pair_count": 2856,
+      "pair_accuracy": {
+        "n": 2856,
+        "mean": 0.9646358543417367,
+        "median": 1.0,
+        "ci95_low": 0.9576330532212886,
+        "ci95_high": 0.97093837535014
+      },
+      "pair_margin": {
+        "n": 2856,
+        "mean": 0.2446077953911699,
+        "median": 0.18264337301791303,
+        "ci95_low": 0.23828561811308885,
+        "ci95_high": 0.25072740291387374
+      },
+      "classification_accuracy": 0.8406862745098039,
+      "classification_log_loss": 0.4947159892202045,
+      "per_pair_preview": [
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_003",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.643404475425771,
+          "margin": 0.031658733723124666,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_007",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.4718643114582106,
+          "margin": 0.203198897690685,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_011",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.4847357502023758,
+          "margin": 0.1903274589465198,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_019",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.5363756037568491,
+          "margin": 0.1386876053920465,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_023",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.3211048705912931,
+          "margin": 0.3539583385576025,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_000",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.49482880255918016,
+          "margin": 0.18023440658971546,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_012",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.503193566039918,
+          "margin": 0.17186964310897757,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_006",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.49425657482970237,
+          "margin": 0.18080663431919325,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_018",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.5268693406047265,
+          "margin": 0.14819386854416916,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "scholarship_doc_009",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.4666793236605615,
+          "margin": 0.20838388548833414,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "naval_doc_000",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.13380888643515418,
+          "margin": 0.5412543227137414,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "naval_doc_006",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.16950984357496576,
+          "margin": 0.5055533655739298,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "naval_doc_012",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.14354494103232393,
+          "margin": 0.5315182681165717,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_015",
+          "positive_doc_id": "scholarship_doc_015",
+          "negative_doc_id": "naval_doc_018",
+          "positive_score": 0.6750632091488956,
+          "negative_score": 0.1993313499366495,
+          "margin": 0.47573185921224614,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_003",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.6048910649818736,
+          "margin": 0.03526978336127917,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_007",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.338427435243615,
+          "margin": 0.3017334130995378,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_019",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.40722105341530773,
+          "margin": 0.23293979492784506,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_000",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.5149726884701396,
+          "margin": 0.12518815987301324,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_009",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.4658105599579515,
+          "margin": 0.17435028838520128,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_012",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.5229693564934036,
+          "margin": 0.1171914918497492,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_021",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.2985268876365549,
+          "margin": 0.3416339607065979,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_006",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.5017054520593436,
+          "margin": 0.1384553962838092,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_018",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.5354854148731313,
+          "margin": 0.1046754334700215,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "law_doc_011",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.43490553182667574,
+          "margin": 0.20525531651647705,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "security_doc_006",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.3701122619019052,
+          "margin": 0.2700485864412476,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "security_doc_018",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.41378188893884543,
+          "margin": 0.22637895940430736,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "agriculture_doc_002",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.10983210317299985,
+          "margin": 0.5303287451701529,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "law_q_015",
+          "positive_doc_id": "law_doc_015",
+          "negative_doc_id": "agriculture_doc_005",
+          "positive_score": 0.6401608483431528,
+          "negative_score": 0.09375054209785774,
+          "margin": 0.5464103062452951,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_006",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.6397744622057084,
+          "margin": 0.025259707288194155,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_000",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.5296906289729482,
+          "margin": 0.13534354052095443,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_012",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.5368361496279181,
+          "margin": 0.12819801986598445,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_002",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.47917389692711,
+          "margin": 0.1858602725667926,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_009",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.48960396449205373,
+          "margin": 0.17543020500184886,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_010",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.4252365389395381,
+          "margin": 0.23979763055436448,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_014",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.5086026266661056,
+          "margin": 0.15643154282779703,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_021",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.32218427400079946,
+          "margin": 0.34284989549310313,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_022",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.23908360902008172,
+          "margin": 0.42595056047382085,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "ritual_doc_003",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.5436560623292243,
+          "margin": 0.12137810716467834,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "logistics_doc_000",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.06281655283500594,
+          "margin": 0.6022176166588966,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "logistics_doc_003",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.07899041235813552,
+          "margin": 0.5860437571357671,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "logistics_doc_006",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.07275694163891669,
+          "margin": 0.5922772278549859,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "ritual_q_018",
+          "positive_doc_id": "ritual_doc_018",
+          "negative_doc_id": "logistics_doc_012",
+          "positive_score": 0.6650341694939026,
+          "negative_score": 0.06950844321891939,
+          "margin": 0.5955257262749832,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_020",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.4609948296110131,
+          "margin": 0.1933708895120977,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_000",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.4383890378190683,
+          "margin": 0.21597668130404252,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_004",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.45891973496459953,
+          "margin": 0.19544598415851128,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_012",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.44900374227106465,
+          "margin": 0.20536197685204616,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_016",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.5059405987319522,
+          "margin": 0.14842512039115863,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_002",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.5597131755879816,
+          "margin": 0.0946525435351292,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_011",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.5679649408177435,
+          "margin": 0.0864007783053673,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_014",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.5858529244080938,
+          "margin": 0.06851279471501703,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_023",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.40016043770444903,
+          "margin": 0.2542052814186618,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "scholarship_doc_005",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.5315736841065518,
+          "margin": 0.122792035016559,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "diplomacy_doc_005",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.17281344474447102,
+          "margin": 0.4815522743786398,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "diplomacy_doc_017",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.17953369675676395,
+          "margin": 0.47483202236634686,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "diplomacy_doc_008",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.1778630843569003,
+          "margin": 0.4765026347662105,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "scholarship_q_008",
+          "positive_doc_id": "scholarship_doc_008",
+          "negative_doc_id": "diplomacy_doc_020",
+          "positive_score": 0.6543657191231108,
+          "negative_score": 0.08084743763048992,
+          "margin": 0.5735182814926209,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_014",
+          "positive_doc_id": "trade_doc_014",
+          "negative_doc_id": "trade_doc_002",
+          "positive_score": 0.6374565622962806,
+          "negative_score": 0.6140310384727365,
+          "margin": 0.023425523823544014,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_014",
+          "positive_doc_id": "trade_doc_014",
+          "negative_doc_id": "trade_doc_010",
+          "positive_score": 0.6374565622962806,
+          "negative_score": 0.47079991538520016,
+          "margin": 0.1666566469110804,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_014",
+          "positive_doc_id": "trade_doc_014",
+          "negative_doc_id": "trade_doc_022",
+          "positive_score": 0.6374565622962806,
+          "negative_score": 0.2690141249477246,
+          "margin": 0.368442437348556,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_014",
+          "positive_doc_id": "trade_doc_014",
+          "negative_doc_id": "trade_doc_006",
+          "positive_score": 0.6374565622962806,
+          "negative_score": 0.47037499455509496,
+          "margin": 0.1670815677411856,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_014",
+          "positive_doc_id": "trade_doc_014",
+          "negative_doc_id": "trade_doc_018",
+          "positive_score": 0.6374565622962806,
+          "negative_score": 0.5068742662467687,
+          "margin": 0.13058229604951188,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_014",
+          "positive_doc_id": "trade_doc_014",
+          "negative_doc_id": "trade_doc_005",
+          "positive_score": 0.6374565622962806,
+          "negative_score": 0.5145879601520483,
+          "margin": 0.12286860214423223,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_014",
+          "positive_doc_id": "trade_doc_014",
+          "negative_doc_id": "trade_doc_008",
+          "positive_score": 0.6374565622962806,
+          "negative_score": 0.4906500518891266,
+          "margin": 0.14680651040715398,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_014",
+          "positive_doc_id": "trade_doc_014",
+          "negative_doc_id": "trade_doc_011",
+          "positive_score": 0.6374565622962806,
+          "negative_score": 0.48958480538148386,
+          "margin": 0.1478717569147967,
+          "pair_correct": 1.0
+        }
+      ],
+      "classification_roc_auc": 0.9537197231833909
+    },
+    "eval_metrics": {
+      "pair_count": 504,
+      "pair_accuracy": {
+        "n": 504,
+        "mean": 0.9563492063492064,
+        "median": 1.0,
+        "ci95_low": 0.9365079365079365,
+        "ci95_high": 0.9742063492063492
+      },
+      "pair_margin": {
+        "n": 504,
+        "mean": 0.2246726585371778,
+        "median": 0.15975773359841303,
+        "ci95_low": 0.20945608832623872,
+        "ci95_high": 0.24009398900195372
+      },
+      "classification_accuracy": 0.8224206349206349,
+      "classification_log_loss": 0.510903026670566,
+      "per_pair_preview": [
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_019",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.6540889451192518,
+          "margin": -0.04456482576354348,
+          "pair_correct": 0.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_003",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.49072644935743875,
+          "margin": 0.11879766999826952,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_004",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.4490437563975989,
+          "margin": 0.16048036295810936,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_015",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.5322579696462083,
+          "margin": 0.07726614970949996,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_016",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.48701883047023403,
+          "margin": 0.12250528888547424,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_011",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.4192219598637575,
+          "margin": 0.19030215949195078,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_023",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.27422134603014475,
+          "margin": 0.3353027733255635,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_001",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.4952257323427536,
+          "margin": 0.1142983870129547,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_010",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.5213001046170376,
+          "margin": 0.0882240147386707,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "medicine_doc_013",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.5339947851294944,
+          "margin": 0.07552933422621388,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "naval_doc_000",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.16512371826892544,
+          "margin": 0.4444004010867828,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "naval_doc_008",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.18954177851672188,
+          "margin": 0.4199823408389864,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "naval_doc_012",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.17497596325790127,
+          "margin": 0.434548156097807,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "medicine_q_007",
+          "positive_doc_id": "medicine_doc_007",
+          "negative_doc_id": "naval_doc_020",
+          "positive_score": 0.6095241193557083,
+          "negative_score": 0.08777635800646812,
+          "margin": 0.5217477613492402,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_021",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.4905892193159505,
+          "margin": 0.16179180049590486,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_005",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.4886218036005381,
+          "margin": 0.16375921621131728,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_017",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.4902171930848906,
+          "margin": 0.16216382672696478,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_001",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.4792366622572288,
+          "margin": 0.1731443575546266,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_013",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.5235362346665511,
+          "margin": 0.12884478514530429,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_000",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.5195388800623642,
+          "margin": 0.13284213974949122,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_003",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.527738376448198,
+          "margin": 0.12464264336365738,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_006",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.517653564215354,
+          "margin": 0.13472745559650134,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_012",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.5272245053397967,
+          "margin": 0.12515651447205867,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "trade_doc_015",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.5675886187161444,
+          "margin": 0.08479240109571096,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "agriculture_doc_002",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.10040675576032522,
+          "margin": 0.5519742640515302,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "agriculture_doc_005",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.0860716729360194,
+          "margin": 0.566309346875836,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "agriculture_doc_014",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.11791066058765333,
+          "margin": 0.534470359224202,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "trade_q_009",
+          "positive_doc_id": "trade_doc_009",
+          "negative_doc_id": "agriculture_doc_017",
+          "positive_score": 0.6523810198118554,
+          "negative_score": 0.09111353635311255,
+          "margin": 0.5612674834587428,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_016",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.6798296723723457,
+          "margin": -0.03249052110965833,
+          "pair_correct": 0.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_008",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.3837852072746242,
+          "margin": 0.2635539439880632,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_020",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.21332900842404892,
+          "margin": 0.4340101428386385,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_001",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.5307023177948718,
+          "margin": 0.11663683346781561,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_013",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.5743068466001461,
+          "margin": 0.07303230466254129,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_000",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.4523995523880477,
+          "margin": 0.19493959887463969,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_007",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.49357399552753123,
+          "margin": 0.15376515573515614,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_010",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.5145754377328572,
+          "margin": 0.13276371352983019,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_012",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.46228892321882387,
+          "margin": 0.1850502280438635,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "diplomacy_doc_019",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.5561569799784842,
+          "margin": 0.09118217128420314,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "naval_doc_000",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.18689256091678638,
+          "margin": 0.46044659034590096,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "naval_doc_006",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.23188765532367858,
+          "margin": 0.41545149593900876,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "naval_doc_012",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.19875329217840879,
+          "margin": 0.4485858590842786,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "diplomacy_q_004",
+          "positive_doc_id": "diplomacy_doc_004",
+          "negative_doc_id": "naval_doc_018",
+          "positive_score": 0.6473391512626874,
+          "negative_score": 0.26797237233388616,
+          "margin": 0.3793667789288012,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_002",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.5522183763160957,
+          "margin": 0.025759213651615598,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_005",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.3755215426308377,
+          "margin": 0.2024560473368736,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_017",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.38007932312948484,
+          "margin": 0.19789826683822648,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_008",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.4517256099550731,
+          "margin": 0.1262519800126382,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_011",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.44542142783527383,
+          "margin": 0.13255616213243748,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_020",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.2526137422313499,
+          "margin": 0.3253638477363614,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_023",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.27840042137019716,
+          "margin": 0.29957716859751415,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_006",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.40725065378195724,
+          "margin": 0.17072693618575407,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_018",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.4431501112515189,
+          "margin": 0.13482747871619244,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "agriculture_doc_010",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.49752617667798293,
+          "margin": 0.08045141328972838,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "logistics_doc_000",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.1739119431702634,
+          "margin": 0.40406564679744794,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "logistics_doc_003",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.20985205770434331,
+          "margin": 0.36812553226336797,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "logistics_doc_006",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.19500301419369792,
+          "margin": 0.3829745757740134,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "agriculture_q_014",
+          "positive_doc_id": "agriculture_doc_014",
+          "negative_doc_id": "logistics_doc_012",
+          "positive_score": 0.5779775899677113,
+          "negative_score": 0.18775564145361864,
+          "margin": 0.39022194851409264,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "wilderness_q_009",
+          "positive_doc_id": "wilderness_doc_009",
+          "negative_doc_id": "wilderness_doc_021",
+          "positive_score": 0.615232302962235,
+          "negative_score": 0.456798244289697,
+          "margin": 0.15843405867253796,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "wilderness_q_009",
+          "positive_doc_id": "wilderness_doc_009",
+          "negative_doc_id": "wilderness_doc_001",
+          "positive_score": 0.615232302962235,
+          "negative_score": 0.4575600149961349,
+          "margin": 0.15767228796610006,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "wilderness_q_009",
+          "positive_doc_id": "wilderness_doc_009",
+          "negative_doc_id": "wilderness_doc_005",
+          "positive_score": 0.615232302962235,
+          "negative_score": 0.4445765965843297,
+          "margin": 0.17065570637790528,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "wilderness_q_009",
+          "positive_doc_id": "wilderness_doc_009",
+          "negative_doc_id": "wilderness_doc_013",
+          "positive_score": 0.615232302962235,
+          "negative_score": 0.5007810141045868,
+          "margin": 0.11445128885764821,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "wilderness_q_009",
+          "positive_doc_id": "wilderness_doc_009",
+          "negative_doc_id": "wilderness_doc_017",
+          "positive_score": 0.615232302962235,
+          "negative_score": 0.44627689383222635,
+          "margin": 0.16895540913000862,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "wilderness_q_009",
+          "positive_doc_id": "wilderness_doc_009",
+          "negative_doc_id": "wilderness_doc_000",
+          "positive_score": 0.615232302962235,
+          "negative_score": 0.601779113907469,
+          "margin": 0.013453189054766002,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "wilderness_q_009",
+          "positive_doc_id": "wilderness_doc_009",
+          "negative_doc_id": "wilderness_doc_012",
+          "positive_score": 0.615232302962235,
+          "negative_score": 0.6073719496671885,
+          "margin": 0.007860353295046418,
+          "pair_correct": 1.0
+        },
+        {
+          "query_id": "wilderness_q_009",
+          "positive_doc_id": "wilderness_doc_009",
+          "negative_doc_id": "wilderness_doc_003",
+          "positive_score": 0.615232302962235,
+          "negative_score": 0.5681730674952482,
+          "margin": 0.04705923546698676,
+          "pair_correct": 1.0
+        }
+      ],
+      "classification_roc_auc": 0.9361221340388007
+    },
+    "model_artifact": "artifacts\\publication\\20260225T061400Z\\retrieval\\reranker\\reranker_model.joblib",
+    "predictions_path": "artifacts\\publication\\20260225T061400Z\\retrieval\\predictions_reranker.jsonl"
+  }
+}

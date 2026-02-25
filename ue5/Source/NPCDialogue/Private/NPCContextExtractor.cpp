@@ -4,6 +4,8 @@
 #include "NPCContextExtractor.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/GameStateBase.h"
+#include "GameFramework/WorldSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
@@ -13,6 +15,126 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
+#include "Perception/AISense_Hearing.h"
+#include "Kismet/KismetSystemLibrary.h"
+
+namespace
+{
+FString NormalizeWeatherToken(const FString& RawToken)
+{
+    FString Token = RawToken;
+    Token.TrimStartAndEndInline();
+    if (Token.IsEmpty())
+    {
+        return FString();
+    }
+
+    if (Token.StartsWith(TEXT("Weather:"), ESearchCase::IgnoreCase))
+    {
+        Token = Token.RightChop(8);
+        Token.TrimStartAndEndInline();
+    }
+    else if (Token.StartsWith(TEXT("Weather_"), ESearchCase::IgnoreCase))
+    {
+        Token = Token.RightChop(8);
+        Token.TrimStartAndEndInline();
+    }
+
+    const TArray<FString> KnownWeather = {
+        TEXT("Clear"), TEXT("Rain"), TEXT("Storm"), TEXT("Snow"), TEXT("Fog"), TEXT("Windy")
+    };
+    for (const FString& Known : KnownWeather)
+    {
+        if (Token.Equals(Known, ESearchCase::IgnoreCase))
+        {
+            return Known;
+        }
+    }
+
+    return FString();
+}
+
+FString DetectWeatherFromTags(const TArray<FName>& Tags)
+{
+    for (const FName& Tag : Tags)
+    {
+        const FString Parsed = NormalizeWeatherToken(Tag.ToString());
+        if (!Parsed.IsEmpty())
+        {
+            return Parsed;
+        }
+    }
+    return FString();
+}
+
+FString DetectWeatherState(UWorld* World)
+{
+    if (!World)
+    {
+        return TEXT("Clear");
+    }
+
+    if (const AGameStateBase* GameState = World->GetGameState())
+    {
+        const FString FromGameState = DetectWeatherFromTags(GameState->Tags);
+        if (!FromGameState.IsEmpty())
+        {
+            return FromGameState;
+        }
+    }
+
+    if (const AWorldSettings* WorldSettings = World->GetWorldSettings())
+    {
+        const FString FromWorldSettings = DetectWeatherFromTags(WorldSettings->Tags);
+        if (!FromWorldSettings.IsEmpty())
+        {
+            return FromWorldSettings;
+        }
+    }
+
+    for (TActorIterator<AActor> It(World); It; ++It)
+    {
+        AActor* Actor = *It;
+        if (!Actor)
+        {
+            continue;
+        }
+
+        if (Actor->ActorHasTag(FName(TEXT("Weather"))) ||
+            Actor->ActorHasTag(FName(TEXT("WeatherSource"))) ||
+            Actor->ActorHasTag(FName(TEXT("Rain"))) ||
+            Actor->ActorHasTag(FName(TEXT("Snow"))) ||
+            Actor->ActorHasTag(FName(TEXT("Storm"))) ||
+            Actor->ActorHasTag(FName(TEXT("Fog"))))
+        {
+            const FString Parsed = DetectWeatherFromTags(Actor->Tags);
+            if (!Parsed.IsEmpty())
+            {
+                return Parsed;
+            }
+
+            if (Actor->ActorHasTag(FName(TEXT("Rain"))))
+            {
+                return TEXT("Rain");
+            }
+            if (Actor->ActorHasTag(FName(TEXT("Snow"))))
+            {
+                return TEXT("Snow");
+            }
+            if (Actor->ActorHasTag(FName(TEXT("Storm"))))
+            {
+                return TEXT("Storm");
+            }
+            if (Actor->ActorHasTag(FName(TEXT("Fog"))))
+            {
+                return TEXT("Fog");
+            }
+        }
+    }
+
+    return TEXT("Clear");
+}
+} // namespace
 
 FNPCDynamicContext UNPCContextExtractor::ExtractContext(
     AActor* NPCActor,
@@ -61,6 +183,24 @@ FNPCDynamicContext UNPCContextExtractor::ExtractContext(
 
     // Extract environment info
     ExtractEnvironmentInfo(World, Context);
+
+    // Synthesize coarse recent events from live perception + behavior signals.
+    if (Context.bCanSeePlayer)
+    {
+        Context.RecentEvents.Add(TEXT("Player in direct line of sight"));
+    }
+    if (Context.HeardSounds.Num() > 0)
+    {
+        Context.RecentEvents.Add(TEXT("Suspicious sounds detected nearby"));
+    }
+    if (Context.BehaviorState.Equals(TEXT("In Combat"), ESearchCase::IgnoreCase))
+    {
+        Context.RecentEvents.Add(TEXT("Combat state active"));
+    }
+    if (Context.NearestPlayerDistance >= 0.0f && Context.NearestPlayerDistance < 200.0f)
+    {
+        Context.RecentEvents.Add(TEXT("Player entered close range"));
+    }
 
     return Context;
 }
@@ -274,8 +414,8 @@ void UNPCContextExtractor::ExtractEnvironmentInfo(
         OutContext.TimeOfDay = TEXT("Night");
     }
 
-    // Weather (placeholder - integrate with your weather system)
-    OutContext.Weather = TEXT("Clear");
+    // Weather inferred from common world/game tags; defaults to Clear.
+    OutContext.Weather = DetectWeatherState(World);
 }
 
 FString UNPCContextExtractor::FormatContextAsScenario(
@@ -344,6 +484,15 @@ FString UNPCContextExtractor::FormatContextAsScenario(
         *Context.TimeOfDay,
         *Context.Weather
     );
+
+    if (Context.RecentEvents.Num() > 0)
+    {
+        Scenario += TEXT(" Recent events: ");
+        for (const FString& Event : Context.RecentEvents)
+        {
+            Scenario += Event + TEXT("; ");
+        }
+    }
 
     return Scenario;
 }
@@ -477,5 +626,30 @@ void UNPCContextExtractor::ExtractPerceptionInfo(
         {
             OutContext.VisibleActors.Add(Actor->GetName());
         }
+    }
+
+    TArray<AActor*> HeardActors;
+    PerceptionComp->GetCurrentlyPerceivedActors(UAISense_Hearing::StaticClass(), HeardActors);
+
+    const APawn* ControlledPawn = AIController->GetPawn();
+    const bool bHasControlledPawn = (ControlledPawn != nullptr);
+    const FVector ListenerLocation = bHasControlledPawn
+        ? ControlledPawn->GetActorLocation()
+        : FVector::ZeroVector;
+
+    for (AActor* Actor : HeardActors)
+    {
+        if (!Actor)
+        {
+            continue;
+        }
+
+        FString HeardInfo = Actor->GetName();
+        if (bHasControlledPawn)
+        {
+            const float DistMeters = FVector::Dist(ListenerLocation, Actor->GetActorLocation()) / 100.0f;
+            HeardInfo = FString::Printf(TEXT("%s (heard %.0fm away)"), *Actor->GetName(), DistMeters);
+        }
+        OutContext.HeardSounds.Add(HeardInfo);
     }
 }

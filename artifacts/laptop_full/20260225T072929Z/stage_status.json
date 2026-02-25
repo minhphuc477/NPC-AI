@@ -1,0 +1,70 @@
+{
+  "run_dir": "artifacts\\laptop_full\\20260225T072929Z",
+  "started_utc": "2026-02-25T07:29:29.670253+00:00",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "stages": {
+    "check_ollama": {
+      "status": "completed",
+      "started_utc": "2026-02-25T07:29:29.671025+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "-c",
+        "print('ollama check delegated')"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260225T072929Z\\logs\\check_ollama.log",
+      "finished_utc": "2026-02-25T07:29:29.672074+00:00",
+      "returncode": 0,
+      "dry_run": true
+    },
+    "generate_inputs": {
+      "status": "completed",
+      "started_utc": "2026-02-25T07:29:29.672758+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "-c",
+        "print('generate_inputs delegated')"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260225T072929Z\\logs\\generate_inputs.log",
+      "finished_utc": "2026-02-25T07:29:29.673252+00:00",
+      "returncode": 0,
+      "dry_run": true
+    },
+    "proposal_eval": {
+      "status": "completed",
+      "started_utc": "2026-02-25T07:29:29.674414+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/run_proposal_alignment_eval_batched.py",
+        "--host",
+        "http://127.0.0.1:11434",
+        "--candidate-model",
+        "elara-npc:latest",
+        "--baseline-model",
+        "phi3:mini",
+        "--baseline-models",
+        "phi3:latest",
+        "--scenarios",
+        "data/proposal_eval_scenarios_large.jsonl",
+        "--batch-size",
+        "20",
+        "--repeats",
+        "1",
+        "--max-tokens",
+        "80",
+        "--temperature",
+        "0.2",
+        "--bertscore-model-type",
+        "roberta-large",
+        "--bertscore-batch-size",
+        "16"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260225T072929Z\\logs\\proposal_eval.log",
+      "finished_utc": "2026-02-25T07:29:29.674995+00:00",
+      "returncode": 0,
+      "dry_run": true
+    }
+  },
+  "context": {}
+}

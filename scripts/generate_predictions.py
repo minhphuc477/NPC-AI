@@ -85,8 +85,7 @@ def main():
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
     # Clear file first
-    with open(output_path, "w", encoding="utf-8") as f:
-        pass
+    output_path.write_text("", encoding="utf-8")
         
     logger.info(f"Generating predictions for {len(test_samples)} samples...")
     

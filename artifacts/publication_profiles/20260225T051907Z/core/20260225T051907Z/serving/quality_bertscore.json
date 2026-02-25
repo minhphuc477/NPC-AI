@@ -1,0 +1,99 @@
+{
+  "lang": "en",
+  "models": {
+    "elara-npc:latest": {
+      "aligned_request_count": 8,
+      "empty_prediction_count": 0,
+      "ok": true,
+      "bertscore_f1": {
+        "n": 8,
+        "mean": -0.0006560867186635733,
+        "median": -0.015016622841358185,
+        "p95": 0.0752392318099737,
+        "ci95_low": -0.03963928287266754,
+        "ci95_high": 0.037548734777374186
+      },
+      "per_request": [
+        {
+          "index": 0,
+          "bertscore_f1": -0.014259973540902138
+        },
+        {
+          "index": 1,
+          "bertscore_f1": -0.10001794248819351
+        },
+        {
+          "index": 2,
+          "bertscore_f1": -0.025078030303120613
+        },
+        {
+          "index": 3,
+          "bertscore_f1": 0.05868668854236603
+        },
+        {
+          "index": 4,
+          "bertscore_f1": -0.03812100738286972
+        },
+        {
+          "index": 5,
+          "bertscore_f1": 0.04516270384192467
+        },
+        {
+          "index": 6,
+          "bertscore_f1": -0.015773272141814232
+        },
+        {
+          "index": 7,
+          "bertscore_f1": 0.08415213972330093
+        }
+      ]
+    },
+    "phi3:mini": {
+      "aligned_request_count": 8,
+      "empty_prediction_count": 0,
+      "ok": true,
+      "bertscore_f1": {
+        "n": 8,
+        "mean": 0.14356329920701683,
+        "median": 0.15607516467571259,
+        "p95": 0.28536533340811726,
+        "ci95_low": 0.07239624036592432,
+        "ci95_high": 0.21799388348008503
+      },
+      "per_request": [
+        {
+          "index": 0,
+          "bertscore_f1": 0.01673104800283909
+        },
+        {
+          "index": 1,
+          "bertscore_f1": 0.18230043351650238
+        },
+        {
+          "index": 2,
+          "bertscore_f1": 0.3274984061717987
+        },
+        {
+          "index": 3,
+          "bertscore_f1": 0.17443057894706726
+        },
+        {
+          "index": 4,
+          "bertscore_f1": -0.017417948693037033
+        },
+        {
+          "index": 5,
+          "bertscore_f1": 0.12012592703104019
+        },
+        {
+          "index": 6,
+          "bertscore_f1": 0.1377197504043579
+        },
+        {
+          "index": 7,
+          "bertscore_f1": 0.2071181982755661
+        }
+      ]
+    }
+  }
+}

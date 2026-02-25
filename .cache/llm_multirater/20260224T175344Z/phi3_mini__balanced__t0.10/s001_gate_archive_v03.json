@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "4",
+      "notes": "proposed_contextual_controlled<TAB>4<TAB>5<TAB>3<TAB>4<TAB>The response is contextually relevant and consistent with the persona but lacks a bit of naturalness in tone, hence slightly lower overall quality. Short note: The answer aligns well with being suspicious yet fair as it insists on following protocol without directly implying distrust towards the player's intentions."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "3",
+      "persona_consistency": "4",
+      "naturalness": "2",
+      "overall_quality": "1",
+      "notes": "baseline_no_context<TAB>3<TAB>4<TATB>2<TAB>1<TAB>Short note: The response is generic and lacks contextual relevance, but it maintains persona consistency as a guard would be expected to know about the need"
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "4",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "The response is relevant to both context and persona, maintains consistency with being suspicious of strangers' intentions while granting access under strict conditions which aligns well. The language used feels natural for an old royal guard character in this scenario."
+    }
+  ]
+}

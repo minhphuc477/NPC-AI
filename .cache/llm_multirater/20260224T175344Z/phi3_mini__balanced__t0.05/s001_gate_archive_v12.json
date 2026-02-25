@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "5",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "5",
+      "notes": "[proposed_contextual_controlled] I see you're in a hurry to access our royal archive again tonight? Captain Rhea has already ordered that we maintain vigilance after last night’s unfortunate incident involving an alarm and potential thieves, remember? The North Barracks Entry is not the place for unauthorized entry.<TAB>5<TAB>5<TAB>4<TAB>5<TAB>The response shows strong context relevance by acknowl"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "baseline_no_context<TAB>2<TAB>5<TAB>4<TAB>3<TAB>The response is consistent with persona but lacks context relevance as it doesn't acknowledge the recent alarm or Captain Rhea’s order. Naturalness and overall quality are average.<br>"
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "The response is contextually relevant, maintains persona consistency as a suspicious guard would be cautious about unautnered access, and the language used feels natural for an old royal guard. The overall quality could improve slightly with more detail on why entry requires clearance in this specific scenario."
+    }
+  ]
+}

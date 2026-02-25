@@ -1,0 +1,261 @@
+{
+  "generated_utc": "2026-02-25T01:19:21.204323+00:00",
+  "overall_pass": true,
+  "proposal_run": "artifacts\\proposal\\20260224T175344Z",
+  "publication_run": "artifacts\\publication\\20260224T151628Z",
+  "thresholds": {
+    "alpha": 0.05,
+    "min_scenarios": 100,
+    "min_external_significant_wins": 10,
+    "require_human_eval": true,
+    "min_human_rows": 300,
+    "min_human_kappa": 0.2,
+    "min_human_soft_win_rate": 0.55,
+    "require_security_benchmark": false,
+    "min_asr_reduction": 0.8,
+    "max_guarded_asr": 0.05
+  },
+  "checks": [
+    {
+      "section": "proposal",
+      "check_id": "file:run_config.json",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\run_config.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:comparison_plan.json",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\comparison_plan.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:summary.json",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\summary.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:paired_delta_significance.json",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\paired_delta_significance.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:win_rates.json",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\win_rates.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:slice_summary.json",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\slice_summary.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:report.md",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\report.md"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:scenarios.jsonl",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\scenarios.jsonl"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:metadata/hardware.json",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\metadata\\hardware.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "file:metadata/models.json",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\metadata\\models.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "scenario_coverage",
+      "passed": true,
+      "details": "rows=112, min_required=100"
+    },
+    {
+      "section": "proposal",
+      "check_id": "bertscore_repro_config",
+      "passed": true,
+      "details": "model_type='roberta-large', batch_size=16"
+    },
+    {
+      "section": "proposal",
+      "check_id": "controlled_vs_raw:context_relevance",
+      "passed": true,
+      "details": "comparison=controlled_vs_proposed_raw, mean_delta=0.204863, p_delta_le_0=0.000000, alpha=0.05"
+    },
+    {
+      "section": "proposal",
+      "check_id": "controlled_vs_raw:persona_consistency",
+      "passed": true,
+      "details": "comparison=controlled_vs_proposed_raw, mean_delta=0.078738, p_delta_le_0=0.000333, alpha=0.05"
+    },
+    {
+      "section": "proposal",
+      "check_id": "controlled_vs_raw:naturalness",
+      "passed": true,
+      "details": "comparison=controlled_vs_proposed_raw, mean_delta=0.088531, p_delta_le_0=0.000000, alpha=0.05"
+    },
+    {
+      "section": "proposal",
+      "check_id": "controlled_vs_raw:overall_quality",
+      "passed": true,
+      "details": "comparison=controlled_vs_proposed_raw, mean_delta=0.128390, p_delta_le_0=0.000000, alpha=0.05"
+    },
+    {
+      "section": "proposal",
+      "check_id": "external_wins:baseline_no_context",
+      "passed": true,
+      "details": "comparison=controlled_vs_baseline_no_context, significant_positive=10, min_required=10"
+    },
+    {
+      "section": "proposal",
+      "check_id": "external_overall_quality:baseline_no_context",
+      "passed": true,
+      "details": "comparison=controlled_vs_baseline_no_context, overall_quality_delta=0.125638, p_delta_le_0=0.000000, alpha=0.05"
+    },
+    {
+      "section": "proposal",
+      "check_id": "external_wins:baseline_no_context_phi3_latest",
+      "passed": true,
+      "details": "comparison=controlled_vs_baseline_no_context_phi3_latest, significant_positive=11, min_required=10"
+    },
+    {
+      "section": "proposal",
+      "check_id": "external_overall_quality:baseline_no_context_phi3_latest",
+      "passed": true,
+      "details": "comparison=controlled_vs_baseline_no_context_phi3_latest, overall_quality_delta=0.120949, p_delta_le_0=0.000000, alpha=0.05"
+    },
+    {
+      "section": "proposal",
+      "check_id": "human_eval_present",
+      "passed": true,
+      "details": "artifacts\\proposal\\20260224T175344Z\\human_eval_summary.json"
+    },
+    {
+      "section": "proposal",
+      "check_id": "human_eval_row_count",
+      "passed": true,
+      "details": "rows=324, min_required=300"
+    },
+    {
+      "section": "proposal",
+      "check_id": "human_eval_agreement",
+      "passed": true,
+      "details": "min_pair_count=3, mean_pairwise_kappa=0.425820, min_kappa_required=0.200000"
+    },
+    {
+      "section": "proposal",
+      "check_id": "human_pref_soft_win:baseline_no_context",
+      "passed": true,
+      "details": "comparison=proposed_contextual_controlled_vs_baseline_no_context, soft_win_rate=0.736111, min_required=0.550000"
+    },
+    {
+      "section": "proposal",
+      "check_id": "human_pref_soft_win:baseline_no_context_phi3_latest",
+      "passed": true,
+      "details": "comparison=proposed_contextual_controlled_vs_baseline_no_context_phi3_latest, soft_win_rate=0.671296, min_required=0.550000"
+    },
+    {
+      "section": "publication",
+      "check_id": "file:run_config.json",
+      "passed": true,
+      "details": "artifacts\\publication\\20260224T151628Z\\run_config.json"
+    },
+    {
+      "section": "publication",
+      "check_id": "file:metadata/hardware.json",
+      "passed": true,
+      "details": "artifacts\\publication\\20260224T151628Z\\metadata\\hardware.json"
+    },
+    {
+      "section": "publication",
+      "check_id": "file:metadata/models.json",
+      "passed": true,
+      "details": "artifacts\\publication\\20260224T151628Z\\metadata\\models.json"
+    },
+    {
+      "section": "publication",
+      "check_id": "file:serving/summary.json",
+      "passed": true,
+      "details": "artifacts\\publication\\20260224T151628Z\\serving\\summary.json"
+    },
+    {
+      "section": "publication",
+      "check_id": "file:serving/delta_vs_baseline.json",
+      "passed": true,
+      "details": "artifacts\\publication\\20260224T151628Z\\serving\\delta_vs_baseline.json"
+    },
+    {
+      "section": "publication",
+      "check_id": "file:retrieval/metrics.json",
+      "passed": true,
+      "details": "artifacts\\publication\\20260224T151628Z\\retrieval\\metrics.json"
+    },
+    {
+      "section": "publication",
+      "check_id": "file:retrieval/ablation_deltas_vs_bm25.json",
+      "passed": true,
+      "details": "artifacts\\publication\\20260224T151628Z\\retrieval\\ablation_deltas_vs_bm25.json"
+    },
+    {
+      "section": "publication",
+      "check_id": "file:report.md",
+      "passed": true,
+      "details": "artifacts\\publication\\20260224T151628Z\\report.md"
+    },
+    {
+      "section": "publication",
+      "check_id": "serving_models_declared",
+      "passed": true,
+      "details": "candidate='elara-npc:latest', baseline='phi3:mini'"
+    },
+    {
+      "section": "publication",
+      "check_id": "identical_inputs_declared",
+      "passed": true,
+      "details": "prompts='data\\serving_prompts.jsonl', references='data\\serving_references.jsonl', retrieval_gold='data\\retrieval_gold.jsonl', retrieval_corpus='data\\retrieval_corpus.jsonl'"
+    },
+    {
+      "section": "publication",
+      "check_id": "serving_confidence_intervals",
+      "passed": true,
+      "details": "ttft_ms/total_time_ms/tokens_per_s each include mean + 95% CI for candidate and baseline"
+    },
+    {
+      "section": "publication",
+      "check_id": "serving_delta_present",
+      "passed": true,
+      "details": "delta_metrics=['ttft_ms', 'total_time_ms', 'tokens_per_s']"
+    },
+    {
+      "section": "publication",
+      "check_id": "retrieval_metrics_standardized",
+      "passed": true,
+      "details": "bm25_keys=['hit@5', 'mrr', 'ndcg@5', 'query_count']"
+    },
+    {
+      "section": "publication",
+      "check_id": "retrieval_ablation_deltas_present",
+      "passed": true,
+      "details": "ablation_methods=['keyword_overlap', 'random']"
+    },
+    {
+      "section": "publication",
+      "check_id": "serving_prompt_parity",
+      "passed": true,
+      "details": "request_files=2"
+    }
+  ],
+  "failures": []
+}

@@ -1,58 +1,72 @@
-# NPC AI Benchmark Standards Proposal
+# NPC AI Benchmark Standards
 
-To ensure the NPC AI system remains performant and high-quality as it evolves, we propose the following benchmarking standards.
+This document defines measurement standards and reporting rules. It does not
+assert final scores unless artifact files are attached.
 
-## 1. System Performance (C++)
-Measure the raw efficiency of the inference engine.
+## Published Artifact Runner
 
-| Operation | Target (p95) | Component |
-|-----------|--------------|-----------|
-| Tokenization | < 5ms | Tokenizer |
-| RAG Retrieval | < 50ms | HybridRetriever |
-| Graph Search | < 10ms | SimpleGraph |
-| Inference (Draft) | < 20ms | MockModel/Draft |
-| Inference (Main) | < 150ms/token | ModelLoader |
+Use `scripts/run_publication_benchmark_suite.py` to generate a timestamped
+artifact bundle under `artifacts/publication/<RUN_ID>/` with:
+- non-mock serving traces
+- hardware/model metadata
+- standardized retrieval metrics (Hit@k/MRR/nDCG)
+- confidence intervals and baseline deltas
+- optional adversarial retrieval security metrics (ASR)
+- a machine-generated markdown report
 
-**Tool**: `bench_engine.exe` (Generated Results: `benchmark_results.json`)
+Example:
+```bash
+python scripts/run_publication_benchmark_suite.py --repeats 1 --max-tokens 64 --temperature 0.2 --run-security-benchmark
+```
 
-## 2. Advanced Efficiency
-Metrics for optimizing the AI architecture.
+## 1. Runtime Latency (C++)
 
-| Metric | Target | Description |
-|--------|--------|-------------|
-| Speculative Accept. | > 60% | Percentage of draft tokens accepted by main model. |
+Measure with non-mock runs (`NPC_MOCK_MODE=0`) whenever model weights are
+available.
 
-## 3. Long-term Reliability
-Ensuring the NPC doesn't "leak" memory or slow down over time.
+| Metric | Reporting Rule | Tool |
+|---|---|---|
+| Cold start | report median + p95 | `bench_engine` |
+| End-to-end generation latency | report p50/p95/p99 | `bench_engine` |
+| Retrieval latency | report p50/p95 by query set | `bench_retrieval` |
+| Ablation deltas | report relative change vs baseline | `ablation_suite` |
 
-| Metric | Target | Description |
-|--------|--------|-------------|
-| Memory Growth | Linear | Vector Store should scale O(N) with dialogue turns. |
-| Retrieval Latency | Constant | Memory search should not slow down as more memories are added (using HNSW). |
+Required metadata:
+- hardware (CPU/GPU/RAM)
+- model IDs and quantization
+- run count
+- mock mode on/off
 
-## 4. Model Quality (Python)
-Measure the semantic and persona alignment.
+## 2. Retrieval Quality
 
-| Metric | Target | Description |
-|--------|--------|-------------|
-| BERTScore F1 | > 0.70 | Semantic similarity to golden responses. |
-| Persona Consist. | > 0.80 | Alignment with NPC traits (Merchant, Guard, etc). |
-| Context Relev. | > 0.75 | Accuracy in referencing game state. |
+Use labeled query-doc relevance files and report:
+- `Hit@k`
+- `MRR`
+- `nDCG@k`
 
-**Tool**: `evaluate/evaluate_bertscore.py`
+The script `scripts/evaluate_benchmarks.py` now supports file-based retrieval
+evaluation via `--rag-gold` and `--rag-predictions`.
 
-## 3. Resource Usage
-| Metric | Target |
-|--------|--------|
-| Peak Memory | < 4GB (Model dependent) |
-| GPU Utilization | > 80% (During batch generation) |
+## 3. Dialogue Quality
 
-## Implementation Progress
-- [x] **C++ Profiler Instrumentation**: `PerformanceProfiler` integrated into the main generation loop.
-- [x] **Automated Benchmark Tool**: `bench_engine.cpp` created for high-granularity timing.
-- [x] **Quality Evaluation Pipeline**: `evaluate_bertscore.py` available for semantic validation.
+Report metrics on fixed test splits:
+- semantic similarity/quality (BERT-based evaluators)
+- persona consistency
+- groundedness (citation-aware checks where available)
 
-## Next Steps
-1.  **Continuous Benchmarking**: Run `bench_engine` as part of the CI/CD pipeline.
-2.  **Gold Dataset Expansion**: Expand `test_samples.jsonl` to cover more edge cases in Vietnamese dialogue.
-3.  **Real-world Profiling**: Capture performance data from UE5 playtests for real-world p99 analysis.
+If using LLM-as-a-judge, publish prompts and judge model version.
+
+## 4. Reliability
+
+Track over long runs:
+- memory growth trends
+- error rate / fallback rate
+- tool-call availability rate (provider-backed vs unavailable/simulated)
+- adversarial retrieval attack success rate (ASR) with guard OFF vs ON
+
+## 5. Claim Discipline
+
+- `Mock-validated` results can validate wiring and control flow.
+- `Production-validated` results require non-mock artifacts and metadata.
+- Do not claim superiority against literature or industry without published,
+  reproducible non-mock benchmark artifacts.

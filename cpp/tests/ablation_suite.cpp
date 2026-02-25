@@ -1,11 +1,17 @@
-// ablation_suite.cpp - Comprehensive Ablation Study Framework
+// ablation_suite.cpp - Comprehensive ablation benchmark harness.
 
 #include "NPCInference.h"
-#include <iostream>
-#include <fstream>
+
+#include <algorithm>
 #include <chrono>
+#include <cstdlib>
+#include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <numeric>
+#include <string>
+#include <vector>
+
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -19,31 +25,84 @@ struct AblationConfig {
     bool enable_grammar = true;
     bool enable_reflection = true;
     bool enable_planner = true;
-    bool enable_hybrid = true;  // Hybrid retrieval (dense + sparse)
+    bool enable_hybrid = true;
     bool enable_truth_guard = true;
 };
 
 struct BenchmarkResults {
-    double latency_p50_ms;
-    double latency_p95_ms;
-    double latency_p99_ms;
-    double throughput_tokens_per_sec;
-    double memory_usage_mb;
-    int total_runs;
+    double latency_p50_ms = 0.0;
+    double latency_p95_ms = 0.0;
+    double latency_p99_ms = 0.0;
+    double throughput_tokens_per_sec = 0.0;
+    double memory_usage_mb = 0.0;
+    int total_runs = 0;
 };
 
-// Test prompts for consistent evaluation
-const std::vector<std::string> TEST_PROMPTS = {
+struct CliOptions {
+    std::string model_dir = "models/phi3_onnx";
+    std::string output_path = "ablation_results.json";
+    int runs_per_prompt = 3;
+    std::string mock_mode;
+};
+
+namespace {
+
+const std::vector<std::string> kTestPrompts = {
     "Tell me about the ancient ruins."
 };
 
-BenchmarkResults RunBenchmark(const AblationConfig& config) {
+std::string GetArgValue(int argc, char* argv[], const std::string& key, const std::string& fallback) {
+    for (int i = 1; i + 1 < argc; ++i) {
+        if (std::string(argv[i]) == key) {
+            return std::string(argv[i + 1]);
+        }
+    }
+    return fallback;
+}
+
+int GetIntArgValue(int argc, char* argv[], const std::string& key, int fallback) {
+    const std::string value = GetArgValue(argc, argv, key, "");
+    if (value.empty()) return fallback;
+    try {
+        return std::stoi(value);
+    } catch (...) {
+        return fallback;
+    }
+}
+
+double Percentile(const std::vector<double>& sorted, double p) {
+    if (sorted.empty()) return 0.0;
+    const size_t idx = static_cast<size_t>(std::min<double>(sorted.size() - 1, p * (sorted.size() - 1)));
+    return sorted[idx];
+}
+
+CliOptions ParseArgs(int argc, char* argv[]) {
+    CliOptions opts{};
+    const char* env_model_dir = std::getenv("NPC_MODEL_DIR");
+    opts.model_dir = GetArgValue(argc, argv, "--model-dir", env_model_dir ? env_model_dir : opts.model_dir);
+    opts.output_path = GetArgValue(argc, argv, "--output", opts.output_path);
+    opts.runs_per_prompt = std::max(1, GetIntArgValue(argc, argv, "--runs", opts.runs_per_prompt));
+    opts.mock_mode = GetArgValue(argc, argv, "--mock-mode", "");
+    return opts;
+}
+
+void ConfigureMockMode(const CliOptions& opts) {
+    if (opts.mock_mode.empty()) return;
+#ifdef _WIN32
+    _putenv_s("NPC_MOCK_MODE", opts.mock_mode.c_str());
+#else
+    setenv("NPC_MOCK_MODE", opts.mock_mode.c_str(), 1);
+#endif
+}
+
+BenchmarkResults RunBenchmark(const AblationConfig& config, const CliOptions& opts) {
+    BenchmarkResults results{};
+
     try {
         std::cout << "\n=== Running Ablation: " << config.name << " ===" << std::endl;
-        
-        // Configure engine
-        NPCInferenceEngine::InferenceConfig inf_config;
-        inf_config.model_dir = "F:/NPC AI/models/phi3_onnx";
+
+        NPCInferenceEngine::InferenceConfig inf_config{};
+        inf_config.model_dir = opts.model_dir;
         inf_config.enable_rag = config.enable_rag;
         inf_config.enable_graph = config.enable_graph;
         inf_config.enable_speculative = config.enable_speculative;
@@ -51,146 +110,148 @@ BenchmarkResults RunBenchmark(const AblationConfig& config) {
         inf_config.enable_reflection = config.enable_reflection;
         inf_config.enable_planner = config.enable_planner;
         inf_config.enable_truth_guard = config.enable_truth_guard;
-        
-        // Initialize engine
+
         NPCInferenceEngine engine;
         std::cout << "Initializing engine..." << std::endl;
         if (!engine.Initialize(inf_config)) {
-            std::cout << "Failed to initialize engine for config: " << config.name << std::endl;
-            throw std::runtime_error("Initialization failed");
+            throw std::runtime_error("Initialization failed for config " + config.name);
         }
-        std::cout << "Engine initialized successfully." << std::endl;
-        
-        BenchmarkResults results = {};
-        std::vector<double> latencies;
-        
-        // Run test prompts
-        for (const auto& prompt : TEST_PROMPTS) {
-            std::cout << "Running prompt: " << prompt.substr(0, 20) << "..." << std::endl;
-            auto start = std::chrono::high_resolution_clock::now();
-            
-            std::string response = engine.GenerateFromContext(
-                "You are a wise NPC in a fantasy game.",
-                "Elder",
-                "In the village square",
-                prompt
-            );
-            
-            auto end = std::chrono::high_resolution_clock::now();
-            double latency_ms = std::chrono::duration<double, std::milli>(end - start).count();
-            latencies.push_back(latency_ms);
-            
-            std::cout << "  Prompt: " << prompt.substr(0, 30) << "... -> " 
-                      << latency_ms << "ms" << std::endl;
-        }
-        
-        if (latencies.empty()) throw std::runtime_error("No latencies captured");
 
-        // Calculate statistics
-        std::sort(latencies.begin(), latencies.end());
-        results.total_runs = latencies.size();
-        results.latency_p50_ms = latencies[latencies.size() / 2];
-        results.latency_p95_ms = latencies[static_cast<size_t>(latencies.size() * 0.95)];
-        results.latency_p99_ms = latencies[static_cast<size_t>(latencies.size() * 0.99)];
-        
-        double avg_latency = std::accumulate(latencies.begin(), latencies.end(), 0.0) / latencies.size();
-        results.throughput_tokens_per_sec = (avg_latency > 0) ? (50.0 / avg_latency) * 1000.0 : 0.0;
+        std::vector<double> latencies_ms;
+        latencies_ms.reserve(kTestPrompts.size() * static_cast<size_t>(opts.runs_per_prompt));
+        size_t total_generated_tokens = 0;
+
+        for (int run = 0; run < opts.runs_per_prompt; ++run) {
+            for (const auto& prompt : kTestPrompts) {
+                auto start = std::chrono::high_resolution_clock::now();
+                const std::string response = engine.GenerateFromContext(
+                    "You are a wise NPC in a fantasy game.",
+                    "Elder",
+                    "In the village square",
+                    prompt
+                );
+                auto end = std::chrono::high_resolution_clock::now();
+
+                const double latency_ms =
+                    std::chrono::duration<double, std::milli>(end - start).count();
+                latencies_ms.push_back(latency_ms);
+                total_generated_tokens += std::max<size_t>(1, response.size() / 4);
+                std::cout << "  run " << (run + 1) << ": " << latency_ms << " ms" << std::endl;
+            }
+        }
+
+        if (latencies_ms.empty()) {
+            throw std::runtime_error("No latencies captured");
+        }
+
+        std::sort(latencies_ms.begin(), latencies_ms.end());
+        results.total_runs = static_cast<int>(latencies_ms.size());
+        results.latency_p50_ms = Percentile(latencies_ms, 0.50);
+        results.latency_p95_ms = Percentile(latencies_ms, 0.95);
+        results.latency_p99_ms = Percentile(latencies_ms, 0.99);
+
+        const double total_latency_ms = std::accumulate(latencies_ms.begin(), latencies_ms.end(), 0.0);
+        results.throughput_tokens_per_sec =
+            total_latency_ms > 0.0 ? (static_cast<double>(total_generated_tokens) * 1000.0) / total_latency_ms : 0.0;
+        results.memory_usage_mb = static_cast<double>(PerformanceProfiler::GetMemoryUsageMB());
     } catch (const std::exception& e) {
-        std::cerr << "[Error] Benchmark run failed: " << e.what() << std::endl;
-        BenchmarkResults results = {}; // Zero init
-        return results;
+        std::cerr << "[ERROR] Benchmark run failed: " << e.what() << std::endl;
     }
+
+    return results;
 }
 
-void SaveResults(const std::vector<std::pair<AblationConfig, BenchmarkResults>>& all_results) {
+void SaveResults(const std::vector<std::pair<AblationConfig, BenchmarkResults>>& all_results,
+                 const std::string& output_path) {
     json output = json::array();
-    
-    for (const auto& [config, results] : all_results) {
-        json entry;
-        entry["config_name"] = config.name;
-        entry["enable_rag"] = config.enable_rag;
-        entry["enable_graph"] = config.enable_graph;
-        entry["enable_speculative"] = config.enable_speculative;
-        entry["enable_grammar"] = config.enable_grammar;
-        entry["enable_reflection"] = config.enable_reflection;
-        entry["enable_planner"] = config.enable_planner;
-        entry["enable_hybrid"] = config.enable_hybrid;
-        entry["enable_truth_guard"] = config.enable_truth_guard;
-        
-        entry["results"]["latency_p50_ms"] = results.latency_p50_ms;
-        entry["results"]["latency_p95_ms"] = results.latency_p95_ms;
-        entry["results"]["latency_p99_ms"] = results.latency_p99_ms;
-        entry["results"]["throughput_tokens_per_sec"] = results.throughput_tokens_per_sec;
-        entry["results"]["memory_usage_mb"] = results.memory_usage_mb;
-        
-        output.push_back(entry);
+
+    for (const auto& entry : all_results) {
+        const AblationConfig& config = entry.first;
+        const BenchmarkResults& results = entry.second;
+
+        json row;
+        row["config_name"] = config.name;
+        row["enable_rag"] = config.enable_rag;
+        row["enable_graph"] = config.enable_graph;
+        row["enable_speculative"] = config.enable_speculative;
+        row["enable_grammar"] = config.enable_grammar;
+        row["enable_reflection"] = config.enable_reflection;
+        row["enable_planner"] = config.enable_planner;
+        row["enable_hybrid"] = config.enable_hybrid;
+        row["enable_truth_guard"] = config.enable_truth_guard;
+
+        row["results"]["latency_p50_ms"] = results.latency_p50_ms;
+        row["results"]["latency_p95_ms"] = results.latency_p95_ms;
+        row["results"]["latency_p99_ms"] = results.latency_p99_ms;
+        row["results"]["throughput_tokens_per_sec"] = results.throughput_tokens_per_sec;
+        row["results"]["memory_usage_mb"] = results.memory_usage_mb;
+        row["results"]["total_runs"] = results.total_runs;
+
+        output.push_back(row);
     }
-    
-    std::ofstream file("ablation_results.json");
+
+    std::ofstream file(output_path);
     file << output.dump(2);
-    std::cout << "\n✓ Results saved to ablation_results.json" << std::endl;
+    std::cout << "\nResults saved to " << output_path << std::endl;
 }
 
-int main() {
-/*
-#ifdef _WIN32
-    _putenv_s("NPC_MOCK_MODE", "1");
-#else
-    setenv("NPC_MOCK_MODE", "1", 1);
-#endif
-*/
+} // namespace
 
+int main(int argc, char* argv[]) {
     try {
+        const CliOptions opts = ParseArgs(argc, argv);
+        ConfigureMockMode(opts);
+
         std::cout << "=== NPC AI Ablation Study Suite ===" << std::endl;
-        std::cout << "Testing 8 configurations to measure component contributions\n" << std::endl;
-        
-        std::vector<AblationConfig> configs = {
-            // 1. Baseline (all features)
+        std::cout << "Model dir: " << opts.model_dir << std::endl;
+        std::cout << "Runs per prompt: " << opts.runs_per_prompt << std::endl;
+        if (!opts.mock_mode.empty()) {
+            std::cout << "NPC_MOCK_MODE: " << opts.mock_mode << std::endl;
+        }
+
+        const std::vector<AblationConfig> configs = {
             {"Baseline", true, true, true, false, true, true, true, true},
-            // 2. No RAG
             {"No_RAG", false, true, true, false, true, true, true, true},
-            // 3. No Graph
             {"No_Graph", true, false, true, false, true, true, true, true},
-            // 4. No Hybrid (Dense only)
             {"No_Hybrid", true, true, true, false, true, true, false, true},
-            // 5. No Speculative Decoding
             {"No_Speculative", true, true, false, false, true, true, true, true},
-            // 6. No Reflection
             {"No_Reflection", true, true, true, false, false, true, true, true},
-            // 7. No Planner
             {"No_Planner", true, true, true, false, true, false, true, true},
-            // 8. No Truth Guard
             {"No_TruthGuard", true, true, true, false, true, true, true, false}
         };
 
-        
         std::vector<std::pair<AblationConfig, BenchmarkResults>> all_results;
-        
+        all_results.reserve(configs.size());
+
         int config_idx = 1;
         for (const auto& config : configs) {
-            std::cout << "[" << config_idx++ << "/" << configs.size() << "] Starting: " << config.name << std::endl;
-            auto results = RunBenchmark(config);
-            all_results.push_back({config, results});
-            std::cout << "Done: " << config.name << std::endl;
+            std::cout << "[" << config_idx++ << "/" << configs.size() << "] " << config.name << std::endl;
+            all_results.push_back({config, RunBenchmark(config, opts)});
         }
-        
-        // Print summary
-        std::cout << "\n=== Ablation Study Summary ===" << std::endl;
-        std::cout << std::left << std::setw(20) << "Configuration" 
-                  << std::right << std::setw(12) << "p95 (ms)"
-                  << std::setw(15) << "Throughput"
-                  << std::setw(12) << "BERTScore" << std::endl;
-        std::cout << std::string(60, '-') << std::endl;
-        
-        for (const auto& [config, results] : all_results) {
+
+        std::cout << "\n=== Ablation Summary ===" << std::endl;
+        std::cout << std::left << std::setw(20) << "Configuration"
+                  << std::right << std::setw(12) << "p95(ms)"
+                  << std::setw(14) << "Tok/s"
+                  << std::setw(12) << "Mem(MB)"
+                  << std::setw(8) << "Runs"
+                  << std::endl;
+        std::cout << std::string(66, '-') << std::endl;
+
+        for (const auto& entry : all_results) {
+            const AblationConfig& config = entry.first;
+            const BenchmarkResults& results = entry.second;
             std::cout << std::left << std::setw(20) << config.name
                       << std::right << std::setw(12) << std::fixed << std::setprecision(1) << results.latency_p95_ms
-                      << std::setw(15) << std::fixed << std::setprecision(1) << results.throughput_tokens_per_sec << std::endl;
+                      << std::setw(14) << std::fixed << std::setprecision(1) << results.throughput_tokens_per_sec
+                      << std::setw(12) << std::fixed << std::setprecision(1) << results.memory_usage_mb
+                      << std::setw(8) << results.total_runs
+                      << std::endl;
         }
-        
-        SaveResults(all_results);
-        
-        std::cout << "\n✓ Ablation study complete!" << std::endl;
+
+        SaveResults(all_results, opts.output_path);
+        std::cout << "\nAblation study complete." << std::endl;
+        return 0;
     } catch (const std::exception& e) {
         std::cerr << "CRITICAL ERROR in ablation_suite: " << e.what() << std::endl;
         return 1;
@@ -198,6 +259,4 @@ int main() {
         std::cerr << "UNKNOWN CRITICAL ERROR in ablation_suite" << std::endl;
         return 1;
     }
-    
-    return 0;
 }

@@ -1,67 +1,42 @@
-# System Verification & Benchmarks
+# Verification Log
 
-**Date**: 2026-02-12
-**Status**: Passing
+## Scope
+Record what has been executed and verified in this environment.
 
----
+## Verified
+1. Unified full checkout pipeline executes successfully:
+- `scripts/run_kaggle_full_results.py`
 
-## 1. Performance Metrics
+2. Full checkout produced manifest:
+- `artifacts/final_checkout/20260225T052614Z/manifest.json`
 
-### 1.1 Inference Latency (Phi-3 INT4)
-| Metric | CPU (Ryzen 9) | GPU (RTX 4090) | Target | Status |
-|--------|---------------|----------------|--------|--------|
-| **First Token (TTFT)** | 120ms | 15ms | <200ms | ✅ Pass |
-| **Decode (TPS)** | 45 tok/s | 120 tok/s | >30 | ✅ Pass |
-| **Speculative Speedup** | 1.7x | 1.3x | >1.5x | ✅ Pass |
+3. Proposal run has attached multi-rater evaluation artifacts:
+- `human_eval_llm_multirater_consistent.csv`
+- `human_eval_summary.json`
+- `human_eval_report.md`
 
-### 1.2 Vision Analysis
-| Model | Latency | Accuracy (Top-1) | Target | Status |
-|-------|---------|------------------|--------|--------|
-| **CLIP ViT-B/32 (FP32)** | 30.4ms | 86.2% | <50ms | ✅ Pass |
-| **CLIP ViT-B/32 (INT8)** | 19.7ms | 85.8% | <30ms | ✅ Pass |
+4. Additional analysis artifacts regenerate correctly:
+- lexical diversity benchmark
+- preference dataset builder
+- retrieval hard-negative set builder
 
-### 1.3 Retrieval (RAG)
-| Dataset | Hit@1 | Hit@5 | Latency | Status |
-|---------|-------|-------|---------|--------|
-| **TrekEval** | 92% | 97% | 12ms | ✅ Pass |
-| **SQA** | 88% | 94% | 15ms | ✅ Pass |
+5. Quality gate passes (human-eval required):
+- `artifacts/proposal/20260224T175344Z/quality_gate_report_final.md`
 
----
+6. Notebook has full checkout execution cell:
+- `notebooks/NPC_AI_Complete_Pipeline.ipynb` includes `scripts/run_kaggle_full_results.py`
 
-## 2. Component Verification
+## Not Fully Verified
+1. Security benchmark requirement on Kaggle unless retrieval security executable is available.
+2. Serving superiority claim over lightweight baselines (current evidence still negative on quality frontier).
+3. Full paper-protocol replication against external publications.
 
-### 2.1 Grammar Sampler
-- **Method**: Finite State Machine (13 states).
-- **Test Set**: 1000 complex JSON schemas.
-- **Validity Rate**: **99.5%** (Target: >99%).
-- **Failure Mode**: Ultra-deep nesting (>20 levels).
+## Reproduce
+```bash
+python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434
+```
 
-### 2.2 Memory System
-- **Vector Store**: `usearch` (HNSW).
-- **Capacity**: Tested up to 100,000 vectors.
-- **Search Time**: <1ms (p95).
-- **Consolidation**: Successfully summarizes 50+ turns into <150 words.
-
-### 2.3 Truth Guard
-- **Hallucination Rate**: Reduced from 15% (Raw) to <0.1% (Guarded).
-- **Overhead**: Adds ~200ms to response time (acceptable for async game logic).
-
----
-
-## 3. Ablation Studies
-
-| Configuration | Latency | Impact |
-|---------------|---------|--------|
-| **Baseline** | 185ms | N/A |
-| **No Speculation** | 310ms | +70% Latency |
-| **No Truth Guard** | 140ms | -25% Latency, +15% Hallucinations |
-| **No RAG** | 130ms | -30% Latency, Context Loss |
-
----
-
-## 4. Build & Deployment
-
-- **Build System**: CMake 3.25+
-- **Compiler**: MSVC 19.x / GCC 11+
-- **Dependencies**: ONNX Runtime, SentencePiece, nlohmann/json, usearch.
-- **Export**: `export_vision_model.py` verified for CLIP/Phi-3.
+Resume after interruption:
+```bash
+python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434 --proposal-run latest --publication-run latest
+```

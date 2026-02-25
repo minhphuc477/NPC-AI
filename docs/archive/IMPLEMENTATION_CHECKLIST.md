@@ -1,4 +1,7 @@
-# Implementation Checklist
+# Implementation Checklist (Archived)
+
+> Historical checklist retained for traceability. Current canonical notebook is
+> `notebooks/NPC_AI_Complete_Pipeline.ipynb`.
 
 - [x] Create Kaggle training notebook (`notebooks/kaggle_train_multiturn.ipynb`)
 - [x] Create Kaggle user guide (`docs/KAGGLE_GUIDE.md`)

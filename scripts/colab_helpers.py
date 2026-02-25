@@ -1,7 +1,7 @@
-"""Colab helpers for QLoRA finetuning & model handling (NPC AI)
+"""Kaggle/Colab helpers for QLoRA finetuning and model handling (NPC AI).
 
-This file contains small utilities used by the Colab notebook. Designed to be
-importable and unit-test friendly (no heavy GPU or network usage in unit tests).
+This file contains lightweight utilities used by notebook workflows.
+It is importable and unit-test friendly (no heavy GPU/network work at import time).
 """
 from __future__ import annotations
 import json
@@ -17,6 +17,52 @@ import requests
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
+
+
+def in_kaggle() -> bool:
+    return Path("/kaggle").exists()
+
+
+def in_colab() -> bool:
+    try:
+        import sys
+
+        return "google.colab" in sys.modules
+    except Exception:
+        return False
+
+
+def runtime_name() -> str:
+    if in_kaggle():
+        return "Kaggle"
+    if in_colab():
+        return "Colab"
+    return "Local"
+
+
+def runtime_working_dir() -> Path:
+    """Return a writable working root for the current runtime."""
+    if in_kaggle():
+        return Path("/kaggle/working")
+    return Path.cwd()
+
+
+def resolve_writable_path(path: str | Path) -> Path:
+    """Resolve a path to a writable location in notebook runtimes."""
+    p = Path(path)
+    if p.is_absolute():
+        return p
+    return runtime_working_dir() / p
+
+
+def ensure_hf_cache(cache_dir: str | Path = "hf_cache") -> Path:
+    """Create and return a HuggingFace cache path in writable storage."""
+    p = resolve_writable_path(cache_dir)
+    p.mkdir(parents=True, exist_ok=True)
+    os.environ.setdefault("HF_HOME", str(p))
+    os.environ.setdefault("TRANSFORMERS_CACHE", str(p / "transformers"))
+    os.environ.setdefault("HUGGINGFACE_HUB_CACHE", str(p / "hub"))
+    return p
 
 
 def csv_to_jsonl(csv_path: str, jsonl_path: str) -> int:
@@ -129,16 +175,16 @@ def convert_csv_to_jsonl(csv_path: str, out_path: str, text_col: str = "text", l
         n = csv_to_jsonl(csv_path, out_path)
         if n and n > 0:
             return n
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Primary csv_to_jsonl converter failed: %s", exc)
     # fallback: use annotation pipeline converter if present
     try:
         from annotation_pipeline.convert_csv_to_jsonl import csv_to_jsonl as conv
         n2 = conv(csv_path, out_path)
         if n2 and n2 > 0:
             return n2
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Annotation pipeline converter failed: %s", exc)
     # last-resort simple conversion
     import csv, json
     written = 0
@@ -299,7 +345,7 @@ def call_groq_api(prompt: str, model_id: str = 'llama-3.3-70b-versatile', max_to
                 try:
                     wait_time = float(retry_after) + 1.0
                 except ValueError:
-                    pass
+                    logger.debug("Invalid retry-after header value: %s", retry_after)
             
             logger.warning(f"Groq rate limited (429). Stalling for {wait_time:.1f}s.")
             
@@ -369,7 +415,7 @@ def batch_generate_with_groq(prompts: List[str], model_id: str, batch_size: int 
     entry exists it will be returned instead of calling the network.
     """
     out = []
-    cache_dir = Path('.cache') / 'groq'
+    cache_dir = runtime_working_dir() / ".cache" / "groq"
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     # helper to get cache path

@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "3",
+      "persona_consistency": "5",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "The response acknowledges the context and attempts to balance assistance with fairness, but it could be more in line with persona consistency by emphasizing honesty even when offering discounts under pressure."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "1",
+      "persona_consistency": "3",
+      "naturalness": "3",
+      "overall_quality": "2 Baseline without considering dynamic context lacks relevance and naturalness as the response doesn't address urgency or scarcity effectively, also not aligning with persona consistency of a helpful yet honest merchant.",
+      "notes": ""
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "5",
+      "persona_consistency": "4",
+      "naturalness": "4",
+      "overall_quality": "4 This balanced approach maintains context relevance by acknowledging both fair trade and the need for",
+      "notes": ""
+    }
+  ]
+}

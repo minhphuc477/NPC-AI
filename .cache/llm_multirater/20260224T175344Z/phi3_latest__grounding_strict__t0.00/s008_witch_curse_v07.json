@@ -1,0 +1,44 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": 5,
+      "persona_consistency": 5,
+      "naturalness": 4,
+      "overall_quality": 5,
+      "notes": "Responses are highly relevant, consistent with the persona of a reclusive witch and provide natural dialogue fitting for such character."
+    },
+    {
+      "arm_id": "proposed_contextual",
+      "context_relevance": 3,
+      "persona_consistency": 2,
+      "naturalness": 1,
+      "overall_quality": 2,
+      "notes": "Response lacks specificity to the context, does not fully embody the persona's characteristics."
+    },
+    {
+      "arm_id": "candidate_no_context",
+      "context_relevance": 1,
+      "persona_consistency": 1,
+      "naturalness": 1,
+      "overall_quality": 1,
+      "notes": "Response is generic and unrelated to context, fails in all aspects of evaluation criteria."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": 2,
+      "persona_consistency": 3,
+      "naturalness": 2,
+      "overall_quality": 2,
+      "notes": "Some elements are relevant but lacks direct connection to the context and persona, natural dialogue is not well-executed."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": 1,
+      "persona_consistency": 1,
+      "naturalness": 2,
+      "overall_quality": 1,
+      "notes": "Response fails to connect with the context and persona, natural dialogue is not well-executed."
+    }
+  ]
+}

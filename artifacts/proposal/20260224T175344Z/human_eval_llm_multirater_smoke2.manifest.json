@@ -1,0 +1,24 @@
+{
+  "run_dir": "artifacts\\proposal\\20260224T175344Z",
+  "output_csv": "artifacts\\proposal\\20260224T175344Z\\human_eval_llm_multirater_smoke2.csv",
+  "arms": [
+    "proposed_contextual_controlled",
+    "proposed_contextual",
+    "candidate_no_context",
+    "baseline_no_context",
+    "baseline_no_context_phi3_latest"
+  ],
+  "scenario_count": 2,
+  "annotators": [
+    {
+      "model": "elara-npc:latest",
+      "profile": "balanced",
+      "temperature": 0.0
+    }
+  ],
+  "total_rows": 10,
+  "api_calls": 2,
+  "cache_hits": 0,
+  "failures": 1,
+  "cache_root": ".cache\\llm_multirater\\20260224T175344Z"
+}

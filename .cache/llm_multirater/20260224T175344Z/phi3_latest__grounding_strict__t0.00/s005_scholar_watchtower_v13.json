@@ -1,0 +1,36 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual",
+      "context_relevance": 5,
+      "persona_consistency": 5,
+      "naturalness": 4.5,
+      "overall_quality": 5,
+      "notes": "The response is highly relevant to the context and persona; it shows knowledge of recent events while maintaining formality."
+    },
+    {
+      "arm_id": "candidate_no_context",
+      "context_relevance": 1,
+      "persona_consistency": 2,
+      "naturalness": 3,
+      "overall_quality": 2,
+      "notes": "The response lacks context relevance and persona consistency; it's generic and not aligned with the scholarly character."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": 1,
+      "persona_consistency": 2,
+      "naturalness": 3,
+      "overall_quality": 2,
+      "notes": "The response is generic and does not reflect the scholarly setting or recent events."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3",
+      "context_relevance": 1,
+      "persona_consistency": 2,
+      "naturalness": 3,
+      "overall_quality": 2,
+      "notes": "The response fails to incorporate the specific context and lacks relevance."
+    }
+  ]
+}

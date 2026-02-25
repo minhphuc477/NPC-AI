@@ -1,0 +1,44 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": 5,
+      "persona_consistency": 5,
+      "naturalness": 4,
+      "overall_quality": 5,
+      "notes": "This response maintains the persona's scholarly demeanor and emphasizes a need for evidence, aligning with both context and character."
+    },
+    {
+      "arm_id": "proposed_contextual",
+      "context_relevance": 5,
+      "persona_consistency": 5,
+      "naturalness": 4,
+      "overall_quality": 5,
+      "notes": "The response stays true to the persona's formal language, caution against hasty conclusions, and respect for evidence."
+    },
+    {
+      "arm_id": "candidate_no_context",
+      "context_relevance": 1,
+      "persona_consistency": 2,
+      "naturalness": 3,
+      "overall_quality": 1,
+      "notes": "This response fails to address the player's immediate need for information and lacks context relevance, persona consistency, naturalness, and overall quality."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": 2,
+      "persona_consistency": 5,
+      "naturalness": 4,
+      "overall_quality": 3,
+      "notes": "While the response maintains formal language consistent with persona, it does not provide contextually relevant information about the watchtower's fate."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": 1,
+      "persona_consistency": 2,
+      "naturalness": 4,
+      "overall_quality": 2,
+      "notes": "The response, while using formal language, fails to provide relevant context and does not align with the persona's scholarly approach."
+    }
+  ]
+}

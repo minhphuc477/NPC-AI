@@ -2,8 +2,20 @@
 #include <iostream>
 #include <chrono>
 #include <ctime>
+#include <cstdlib>
+#include <functional>
 
 namespace NPCInference {
+
+namespace {
+BuiltInTools::Providers g_tool_providers;
+
+bool IsTruthyEnv(const char* value) {
+    if (!value) return false;
+    const std::string s(value);
+    return s == "1" || s == "true" || s == "TRUE" || s == "on" || s == "ON";
+}
+} // namespace
 
 void ToolRegistry::RegisterTool(const std::string& name,
                                 const std::string& description,
@@ -86,7 +98,7 @@ void BuiltInTools::RegisterAll(ToolRegistry& registry) {
         GetCurrentTime
     );
 
-    // Get weather (mock)
+    // Get weather
     registry.RegisterTool(
         "get_weather",
         "Get weather information for a location",
@@ -129,6 +141,89 @@ void BuiltInTools::RegisterAll(ToolRegistry& registry) {
     );
 }
 
+void BuiltInTools::SetProviders(const Providers& providers) {
+    g_tool_providers = providers;
+}
+
+void BuiltInTools::ClearProviders() {
+    g_tool_providers = Providers{};
+}
+
+bool BuiltInTools::HasExternalProviders() {
+    return static_cast<bool>(g_tool_providers.weather_provider) ||
+           static_cast<bool>(g_tool_providers.knowledge_provider) ||
+           static_cast<bool>(g_tool_providers.memory_provider);
+}
+
+const BuiltInTools::Providers& BuiltInTools::GetProviders() {
+    return g_tool_providers;
+}
+
+bool BuiltInTools::AllowSimulatedFallback() {
+    return IsTruthyEnv(std::getenv("NPC_ALLOW_SIMULATED_TOOLS"));
+}
+
+json BuiltInTools::BuildUnavailableResult(const std::string& tool_name, const std::string& reason) {
+    return json{
+        {"tool", tool_name},
+        {"available", false},
+        {"reason", reason}
+    };
+}
+
+json BuiltInTools::BuildSimulatedWeather(const std::string& location) {
+    const std::size_t h = std::hash<std::string>{}(location);
+    static const std::vector<std::string> kConditions = {
+        "Clear",
+        "Cloudy",
+        "Light Rain",
+        "Windy",
+        "Overcast",
+        "Partly Cloudy"
+    };
+
+    const int temp_c = static_cast<int>(8 + (h % 25));
+    const int humidity = static_cast<int>(30 + (h % 61));
+    const std::string condition = kConditions[h % kConditions.size()];
+
+    return json{
+        {"location", location},
+        {"temperature_c", temp_c},
+        {"condition", condition},
+        {"humidity_percent", humidity},
+        {"available", true},
+        {"source", "simulated"},
+        {"simulated", true}
+    };
+}
+
+json BuiltInTools::BuildSimulatedKnowledge(const std::string& query) {
+    return json{
+        {"query", query},
+        {"results", json::array({
+            {
+                {"title", "Simulated Knowledge Snippet"},
+                {"snippet", "No external provider configured. Query retained for offline testing."}
+            }
+        })},
+        {"available", true},
+        {"source", "simulated"},
+        {"simulated", true}
+    };
+}
+
+json BuiltInTools::BuildSimulatedMemory(const std::string& topic) {
+    return json{
+        {"topic", topic},
+        {"memories", json::array({
+            "No persistent memory provider configured. This is a simulated memory response."
+        })},
+        {"available", true},
+        {"source", "simulated"},
+        {"simulated", true}
+    };
+}
+
 json BuiltInTools::GetCurrentTime(const json& args) {
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
@@ -144,40 +239,59 @@ json BuiltInTools::GetCurrentTime(const json& args) {
 
 json BuiltInTools::GetWeather(const json& args) {
     std::string location = args.value("location", "Unknown");
-    
-    // Mock weather data
-    return json{
-        {"location", location},
-        {"temperature", 22},
-        {"condition", "Partly Cloudy"},
-        {"humidity", 65}
-    };
+
+    const auto& providers = GetProviders();
+    if (providers.weather_provider) {
+        json result = providers.weather_provider(location);
+        if (!result.contains("source")) result["source"] = "provider";
+        result["available"] = true;
+        result["simulated"] = false;
+        return result;
+    }
+
+    if (AllowSimulatedFallback()) {
+        return BuildSimulatedWeather(location);
+    }
+
+    return BuildUnavailableResult("get_weather", "Weather provider not configured");
 }
 
 json BuiltInTools::SearchKnowledge(const json& args) {
     std::string query = args.value("query", "");
-    
-    // Mock search results
-    return json{
-        {"query", query},
-        {"results", json::array({
-            {{"title", "Result 1"}, {"snippet", "Information about " + query}},
-            {{"title", "Result 2"}, {"snippet", "More details on " + query}}
-        })}
-    };
+
+    const auto& providers = GetProviders();
+    if (providers.knowledge_provider) {
+        json result = providers.knowledge_provider(query);
+        if (!result.contains("source")) result["source"] = "provider";
+        result["available"] = true;
+        result["simulated"] = false;
+        return result;
+    }
+
+    if (AllowSimulatedFallback()) {
+        return BuildSimulatedKnowledge(query);
+    }
+
+    return BuildUnavailableResult("search_knowledge", "Knowledge provider not configured");
 }
 
 json BuiltInTools::RecallMemory(const json& args) {
     std::string topic = args.value("topic", "");
-    
-    // Mock memory recall
-    return json{
-        {"topic", topic},
-        {"memories", json::array({
-            "I remember discussing " + topic + " before",
-            "There was an important event related to " + topic
-        })}
-    };
+
+    const auto& providers = GetProviders();
+    if (providers.memory_provider) {
+        json result = providers.memory_provider(topic);
+        if (!result.contains("source")) result["source"] = "provider";
+        result["available"] = true;
+        result["simulated"] = false;
+        return result;
+    }
+
+    if (AllowSimulatedFallback()) {
+        return BuildSimulatedMemory(topic);
+    }
+
+    return BuildUnavailableResult("recall_memory", "Memory provider not configured");
 }
 
 } // namespace NPCInference

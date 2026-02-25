@@ -1,0 +1,25 @@
+{
+  "run_id": "20260224T151628Z",
+  "generated_utc": "2026-02-24T15:16:28.169951+00:00",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "repeats": 1,
+  "temperature": 0.2,
+  "max_tokens": 64,
+  "hit_k": 5,
+  "seed": 7,
+  "run_security_spoofed_benchmark": true,
+  "inputs": {
+    "prompts": "data\\serving_prompts.jsonl",
+    "serving_references": "data\\serving_references.jsonl",
+    "retrieval_corpus": "data\\retrieval_corpus.jsonl",
+    "retrieval_gold": "data\\retrieval_gold.jsonl",
+    "prompts_sha256": "277242d1dda833b0e10abf1f634503c3a9aed90030911eb4637954d58ff01cad",
+    "serving_references_sha256": "258aa21077e60e2bdd81ec65576a5db29ec19e65dd9a179cf289e3aa12bbe032",
+    "retrieval_corpus_sha256": "9ee92faa9811ca8d1a34367fe2b98d44866886fbf9b8edf9d9febf561bb82606",
+    "retrieval_gold_sha256": "e95521883c2223baf38338dee0fb40aa693ca2ff5417f6151af7b8e8279d360f",
+    "security_dataset": "data\\retrieval_poison_benchmark.jsonl",
+    "security_dataset_sha256": "25fbc836ef3f16eee512521acf07bebd149b517079df5891cb31830629b4f3a7"
+  }
+}
