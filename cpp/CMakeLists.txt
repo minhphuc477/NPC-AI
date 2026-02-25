@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 project(NPCInference VERSION 1.0.0 LANGUAGES CXX)
 
+# CMake 4.x removes compatibility with very old minimum versions used by some
+# third-party CMakeLists (e.g., sentencepiece). Set a policy floor explicitly.
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0")
+    set(CMAKE_POLICY_VERSION_MINIMUM "3.5")
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -8,6 +14,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(BUILD_TESTS "Build test suite" ON)
 option(BUILD_CLI "Build CLI tool" ON)
 option(NPC_USE_MOCKS "Enable mock implementations for testing" ON)
+if(WIN32)
+    set(NPC_USE_USEARCH_DEFAULT OFF)
+else()
+    set(NPC_USE_USEARCH_DEFAULT ON)
+endif()
+option(NPC_USE_USEARCH "Enable usearch backend for VectorStore" ${NPC_USE_USEARCH_DEFAULT})
+
+if(NPC_USE_MOCKS)
+    message(STATUS "NPC_USE_MOCKS=ON (compile-time mock mode enabled)")
+    add_compile_definitions(NPC_USE_MOCKS=1)
+else()
+    message(STATUS "NPC_USE_MOCKS=OFF (production mode)")
+    add_compile_definitions(NPC_USE_MOCKS=0)
+endif()
+
+if(NPC_USE_USEARCH)
+    message(STATUS "NPC_USE_USEARCH=ON (VectorStore uses usearch backend)")
+    add_compile_definitions(NPC_USE_USEARCH=1)
+else()
+    message(STATUS "NPC_USE_USEARCH=OFF (VectorStore fallback backend)")
+    add_compile_definitions(NPC_USE_USEARCH=0)
+endif()
 
 # External Dependencies
 include(FetchContent)
@@ -30,13 +58,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
-# usearch
-FetchContent_Declare(
-    usearch
-    GIT_REPOSITORY https://github.com/unum-cloud/usearch.git
-    GIT_TAG v2.10.0
-)
-FetchContent_MakeAvailable(usearch)
+if(NPC_USE_USEARCH)
+    FetchContent_Declare(
+        usearch
+        GIT_REPOSITORY https://github.com/unum-cloud/usearch.git
+        GIT_TAG v2.10.0
+    )
+    FetchContent_MakeAvailable(usearch)
+endif()
 
 # Download ONNX Runtime
 set(ONNXRUNTIME_VERSION "1.18.0")
@@ -60,10 +89,15 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime")
     message(STATUS "Extracting ONNX Runtime...")
     file(ARCHIVE_EXTRACT INPUT "${ONNXRUNTIME_ARCHIVE}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime")
     # Releases extract into a subfolder like onnxruntime-win-x64-1.18.0 or onnxruntime-linux-x64-1.18.0
-    file(GLOB EXTRACTED_DIR "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/onnxruntime-*")
-    if(EXTRACTED_DIR)
-        file(RENAME "${EXTRACTED_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/include")
-        file(RENAME "${EXTRACTED_DIR}/lib" "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/lib")
+    file(GLOB EXTRACTED_DIRS "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/onnxruntime-*")
+    if(EXTRACTED_DIRS)
+        list(GET EXTRACTED_DIRS 0 EXTRACTED_DIR)
+        if(EXISTS "${EXTRACTED_DIR}/include" AND NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/include")
+            file(RENAME "${EXTRACTED_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/include")
+        endif()
+        if(EXISTS "${EXTRACTED_DIR}/lib" AND NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/lib")
+            file(RENAME "${EXTRACTED_DIR}/lib" "${CMAKE_CURRENT_BINARY_DIR}/onnxruntime/lib")
+        endif()
     endif()
 endif()
 
@@ -78,9 +112,16 @@ find_library(ONNXRUNTIME_LIBRARY
 )
 
 # Library Target
+if(NPC_USE_USEARCH)
+    set(VECTOR_STORE_SOURCE src/VectorStore.cpp)
+else()
+    set(VECTOR_STORE_SOURCE src/VectorStoreFallback.cpp)
+endif()
+
 add_library(npc_inference STATIC
     src/PromptFormatter.cpp
     src/NPCInference.cpp
+    src/ResponseController.cpp
     src/ModelLoader.cpp
     src/PythonBridge.cpp
     src/BehaviorTree.cpp
@@ -88,7 +129,7 @@ add_library(npc_inference STATIC
     src/Tokenizer.cpp
     src/EmbeddingModel.cpp
     src/KVCacheManager.cpp
-    src/VectorStore.cpp
+    ${VECTOR_STORE_SOURCE}
     src/VisionLoader.cpp
     src/SocialFabricNetwork.cpp
     src/TemporalMemorySystem.cpp
@@ -114,8 +155,11 @@ target_include_directories(npc_inference
         ${ONNXRUNTIME_INCLUDE_DIR}
     PRIVATE
         ${sentencepiece_SOURCE_DIR}/src
-        ${usearch_SOURCE_DIR}/include
 )
+
+if(NPC_USE_USEARCH)
+    target_include_directories(npc_inference PRIVATE ${usearch_SOURCE_DIR}/include)
+endif()
 
 target_link_libraries(npc_inference
     PRIVATE
@@ -158,6 +202,9 @@ if(BUILD_TESTS)
     npc_add_test(test_inference tests/test_inference.cpp)
     npc_add_test(test_final tests/test_final_system.cpp)
     npc_add_test(test_reasoning_loop tests/test_reasoning_loop.cpp)
+    npc_add_test(test_tool_registry tests/test_tool_registry.cpp)
+    npc_add_test(test_retrieval_guard tests/test_retrieval_guard.cpp)
+    npc_add_test(test_response_controller tests/test_response_controller.cpp)
     npc_add_test(test_multithreading tests/test_multithreading.cpp)
     npc_add_test(test_truth_guard tests/test_truth_guard.cpp)
     npc_add_test(demo_temporal_memory src/demo_temporal_memory.cpp)
@@ -169,5 +216,6 @@ if(BUILD_TESTS)
     npc_add_test(bench_engine tests/bench_engine.cpp)
     npc_add_test(bench_memory tests/bench_memory.cpp)
     npc_add_test(bench_retrieval tests/bench_retrieval.cpp)
+    npc_add_test(bench_retrieval_security tests/bench_retrieval_security.cpp)
     npc_add_test(ablation_suite tests/ablation_suite.cpp)
 endif()

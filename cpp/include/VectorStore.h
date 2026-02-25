@@ -62,6 +62,7 @@ namespace NPCInference {
         struct DocData {
             std::string text;
             std::map<std::string, std::string> metadata;
+            std::vector<float> embedding;
             
             // For Memory Decay
             unsigned long long timestamp = 0;

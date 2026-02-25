@@ -25,6 +25,7 @@
 #include "MemoryConsolidator.h"
 #include "VisionLoader.h"
 #include "GrammarSampler.h"
+#include "ResponseController.h"
 #include "ConversationManager.h"
 #include "TemporalMemorySystem.h"
 #include "SocialFabricNetwork.h"
@@ -33,6 +34,83 @@
 #include "AmbientAwarenessSystem.h"
 
 using json = nlohmann::json;
+
+namespace {
+
+std::string TrimCopy(const std::string& text) {
+    size_t start = 0;
+    while (start < text.size() && std::isspace(static_cast<unsigned char>(text[start]))) {
+        ++start;
+    }
+
+    size_t end = text.size();
+    while (end > start && std::isspace(static_cast<unsigned char>(text[end - 1]))) {
+        --end;
+    }
+
+    return text.substr(start, end - start);
+}
+
+std::string ExtractPersonaForControl(const json& state) {
+    if (!state.is_object()) {
+        return "You are an NPC.";
+    }
+
+    const std::vector<std::string> persona_keys = {"persona", "persona_en", "persona_vi"};
+    for (const auto& key : persona_keys) {
+        if (state.contains(key) && state[key].is_string()) {
+            const std::string value = TrimCopy(state[key].get<std::string>());
+            if (!value.empty()) {
+                return value;
+            }
+        }
+    }
+
+    if (state.contains("npc_info") && state["npc_info"].is_object()) {
+        const auto& npc_info = state["npc_info"];
+        for (const auto& key : persona_keys) {
+            if (npc_info.contains(key) && npc_info[key].is_string()) {
+                const std::string value = TrimCopy(npc_info[key].get<std::string>());
+                if (!value.empty()) {
+                    return value;
+                }
+            }
+        }
+    }
+
+    if (state.contains("npc_id") && state["npc_id"].is_string()) {
+        const std::string npc_id = TrimCopy(state["npc_id"].get<std::string>());
+        if (!npc_id.empty()) {
+            return "You are " + npc_id + ": stay practical, in-character, and context-grounded.";
+        }
+    }
+
+    return "You are an NPC.";
+}
+
+std::string ConversationIdForControl(const json& state) {
+    if (!state.is_object()) {
+        return "response_control";
+    }
+
+    if (state.contains("conversation_id") && state["conversation_id"].is_string()) {
+        const std::string conv = TrimCopy(state["conversation_id"].get<std::string>());
+        if (!conv.empty()) {
+            return conv + "_response_control";
+        }
+    }
+
+    if (state.contains("npc_id") && state["npc_id"].is_string()) {
+        const std::string npc_id = TrimCopy(state["npc_id"].get<std::string>());
+        if (!npc_id.empty()) {
+            return npc_id + "_response_control";
+        }
+    }
+
+    return "response_control";
+}
+
+} // namespace
 
 namespace NPCInference {
 
@@ -223,12 +301,26 @@ namespace NPCInference {
             config_json["model_dir"] = config_.model_dir;
             config_json["rag_threshold"] = config_.rag_threshold;
             config_json["enable_rag"] = config_.enable_rag;
+            config_json["enable_retrieval_guard"] = config_.enable_retrieval_guard;
+            config_json["retrieval_guard_min_trust"] = config_.retrieval_guard_min_trust;
+            config_json["retrieval_guard_max_risk"] = config_.retrieval_guard_max_risk;
+            config_json["retrieval_guard_trust_weight"] = config_.retrieval_guard_trust_weight;
+            config_json["retrieval_guard_risk_penalty"] = config_.retrieval_guard_risk_penalty;
             config_json["enable_graph"] = config_.enable_graph;
             config_json["enable_speculative"] = config_.enable_speculative;
             config_json["enable_grammar"] = config_.enable_grammar;
             config_json["enable_planner"] = config_.enable_planner;
             config_json["enable_reflection"] = config_.enable_reflection;
             config_json["enable_truth_guard"] = config_.enable_truth_guard;
+            config_json["enable_response_control"] = config_.enable_response_control;
+            config_json["response_control_min_context_coverage"] = config_.response_control_min_context_coverage;
+            config_json["response_control_min_persona_coverage"] = config_.response_control_min_persona_coverage;
+            config_json["response_control_rewrite_temperature"] = config_.response_control_rewrite_temperature;
+            config_json["response_control_rewrite_max_tokens"] = config_.response_control_rewrite_max_tokens;
+            config_json["response_control_rewrite_candidates"] = config_.response_control_rewrite_candidates;
+            config_json["response_control_rewrite_temperature_step"] = config_.response_control_rewrite_temperature_step;
+            config_json["response_control_enable_rewrite"] = config_.response_control_enable_rewrite;
+            config_json["response_control_allow_best_effort_rewrite"] = config_.response_control_allow_best_effort_rewrite;
             state_bundle["config"] = config_json;
             
             std::ofstream f(filepath);
@@ -366,24 +458,94 @@ namespace NPCInference {
                         return "Error: Engine not ready";
         }
 
-        // SUPER MOCK BYPASS (Force non-zero stats)
+        // Mock-mode bypass: return deterministic text without fabricating profiler metrics.
         const char* mock_env = std::getenv("NPC_MOCK_MODE");
         if (mock_env && std::string(mock_env) == "1") {
-             std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Simulate latency
-             std::string mock_resp = "This is a mocked response to ensure pipeline integrity.";
-             
-             // Record fake metrics so ablation suite sees numbers
-             if (profiler_) {
-                 profiler_->RecordLatency("inference", 50.0);
-                 profiler_->RecordTokens(mock_resp.length() / 4); // Approx tokens
-                 profiler_->RecordRequest(true);
-                 if (config_.enable_planner) profiler_->RecordLatency("planning_phase", 15.0);
-             }
-             return mock_resp;
+             std::this_thread::sleep_for(std::chrono::milliseconds(50));
+             return "[MOCK_MODE] deterministic response for pipeline validation.";
         }
 
         // 0. Use local state copy
         json local_state = state;
+
+        auto apply_response_control = [&](const std::string& raw_output) -> std::string {
+            if (is_json || !config_.enable_response_control) {
+                return raw_output;
+            }
+
+            const std::string persona = ExtractPersonaForControl(local_state);
+            const std::string dynamic_context = ResponseController::BuildDynamicContext(local_state);
+            const auto context_keywords = ResponseController::ExtractContextKeywords(local_state);
+            const auto persona_keywords = ResponseController::ExtractPersonaKeywords(persona);
+
+            ResponseControlConfig rc_config;
+            rc_config.min_context_coverage =
+                context_keywords.empty() ? 0.0f : config_.response_control_min_context_coverage;
+            rc_config.min_persona_coverage =
+                persona_keywords.empty() ? 0.0f : config_.response_control_min_persona_coverage;
+            rc_config.rewrite_temperature = config_.response_control_rewrite_temperature;
+            rc_config.rewrite_max_tokens = std::max(1, config_.response_control_rewrite_max_tokens);
+            rc_config.rewrite_candidates = std::max(1, config_.response_control_rewrite_candidates);
+            rc_config.rewrite_temperature_step =
+                std::max(0.01f, config_.response_control_rewrite_temperature_step);
+            rc_config.enable_rewrite = config_.response_control_enable_rewrite;
+            rc_config.allow_best_effort_rewrite = config_.response_control_allow_best_effort_rewrite;
+
+            ResponseController::RewriteFn rewrite_fn = nullptr;
+            if (rc_config.enable_rewrite && model_loader_ && tokenizer_ &&
+                model_loader_->IsLoaded() && tokenizer_->IsLoaded()) {
+                const std::string rewrite_conv_id = ConversationIdForControl(local_state);
+                rewrite_fn = [&, rewrite_conv_id](const std::string& rewrite_prompt, int max_tokens, float temperature) {
+                    std::vector<int64_t> input_ids = tokenizer_->Encode(rewrite_prompt);
+                    if (input_ids.empty()) {
+                        return std::string{};
+                    }
+
+                    std::vector<int64_t> attention_mask(input_ids.size(), 1);
+                    const float previous_temperature = model_loader_->GetTemperature();
+                    model_loader_->SetTemperature(temperature);
+                    std::vector<int64_t> output_ids;
+                    try {
+                        output_ids =
+                            model_loader_->Generate(input_ids, attention_mask, std::max(1, max_tokens), rewrite_conv_id, nullptr, nullptr);
+                    } catch (...) {
+                        model_loader_->SetTemperature(previous_temperature);
+                        throw;
+                    }
+                    model_loader_->SetTemperature(previous_temperature);
+
+                    if (output_ids.size() <= input_ids.size()) {
+                        return std::string{};
+                    }
+
+                    std::vector<int64_t> generated_tokens(output_ids.begin() + input_ids.size(), output_ids.end());
+                    return tokenizer_->Decode(generated_tokens);
+                };
+            }
+
+            const auto controlled = ResponseController::ControlResponse(
+                raw_output,
+                persona,
+                dynamic_context,
+                prompt,
+                context_keywords,
+                persona_keywords,
+                rc_config,
+                rewrite_fn
+            );
+
+            if (controlled.repaired) {
+                std::cout << "ResponseControl: repaired=" << controlled.repair_reason
+                          << ", source=" << controlled.source
+                          << ", context_cov=" << controlled.context_coverage
+                          << ", persona_cov=" << controlled.persona_coverage << std::endl;
+            }
+
+            if (!controlled.response.empty()) {
+                return controlled.response;
+            }
+            return raw_output;
+        };
 
         if (bridge_mode_ && python_bridge_) {
              auto scope = profiler_->StartTiming("python_bridge");
@@ -395,9 +557,12 @@ namespace NPCInference {
              json response = python_bridge_->SendRequest(request);
              
              if (response.contains("response")) {
-                 return response["response"].is_string() ? response["response"].get<std::string>() : response["response"].dump();
+                 std::string bridge_output = response["response"].is_string()
+                     ? response["response"].get<std::string>()
+                     : response["response"].dump();
+                 return apply_response_control(bridge_output);
              }
-             return response.dump();
+             return apply_response_control(response.dump());
         }
         
         // Native Generation
@@ -409,20 +574,71 @@ namespace NPCInference {
                  std::vector<float> query_vec = embedding_model_->Embed(prompt);
                  if (!query_vec.empty()) {
                       if (hybrid_retriever_) {
-                          auto results = hybrid_retriever_->Search(prompt);
+                          HybridRetriever::RetrievalConfig retrieval_config;
+                          retrieval_config.top_k = std::max(1, config_.rag_top_k);
+                          retrieval_config.enable_robustness_guard = config_.enable_retrieval_guard;
+                          retrieval_config.min_trust_score = config_.retrieval_guard_min_trust;
+                          retrieval_config.max_injection_risk = config_.retrieval_guard_max_risk;
+                          retrieval_config.trust_weight = config_.retrieval_guard_trust_weight;
+                          retrieval_config.injection_penalty_scale = config_.retrieval_guard_risk_penalty;
+                          auto results = hybrid_retriever_->Search(prompt, retrieval_config);
                           if (!results.empty()) {
                               std::string memory_block = "[Retrieved Memories]\n";
+                              nlohmann::json citations = nlohmann::json::array();
+                              size_t total_chars = memory_block.size();
                               for (const auto& res : results) {
-                                  memory_block += "- " + res.text + " (Rel: " + std::to_string(res.fused_score) + ")\n";
+                                  std::string snippet = res.text;
+                                  if (snippet.size() > 320) {
+                                      snippet = snippet.substr(0, 320) + "...";
+                                  }
+
+                                  std::string line = "- [" + res.doc_id + "] " + snippet;
+                                  if (config_.rag_include_scores) {
+                                      std::string score = std::to_string(res.fused_score);
+                                      if (score.size() > 6) score = score.substr(0, 6);
+                                      line += " (fused: " + score + ")";
+                                  }
+                                  line += "\n";
+
+                                  if (total_chars + line.size() > config_.rag_max_context_chars) {
+                                      break;
+                                  }
+
+                                  memory_block += line;
+                                  total_chars += line.size();
+                                  citations.push_back({
+                                      {"doc_id", res.doc_id},
+                                      {"base_fused_score", res.base_fused_score},
+                                      {"fused_score", res.fused_score},
+                                      {"trust_score", res.trust_score},
+                                      {"injection_risk", res.injection_risk}
+                                  });
                               }
-                              local_state["memory_context"] = memory_block;
+                              if (!citations.empty()) {
+                                  local_state["retrieval_citations"] = citations;
+                              }
+                              if (memory_block.size() > std::string("[Retrieved Memories]\n").size()) {
+                                  local_state["memory_context"] = memory_block;
+                              }
                           }
                       } else {
-                          auto results = vector_store_->Search(query_vec, 3);
+                          auto results = vector_store_->Search(query_vec, std::max(1, config_.rag_top_k));
                           if (!results.empty()) {
                               std::string memory_block;
+                              size_t total_chars = 0;
                               for (const auto& res : results) {
-                                  if (res.distance < config_.rag_threshold) memory_block += "- " + res.text + "\n";
+                                  if (res.distance >= config_.rag_threshold) {
+                                      std::string snippet = res.text;
+                                      if (snippet.size() > 320) {
+                                          snippet = snippet.substr(0, 320) + "...";
+                                      }
+                                      std::string line = "- " + snippet + "\n";
+                                      if (total_chars + line.size() > config_.rag_max_context_chars) {
+                                          break;
+                                      }
+                                      memory_block += line;
+                                      total_chars += line.size();
+                                  }
                               }
                               if (!memory_block.empty()) local_state["memory_context"] = memory_block;
                           }
@@ -581,7 +797,7 @@ namespace NPCInference {
                          }
                      }
 
-                     return final_output;
+                     return apply_response_control(final_output);
                  } catch (const std::exception& e) {
                  std::cerr << "Engine Error: " << e.what() << std::endl;
                  return std::string("Error: ") + e.what();
@@ -626,14 +842,19 @@ namespace NPCInference {
         std::vector<float> vec = embedding_model_->Embed(text);
         if (vec.empty()) return false;
 
+        std::map<std::string, std::string> merged_metadata = metadata;
+        if (!merged_metadata.count("source")) {
+            merged_metadata["source"] = "memory";
+        }
+
         // Add to Hybrid Retriever if active (Phase 2)
         if (hybrid_retriever_) {
             std::string doc_id = "mem_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
-            hybrid_retriever_->AddDocument(doc_id, text);
+            hybrid_retriever_->AddDocument(doc_id, text, merged_metadata);
         }
 
         if (vector_store_) {
-            vector_store_->Add(text, vec, metadata);
+            vector_store_->Add(text, vec, merged_metadata);
             std::cout << "RAG: Remembered '" << text.substr(0, 30) << "...' (Hybrid Indexed)" << std::endl;
             return true;
         }

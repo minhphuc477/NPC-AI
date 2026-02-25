@@ -9,11 +9,13 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, asdict
+from typing import Dict, List, Any
+from dataclasses import dataclass
 import logging
+import os
 
 # Add parent dir to path to import core modules
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -28,6 +30,35 @@ except ImportError as e:
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+DEFAULT_PERSONAS = {
+    "merchant": {
+        "name": "Elara",
+        "persona_vi": "Bạn là Elara, một thương nhân thân thiện, thực tế và lịch sự.",
+        "persona_en": "You are Elara, a practical but kind merchant who values fair trade."
+    }
+}
+
+DEFAULT_SCENARIOS = {
+    "village_gate": {
+        "location": "Village Gate",
+        "plot_vi": "Người chơi vừa đến cổng làng.",
+        "plot_en": "The player has just arrived at the village gate."
+    }
+}
+
+DEFAULT_CONTEXTS = {
+    "behavior_states": {"idle": {"vi": "đứng canh", "en": "standing guard"}},
+    "health_states": {"healthy": {"vi": "khỏe mạnh", "en": "healthy"}},
+    "mood_states": {"neutral": {"vi": "bình tĩnh", "en": "neutral"}},
+    "nearby_entities": {"none": {"vi": "không có ai", "en": "no one nearby"}},
+    "time_contexts": {"day": {"vi": "ban ngày", "en": "daytime"}}
+}
+
+DEFAULT_UTTERANCES = {
+    "greeting": {"vi": ["Xin chào."], "en": ["Hello."]},
+    "question": {"vi": ["Bạn có thể giúp tôi không?"], "en": ["Can you help me?"]}
+}
 
 
 @dataclass
@@ -97,10 +128,10 @@ class DataGenerator:
     def __init__(self, data_dir: Path, language: str = "vi"):
         self.data_dir = data_dir
         self.language = language
-        self.personas = self._load_json("personas.json")
-        self.scenarios = self._load_json("scenarios.json")
-        self.contexts = self._load_json("context_templates.json")
-        self.utterances = self._load_json("player_utterances.json")
+        self.personas = self._load_json("personas.json") or DEFAULT_PERSONAS
+        self.scenarios = self._load_json("scenarios.json") or DEFAULT_SCENARIOS
+        self.contexts = self._load_json("context_templates.json") or DEFAULT_CONTEXTS
+        self.utterances = self._load_json("player_utterances.json") or DEFAULT_UTTERANCES
         
     def _load_json(self, filename: str) -> Dict:
         path = self.data_dir / filename
@@ -164,14 +195,44 @@ class DataGenerator:
         return gs
     
     def _generate_response_template(self, npc_id: str, context: Dict[str, str], player_input: str) -> str:
-        """Generate a template NPC response (Fallback)."""
-        # Simplified for v2 - mostly reliant on LLM enhancement later or expanded utterances
-        return "..."
+        """Generate a deterministic response template for offline-safe data generation."""
+        style_open = {
+            "vi": [
+                "Ta hiểu ý ngươi.",
+                "Để ta xem xét kỹ hơn.",
+                "Nghe có lý đấy.",
+            ],
+            "en": [
+                "I understand your point.",
+                "Let me think about that carefully.",
+                "That is a reasonable question.",
+            ],
+        }
+        mood = context.get("mood_state", "neutral")
+        location = context.get("location", "the village")
+        trust_level = context.get("trust_level", 50)
+
+        opening = random.choice(style_open.get(self.language, style_open["en"]))
+        if self.language == "vi":
+            stance = "Ta tin ngươi." if trust_level >= 60 else "Ta vẫn cần thận trọng."
+            return f"{opening} Ở {location}, tâm trạng của ta đang {mood}. {stance} Ta sẽ trả lời về việc: \"{player_input}\"."
+
+        stance = "I trust you." if trust_level >= 60 else "I still need to be careful."
+        return f"{opening} Here at {location}, my mood is {mood}. {stance} I will respond about: \"{player_input}\"."
     
     def generate_sample(self, sample_id: int) -> TrainingSample:
         """Generate a single training sample."""
-        npc_id = random.choice(list(self.personas.keys()))
-        scenario_id = random.choice(list(self.scenarios.keys()))
+        persona_keys = list(self.personas.keys()) if isinstance(self.personas, dict) else []
+        scenario_keys = list(self.scenarios.keys()) if isinstance(self.scenarios, dict) else []
+        if not persona_keys:
+            self.personas = DEFAULT_PERSONAS
+            persona_keys = list(self.personas.keys())
+        if not scenario_keys:
+            self.scenarios = DEFAULT_SCENARIOS
+            scenario_keys = list(self.scenarios.keys())
+
+        npc_id = random.choice(persona_keys)
+        scenario_id = random.choice(scenario_keys)
         
         npc = self.personas[npc_id]
         scenario = self.scenarios[scenario_id]
@@ -185,14 +246,18 @@ class DataGenerator:
         game_state = self._build_game_state(scenario_id)
         
         # Player input
-        utterance_type = random.choice(list(self.utterances.keys()))
-        utterances_list = self.utterances[utterance_type].get(self.language, [])
+        utterance_types = list(self.utterances.keys()) if isinstance(self.utterances, dict) else []
+        if not utterance_types:
+            self.utterances = DEFAULT_UTTERANCES
+            utterance_types = list(self.utterances.keys())
+
+        utterance_type = random.choice(utterance_types)
+        utterances_list = self.utterances.get(utterance_type, {}).get(self.language, [])
         if not utterances_list:
             utterances_list = ["Xin chào."] if self.language == "vi" else ["Hello."]
         player_input = random.choice(utterances_list)
         
-        # Placeholder response
-        npc_response = "..."
+        npc_response = self._generate_response_template(npc_id, game_state, player_input)
         
         return TrainingSample(
             id="sample_{:05d}".format(sample_id),
@@ -211,12 +276,35 @@ class DataGenerator:
         return [self.generate_sample(i) for i in range(num_samples)]
 
 
-# LLM Enhancement (Mock/Template for now, real implementation would use API)
-def generate_with_llm(samples: List[TrainingSample], model_id: str = "llama-3.1-8b") -> List[TrainingSample]:
-    # In a real run, this calls Groq/OpenAI. 
-    # For this script replacement, we'll keep the function structure but just fill dummy data if API not present.
-    # The original script had import logic.
-    return samples 
+def generate_with_llm(samples: List[TrainingSample], model_id: str = "phi3:mini") -> List[TrainingSample]:
+    """
+    Optional response enhancement with local Ollama.
+    This function is safe-by-default: if Ollama is unavailable, it keeps existing responses.
+    Enable by setting NPC_USE_OLLAMA=1.
+    """
+    if os.getenv("NPC_USE_OLLAMA", "0") != "1":
+        return samples
+
+    enhanced = 0
+    for sample in samples:
+        try:
+            prompt = sample.to_prompt_completion()["prompt"]
+            result = subprocess.run(
+                ["ollama", "run", model_id, prompt],
+                capture_output=True,
+                text=True,
+                timeout=40,
+            )
+            text = result.stdout.strip()
+            if result.returncode == 0 and text:
+                sample.npc_response = text
+                enhanced += 1
+        except Exception:
+            # Keep deterministic template response on any failure.
+            continue
+
+    logger.info("Enhanced %d/%d samples with Ollama", enhanced, len(samples))
+    return samples
 
 
 def save_jsonl(samples: List[TrainingSample], output_path: Path):
@@ -246,9 +334,8 @@ def main():
     
     generator = DataGenerator(data_dir, language=args.language)
     samples = generator.generate_dataset(args.samples)
-    
-    # Skipping actual LLM call in this V2 rewrite to ensure stability, 
-    # normally we'd keep the API call logic.
+    if args.use_llm:
+        samples = generate_with_llm(samples)
     
     output_path = Path(args.output)
     if not output_path.is_absolute():

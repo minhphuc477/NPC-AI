@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "tab",
+      "persona_consistency": ">4<",
+      "naturalness": "tab",
+      "overall_quality": ">5<",
+      "notes": "tab"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "3",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "The response shows some relevance to context and naturalness but lacks direct connection with persona consistency as it doesn't fully align with a healer’s role in the scenario, especially considering that fever is present."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "4",
+      "naturalness": "3",
+      "overall_quality": "3",
+      "notes": "The response is somewhat relevant but lacks immediate contextual connection to fever and swamp spores, which could be important in diagnosis; the persona of calmness and care shines through."
+    }
+  ]
+}

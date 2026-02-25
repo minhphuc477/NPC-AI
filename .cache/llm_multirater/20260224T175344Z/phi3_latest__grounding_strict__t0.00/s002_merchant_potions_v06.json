@@ -1,0 +1,36 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual",
+      "context_relevance": 5,
+      "persona_consistency": 5,
+      "naturalness": 4.5,
+      "overall_quality": 5,
+      "notes": "The response is highly relevant to the context and maintains persona consistency as an Old Merchant who values fair trade despite circumstances."
+    },
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": 4,
+      "persona_consistency": 4.5,
+      "naturalness": 4,
+      "overall_quality": 4.5,
+      "notes": "The response is relevant and maintains a good level of persona consistency but lacks some natural flow in the dialogue."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": 1,
+      "persona_consistency": 2,
+      "naturalness": 3,
+      "overall_quality": 2.5,
+      "notes": "The response lacks context relevance and persona consistency as it does not reflect the Old Merchant's character or situation."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": 1,
+      "persona_consistency": 2,
+      "naturalness": 3,
+      "overall_quality": 2.5,
+      "notes": "The response lacks context relevance and does not maintain the Old Merchant's persona consistently."
+    }
+  ]
+}

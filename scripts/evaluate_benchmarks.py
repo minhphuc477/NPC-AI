@@ -1,181 +1,277 @@
-import requests
-import json
-import time
+#!/usr/bin/env python3
+"""Evaluate latency/quality/retrieval metrics without fabricated defaults."""
+
 import argparse
-import os
+import json
+import math
+import time
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional, Tuple
 
-# Evaluate LLM Performance and Quality metrics for AAA NPC AI
+import requests
 
-def run_performance_benchmark(prompt, target_model="phi3:mini", host="http://localhost:11434"):
-    """
-    Measures Time To First Token (TTFT) and Tokens Per Second (TPS)
-    """
-    headers = {'Content-Type': 'application/json'}
+
+def run_performance_benchmark(
+    prompt: str,
+    target_model: str = "phi3:mini",
+    host: str = "http://localhost:11434",
+) -> Dict[str, object]:
+    """Measure TTFT and generation throughput from Ollama streaming API."""
     payload = {
         "model": target_model,
         "prompt": prompt,
         "stream": True,
-        "options": {
-            "temperature": 0.7
-        }
+        "options": {"temperature": 0.7},
     }
-    
-    start_time = time.time()
-    
+    headers = {"Content-Type": "application/json"}
+
+    start = time.time()
     try:
-        response = requests.post(f"{host}/api/generate", json=payload, headers=headers, stream=True)
-    except Exception as e:
-        print(f"Error connecting to Ollama: {e}")
-        return None
-        
+        response = requests.post(
+            f"{host}/api/generate",
+            json=payload,
+            headers=headers,
+            stream=True,
+            timeout=180,
+        )
+    except Exception as exc:
+        return {"ok": False, "error": f"Connection failed: {exc}"}
+
+    if response.status_code != 200:
+        return {
+            "ok": False,
+            "error": f"HTTP {response.status_code}",
+            "body": response.text[:300],
+        }
+
     ttft = None
-    full_response = ""
-    token_count = 0
-    
-    for line in response.iter_lines():
-        if line:
-            if ttft is None:
-                ttft = time.time() - start_time
-                
-            data = json.loads(line)
-            full_response += data.get("response", "")
-            token_count += 1
-            
-            if data.get("done"):
-                break
-                
-    total_time = time.time() - start_time
-    tps = token_count / total_time if total_time > 0 else 0
-    
+    token_chunks = 0
+    full_response = []
+
+    for raw in response.iter_lines():
+        if not raw:
+            continue
+        if ttft is None:
+            ttft = time.time() - start
+
+        try:
+            item = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+
+        chunk = item.get("response", "")
+        if chunk:
+            token_chunks += 1
+            full_response.append(chunk)
+
+        if item.get("done"):
+            break
+
+    total = time.time() - start
+    tps = token_chunks / total if total > 0 else 0.0
+
     return {
-        "ttft_ms": ttft * 1000 if ttft else 0,
-        "tps": tps,
-        "total_time_s": total_time,
-        "token_count": token_count,
-        "response": full_response
+        "ok": True,
+        "ttft_ms": (ttft or 0.0) * 1000.0,
+        "tps_chunk": tps,
+        "total_time_s": total,
+        "chunk_count": token_chunks,
+        "response": "".join(full_response).strip(),
     }
 
-def run_llm_as_a_judge(npc_response, context, persona, judge_model="llama3", host="http://localhost:11434"):
-    """
-    Uses a larger LLM as a judge to grade the response on 1-5 scale.
-    """
+
+def run_llm_as_a_judge(
+    npc_response: str,
+    context: str,
+    persona: str,
+    judge_model: str = "llama3",
+    host: str = "http://localhost:11434",
+) -> Dict[str, object]:
+    """Use an LLM judge and return parsed JSON scores."""
     judge_prompt = f"""
-You are an expert Game AI Director evaluating an NPC's dialogue response.
-Evaluate the NPC's response based on the following 3 criteria on a scale of 1 to 5:
+You are evaluating an NPC response.
+Score each criterion from 1 to 5 and return JSON only:
+{{
+  "ContextAwareness": int,
+  "PersonaConsistency": int,
+  "Truthfulness": int,
+  "NLI_Logic": int,
+  "Reasoning": "short explanation"
+}}
 
 Context: {context}
-NPC Persona: {persona}
-NPC Response: "{npc_response}"
-
-CRITERIA:
-1. Context-Awareness (1-5): Does the NPC acknowledge the current situation/events?
-2. Persona Consistency (1-5): Does the NPC sound like their persona, avoiding modern slang if inappropriate?
-3. Truthfulness/No Hallucination (1-5): Does the NPC stick to the known context without inventing absurd facts?
-4. **NLI/Logic Contradiction (1-5)**: Does the NPC's statement actively contradict itself or the explicitly stated Context? (e.g. Context says NPC is unarmed, Response says NPC draws a sword). 1 = Severe contradiction, 5 = Flawless logic.
-
-Return ONLY a JSON object with the scores, exactly like this:
-{{
-  "ContextAwareness": 5,
-  "PersonaConsistency": 5,
-  "Truthfulness": 5,
-  "NLI_Logic": 5,
-  "Reasoning": "Brief explanation here"
-}}
+Persona: {persona}
+NPC Response: {npc_response}
 """
-
     payload = {
         "model": judge_model,
         "prompt": judge_prompt,
         "stream": False,
-        "format": "json"
+        "format": "json",
     }
-    
     try:
-        response = requests.post(f"{host}/api/generate", json=payload)
+        response = requests.post(f"{host}/api/generate", json=payload, timeout=120)
+        if response.status_code != 200:
+            return {"ok": False, "error": f"Judge HTTP {response.status_code}"}
         data = response.json()
-        return json.loads(data["response"])
-    except Exception as e:
-        print(f"Judge Error: {e}")
+        parsed = json.loads(data.get("response", "{}"))
+        parsed["ok"] = True
+        return parsed
+    except Exception as exc:
+        return {"ok": False, "error": f"Judge failed: {exc}"}
+
+
+def _load_jsonl(path: Path) -> Iterable[Dict[str, object]]:
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            yield json.loads(line)
+
+
+def _normalize_relevant_ids(record: Dict[str, object]) -> List[str]:
+    if "relevant_doc_ids" in record and isinstance(record["relevant_doc_ids"], list):
+        return [str(x) for x in record["relevant_doc_ids"]]
+    if "relevant_doc_id" in record:
+        return [str(record["relevant_doc_id"])]
+    return []
+
+
+def _dcg(relevances: List[int], k: int) -> float:
+    score = 0.0
+    for i, rel in enumerate(relevances[:k]):
+        denom = math.log2(i + 2)
+        score += rel / denom
+    return score
+
+
+def evaluate_rag_metrics(
+    gold_path: Optional[str],
+    predictions_path: Optional[str],
+    hit_k: int = 5,
+) -> Dict[str, object]:
+    """Compute Hit@k, MRR and nDCG@k from prediction/gold JSONL files."""
+    if not gold_path or not predictions_path:
+        return {"ok": False, "error": "RAG metrics skipped (missing --rag-gold or --rag-predictions)."}
+
+    gold_file = Path(gold_path)
+    pred_file = Path(predictions_path)
+    if not gold_file.exists() or not pred_file.exists():
         return {
-            "ContextAwareness": 0,
-            "PersonaConsistency": 0,
-            "Truthfulness": 0,
-            "Reasoning": "Failed to judge"
+            "ok": False,
+            "error": f"RAG metrics skipped (missing files: gold={gold_file.exists()} pred={pred_file.exists()}).",
         }
 
-def evaluate_rag_metrics(mock_queries=[("Who is the King?", "Alaric")]):
-    """
-    Simulated or actual test against VectorStore to calculate Hit Rate and MRR.
-    For this benchmark script, we will represent the standard mathematical formula.
-    """
-    print("\n--- RAG Retrieval Metrics ---")
-    
-    hit_count = 0
-    mrr_sum = 0.0
-    total = len(mock_queries)
-    
-    # Example hardcoded metric simulation based on project data
-    # In a full pipeline, this queries the `VectorStore::Search` via Python binding.
-    hit_rate = 0.92  # 92%
-    mrr = 0.85       # Mean Reciprocal Rank
-    
-    print(f"Total Test Queries: 100")
-    print(f"Top-K Hit Rate: {hit_rate * 100}% (Industry target > 85%)")
-    print(f"Mean Reciprocal Rank (MRR): {mrr:.2f}")
+    gold = {}
+    for row in _load_jsonl(gold_file):
+        qid = str(row.get("query_id", "")).strip()
+        if not qid:
+            continue
+        relevant = _normalize_relevant_ids(row)
+        if relevant:
+            gold[qid] = set(relevant)
 
-def main():
-    parser = argparse.ArgumentParser(description="Evaluate NPC AI Performance and Quality")
-    parser.add_argument("--model", type=str, default="phi3:mini", help="Target model to test (e.g., phi3:mini)")
-    parser.add_argument("--judge", type=str, default="llama3", help="Model to use for LLM-as-a-Judge (e.g., llama3)")
+    if not gold:
+        return {"ok": False, "error": "Gold file has no valid query_id/relevant_doc_ids entries."}
+
+    hits = 0
+    mrr_sum = 0.0
+    ndcg_sum = 0.0
+    evaluated = 0
+
+    for row in _load_jsonl(pred_file):
+        qid = str(row.get("query_id", "")).strip()
+        ranked = [str(x) for x in row.get("ranked_doc_ids", []) if str(x).strip()]
+        if not qid or qid not in gold or not ranked:
+            continue
+
+        evaluated += 1
+        relevant = gold[qid]
+        top_k = ranked[: max(1, hit_k)]
+
+        if any(doc_id in relevant for doc_id in top_k):
+            hits += 1
+
+        rr = 0.0
+        gains = []
+        for idx, doc_id in enumerate(top_k):
+            rel = 1 if doc_id in relevant else 0
+            gains.append(rel)
+            if rr == 0.0 and rel == 1:
+                rr = 1.0 / float(idx + 1)
+        mrr_sum += rr
+
+        ideal_count = min(len(relevant), len(top_k))
+        ideal_gains = [1] * ideal_count + [0] * (len(top_k) - ideal_count)
+        idcg = _dcg(ideal_gains, len(top_k))
+        ndcg = (_dcg(gains, len(top_k)) / idcg) if idcg > 0 else 0.0
+        ndcg_sum += ndcg
+
+    if evaluated == 0:
+        return {"ok": False, "error": "No overlapping query_id entries between gold and predictions."}
+
+    return {
+        "ok": True,
+        "query_count": evaluated,
+        f"hit@{hit_k}": hits / evaluated,
+        "mrr": mrr_sum / evaluated,
+        f"ndcg@{hit_k}": ndcg_sum / evaluated,
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Evaluate NPC benchmark signals without hardcoded scores.")
+    parser.add_argument("--model", default="phi3:mini")
+    parser.add_argument("--judge-model", default="llama3")
+    parser.add_argument("--host", default="http://localhost:11434")
+    parser.add_argument("--run-judge", action="store_true")
+    parser.add_argument("--rag-gold", default="")
+    parser.add_argument("--rag-predictions", default="")
+    parser.add_argument("--hit-k", type=int, default=5)
     args = parser.parse_args()
-    
-    print(f"Starting AAA Benchmark Suite...")
-    print(f"Target Model: {args.model} | Judge Model: {args.judge}")
-    
-    test_context = "The player has just drawn a glowing sword inside the King's throne room."
-    test_persona = "King Alaric. A proud, medieval king who is currently very suspicious of strangers."
-    test_input = "I am the new champion. Yield the throne to me immediately!"
-    
-    full_prompt = f"System: You are {test_persona}\nContext: {test_context}\nPlayer: {test_input}\nNPC:"
-    
-    print("\n--- 1. Performance Benchmark ---")
-    perf = run_performance_benchmark(full_prompt, target_model=args.model)
-    
-    if not perf:
-        print("Performance benchmark failed. Is Ollama running?")
-        return
-        
-    print(f"Time To First Token (TTFT): {perf['ttft_ms']:.2f} ms")
-    if perf['ttft_ms'] < 500:
-         print(" -> PASS: TTFT is < 500ms (AAA Industry Standard)")
+
+    context = "The player has drawn a glowing sword inside the King's throne room."
+    persona = "King Alaric, suspicious medieval ruler."
+    player_input = "I am the new champion. Yield the throne."
+    prompt = f"System: You are {persona}\nContext: {context}\nPlayer: {player_input}\nNPC:"
+
+    print("=== Performance Benchmark ===")
+    perf = run_performance_benchmark(prompt, target_model=args.model, host=args.host)
+    if not perf.get("ok"):
+        print(f"Performance benchmark failed: {perf.get('error')}")
     else:
-         print(" -> WARN: TTFT is > 500ms")
-         
-    print(f"Tokens Per Second (TPS): {perf['tps']:.2f} t/s")
-    if perf['tps'] > 15:
-        print(" -> PASS: Speed is > 15 TPS (Human Reading Speed)")
+        print(f"TTFT: {perf['ttft_ms']:.2f} ms")
+        print(f"Throughput (chunk/s): {perf['tps_chunk']:.2f}")
+        print(f"Total time: {perf['total_time_s']:.2f} s")
+        print(f"Chunk count: {perf['chunk_count']}")
+        print(f"Response sample: {str(perf.get('response', ''))[:180]}")
+
+    if args.run_judge and perf.get("ok"):
+        print("\n=== LLM Judge ===")
+        judge = run_llm_as_a_judge(
+            str(perf.get("response", "")),
+            context=context,
+            persona=persona,
+            judge_model=args.judge_model,
+            host=args.host,
+        )
+        if not judge.get("ok"):
+            print(f"Judge skipped/failed: {judge.get('error')}")
+        else:
+            print(json.dumps(judge, ensure_ascii=False, indent=2))
+
+    print("\n=== RAG Metrics ===")
+    rag = evaluate_rag_metrics(
+        gold_path=args.rag_gold,
+        predictions_path=args.rag_predictions,
+        hit_k=max(1, args.hit_k),
+    )
+    if not rag.get("ok"):
+        print(rag.get("error"))
     else:
-        print(" -> WARN: Speed is < 15 TPS")
-        
-    print(f"\n[Generated Response]:\n{perf['response']}\n")
-    
-    print("--- 2. LLM-as-a-Judge Evaluation ---")
-    print("Asking Judge to score response...")
-    judge_scores = run_llm_as_a_judge(perf['response'], test_context, test_persona, judge_model=args.judge)
-    
-    print(f"Context-Awareness:    {judge_scores.get('ContextAwareness', 0)} / 5")
-    print(f"Persona Consistency:  {judge_scores.get('PersonaConsistency', 0)} / 5")
-    print(f"Truthfulness/Safety:  {judge_scores.get('Truthfulness', 0)} / 5")
-    print(f"NLI / Logic Check:    {judge_scores.get('NLI_Logic', 0)} / 5")
-    print(f"Judge Reasoning:      {judge_scores.get('Reasoning', '')}")
-    
-    evaluate_rag_metrics()
-    
-    print("\n--- 3. Resource Usage Profile ---")
-    print("Peak VRAM/RAM Usage:")
-    print(" -> VRAM < 3.8GB (Using 4-bit Quantization / INT4 via QLoRA)")
-    print(" -> RAM < 2.0GB (VectorStore MessagePack Snapshotting)")
-    print("Benchmark Complete.")
+        print(json.dumps(rag, ensure_ascii=False, indent=2))
+
 
 if __name__ == "__main__":
     main()

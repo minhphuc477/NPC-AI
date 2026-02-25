@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <map>
 
 namespace NPCInference {
 
@@ -27,6 +28,9 @@ public:
         double dense_score;
         double sparse_score;
         double fused_score;
+        double base_fused_score = 0.0;
+        double trust_score = 1.0;
+        double injection_risk = 0.0;
         int dense_rank;
         int sparse_rank;
     };
@@ -37,6 +41,13 @@ public:
         double sparse_weight = 0.4;
         double min_score_threshold = 0.0;
         int rrf_k = 60;
+
+        // Robustness guard against retrieval poisoning / prompt injection.
+        bool enable_robustness_guard = true;
+        double trust_weight = 0.35;
+        double min_trust_score = 0.15;
+        double injection_penalty_scale = 0.6;
+        double max_injection_risk = 0.95;
     };
 
     /**
@@ -49,7 +60,9 @@ public:
     /**
      * Add document to both dense and sparse indices
      */
-    void AddDocument(const std::string& doc_id, const std::string& text);
+    void AddDocument(const std::string& doc_id,
+                     const std::string& text,
+                     const std::map<std::string, std::string>& metadata = {});
 
     /**
      * Hybrid search with RRF fusion
@@ -99,6 +112,12 @@ private:
 
     // Calculate RRF score
     double CalculateRRFScore(int rank, int k);
+    double ComputeTrustScore(const std::map<std::string, std::string>& metadata) const;
+    double ComputeInjectionRisk(
+        const std::string& text,
+        const std::map<std::string, std::string>& metadata
+    ) const;
+    double Clamp01(double value) const;
 
     std::shared_ptr<VectorStore> vector_store_;
     std::shared_ptr<BM25Retriever> bm25_retriever_;
@@ -106,6 +125,7 @@ private:
 
     // Document ID to text mapping
     std::unordered_map<std::string, std::string> doc_texts_;
+    std::unordered_map<std::string, std::map<std::string, std::string>> doc_metadata_;
 };
 
 } // namespace NPCInference

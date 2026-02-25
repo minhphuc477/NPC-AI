@@ -1,81 +1,91 @@
-# Kaggle Training Guide for NPC AI
+# Kaggle Guide (Full Results Checkout)
 
-## Quick Start
+## Scope
+Run `notebooks/NPC_AI_Complete_Pipeline.ipynb` on Kaggle and produce a complete artifact bundle:
+- proposal run,
+- human-eval attachment,
+- lexical benchmark,
+- publication run,
+- serving-efficiency matrix,
+- external profile suite,
+- quality-gate report,
+- preference/hard-negative datasets.
 
-### Step 1: Create Kaggle Dataset
-1. Go to [kaggle.com/datasets](https://www.kaggle.com/datasets)
-2. Click **"+ New Dataset"**
-3. Upload `data/train_multiturn.jsonl`
-4. Name it: `npc-ai-training-data`
-5. Set visibility to **Private**
+## Required Inputs
+1. Repository snapshot as a Kaggle Dataset (recommended).
+2. Internet enabled (model/dependency pulls).
+3. Local model runtime reachable from notebook process (`ollama` host), with:
+- `elara-npc:latest`
+- `phi3:mini`
+- `phi3:latest`
 
-### Step 2: Create Notebook
-1. Go to [kaggle.com/code](https://www.kaggle.com/code)
-2. Click **"+ New Notebook"**
-3. Upload `notebooks/kaggle_train_multiturn.ipynb`
+## Setup
+1. Upload/attach this repo in Kaggle (`Add Data`).
+2. Upload `notebooks/NPC_AI_Complete_Pipeline.ipynb`.
+3. Refresh notebook with the latest orchestration cells before upload:
+```bash
+python scripts/create_pipeline_notebook.py --clear-outputs
+```
+4. Use GPU runtime (T4/P100 preferred for stability).
 
-### Step 3: Configure Notebook
-1. **Add Data**: Right sidebar → **"+ Add Data"** → Select your dataset
-2. **Enable GPU**: Settings → Accelerator → **GPU P100** (or T4 x2)
-3. **Enable Internet**: Settings → Internet → **On**
-
-### Step 4: Update Data Path
-In the CONFIG cell, update the path to match your dataset:
-```python
-"data_path": "/kaggle/input/YOUR-DATASET-NAME/train_multiturn.jsonl",
+## One-Command Full Run
+Use this command in notebook (or the generated "Full Artifact Checkout" cell):
+```bash
+python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434
 ```
 
-### Step 5: Run All Cells
-Click **"Run All"** and wait ~20-30 minutes for training.
-
-### Step 6: Download Results
-After training, download `adapter_multiturn.zip` from the **Output** tab.
-
----
-
-## Kaggle GPU Specs (Free Tier)
-| GPU | VRAM | Weekly Quota |
-|-----|------|--------------|
-| P100 | 16 GB | 30 hours |
-| T4 x2 | 16 GB each | 30 hours |
-
-Both are significantly faster than your 3050 Ti (4GB)!
-
-## Troubleshooting
-
-**"Internet is not enabled"**: Settings → Internet → On
-
-**"Out of memory"**: Reduce `batch_size` to 2 in CONFIG
-
-
-## Using the Adapter Locally
-
-1. **Download**: Get `adapter_multiturn.zip` from Kaggle Output tab
-2. **Extract**: Unzip into your project folder. You should see an `adapter_multiturn` folder containing `adapter_model.safetensors` and `adapter_config.json`.
-3. **Run Test Script**:
-   ```powershell
-   python scripts/test_adapter.py
-   ```
-
-### Troubleshooting
-- **"DynamicCache object has no attribute 'seen_tokens'"**: 
-  - This is a compatibility issue with Phi-3 and PEFT.
-  - Fix: Add `use_cache=False` to `model.generate()`.
-  
-- **"Out of Memory" (CUDA OOM)**:
-  - Reduce `max_new_tokens`
-  - Ensure `load_in_4bit=True` is used
-  - Close other apps using GPU
-
-### Merging Adapter (Optional)
-To merge the adapter into the base model for faster inference (requires ~8GB VRAM for merging):
-```python
-from peft import PeftModel
-from transformers import AutoModelForCausalLM
-
-base_model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
-model = PeftModel.from_pretrained(base_model, "adapter_multiturn")
-model = model.merge_and_unload()
-model.save_pretrained("models/phi3-npc-merged")
-tokenizer.save_pretrained("models/phi3-merged")
+Ablation option (disable keyword/random retrieval ablation baselines):
+```bash
+python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434 --skip-ablation-baselines
 ```
+
+Optional security benchmark mode (requires compiled retrieval security executable):
+```bash
+python scripts/run_kaggle_full_results.py \
+  --host http://127.0.0.1:11434 \
+  --run-security-benchmark \
+  --require-security-benchmark
+```
+
+Resume from existing runs (recommended after timeout/interruption):
+```bash
+python scripts/run_kaggle_full_results.py \
+  --host http://127.0.0.1:11434 \
+  --proposal-run latest \
+  --publication-run latest
+```
+
+## Outputs
+Primary manifest:
+- `artifacts/final_checkout/<timestamp>/manifest.json`
+
+Referenced artifacts include:
+- `artifacts/proposal/<run_id>/...`
+- `artifacts/publication/<run_id>/...`
+- `artifacts/serving_efficiency/<run_id>/...`
+- `artifacts/publication_profiles/<run_id>/...`
+- `artifacts/proposal/<run_id>/quality_gate_report_final.md`
+- `artifacts/proposal/<run_id>/preference_dataset.jsonl`
+- `data/retrieval_hard_negatives_wide.jsonl`
+- `data/retrieval_reranker_pairs_wide.jsonl`
+
+## Common Failure Modes
+1. `Ollama host is unavailable`
+- Ensure the runtime can reach `--host` and the server is running.
+
+2. `Missing Ollama models`
+- Pull/create required models before full checkout run.
+
+3. Security benchmark requirement fails
+- Either compile/provide `bench_retrieval_security` or run without `--require-security-benchmark`.
+
+4. Notebook cannot find scripts
+- Attach repo snapshot in `Add Data` and run from repo root.
+
+## Minimal Success Criteria
+1. `artifacts/final_checkout/<timestamp>/manifest.json` exists.
+2. `quality_gate_report_final.md` shows pass for required checks.
+3. Proposal run contains:
+- `human_eval_summary.json`
+- `lexical_diversity_summary.json`
+- `preference_dataset.jsonl`

@@ -1,0 +1,32 @@
+{
+  "run_dir": "artifacts\\proposal\\20260224T175344Z",
+  "output_csv": "artifacts\\proposal\\20260224T175344Z\\human_eval_kappa_pilot.csv",
+  "arms": [
+    "proposed_contextual_controlled",
+    "baseline_no_context",
+    "baseline_no_context_phi3_latest"
+  ],
+  "scenario_count": 8,
+  "annotators": [
+    {
+      "model": "phi3:mini",
+      "profile": "balanced",
+      "temperature": 0.0
+    },
+    {
+      "model": "phi3:mini",
+      "profile": "balanced",
+      "temperature": 0.05
+    },
+    {
+      "model": "phi3:mini",
+      "profile": "balanced",
+      "temperature": 0.1
+    }
+  ],
+  "total_rows": 72,
+  "api_calls": 16,
+  "cache_hits": 8,
+  "failures": 0,
+  "cache_root": ".cache\\llm_multirater\\20260224T175344Z"
+}

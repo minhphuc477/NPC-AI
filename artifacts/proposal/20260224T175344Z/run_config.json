@@ -1,0 +1,95 @@
+{
+  "run_id": "20260224T175344Z",
+  "generated_utc": "2026-02-24T17:53:44.657432+00:00",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "baseline_models": [
+    "phi3:mini",
+    "phi3:latest"
+  ],
+  "baseline_arm_ids": [
+    "baseline_no_context",
+    "baseline_no_context_phi3_latest"
+  ],
+  "temperature": 0.2,
+  "max_tokens": 80,
+  "repeats": 1,
+  "max_scenarios": 0,
+  "seed": 19,
+  "target_arm": "proposed_contextual_controlled",
+  "slice_keys": [
+    "persona_archetype",
+    "conflict_type",
+    "location_type",
+    "behavior_state"
+  ],
+  "human_eval_file": "",
+  "human_eval_metrics": [
+    "context_relevance",
+    "persona_consistency",
+    "naturalness",
+    "overall_quality"
+  ],
+  "human_eval_scale_max": 5.0,
+  "scenario_path": "data\\proposal_eval_scenarios_large.jsonl",
+  "scenario_sha256": "796906ac4ffa3d4251895f1a4ccb1ddc6b4a07fd903f485d53b63ee6dd84b633",
+  "arms": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": true,
+      "use_response_control": true
+    },
+    {
+      "arm_id": "proposed_contextual",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": true,
+      "use_response_control": false
+    },
+    {
+      "arm_id": "candidate_no_context",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": false,
+      "use_response_control": false
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "model": "phi3:mini",
+      "include_dynamic_context": false,
+      "use_response_control": false
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "model": "phi3:latest",
+      "include_dynamic_context": false,
+      "use_response_control": false
+    }
+  ],
+  "response_control_config": {
+    "min_context_coverage": 0.35,
+    "min_persona_coverage": 0.2,
+    "rewrite_temperature": 0.2,
+    "rewrite_max_tokens": 96,
+    "rewrite_candidates": 2,
+    "rewrite_temperature_step": 0.15,
+    "enable_rewrite": true,
+    "allow_best_effort_rewrite": true
+  },
+  "batch_mode": {
+    "enabled": true,
+    "batch_size": 28,
+    "batch_count": 4,
+    "batch_run_ids": [
+      "20260224T165142Z",
+      "20260224T170521Z",
+      "20260224T172457Z",
+      "20260224T174120Z"
+    ],
+    "intermediate_root": "artifacts\\proposal\\20260224T165142Z_batch_tmp"
+  },
+  "bertscore_lang": "en",
+  "bertscore_model_type": "roberta-large",
+  "bertscore_batch_size": 16,
+  "bertscore_cache_dir": ""
+}

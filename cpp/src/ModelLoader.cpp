@@ -17,8 +17,25 @@
 #include <random>
 #include <cmath>
 #include <utility>
+#include <cstdlib>
 
 namespace NPCInference {
+
+namespace {
+
+bool IsMockMode() {
+    const char* mock_env = std::getenv("NPC_MOCK_MODE");
+    if (mock_env) {
+        return std::string(mock_env) == "1";
+    }
+#if NPC_USE_MOCKS
+    return true;
+#else
+    return false;
+#endif
+}
+
+} // namespace
 
 // PIMPL struct definition for KV Cache
 struct ModelLoader::KVCache {
@@ -42,9 +59,8 @@ ModelLoader::ModelLoader()
 ModelLoader::~ModelLoader() = default;
 
 bool ModelLoader::LoadModel(const std::string& model_path, bool use_cuda, int num_threads) {
-    // Check for MOCK MODE
-    const char* mock_env = std::getenv("NPC_MOCK_MODE");
-    if (mock_env && std::string(mock_env) == "1") {
+    // Check for mock mode (env var or compile-time switch).
+    if (IsMockMode()) {
         NPCLogger::Warn("!! RUNNING IN MOCK MODE !! - Logic verified, Weights skipped.");
         is_loaded_ = true;
         // session_ remains nullptr

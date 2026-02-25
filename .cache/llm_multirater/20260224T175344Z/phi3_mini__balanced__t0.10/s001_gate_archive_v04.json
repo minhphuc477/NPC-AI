@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "3",
+      "naturalness": "4",
+      "overall_quality": "4",
+      "notes": "[proposed_contextual_controlled]   4  3    4     4       - Follows protocol but lacks urgency in tone, which is important for the Gatekeeper persona and context. Short note: Needs to convey a sense of immediacy while maintaining authority."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "3",
+      "notes": "[baseline_no_context]              2  5    3     3       - Lacks specificity regarding current duties or location; does not align well with the investigating state, but is consistent in persona and naturalness within context-less dialogue. Short note: Needs to integrate more details about present circumstances for relevance."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "\"Appropriate response, maintains persona and context relevance.\"|end-of-output|"
+    }
+  ]
+}

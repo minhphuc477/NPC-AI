@@ -8,13 +8,13 @@ Combines all advanced features:
 - Player satisfaction correlation
 """
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict
 import json
 
-from bert_evaluator import BERTSemanticEvaluator, SemanticScore
-from multilanguage_support import MultiLanguageSupport
-from emotion_scoring import EmotionAwareScoring, EmotionProfile
+from .bert_evaluator import BERTSemanticEvaluator, SemanticScore
+from .multilanguage_support import MultiLanguageSupport
+from .emotion_scoring import EmotionAwareScoring, EmotionProfile
 
 
 @dataclass
@@ -68,7 +68,7 @@ class IntegratedBERTSystem:
         self.multilang = MultiLanguageSupport(default_language=default_language)
         self.emotion_scorer = EmotionAwareScoring(use_gpu=use_gpu)
         
-        # Player satisfaction model (placeholder)
+        # Baseline linear satisfaction model (replace with learned model when labeled data is available).
         self._satisfaction_weights = {
             'semantic': 0.25,
             'emotion': 0.30,
@@ -214,7 +214,7 @@ class IntegratedBERTSystem:
         self,
         score: ComprehensiveScore,
         context_type: Optional[str] = None
-    ) -> Dict[str, any]:
+    ) -> Dict[str, Any]:
         """
         Get actionable feedback based on scores
         
@@ -292,7 +292,7 @@ def quick_evaluate(
     context: str = "",
     context_type: Optional[str] = None,
     use_gpu: bool = True
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """
     Quick evaluation with simple output
     

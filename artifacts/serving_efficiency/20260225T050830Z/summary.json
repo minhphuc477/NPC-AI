@@ -1,0 +1,685 @@
+{
+  "run_id": "20260225T050830Z",
+  "generated_utc": "2026-02-25T05:19:05.229389+00:00",
+  "host": "http://127.0.0.1:11434",
+  "models": [
+    "elara-npc:latest",
+    "phi3:mini",
+    "phi3:latest"
+  ],
+  "candidate_model": "elara-npc:latest",
+  "prompt_count": 48,
+  "inputs": {
+    "prompts": "data\\serving_prompts_wide.jsonl",
+    "serving_references": "data\\serving_references_wide.jsonl"
+  },
+  "model_summary": {
+    "elara-npc:latest": {
+      "ttft_ms_mean": 696.984218749094,
+      "total_time_ms_mean": 3930.9039520818865,
+      "tokens_per_s_mean": 20.096553856088455,
+      "bertscore_f1_mean": -0.03848432427427421,
+      "quality_per_second": -0.009790197049686785,
+      "pareto_optimal": false,
+      "latency_ratio_to_quality_frontier": 1.3636992662130543
+    },
+    "phi3:mini": {
+      "ttft_ms_mean": 252.45603541679884,
+      "total_time_ms_mean": 4331.811145833247,
+      "tokens_per_s_mean": 20.285288678692122,
+      "bertscore_f1_mean": 0.07306678225965395,
+      "quality_per_second": 0.01686749024826177,
+      "pareto_optimal": true,
+      "latency_ratio_to_quality_frontier": 1.0
+    },
+    "phi3:latest": {
+      "ttft_ms_mean": 197.00191666530978,
+      "total_time_ms_mean": 2882.529931249337,
+      "tokens_per_s_mean": 23.9715488446063,
+      "bertscore_f1_mean": 0.06924676906783134,
+      "quality_per_second": 0.024022914148134664,
+      "pareto_optimal": true,
+      "latency_ratio_to_quality_frontier": 1.0
+    }
+  },
+  "candidate_deltas": [
+    {
+      "baseline_model": "phi3:mini",
+      "delta_total_time_ms": -400.9071937513604,
+      "delta_bertscore_f1": -0.11155110653392816,
+      "delta_quality_per_second": -0.026657687297948554
+    },
+    {
+      "baseline_model": "phi3:latest",
+      "delta_total_time_ms": 1048.3740208325494,
+      "delta_bertscore_f1": -0.10773109334210554,
+      "delta_quality_per_second": -0.03381311119782145
+    }
+  ],
+  "bertscore_summary": {
+    "lang": "en",
+    "models": {
+      "elara-npc:latest": {
+        "aligned_request_count": 48,
+        "empty_prediction_count": 0,
+        "ok": true,
+        "bertscore_f1": {
+          "n": 48,
+          "mean": -0.03848432427427421,
+          "median": -0.0374339334666729,
+          "p95": 0.03614734532311557,
+          "ci95_low": -0.054563830782232495,
+          "ci95_high": -0.024267001263554758
+        },
+        "per_request": [
+          {
+            "index": 0,
+            "bertscore_f1": -0.051766835153102875
+          },
+          {
+            "index": 1,
+            "bertscore_f1": -0.02001192234456539
+          },
+          {
+            "index": 2,
+            "bertscore_f1": -0.09242566674947739
+          },
+          {
+            "index": 3,
+            "bertscore_f1": -0.11601652950048447
+          },
+          {
+            "index": 4,
+            "bertscore_f1": -0.011325198225677013
+          },
+          {
+            "index": 5,
+            "bertscore_f1": -0.012026224285364151
+          },
+          {
+            "index": 6,
+            "bertscore_f1": -0.046974778175354004
+          },
+          {
+            "index": 7,
+            "bertscore_f1": -0.2450806349515915
+          },
+          {
+            "index": 8,
+            "bertscore_f1": -0.019526325166225433
+          },
+          {
+            "index": 9,
+            "bertscore_f1": -0.050413165241479874
+          },
+          {
+            "index": 10,
+            "bertscore_f1": -0.047217756509780884
+          },
+          {
+            "index": 11,
+            "bertscore_f1": 0.04277956858277321
+          },
+          {
+            "index": 12,
+            "bertscore_f1": -0.13970628380775452
+          },
+          {
+            "index": 13,
+            "bertscore_f1": -0.00013278890401124954
+          },
+          {
+            "index": 14,
+            "bertscore_f1": 0.02928878180682659
+          },
+          {
+            "index": 15,
+            "bertscore_f1": -0.03305066376924515
+          },
+          {
+            "index": 16,
+            "bertscore_f1": 0.00855322927236557
+          },
+          {
+            "index": 17,
+            "bertscore_f1": -0.08397343754768372
+          },
+          {
+            "index": 18,
+            "bertscore_f1": 0.04127439111471176
+          },
+          {
+            "index": 19,
+            "bertscore_f1": -0.06007920578122139
+          },
+          {
+            "index": 20,
+            "bertscore_f1": 0.02828156389296055
+          },
+          {
+            "index": 21,
+            "bertscore_f1": 0.03923911973834038
+          },
+          {
+            "index": 22,
+            "bertscore_f1": -0.0750829428434372
+          },
+          {
+            "index": 23,
+            "bertscore_f1": -0.026267128065228462
+          },
+          {
+            "index": 24,
+            "bertscore_f1": 0.02803894132375717
+          },
+          {
+            "index": 25,
+            "bertscore_f1": 0.030405478551983833
+          },
+          {
+            "index": 26,
+            "bertscore_f1": -0.04690626636147499
+          },
+          {
+            "index": 27,
+            "bertscore_f1": -0.05599983409047127
+          },
+          {
+            "index": 28,
+            "bertscore_f1": -0.045574139803647995
+          },
+          {
+            "index": 29,
+            "bertscore_f1": -0.04270293191075325
+          },
+          {
+            "index": 30,
+            "bertscore_f1": -0.13486866652965546
+          },
+          {
+            "index": 31,
+            "bertscore_f1": -0.012655558995902538
+          },
+          {
+            "index": 32,
+            "bertscore_f1": -0.0810457244515419
+          },
+          {
+            "index": 33,
+            "bertscore_f1": 0.006480169016867876
+          },
+          {
+            "index": 34,
+            "bertscore_f1": -0.013769431971013546
+          },
+          {
+            "index": 35,
+            "bertscore_f1": -0.01967606507241726
+          },
+          {
+            "index": 36,
+            "bertscore_f1": -0.02716097980737686
+          },
+          {
+            "index": 37,
+            "bertscore_f1": -0.017852338030934334
+          },
+          {
+            "index": 38,
+            "bertscore_f1": -0.04181720316410065
+          },
+          {
+            "index": 39,
+            "bertscore_f1": 0.002711930777877569
+          },
+          {
+            "index": 40,
+            "bertscore_f1": -0.06417800486087799
+          },
+          {
+            "index": 41,
+            "bertscore_f1": -0.06311145424842834
+          },
+          {
+            "index": 42,
+            "bertscore_f1": -0.07330688834190369
+          },
+          {
+            "index": 43,
+            "bertscore_f1": -0.05593661591410637
+          },
+          {
+            "index": 44,
+            "bertscore_f1": -0.04916226491332054
+          },
+          {
+            "index": 45,
+            "bertscore_f1": -0.09748294204473495
+          },
+          {
+            "index": 46,
+            "bertscore_f1": -0.00724688358604908
+          },
+          {
+            "index": 47,
+            "bertscore_f1": -0.022769058123230934
+          }
+        ]
+      },
+      "phi3:mini": {
+        "aligned_request_count": 48,
+        "empty_prediction_count": 0,
+        "ok": true,
+        "bertscore_f1": {
+          "n": 48,
+          "mean": 0.07306678225965395,
+          "median": 0.08129452913999557,
+          "p95": 0.12113395072519778,
+          "ci95_low": 0.06174400033329827,
+          "ci95_high": 0.08305371390500414
+        },
+        "per_request": [
+          {
+            "index": 0,
+            "bertscore_f1": 0.03146355226635933
+          },
+          {
+            "index": 1,
+            "bertscore_f1": 0.06277524679899216
+          },
+          {
+            "index": 2,
+            "bertscore_f1": 0.08452048897743225
+          },
+          {
+            "index": 3,
+            "bertscore_f1": 0.08215606957674026
+          },
+          {
+            "index": 4,
+            "bertscore_f1": 0.0033652803394943476
+          },
+          {
+            "index": 5,
+            "bertscore_f1": 0.0631665512919426
+          },
+          {
+            "index": 6,
+            "bertscore_f1": 0.11785968393087387
+          },
+          {
+            "index": 7,
+            "bertscore_f1": 0.0684163048863411
+          },
+          {
+            "index": 8,
+            "bertscore_f1": 0.104954794049263
+          },
+          {
+            "index": 9,
+            "bertscore_f1": 0.05804499238729477
+          },
+          {
+            "index": 10,
+            "bertscore_f1": 0.08147234469652176
+          },
+          {
+            "index": 11,
+            "bertscore_f1": 0.09117229282855988
+          },
+          {
+            "index": 12,
+            "bertscore_f1": 0.06339998543262482
+          },
+          {
+            "index": 13,
+            "bertscore_f1": 0.10437419265508652
+          },
+          {
+            "index": 14,
+            "bertscore_f1": 0.08333492279052734
+          },
+          {
+            "index": 15,
+            "bertscore_f1": 0.011830925941467285
+          },
+          {
+            "index": 16,
+            "bertscore_f1": 0.1560015231370926
+          },
+          {
+            "index": 17,
+            "bertscore_f1": 0.12239498645067215
+          },
+          {
+            "index": 18,
+            "bertscore_f1": 0.10099761188030243
+          },
+          {
+            "index": 19,
+            "bertscore_f1": 0.10026338696479797
+          },
+          {
+            "index": 20,
+            "bertscore_f1": 0.08158782869577408
+          },
+          {
+            "index": 21,
+            "bertscore_f1": 0.03504673391580582
+          },
+          {
+            "index": 22,
+            "bertscore_f1": 0.08111671358346939
+          },
+          {
+            "index": 23,
+            "bertscore_f1": 0.06512518227100372
+          },
+          {
+            "index": 24,
+            "bertscore_f1": 0.04809359461069107
+          },
+          {
+            "index": 25,
+            "bertscore_f1": 0.11879202723503113
+          },
+          {
+            "index": 26,
+            "bertscore_f1": 0.05811244994401932
+          },
+          {
+            "index": 27,
+            "bertscore_f1": 0.116301529109478
+          },
+          {
+            "index": 28,
+            "bertscore_f1": 0.08710775524377823
+          },
+          {
+            "index": 29,
+            "bertscore_f1": 0.11150312423706055
+          },
+          {
+            "index": 30,
+            "bertscore_f1": 0.09566628187894821
+          },
+          {
+            "index": 31,
+            "bertscore_f1": 0.11869243532419205
+          },
+          {
+            "index": 32,
+            "bertscore_f1": 0.08356589078903198
+          },
+          {
+            "index": 33,
+            "bertscore_f1": -0.05497460439801216
+          },
+          {
+            "index": 34,
+            "bertscore_f1": 0.007267013657838106
+          },
+          {
+            "index": 35,
+            "bertscore_f1": 0.03829370439052582
+          },
+          {
+            "index": 36,
+            "bertscore_f1": 0.025869466364383698
+          },
+          {
+            "index": 37,
+            "bertscore_f1": 0.08267027139663696
+          },
+          {
+            "index": 38,
+            "bertscore_f1": 0.1262373924255371
+          },
+          {
+            "index": 39,
+            "bertscore_f1": 0.06529717147350311
+          },
+          {
+            "index": 40,
+            "bertscore_f1": 0.09369528293609619
+          },
+          {
+            "index": 41,
+            "bertscore_f1": 0.0673794150352478
+          },
+          {
+            "index": 42,
+            "bertscore_f1": 0.044879116117954254
+          },
+          {
+            "index": 43,
+            "bertscore_f1": 0.040843889117240906
+          },
+          {
+            "index": 44,
+            "bertscore_f1": 0.10224780440330505
+          },
+          {
+            "index": 45,
+            "bertscore_f1": 0.06050582602620125
+          },
+          {
+            "index": 46,
+            "bertscore_f1": 0.07156756520271301
+          },
+          {
+            "index": 47,
+            "bertscore_f1": 0.0427495501935482
+          }
+        ]
+      },
+      "phi3:latest": {
+        "aligned_request_count": 48,
+        "empty_prediction_count": 0,
+        "ok": true,
+        "bertscore_f1": {
+          "n": 48,
+          "mean": 0.06924676906783134,
+          "median": 0.06985490769147873,
+          "p95": 0.11349142454564572,
+          "ci95_low": 0.06007037806363466,
+          "ci95_high": 0.07887567440241885
+        },
+        "per_request": [
+          {
+            "index": 0,
+            "bertscore_f1": 0.06992218643426895
+          },
+          {
+            "index": 1,
+            "bertscore_f1": 0.09925687313079834
+          },
+          {
+            "index": 2,
+            "bertscore_f1": 0.004098091274499893
+          },
+          {
+            "index": 3,
+            "bertscore_f1": 0.09637189656496048
+          },
+          {
+            "index": 4,
+            "bertscore_f1": 0.10700313001871109
+          },
+          {
+            "index": 5,
+            "bertscore_f1": 0.060821905732154846
+          },
+          {
+            "index": 6,
+            "bertscore_f1": 0.06750372797250748
+          },
+          {
+            "index": 7,
+            "bertscore_f1": 0.04538166522979736
+          },
+          {
+            "index": 8,
+            "bertscore_f1": 0.05540299043059349
+          },
+          {
+            "index": 9,
+            "bertscore_f1": 0.025298403576016426
+          },
+          {
+            "index": 10,
+            "bertscore_f1": 0.11223345994949341
+          },
+          {
+            "index": 11,
+            "bertscore_f1": 0.11256860941648483
+          },
+          {
+            "index": 12,
+            "bertscore_f1": 0.022177157923579216
+          },
+          {
+            "index": 13,
+            "bertscore_f1": 0.09660321474075317
+          },
+          {
+            "index": 14,
+            "bertscore_f1": 0.05282314121723175
+          },
+          {
+            "index": 15,
+            "bertscore_f1": 0.03233197703957558
+          },
+          {
+            "index": 16,
+            "bertscore_f1": 0.08433543145656586
+          },
+          {
+            "index": 17,
+            "bertscore_f1": 0.08591265231370926
+          },
+          {
+            "index": 18,
+            "bertscore_f1": 0.054310306906700134
+          },
+          {
+            "index": 19,
+            "bertscore_f1": 0.1008351594209671
+          },
+          {
+            "index": 20,
+            "bertscore_f1": 0.032293837517499924
+          },
+          {
+            "index": 21,
+            "bertscore_f1": 0.06978762894868851
+          },
+          {
+            "index": 22,
+            "bertscore_f1": 0.09289607405662537
+          },
+          {
+            "index": 23,
+            "bertscore_f1": 0.1223059892654419
+          },
+          {
+            "index": 24,
+            "bertscore_f1": 0.04423777386546135
+          },
+          {
+            "index": 25,
+            "bertscore_f1": 0.09860529005527496
+          },
+          {
+            "index": 26,
+            "bertscore_f1": 0.07272770255804062
+          },
+          {
+            "index": 27,
+            "bertscore_f1": 0.09813770651817322
+          },
+          {
+            "index": 28,
+            "bertscore_f1": 0.023804882541298866
+          },
+          {
+            "index": 29,
+            "bertscore_f1": 0.10974296182394028
+          },
+          {
+            "index": 30,
+            "bertscore_f1": 0.07787327468395233
+          },
+          {
+            "index": 31,
+            "bertscore_f1": 0.04789441451430321
+          },
+          {
+            "index": 32,
+            "bertscore_f1": 0.017748860642313957
+          },
+          {
+            "index": 33,
+            "bertscore_f1": 0.014138486236333847
+          },
+          {
+            "index": 34,
+            "bertscore_f1": 0.052133768796920776
+          },
+          {
+            "index": 35,
+            "bertscore_f1": 0.028648851439356804
+          },
+          {
+            "index": 36,
+            "bertscore_f1": 0.04559073597192764
+          },
+          {
+            "index": 37,
+            "bertscore_f1": 0.08908333629369736
+          },
+          {
+            "index": 38,
+            "bertscore_f1": 0.061054639518260956
+          },
+          {
+            "index": 39,
+            "bertscore_f1": 0.08077343553304672
+          },
+          {
+            "index": 40,
+            "bertscore_f1": 0.07147292047739029
+          },
+          {
+            "index": 41,
+            "bertscore_f1": 0.041038479655981064
+          },
+          {
+            "index": 42,
+            "bertscore_f1": 0.06174330785870552
+          },
+          {
+            "index": 43,
+            "bertscore_f1": 0.0842926949262619
+          },
+          {
+            "index": 44,
+            "bertscore_f1": 0.165363147854805
+          },
+          {
+            "index": 45,
+            "bertscore_f1": 0.03333071991801262
+          },
+          {
+            "index": 46,
+            "bertscore_f1": 0.08794368803501129
+          },
+          {
+            "index": 47,
+            "bertscore_f1": 0.11398832499980927
+          }
+        ]
+      }
+    }
+  }
+}
