@@ -22,10 +22,7 @@ Run `notebooks/NPC_AI_Complete_Pipeline.ipynb` on Kaggle and produce a complete 
 ## Setup
 1. Upload/attach this repo in Kaggle (`Add Data`).
 2. Upload `notebooks/NPC_AI_Complete_Pipeline.ipynb`.
-3. Refresh notebook with the latest orchestration cells before upload:
-```bash
-python scripts/create_pipeline_notebook.py --clear-outputs
-```
+3. Use the committed notebook directly (it already contains the full orchestration cells).
 4. Use GPU runtime (T4/P100 preferred for stability).
 
 ## One-Command Full Run
