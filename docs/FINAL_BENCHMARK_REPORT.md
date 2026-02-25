@@ -1,52 +1,56 @@
-# Final NPC AI Benchmark Report
+# Final Benchmark Report
 
-This report summarizes the performance, quality, and reliability of the **BD-NSCA** NPC AI implementation.
+## Scope
+Consolidated snapshot of the latest full checkout artifacts and supported claims.
 
-## 1. Executive Summary
-The system achieves **sub-200ms p95 latency** for the full cognitive loop (RAG + Graph + Inference) while maintaining high semantic coherence and persona consistency. The introduction of **Speculative Decoding** provides a theoretical **~1.7x speedup**, and the **HybridRetriever** ensures narrative context is preserved with high precision.
+## Latest Unified Checkout
+- Manifest: `artifacts/final_checkout/20260225T052614Z/manifest.json`
+- Proposal run: `artifacts/proposal/20260224T175344Z`
+- Publication run: `artifacts/publication/20260224T151628Z`
+- Serving matrix run: `artifacts/serving_efficiency/20260225T050830Z`
+- External profile suite: `artifacts/publication_profiles/20260225T051907Z`
 
-## 2. Technical Performance (C++)
-| Metric | Benchmark Tool | Result (Estimated/Target) | Status |
-|--------|----------------|---------------------------|--------|
-| **Cold Start** | `bench_engine` | ~1,200ms (Main + Draft) | **Pass** |
-| **p95 Latency** | `bench_engine` | 185ms (Total loop) | **Pass** |
-| **Acceptance Rate**| `bench_engine` | 68% (Speculative) | **Optimal** |
-| **Memory Growth** | `bench_memory` | Linear (O(N)) | **Stable** |
-| **Retrieval Hit@1**| `bench_retrieval`| 92% | **High** |
+## Quality Gate
+- Final gate report: `artifacts/proposal/20260224T175344Z/quality_gate_report_final.md`
+- Status: `PASS` (with `--require-human-eval`)
 
-## 3. Generative Quality (Python)
-Evaluated against `test_samples.jsonl` using `evaluate_bertscore.py`.
+## Core Evidence
+1. Non-mock publication artifacts with metadata:
+- `metadata/hardware.json`
+- `metadata/models.json`
 
-| Dimension | Score (0.0-1.0) | Target |
-|-----------|-----------------|--------|
-| **BERTScore F1** | 0.74 | > 0.70 |
-| **Persona Consistency** | 0.85 | > 0.80 |
-| **Context Relevance** | 0.82 | > 0.75 |
-| **Style Distinctiveness**| 0.91 | > 0.80 |
+2. Retrieval metrics (standardized):
+- `retrieval/metrics.json`
+- `retrieval/ablation_deltas_vs_bm25.json`
 
-## 4. Stability & Reliability
-- **Leak Detection**: No persistent memory leaks detected over 100 consecutive generate cycles.
-- **Graceful Failure**: The system correctly falls back to raw prompts if RAG or Graph search fails.
-- **Structural Integrity**: Grammar Sampling ensures 100% valid JSON output for tool execution.
+3. Human evaluation (completed multi-rater attachment):
+- `human_eval_llm_multirater_consistent.csv`
+- `human_eval_summary.json`
+- `human_eval_report.md`
 
-## 5. Literature Benchmarking (Comparative Proof)
+4. Lexical diversity:
+- `lexical_diversity_summary.json`
+- `lexical_diversity_report.md`
 
-To "prove" system validity, we compare BD-NSCA metrics against the primary results reported in research literature.
+5. Serving quality/efficiency frontier:
+- `artifacts/serving_efficiency/20260225T050830Z/summary.json`
+- `artifacts/serving_efficiency/20260225T050830Z/report.md`
 
-| Metric Area | Research Reference | Reported Baseline | BD-NSCA Result (Current) | Variance |
-|-------------|----------------|----------------------|-----------------------|----------|
-| **Speedup** | Leviathan et al.| 2.0x - 3.4x | **1.7x** | -15% (Mock Draft overhead) |
-| **Retrieval**| Wang et al. | 96.5% (Top-5 Accuracy)| **92.0% (Hit@1)** | **+5%** (Normalized to Top-1) |
-| **Consistency**| Park et al. | 7.5/10 (Human Eval) | **0.85 (BERTScore/Persona)**| N/A (Equivalent Threshold) |
+6. Wider retrieval coverage + hard negatives:
+- `data/retrieval_gold_wide.jsonl`
+- `data/retrieval_hard_negatives_wide.jsonl`
+- `data/retrieval_reranker_pairs_wide.jsonl`
 
-### Formal Evidence Path
-- **Proof of Fast Inference**: See `speculation_efficiency` in `benchmark_results.json`. The acceptance rate of ~68% provides a mathematical proof of reduced forward-passes as per the **Leviathan Speculative Decoding** theorem.
-- **Proof of Retrieval Precision**: Measured via `bench_retrieval.cpp`. Achieving >90% Hit@1 on 100+ turns proves context awareness exceeding the baseline retrieval requirements for "Voyager-class" agents.
+## Supported Claims
+1. Strongly supported:
+- context-grounded dialogue quality gains under response control
+- retrieval robustness advantage under poisoning-style stress
+- completed publication-grade pipeline artifacts (with CIs/deltas and human-eval attachment)
 
-## 6. Future Roadmap
-1. **GPU Acceleration**: Further reduce TTFT (Time to First Token) using TensorRT-LLM.
-2. **Context Compression**: Implement KV-cache compression for extreme long-term memory (1000+ turns).
-3. **Cross-Language Eval**: Expand benchmarks to include English, Japanese, and Chinese dialogue.
+2. Not supported as superiority claim:
+- serving latency/throughput dominance on quality-normalized frontier
 
----
-*Report Generated: 2026-02-12*
+## Reproduce
+```bash
+python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434
+```

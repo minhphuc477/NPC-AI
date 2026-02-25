@@ -11,7 +11,7 @@ Features:
 
 import torch
 import numpy as np
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
 import json
 
@@ -296,25 +296,75 @@ class BERTSemanticEvaluator:
     def fine_tune_for_game_dialogue(
         self,
         training_data: List[Dict[str, str]],
-        output_path: str = "models/game_dialogue_bert"
-    ):
+        output_path: str = "models/game_dialogue_bert",
+        epochs: int = 1,
+        batch_size: int = 16,
+        learning_rate: float = 2e-5,
+    ) -> Dict[str, Any]:
         """
-        Fine-tune BERT for game dialogue
-        
+        Fine-tune BERT for game dialogue.
+
         Args:
             training_data: List of {"context": str, "response": str, "label": float}
             output_path: Where to save fine-tuned model
+            epochs: Number of training epochs
+            batch_size: Training batch size
+            learning_rate: Optimizer learning rate
         """
-        print("🎮 Fine-tuning BERT for game dialogue...")
-        print(f"   Training samples: {len(training_data)}")
-        print(f"   Output: {output_path}")
-        
-        # This would implement actual fine-tuning
-        # For now, placeholder
-        print("⚠ Fine-tuning not implemented in this version")
-        print("   Use sentence-transformers training API for production")
-    
-    def get_device_info(self) -> Dict[str, any]:
+        if not training_data:
+            raise ValueError("training_data must contain at least one sample")
+
+        try:
+            from sentence_transformers import InputExample, losses
+            from torch.utils.data import DataLoader
+        except ImportError as exc:
+            raise ImportError(
+                "Fine-tuning requires sentence-transformers and torch DataLoader support"
+            ) from exc
+
+        model = self._load_embedding_model()
+
+        examples = []
+        for row in training_data:
+            context = str(row.get("context", "")).strip()
+            response = str(row.get("response", "")).strip()
+            if not context or not response:
+                continue
+
+            raw_label = row.get("label", row.get("score", 1.0))
+            try:
+                label = float(raw_label)
+            except (TypeError, ValueError):
+                label = 1.0
+            label = max(0.0, min(1.0, label))
+            examples.append(InputExample(texts=[context, response], label=label))
+
+        if not examples:
+            raise ValueError("No valid (context, response) pairs found in training_data")
+
+        dataloader = DataLoader(examples, shuffle=True, batch_size=max(1, batch_size))
+        train_loss = losses.CosineSimilarityLoss(model)
+        warmup_steps = max(1, int(len(dataloader) * max(1, epochs) * 0.1))
+
+        model.fit(
+            train_objectives=[(dataloader, train_loss)],
+            epochs=max(1, epochs),
+            warmup_steps=warmup_steps,
+            output_path=output_path,
+            optimizer_params={"lr": learning_rate},
+            show_progress_bar=True,
+        )
+
+        self._embedding_model = model
+        return {
+            "output_path": output_path,
+            "samples_used": len(examples),
+            "epochs": max(1, epochs),
+            "batch_size": max(1, batch_size),
+            "learning_rate": learning_rate,
+        }
+
+    def get_device_info(self) -> Dict[str, Any]:
         """Get device information"""
         info = {
             'device': self.device,
@@ -339,7 +389,7 @@ def evaluate_npc_response(
     response: str,
     context: str = "",
     use_gpu: bool = True
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """
     Quick evaluation of NPC response
     

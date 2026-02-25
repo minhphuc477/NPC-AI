@@ -1,0 +1,44 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": 5,
+      "persona_consistency": 5,
+      "naturalness": 4,
+      "overall_quality": 5,
+      "notes": "Responses are highly relevant to the context and persona. Maintains a firm tone while addressing concerns."
+    },
+    {
+      "arm_id": "proposed_contextual",
+      "context_relevance": 5,
+      "persona_consistency": 4,
+      "naturalness": 3,
+      "overall_quality": 4,
+      "notes": "Good context relevance and persona consistency. However, the suggestion of discussing over tea might seem less formal for a City Watch Captain."
+    },
+    {
+      "arm_id": "candidate_no_context",
+      "context_relevance": 2,
+      "persona_consistency": 3,
+      "naturalness": 4,
+      "overall_quality": 3,
+      "notes": "Lacks context relevance and does not align well with the procedural persona of a City Watch Captain."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": 1,
+      "persona_consistency": 2,
+      "naturalness": 3,
+      "overall_quality": 2,
+      "notes": "Very generic response with no context relevance or persona consistency."
+    },
+    {
+      "arm_id": "baseline_no0_phi3_latest",
+      "context_relevance": 1,
+      "persona_consistency": 1,
+      "naturalness": 2,
+      "overall_quality": 1,
+      "notes": "Generic and lacks context relevance. Does not reflect the procedural nature of a City Watch Captain."
+    }
+  ]
+}

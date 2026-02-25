@@ -9,8 +9,6 @@ from tqdm import tqdm
 from functools import partialmethod
 tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-from peft import PeftModel
 from .config import BASE_MODEL, ADAPTER_PATH, QUANTIZATION_CONFIG, GENERATION_CONFIG
 
 # Memory Optimization for Windows 1455 Error
@@ -35,22 +33,45 @@ class NPCInferenceEngine:
         torch.cuda.empty_cache()
 
         try:
-            bnb_config = BitsAndBytesConfig(**QUANTIZATION_CONFIG)
+            from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+        except Exception as e:
+            raise RuntimeError(
+                "transformers import failed. Install/repair transformers + torch first."
+            ) from e
 
-            base_model = AutoModelForCausalLM.from_pretrained(
-                BASE_MODEL,
-                quantization_config=bnb_config,
-                device_map="auto",
-                trust_remote_code=True,
-                attn_implementation="eager"
-            )
-            
+        try:
+            from peft import PeftModel
+        except Exception:
+            PeftModel = None
+
+        try:
+            bnb_config = BitsAndBytesConfig(**QUANTIZATION_CONFIG)
+        except Exception as e:
+            print(f"Quantization config unavailable, falling back to non-quantized load: {e}", file=sys.stderr)
+            bnb_config = None
+
+        try:
+            load_kwargs = {
+                "device_map": "auto",
+                "trust_remote_code": True,
+                "attn_implementation": "eager",
+            }
+            if bnb_config is not None:
+                load_kwargs["quantization_config"] = bnb_config
+            else:
+                load_kwargs["torch_dtype"] = torch.float16 if torch.cuda.is_available() else torch.float32
+
+            base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL, **load_kwargs)
+             
             self.tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, trust_remote_code=True)
             self.tokenizer.pad_token = self.tokenizer.eos_token
-            
-            if os.path.exists(ADAPTER_PATH):
+             
+            if PeftModel is not None and os.path.exists(ADAPTER_PATH):
                 print(f"Loading adapter from {ADAPTER_PATH}...", file=sys.stderr)
                 self.model = PeftModel.from_pretrained(base_model, ADAPTER_PATH)
+            elif os.path.exists(ADAPTER_PATH):
+                print("peft is unavailable; using base model without adapter.", file=sys.stderr)
+                self.model = base_model
             else:
                 print(f"Adapter not found at {ADAPTER_PATH}. Using base model.", file=sys.stderr)
                 self.model = base_model

@@ -5,7 +5,7 @@ Analyzes emotional content and adjusts semantic scores accordingly.
 Helps create more emotionally appropriate NPC responses.
 """
 
-from typing import Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Tuple, Optional
 from dataclasses import dataclass
 import numpy as np
 
@@ -229,7 +229,7 @@ class EmotionAwareScoring:
         self,
         emotion: EmotionProfile,
         context_type: str
-    ) -> Dict[str, any]:
+    ) -> Dict[str, Any]:
         """
         Get feedback on emotional appropriateness
         

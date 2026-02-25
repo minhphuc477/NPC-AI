@@ -1,0 +1,99 @@
+{
+  "lang": "en",
+  "models": {
+    "elara-npc:latest": {
+      "aligned_request_count": 8,
+      "empty_prediction_count": 0,
+      "ok": true,
+      "bertscore_f1": {
+        "n": 8,
+        "mean": -0.07590956124477088,
+        "median": -0.08558809757232666,
+        "p95": -0.005458082724362639,
+        "ci95_low": -0.10796220515621825,
+        "ci95_high": -0.04257541416445749
+      },
+      "per_request": [
+        {
+          "index": 0,
+          "bertscore_f1": -0.08188095688819885
+        },
+        {
+          "index": 1,
+          "bertscore_f1": -0.13296230137348175
+        },
+        {
+          "index": 2,
+          "bertscore_f1": -0.037066467106342316
+        },
+        {
+          "index": 3,
+          "bertscore_f1": -0.09260542690753937
+        },
+        {
+          "index": 4,
+          "bertscore_f1": -0.04048401489853859
+        },
+        {
+          "index": 5,
+          "bertscore_f1": 0.011561816558241844
+        },
+        {
+          "index": 6,
+          "bertscore_f1": -0.08929523825645447
+        },
+        {
+          "index": 7,
+          "bertscore_f1": -0.14454390108585358
+        }
+      ]
+    },
+    "phi3:mini": {
+      "aligned_request_count": 8,
+      "empty_prediction_count": 0,
+      "ok": true,
+      "bertscore_f1": {
+        "n": 8,
+        "mean": -0.03332542220596224,
+        "median": -0.0140712084248662,
+        "p95": 0.07495008260011668,
+        "ci95_low": -0.08499749798502307,
+        "ci95_high": 0.01896003063302487
+      },
+      "per_request": [
+        {
+          "index": 0,
+          "bertscore_f1": -0.0168754905462265
+        },
+        {
+          "index": 1,
+          "bertscore_f1": 0.009207285940647125
+        },
+        {
+          "index": 2,
+          "bertscore_f1": -0.17412897944450378
+        },
+        {
+          "index": 3,
+          "bertscore_f1": -0.011266926303505898
+        },
+        {
+          "index": 4,
+          "bertscore_f1": -0.1142231747508049
+        },
+        {
+          "index": 5,
+          "bertscore_f1": -0.008884142152965069
+        },
+        {
+          "index": 6,
+          "bertscore_f1": -0.06078200042247772
+        },
+        {
+          "index": 7,
+          "bertscore_f1": 0.11035005003213882
+        }
+      ]
+    }
+  }
+}

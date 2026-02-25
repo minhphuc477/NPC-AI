@@ -87,6 +87,7 @@ public:
     // Configuration setters
     void SetTemperature(float temp) { temperature_ = temp; }
     void SetTopP(float top_p) { top_p_ = top_p; }
+    float GetTemperature() const { return temperature_; }
 
     /**
      * Cancel the ongoing Native Generation loop

@@ -262,6 +262,14 @@ public:
         std::string embedding_model_name = "embedding.onnx";
         std::string tokenizer_embedding_path = "tokenizer_embedding/sentencepiece.bpe.model";
         float rag_threshold = 0.6f;
+        int rag_top_k = 5;
+        size_t rag_max_context_chars = 1800;
+        bool rag_include_scores = true;
+        bool enable_retrieval_guard = true;
+        float retrieval_guard_min_trust = 0.15f;
+        float retrieval_guard_max_risk = 0.95f;
+        float retrieval_guard_trust_weight = 0.35f;
+        float retrieval_guard_risk_penalty = 0.6f;
         bool use_cuda = true;
         int num_threads = 4;
         
@@ -273,6 +281,15 @@ public:
         bool enable_planner = true;
         bool enable_reflection = true;
         bool enable_truth_guard = true; // Phase 2: Neuro-symbolic Truth Guard
+        bool enable_response_control = true; // Proposal-aligned response control in runtime
+        float response_control_min_context_coverage = 0.25f;
+        float response_control_min_persona_coverage = 0.15f;
+        float response_control_rewrite_temperature = 0.2f;
+        int response_control_rewrite_max_tokens = 96;
+        int response_control_rewrite_candidates = 3;
+        float response_control_rewrite_temperature_step = 0.15f;
+        bool response_control_enable_rewrite = true;
+        bool response_control_allow_best_effort_rewrite = true;
         bool enable_python_bridge = false; // Fallback to Python Bridge
     };
 

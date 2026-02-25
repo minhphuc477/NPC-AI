@@ -9,8 +9,25 @@
 #include <onnxruntime_cxx_api.h>
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 
 namespace NPCInference {
+
+namespace {
+
+bool IsMockMode() {
+    const char* mock_env = std::getenv("NPC_MOCK_MODE");
+    if (mock_env) {
+        return std::string(mock_env) == "1";
+    }
+#if NPC_USE_MOCKS
+    return true;
+#else
+    return false;
+#endif
+}
+
+} // namespace
 
     struct EmbeddingModel::Impl {
         std::unique_ptr<Ort::Session> session;
@@ -26,8 +43,7 @@ namespace NPCInference {
 
     bool EmbeddingModel::Load(const std::string& model_path, const std::string& tokenizer_path) {
         // Check for Mock Mode
-        const char* mock_env = std::getenv("NPC_MOCK_MODE");
-        if (mock_env && std::string(mock_env) == "1") {
+        if (IsMockMode()) {
             NPCLogger::Info("EmbeddingModel: Running in MOCK MODE - Weights skipped.");
             loaded_ = true;
             return true;
@@ -65,8 +81,7 @@ namespace NPCInference {
         if (!loaded_) return {};
 
         // Mock mode: return deterministic embeddings based on text hash
-        const char* mock_env = std::getenv("NPC_MOCK_MODE");
-        if (mock_env && std::string(mock_env) == "1") {
+        if (IsMockMode()) {
             const size_t mock_dim = 768; // Standard BERT dimension
             std::vector<float> mock_embedding(mock_dim, 0.0f);
             

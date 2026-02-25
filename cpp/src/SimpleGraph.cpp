@@ -1,4 +1,4 @@
-#include "SimpleGraph.h"
+﻿#include "SimpleGraph.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -13,7 +13,7 @@ using json = nlohmann::json;
 namespace NPCInference {
 
     void SimpleGraph::AddRelation(const std::string& subject, const std::string& relation, const std::string& target, float weight) {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         // Check if edge already exists
         auto& edges = adjacencyList_[subject];
         for (auto& edge : edges) {
@@ -28,7 +28,7 @@ namespace NPCInference {
     }
 
     std::vector<GraphEdge> SimpleGraph::GetRelations(const std::string& subject) const {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         if (adjacencyList_.count(subject)) {
             return adjacencyList_.at(subject);
         }
@@ -36,7 +36,7 @@ namespace NPCInference {
     }
 
     GraphPath SimpleGraph::FindPath(const std::string& start, const std::string& end, int maxDepth) const {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         if (!adjacencyList_.count(start)) return {};
 
         std::queue<std::pair<std::string, GraphPath>> q;
@@ -80,7 +80,7 @@ namespace NPCInference {
     }
 
     std::string SimpleGraph::GetKnowledgeContext(const std::string& entity) const {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         std::stringstream ss;
         if (adjacencyList_.count(entity)) {
             const auto& edges = adjacencyList_.at(entity);
@@ -92,7 +92,7 @@ namespace NPCInference {
     }
 
     bool SimpleGraph::Save(const std::string& filepath) const {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         json j;
         for (const auto& [node, edges] : adjacencyList_) {
             json edgeList = json::array();
@@ -120,7 +120,7 @@ namespace NPCInference {
     }
 
     bool SimpleGraph::Load(const std::string& filepath) {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         try {
             std::ifstream f(filepath);
             if (!f.is_open()) return false;
@@ -160,7 +160,7 @@ namespace NPCInference {
     }
 
     bool SimpleGraph::HasNode(const std::string& node) const {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         return adjacencyList_.count(node) > 0;
     }
 
@@ -191,7 +191,7 @@ namespace NPCInference {
     }
 
     std::map<int, std::vector<std::string>> SimpleGraph::DetectCommunities() {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         // Label Propagation Algorithm (LPA)
         std::map<std::string, int> labels;
         std::vector<std::string> nodes;
@@ -258,7 +258,7 @@ namespace NPCInference {
     }
 
     std::map<std::string, float> SimpleGraph::CalculatePageRank(int max_iters, float damping) const {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
         std::map<std::string, float> ranks;
         std::set<std::string> nodes;
         
@@ -308,3 +308,4 @@ namespace NPCInference {
     }
 
 } // namespace NPCInference
+

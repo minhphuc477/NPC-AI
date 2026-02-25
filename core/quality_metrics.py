@@ -4,7 +4,7 @@ Response Quality Metrics
 Evaluates NPC responses for coherence, relevance, and safety
 """
 
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import re
 from collections import Counter
 import math
@@ -89,7 +89,7 @@ class QualityMetrics:
         return repeated / len(ngrams)
     
     @staticmethod
-    def check_safety(text: str) -> Dict[str, any]:
+    def check_safety(text: str) -> Dict[str, Any]:
         """
         Basic safety checks for toxic/inappropriate content
         """
@@ -137,7 +137,7 @@ class QualityMetrics:
     
     @staticmethod
     def evaluate_response(response: str, context: str = "", 
-                         conversation_history: List[Dict] = None) -> Dict[str, any]:
+                         conversation_history: List[Dict] = None) -> Dict[str, Any]:
         """
         Comprehensive response evaluation
         """

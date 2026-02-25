@@ -1,0 +1,16 @@
+{
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "proposal_run": "artifacts\\proposal\\20260224T175344Z",
+  "publication_run": "artifacts\\publication\\20260224T151628Z",
+  "serving_efficiency_run": "artifacts\\serving_efficiency\\latest",
+  "publication_profile_suite": "artifacts\\publication_profiles\\latest",
+  "human_eval_csv": "artifacts\\proposal\\20260224T175344Z\\human_eval_llm_multirater_consistent.csv",
+  "quality_gate_json": "artifacts\\proposal\\20260224T175344Z\\quality_gate_report_final.json",
+  "quality_gate_md": "artifacts\\proposal\\20260224T175344Z\\quality_gate_report_final.md",
+  "preference_dataset": "artifacts\\proposal\\20260224T175344Z\\preference_dataset.jsonl",
+  "retrieval_hard_negatives": "data/retrieval_hard_negatives_wide.jsonl",
+  "retrieval_reranker_pairs": "data/retrieval_reranker_pairs_wide.jsonl",
+  "dry_run": true
+}

@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "3",
+      "naturalness": "4",
+      "overall_quality": "4",
+      "notes": "Balanced discount offer, maintains fairness and persona consistency but lacks naturalness in urgency tone"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "3",
+      "notes": "Highly consistent with the Old Merchant's persona; however, it fails to consider player input effectively. Lacks context relevance as no discount is offered despite request for one."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "3",
+      "persona_consistency": "4",
+      "naturalness": "2",
+      "overall_quality": "3",
+      "notes": "Responses are somewhat consistent with the Old Merchant's persona but lacks naturalness and fails to address player input directly, reducing overall quality in this scenario."
+    }
+  ]
+}

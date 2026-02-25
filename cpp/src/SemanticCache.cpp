@@ -2,12 +2,17 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <limits>
+#if NPC_USE_USEARCH
 #include <usearch/index_dense.hpp>
+#endif
 
 namespace NPCInference {
 
 struct SemanticCache::Impl {
+#if NPC_USE_USEARCH
     unum::usearch::index_dense_gt<uint64_t, uint32_t> idx;
+#endif
 };
 
 SemanticCache::SemanticCache(std::shared_ptr<EmbeddingModel> embedding_model,
@@ -34,12 +39,28 @@ float SemanticCache::CosineSimilarity(const std::vector<float>& a, const std::ve
         return 0.0f;
     }
 
-    // Use usearch's highly optimized SIMD distance calculation
+#if NPC_USE_USEARCH
+    // Use usearch's SIMD distance calculation when available.
     unum::usearch::metric_punned_t metric(a.size(), unum::usearch::metric_kind_t::cos_k, unum::usearch::scalar_kind_t::f32_k);
     float distance = metric((const unum::usearch::byte_t*)a.data(), (const unum::usearch::byte_t*)b.data());
     
-    // Convert distance back to similarity: similarity = 1 - distance
+    // Convert distance back to similarity: similarity = 1 - distance.
     return 1.0f - distance;
+#else
+    // Portable fallback.
+    float dot = 0.0f;
+    float na = 0.0f;
+    float nb = 0.0f;
+    for (size_t i = 0; i < a.size(); ++i) {
+        dot += a[i] * b[i];
+        na += a[i] * a[i];
+        nb += b[i] * b[i];
+    }
+    if (na <= 1e-8f || nb <= 1e-8f) {
+        return 0.0f;
+    }
+    return dot / (std::sqrt(na) * std::sqrt(nb));
+#endif
 }
 
 std::optional<SemanticCache::CacheEntry> SemanticCache::Get(const std::string& query) {
@@ -55,21 +76,26 @@ std::optional<SemanticCache::CacheEntry> SemanticCache::Get(const std::string& q
 
     std::lock_guard<std::mutex> lock(mutex_);
 
-    // If cache is empty or index not initialized, miss
-    if (cache_map_.empty() || !impl_->idx) {
+    if (cache_map_.empty()) {
         stats_.misses++;
-        // Do not spam stdout std::cerr << "SemanticCache: MISS (query='" << query << "')" << std::endl;
         return std::nullopt;
     }
 
-    // Search in index for Top 5 candidates
+    int64_t current_time = GetCurrentTimestamp();
+
+#if NPC_USE_USEARCH
+    // If index is unavailable, this is a miss.
+    if (!impl_->idx) {
+        stats_.misses++;
+        return std::nullopt;
+    }
+
+    // Search in index for Top 5 candidates.
     auto matches = impl_->idx.search(query_embedding.data(), 5);
     if (matches.size() == 0) {
         stats_.misses++;
         return std::nullopt;
     }
-    
-    int64_t current_time = GetCurrentTimestamp();
 
     // Iterate through candidates to find the first valid match and GC expired ones
     for (std::size_t i = 0; i < matches.size(); ++i) {
@@ -113,6 +139,44 @@ std::optional<SemanticCache::CacheEntry> SemanticCache::Get(const std::string& q
 
         return entryNode.entry;
     }
+#else
+    // Brute-force fallback without usearch.
+    std::string best_query;
+    float best_similarity = -std::numeric_limits<float>::infinity();
+
+    for (auto it = cache_map_.begin(); it != cache_map_.end();) {
+        auto& entry_node = it->second;
+        const auto& entry = entry_node.entry;
+        bool expired = entry.ttl_seconds > 0 && (current_time - entry.timestamp) > entry.ttl_seconds;
+        if (expired) {
+            lru_list_.erase(entry_node.lru_it);
+            id_to_query_.erase(entry_node.usearch_id);
+            it = cache_map_.erase(it);
+            stats_.expired++;
+            stats_.total_entries = cache_map_.size();
+            continue;
+        }
+
+        const float sim = CosineSimilarity(query_embedding, entry.query_embedding);
+        if (sim >= similarity_threshold_ && sim > best_similarity) {
+            best_similarity = sim;
+            best_query = it->first;
+        }
+        ++it;
+    }
+
+    if (!best_query.empty()) {
+        auto cache_it = cache_map_.find(best_query);
+        if (cache_it != cache_map_.end()) {
+            stats_.hits++;
+            lru_list_.erase(cache_it->second.lru_it);
+            lru_list_.push_front(cache_it->second.usearch_id);
+            cache_it->second.lru_it = lru_list_.begin();
+            cache_it->second.entry.hit_count++;
+            return cache_it->second.entry;
+        }
+    }
+#endif
 
     stats_.misses++;
     return std::nullopt;
@@ -131,7 +195,8 @@ void SemanticCache::Put(const std::string& query, const std::string& result, int
 
     std::lock_guard<std::mutex> lock(mutex_);
 
-    // Initialize usearch if needed
+    // Initialize usearch if needed.
+#if NPC_USE_USEARCH
     if (!impl_->idx) {
         unum::usearch::metric_punned_t metric(query_embedding.size(), unum::usearch::metric_kind_t::cos_k, unum::usearch::scalar_kind_t::f32_k);
         unum::usearch::index_dense_config_t config;
@@ -146,6 +211,7 @@ void SemanticCache::Put(const std::string& query, const std::string& result, int
             return;
         }
     }
+#endif
 
     // Use default TTL if not specified
     if (ttl_seconds < 0) {
@@ -185,10 +251,12 @@ void SemanticCache::Put(const std::string& query, const std::string& result, int
     node.entry.hit_count = 0;
     node.usearch_id = new_id;
 
-    // Add to index
+    // Add to index if usearch is enabled.
+#if NPC_USE_USEARCH
     if (impl_->idx) {
         impl_->idx.add(new_id, node.entry.query_embedding.data());
     }
+#endif
 
     // Add to LRU front
     lru_list_.push_front(new_id);
@@ -211,7 +279,9 @@ void SemanticCache::EvictLRU() {
         std::string victim = qt->second;
         auto it = cache_map_.find(victim);
         if (it != cache_map_.end()) {
+#if NPC_USE_USEARCH
             if (impl_->idx) impl_->idx.remove(vid);
+#endif
             id_to_query_.erase(vid);
             cache_map_.erase(it);
         }
@@ -226,9 +296,11 @@ void SemanticCache::Clear() {
     cache_map_.clear();
     id_to_query_.clear();
     lru_list_.clear();
+#if NPC_USE_USEARCH
     if (impl_->idx) {
         impl_->idx.clear();
     }
+#endif
     stats_.total_entries = 0;
 }
 
@@ -251,7 +323,9 @@ void SemanticCache::RemoveExpired() {
         if (it != cache_map_.end()) {
             lru_list_.erase(it->second.lru_it);
             uint64_t vid = it->second.usearch_id;
+#if NPC_USE_USEARCH
             if (impl_->idx) impl_->idx.remove(vid);
+#endif
             id_to_query_.erase(vid);
             cache_map_.erase(it);
             stats_.expired++;

@@ -5,6 +5,7 @@
 #include <sstream>
 #include <algorithm>
 #include <map>
+#include <cstdlib>
 
 // Phi-3 Special Tokens (Common IDs, but should verify with added_tokens.json if possible)
 // Usually:
@@ -19,6 +20,22 @@
 
 namespace NPCInference {
 
+namespace {
+
+bool IsMockMode() {
+    const char* mock_env = std::getenv("NPC_MOCK_MODE");
+    if (mock_env) {
+        return std::string(mock_env) == "1";
+    }
+#if NPC_USE_MOCKS
+    return true;
+#else
+    return false;
+#endif
+}
+
+} // namespace
+
     Tokenizer::Tokenizer() {
         sentence_piece_processor_ = std::make_unique<sentencepiece::SentencePieceProcessor>();
     }
@@ -26,9 +43,8 @@ namespace NPCInference {
     Tokenizer::~Tokenizer() = default;
 
     bool Tokenizer::Load(const std::string& model_path) {
-        // MOCK MODE
-        const char* mock_env = std::getenv("NPC_MOCK_MODE");
-        if (mock_env && std::string(mock_env) == "1") {
+        // Mock mode
+        if (IsMockMode()) {
             std::cerr << "Tokenizer running in MOCK MODE (No model file req)" << std::endl;
             // Setup dummy special tokens
              special_tokens_ = {
@@ -99,8 +115,7 @@ namespace NPCInference {
              // Wait, sentence_piece_processor_ is unique_ptr.
              // If Load skipped loading SPM, it's non-null (ctor) but empty.
              // Mock Encode: simple ASCII?
-             const char* mock_env = std::getenv("NPC_MOCK_MODE");
-             if (mock_env && std::string(mock_env) == "1") {
+             if (IsMockMode()) {
                  std::vector<int64_t> output;
                  for(char c : text) output.push_back((int64_t)c);
                  return output;
@@ -122,10 +137,7 @@ namespace NPCInference {
         // If mock mode, SPM is not loaded with model, but pointer exists.
         // Calling SPM methods might crash if not loaded?
         // Let's safe guard.
-        const char* mock_env = std::getenv("NPC_MOCK_MODE");
-        bool is_mock = (mock_env && std::string(mock_env) == "1");
-
-        if (is_mock) {
+        if (IsMockMode()) {
              std::vector<int64_t> output;
              for(char c : text) output.push_back((int64_t)c); // Simple ASCII encoding
              return output;
@@ -178,9 +190,7 @@ namespace NPCInference {
     }
 
     std::string Tokenizer::Decode(const std::vector<int64_t>& ids) {
-         const char* mock_env = std::getenv("NPC_MOCK_MODE");
-         bool is_mock = (mock_env && std::string(mock_env) == "1");
-        if (is_mock) {
+        if (IsMockMode()) {
             std::string s;
             for(auto id : ids) s += (char)id;
             return s;

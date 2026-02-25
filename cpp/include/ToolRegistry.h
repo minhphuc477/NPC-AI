@@ -72,9 +72,25 @@ private:
  */
 class BuiltInTools {
 public:
+    struct Providers {
+        std::function<json(const std::string& location)> weather_provider;
+        std::function<json(const std::string& query)> knowledge_provider;
+        std::function<json(const std::string& topic)> memory_provider;
+    };
+
     static void RegisterAll(ToolRegistry& registry);
+    static void SetProviders(const Providers& providers);
+    static void ClearProviders();
+    static bool HasExternalProviders();
 
 private:
+    static const Providers& GetProviders();
+    static bool AllowSimulatedFallback();
+    static json BuildUnavailableResult(const std::string& tool_name, const std::string& reason);
+    static json BuildSimulatedWeather(const std::string& location);
+    static json BuildSimulatedKnowledge(const std::string& query);
+    static json BuildSimulatedMemory(const std::string& topic);
+
     static json GetCurrentTime(const json& args);
     static json GetWeather(const json& args);
     static json SearchKnowledge(const json& args);

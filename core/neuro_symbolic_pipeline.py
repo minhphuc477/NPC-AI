@@ -1,16 +1,48 @@
 import time
 import json
 import numpy as np
-import faiss
-import networkx as nx
-from llama_cpp import Llama
-from sentence_transformers import SentenceTransformer
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 import re
 import os
 
+try:
+    import faiss
+except ImportError:
+    faiss = None
+
+try:
+    import networkx as nx
+except ImportError:
+    nx = None
+
+try:
+    from llama_cpp import Llama
+except ImportError:
+    Llama = None
+
+try:
+    from sentence_transformers import SentenceTransformer
+except ImportError:
+    SentenceTransformer = None
+
+try:
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+except ImportError:
+    RecursiveCharacterTextSplitter = None
+
 class NeuroSymbolicPipeline:
     def __init__(self, model_path, raw_lore=None, embedding_model='all-MiniLM-L6-v2'):
+        missing = []
+        if faiss is None: missing.append("faiss")
+        if nx is None: missing.append("networkx")
+        if Llama is None: missing.append("llama-cpp-python")
+        if SentenceTransformer is None: missing.append("sentence-transformers")
+        if RecursiveCharacterTextSplitter is None: missing.append("langchain-text-splitters")
+        if missing:
+            raise RuntimeError(
+                "NeuroSymbolicPipeline dependencies are missing: "
+                + ", ".join(missing)
+            )
+
         print(f"Initializing Neuro-Symbolic Pipeline with model: {model_path}")
         self.llm = Llama(
             model_path=model_path,

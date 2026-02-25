@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <set>
 
 namespace NPCInference {
 
@@ -398,81 +399,152 @@ std::string PlayerBehaviorModeling::GenerateActionId() const {
     return ss.str();
 }
 
-nlohmann::json PlayerBehaviorModeling::ToJSON() const {
-    nlohmann::json j;
-    
-    // Save profile
-    j["profile"]["aggression"] = profile_.aggression;
-    j["profile"]["caution"] = profile_.caution;
-    j["profile"]["social_preference"] = profile_.social_preference;
-    j["profile"]["exploration_tendency"] = profile_.exploration_tendency;
-    j["profile"]["creativity"] = profile_.creativity;
-    j["profile"]["estimated_skill"] = profile_.estimated_skill;
-    j["profile"]["reaction_speed"] = profile_.reaction_speed;
-    j["profile"]["strategic_thinking"] = profile_.strategic_thinking;
-    
-    // Save patterns
-    j["patterns"] = nlohmann::json::array();
-    for (const auto& pattern : detected_patterns_) {
-        nlohmann::json p;
-        p["type"] = pattern.pattern_type;
-        p["description"] = pattern.description;
-        p["confidence"] = pattern.confidence;
-        p["count"] = pattern.occurrence_count;
-        j["patterns"].push_back(p);
-    }
-    
-    // Save recent actions (last 20)
-    j["recent_actions"] = nlohmann::json::array();
-    int start = std::max(0, static_cast<int>(action_history_.size()) - 20);
-    for (size_t i = start; i < action_history_.size(); i++) {
-        nlohmann::json a;
-        a["type"] = action_history_[i].action_type;
-        a["target"] = action_history_[i].target;
-        a["success"] = action_history_[i].was_successful;
-        a["risk"] = action_history_[i].risk_level;
-        j["recent_actions"].push_back(a);
-    }
-    
-    return j;
+float PlayerBehaviorModeling::CalculateActionSimilarity(
+    const PlayerAction& a,
+    const PlayerAction& b
+) const {
+    float score = 0.0f;
+    if (a.action_type == b.action_type) score += 0.4f;
+    if (!a.target.empty() && a.target == b.target) score += 0.2f;
+    if (!a.context.empty() && a.context == b.context) score += 0.2f;
+    if (a.was_successful == b.was_successful) score += 0.1f;
+    score += (1.0f - std::min(1.0f, std::abs(a.risk_level - b.risk_level))) * 0.1f;
+    return std::max(0.0f, std::min(1.0f, score));
 }
 
-void PlayerBehaviorModeling::FromJSON(const nlohmann::json& j) {
-    if (j.contains("profile")) {
-        profile_.aggression = j["profile"].value("aggression", 0.5f);
-        profile_.caution = j["profile"].value("caution", 0.5f);
-        profile_.social_preference = j["profile"].value("social_preference", 0.5f);
-        profile_.exploration_tendency = j["profile"].value("exploration_tendency", 0.5f);
-        profile_.creativity = j["profile"].value("creativity", 0.5f);
-        profile_.estimated_skill = j["profile"].value("estimated_skill", 0.5f);
-        profile_.reaction_speed = j["profile"].value("reaction_speed", 0.5f);
-        profile_.strategic_thinking = j["profile"].value("strategic_thinking", 0.5f);
+std::vector<std::vector<int>> PlayerBehaviorModeling::ClusterActions() const {
+    std::vector<std::vector<int>> clusters;
+    if (action_history_.empty()) return clusters;
+
+    std::map<std::string, std::vector<int>> by_type;
+    for (int i = 0; i < static_cast<int>(action_history_.size()); ++i) {
+        by_type[action_history_[i].action_type].push_back(i);
     }
-    
-    // Load patterns
-    if (j.contains("patterns")) {
-        detected_patterns_.clear();
-        for (const auto& p : j["patterns"]) {
-            BehaviorPattern pattern;
-            pattern.pattern_type = p.value("type", "");
-            pattern.description = p.value("description", "");
-            pattern.confidence = p.value("confidence", 0.5f);
-            pattern.occurrence_count = p.value("count", 0);
-            detected_patterns_.push_back(pattern);
+
+    for (auto& [_, indices] : by_type) {
+        if (!indices.empty()) {
+            clusters.push_back(indices);
         }
     }
+    return clusters;
 }
 
-int64_t PlayerBehaviorModeling::GetCurrentTimestamp() const {
-    return std::chrono::duration_cast<std::chrono::seconds>(
-        std::chrono::system_clock::now().time_since_epoch()
-    ).count();
+BehaviorPattern PlayerBehaviorModeling::AnalyzeCluster(const std::vector<PlayerAction>& cluster) const {
+    BehaviorPattern pattern;
+    if (cluster.empty()) return pattern;
+
+    std::map<std::string, int> counts;
+    for (const auto& action : cluster) {
+        counts[action.action_type]++;
+    }
+
+    std::string dominant = cluster.front().action_type;
+    int max_count = 0;
+    for (const auto& [action_type, count] : counts) {
+        if (count > max_count) {
+            dominant = action_type;
+            max_count = count;
+        }
+    }
+
+    pattern.pattern_type = "cluster_" + dominant;
+    pattern.description = "Repeated preference for action type: " + dominant;
+    pattern.occurrence_count = max_count;
+    pattern.confidence = static_cast<float>(max_count) / static_cast<float>(cluster.size());
+    pattern.first_detected = cluster.front().timestamp;
+    pattern.last_seen = cluster.back().timestamp;
+    return pattern;
 }
 
-std::string PlayerBehaviorModeling::GenerateActionId() const {
-    std::stringstream ss;
-    ss << "action_" << GetCurrentTimestamp() << "_" << action_history_.size();
-    return ss.str();
+void PlayerBehaviorModeling::UpdatePlaystyleDimensions() {
+    if (action_history_.empty()) return;
+
+    const std::set<std::string> aggressive_actions = {"attack", "charge", "ambush", "intimidate"};
+    const std::set<std::string> cautious_actions = {"defend", "retreat", "hide", "observe"};
+    const std::set<std::string> social_actions = {"talk", "negotiate", "persuade", "trade"};
+    const std::set<std::string> exploration_actions = {"explore", "investigate", "search", "scout"};
+
+    float aggressive = 0.0f;
+    float cautious = 0.0f;
+    float social = 0.0f;
+    float exploration = 0.0f;
+    float risk_sum = 0.0f;
+
+    for (const auto& action : action_history_) {
+        risk_sum += action.risk_level;
+        if (aggressive_actions.count(action.action_type)) aggressive += 1.0f;
+        if (cautious_actions.count(action.action_type)) cautious += 1.0f;
+        if (social_actions.count(action.action_type)) social += 1.0f;
+        if (exploration_actions.count(action.action_type)) exploration += 1.0f;
+    }
+
+    const float total = static_cast<float>(action_history_.size());
+    const float avg_risk = risk_sum / std::max(1.0f, total);
+    profile_.aggression = std::max(0.0f, std::min(1.0f, (aggressive / total + avg_risk) * 0.5f));
+    profile_.caution = std::max(0.0f, std::min(1.0f, (cautious / total + (1.0f - avg_risk)) * 0.5f));
+    profile_.social_preference = std::max(0.0f, std::min(1.0f, social / total));
+    profile_.exploration_tendency = std::max(0.0f, std::min(1.0f, exploration / total));
+    profile_.creativity = std::max(0.0f, std::min(1.0f, CalculateEntropy()));
+}
+
+void PlayerBehaviorModeling::UpdateSkillAssessment() {
+    if (action_history_.empty()) return;
+
+    float success_count = 0.0f;
+    float risk_success = 0.0f;
+    int64_t total_delta = 0;
+    int delta_count = 0;
+
+    for (size_t i = 0; i < action_history_.size(); ++i) {
+        const auto& action = action_history_[i];
+        if (action.was_successful) {
+            success_count += 1.0f;
+            risk_success += action.risk_level;
+        }
+        if (i > 0) {
+            int64_t dt = action.timestamp - action_history_[i - 1].timestamp;
+            if (dt >= 0) {
+                total_delta += dt;
+                delta_count++;
+            }
+        }
+    }
+
+    const float total = static_cast<float>(action_history_.size());
+    const float success_rate = success_count / std::max(1.0f, total);
+    const float avg_success_risk = success_count > 0 ? risk_success / success_count : 0.0f;
+    const float avg_delta = delta_count > 0 ? static_cast<float>(total_delta) / delta_count : 30.0f;
+    const float reaction = 1.0f / (1.0f + avg_delta / 20.0f);
+
+    profile_.reaction_speed = std::max(0.0f, std::min(1.0f, reaction));
+    profile_.strategic_thinking = std::max(0.0f, std::min(1.0f, 0.6f * success_rate + 0.4f * avg_success_risk));
+    profile_.estimated_skill = std::max(
+        0.0f,
+        std::min(1.0f, 0.5f * success_rate + 0.3f * profile_.strategic_thinking + 0.2f * profile_.reaction_speed)
+    );
+}
+
+float PlayerBehaviorModeling::CalculateEntropy() const {
+    if (action_history_.empty()) return 0.0f;
+
+    std::map<std::string, int> counts;
+    for (const auto& action : action_history_) {
+        counts[action.action_type]++;
+    }
+
+    const float n = static_cast<float>(action_history_.size());
+    if (n <= 0.0f) return 0.0f;
+
+    float entropy = 0.0f;
+    for (const auto& [_, count] : counts) {
+        const float p = static_cast<float>(count) / n;
+        if (p > 1e-8f) {
+            entropy -= p * std::log2(p);
+        }
+    }
+
+    const float max_entropy = counts.size() > 1 ? std::log2(static_cast<float>(counts.size())) : 1.0f;
+    return entropy / max_entropy;
 }
 
 } // namespace NPCInference
