@@ -17,6 +17,33 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def resolve_kaggle_path(path_value: str) -> str:
+    """Resolve relative path to /kaggle/working when present."""
+    path = Path(path_value)
+    if path.is_absolute():
+        return str(path)
+    if Path("/kaggle").exists():
+        working_candidate = Path("/kaggle/working") / path
+        if working_candidate.exists():
+            return str(working_candidate)
+    return str(path)
+
+
+def validate_adapter_dir(adapter_path: str) -> str:
+    """Validate adapter path before PEFT tries remote Hub fallback."""
+    resolved = Path(resolve_kaggle_path(adapter_path))
+    if not resolved.exists():
+        raise FileNotFoundError(
+            f"Adapter path not found locally: {adapter_path} (resolved: {resolved})"
+        )
+    if not (resolved / "adapter_config.json").exists():
+        raise FileNotFoundError(
+            f"Missing adapter_config.json under {resolved}. "
+            "Expected a PEFT adapter directory."
+        )
+    return str(resolved)
+
+
 def merge_adapter(base_model: str, adapter_path: str, output_path: str):
     """Merge LoRA adapter with base model."""
     try:
@@ -35,8 +62,9 @@ def merge_adapter(base_model: str, adapter_path: str, output_path: str):
         trust_remote_code=True,
     )
     
-    logger.info(f"Loading adapter: {adapter_path}")
-    model = PeftModel.from_pretrained(model, adapter_path)
+    verified_adapter = validate_adapter_dir(adapter_path)
+    logger.info(f"Loading adapter: {verified_adapter}")
+    model = PeftModel.from_pretrained(model, verified_adapter)
     
     logger.info("Merging adapter weights...")
     model = model.merge_and_unload()
@@ -108,17 +136,20 @@ def main():
     parser.add_argument("--skip-merge", action="store_true", help="Skip merge, use existing merged model")
     args = parser.parse_args()
     
-    Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+    output_path = Path(resolve_kaggle_path(args.output))
+    merged_dir = Path(resolve_kaggle_path(args.merged_dir))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    merged_dir.mkdir(parents=True, exist_ok=True)
     
     if not args.skip_merge:
         logger.info("Merging adapter with base model...")
-        if not merge_adapter(args.base_model, args.adapter, args.merged_dir):
+        if not merge_adapter(args.base_model, args.adapter, str(merged_dir)):
             logger.error("❌ Merge failed!")
             return 1
         logger.info("✓ Merge completed successfully")
     
     logger.info("Converting to GGUF format...")
-    if not convert_to_gguf(args.merged_dir, args.output):
+    if not convert_to_gguf(str(merged_dir), str(output_path)):
         logger.error("❌ GGUF conversion failed!")
         logger.warning("Manual steps:")
         logger.info("1. Clone llama.cpp: git clone https://github.com/ggerganov/llama.cpp")
@@ -128,7 +159,7 @@ def main():
     logger.info("✓ GGUF conversion completed successfully")
     
     logger.info("Creating Ollama model...")
-    create_ollama_model(args.output)
+    create_ollama_model(str(output_path))
     logger.info("✓ All steps completed successfully!")
     return 0
 

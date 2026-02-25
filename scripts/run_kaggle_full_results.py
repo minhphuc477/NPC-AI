@@ -148,6 +148,11 @@ def main() -> None:
     parser.add_argument("--require-security-benchmark", action="store_true")
     parser.add_argument("--output-root", default="artifacts/final_checkout")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--allow-missing-ollama",
+        action="store_true",
+        help="If Ollama host/models are unavailable, continue in dry-run mode instead of failing.",
+    )
     args = parser.parse_args()
 
     if bool(args.require_security_benchmark) and not bool(args.run_security_benchmark):
@@ -159,7 +164,14 @@ def main() -> None:
             t = token.strip()
             if t:
                 model_checks.append(t)
-        ollama_ready(args.host, model_checks)
+        try:
+            ollama_ready(args.host, model_checks)
+        except RuntimeError as exc:
+            if not args.allow_missing_ollama:
+                raise
+            print(f"[warn] {exc}")
+            print("[warn] Falling back to dry-run mode (--allow-missing-ollama).")
+            args.dry_run = True
 
     maybe_generate_inputs(dry_run=bool(args.dry_run))
 
