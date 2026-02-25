@@ -44,6 +44,38 @@ def validate_adapter_dir(adapter_path: str) -> str:
     return str(resolved)
 
 
+def ensure_convert_script() -> Path | None:
+    """Locate or bootstrap llama.cpp conversion script."""
+    candidates = [
+        Path("llama.cpp/convert_hf_to_gguf.py"),
+        Path("/kaggle/working/llama.cpp/convert_hf_to_gguf.py"),
+        Path.home() / "llama.cpp/convert_hf_to_gguf.py",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    # Bootstrap on Kaggle/local when internet is enabled.
+    clone_dir = Path("/kaggle/working/llama.cpp") if Path("/kaggle").exists() else Path("llama.cpp")
+    if not clone_dir.exists():
+        logger.info("llama.cpp converter not found. Cloning llama.cpp into %s", clone_dir)
+        clone_cmd = [
+            "git",
+            "clone",
+            "--depth",
+            "1",
+            "https://github.com/ggerganov/llama.cpp",
+            str(clone_dir),
+        ]
+        proc = subprocess.run(clone_cmd, capture_output=True, text=True)
+        if proc.returncode != 0:
+            logger.warning("Failed to clone llama.cpp: %s", (proc.stderr or proc.stdout).strip())
+            return None
+
+    script = clone_dir / "convert_hf_to_gguf.py"
+    return script if script.exists() else None
+
+
 def merge_adapter(base_model: str, adapter_path: str, output_path: str):
     """Merge LoRA adapter with base model."""
     try:
@@ -83,11 +115,8 @@ def convert_to_gguf(model_path: str, output_gguf: str, quantization: str = "q4_k
     
     Requires llama.cpp convert tools.
     """
-    convert_script = Path("llama.cpp/convert_hf_to_gguf.py")
-    if not convert_script.exists():
-        convert_script = Path.home() / "llama.cpp/convert_hf_to_gguf.py"
-    
-    if not convert_script.exists():
+    convert_script = ensure_convert_script()
+    if not convert_script:
         logger.error("llama.cpp not found. Clone: git clone https://github.com/ggerganov/llama.cpp")
         logger.info("Then run: python convert_hf_to_gguf.py <model_path> --outtype f16 --outfile <output.gguf>")
         return False
