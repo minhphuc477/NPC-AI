@@ -169,8 +169,14 @@ target_link_libraries(npc_inference
 )
 
 if(WIN32)
-    target_compile_definitions(npc_inference PRIVATE NOMINMAX USEARCH_USE_FP16LIB=0)
+    target_compile_definitions(npc_inference PRIVATE NOMINMAX)
     target_link_libraries(npc_inference PRIVATE psapi)
+endif()
+
+# Disable optional fp16 header dependency from usearch plugins.
+# Kaggle/CI environments often do not provide fp16/fp16.h.
+if(NPC_USE_USEARCH)
+    target_compile_definitions(npc_inference PRIVATE USEARCH_USE_FP16LIB=0)
 endif()
 
 # Function to deploy runtime dependencies (DLLs)
