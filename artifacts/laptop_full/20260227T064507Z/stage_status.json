@@ -1,0 +1,100 @@
+{
+  "run_dir": "artifacts\\laptop_full\\20260227T064507Z",
+  "started_utc": "2026-02-27T06:45:07.601920+00:00",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "stages": {
+    "check_ollama": {
+      "status": "completed",
+      "updated_utc": "2026-02-27T06:45:07.639404+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "-c",
+        "print('ollama readiness check')"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T064507Z\\logs\\check_ollama.log",
+      "started_utc": "2026-02-27T06:45:07.603021+00:00",
+      "finished_utc": "2026-02-27T06:45:07.639389+00:00",
+      "returncode": 0
+    },
+    "publication": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:45:07.640658+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/run_publication_benchmark_suite.py",
+        "--host",
+        "http://127.0.0.1:11434",
+        "--candidate-model",
+        "elara-npc:latest",
+        "--baseline-model",
+        "phi3:mini",
+        "--repeats",
+        "1",
+        "--max-tokens",
+        "56",
+        "--temperature",
+        "0.2",
+        "--reranker-pairs",
+        "data/retrieval_reranker_pairs_wide.jsonl",
+        "--reranker-train-frac",
+        "0.85",
+        "--reranker-bm25-candidate-k",
+        "24",
+        "--run-security-benchmark",
+        "--run-security-spoofed-benchmark"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T064507Z\\logs\\publication.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:45:07.641618+00:00",
+          "finished_utc": "2026-02-27T06:46:22.075755+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T064507Z\\logs\\publication.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T06:46:22.077203+00:00",
+      "returncode": 0
+    },
+    "quality_gate": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:46:22.080346+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/proposal_quality_gate.py",
+        "--proposal-run",
+        "artifacts\\proposal\\20260225T080711Z",
+        "--publication-run",
+        "artifacts\\publication\\20260227T064507Z",
+        "--require-human-eval",
+        "--output-json",
+        "artifacts\\proposal\\20260225T080711Z\\quality_gate_report_final.json",
+        "--output-md",
+        "artifacts\\proposal\\20260225T080711Z\\quality_gate_report_final.md",
+        "--require-security-benchmark"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T064507Z\\logs\\quality_gate.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:46:22.081069+00:00",
+          "finished_utc": "2026-02-27T06:46:22.309237+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T064507Z\\logs\\quality_gate.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T06:46:22.310250+00:00",
+      "returncode": 0
+    }
+  },
+  "context": {
+    "ollama_available": true,
+    "proposal_run": "artifacts\\proposal\\20260225T080711Z",
+    "publication_run": "artifacts\\publication\\20260227T064507Z"
+  },
+  "finished_utc": "2026-02-27T06:46:22.311697+00:00"
+}

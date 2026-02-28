@@ -1,0 +1,345 @@
+{
+  "run_dir": "artifacts\\laptop_full\\20260227T065106Z",
+  "started_utc": "2026-02-27T06:51:06.705764+00:00",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "stages": {
+    "check_ollama": {
+      "status": "completed",
+      "updated_utc": "2026-02-27T06:51:06.721030+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "-c",
+        "print('ollama readiness check')"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\check_ollama.log",
+      "started_utc": "2026-02-27T06:51:06.707066+00:00",
+      "finished_utc": "2026-02-27T06:51:06.721007+00:00",
+      "returncode": 0
+    },
+    "generate_inputs": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:51:06.721863+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "-c",
+        "print('generate_inputs delegated')"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\generate_inputs.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:51:06.722660+00:00",
+          "finished_utc": "2026-02-27T06:51:06.777995+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\generate_inputs.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T06:51:06.778672+00:00",
+      "returncode": 0
+    },
+    "multirater": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:51:06.780186+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/run_llm_multirater_campaign.py",
+        "--run-dir",
+        "artifacts\\proposal\\20260225T080711Z",
+        "--host",
+        "http://127.0.0.1:11434",
+        "--annotators",
+        "phi3:mini|balanced|0.00,phi3:mini|balanced|0.05,phi3:mini|balanced|0.10",
+        "--arms",
+        "proposed_contextual_controlled,baseline_no_context,baseline_no_context_phi3_latest",
+        "--scenario-limit",
+        "36",
+        "--max-tokens",
+        "160",
+        "--timeout-s",
+        "120",
+        "--output-csv",
+        "artifacts\\proposal\\20260225T080711Z\\human_eval_llm_multirater_consistent.csv"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\multirater.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:51:06.781059+00:00",
+          "finished_utc": "2026-02-27T06:51:08.362119+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\multirater.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T06:51:08.363273+00:00",
+      "returncode": 0
+    },
+    "attach_human_eval": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:51:08.364007+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/attach_human_eval_to_run.py",
+        "--run-dir",
+        "artifacts\\proposal\\20260225T080711Z",
+        "--human-eval-file",
+        "artifacts\\proposal\\20260225T080711Z\\human_eval_llm_multirater_consistent.csv"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\attach_human_eval.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:51:08.365164+00:00",
+          "finished_utc": "2026-02-27T06:51:10.089194+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\attach_human_eval.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T06:51:10.090395+00:00",
+      "returncode": 0
+    },
+    "lexical": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:51:10.091611+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/run_lexical_diversity_benchmark.py",
+        "--run-dir",
+        "artifacts\\proposal\\20260225T080711Z"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\lexical.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:51:10.092583+00:00",
+          "finished_utc": "2026-02-27T06:51:18.703447+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\lexical.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T06:51:18.704203+00:00",
+      "returncode": 0
+    },
+    "publication": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:51:18.705007+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/run_publication_benchmark_suite.py",
+        "--host",
+        "http://127.0.0.1:11434",
+        "--candidate-model",
+        "elara-npc:latest",
+        "--baseline-model",
+        "phi3:mini",
+        "--repeats",
+        "1",
+        "--max-tokens",
+        "56",
+        "--temperature",
+        "0.2",
+        "--reranker-pairs",
+        "data/retrieval_reranker_pairs_wide.jsonl",
+        "--reranker-train-frac",
+        "0.85",
+        "--reranker-bm25-candidate-k",
+        "24",
+        "--run-security-benchmark",
+        "--run-security-spoofed-benchmark"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\publication.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:51:18.706315+00:00",
+          "finished_utc": "2026-02-27T06:52:29.910992+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\publication.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T06:52:29.911778+00:00",
+      "returncode": 0
+    },
+    "serving_matrix": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:52:29.914888+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/run_serving_efficiency_matrix.py",
+        "--host",
+        "http://127.0.0.1:11434",
+        "--models",
+        "elara-npc:latest,phi3:mini,phi3:latest",
+        "--candidate-model",
+        "elara-npc:latest",
+        "--prompts",
+        "data/serving_prompts_wide.jsonl",
+        "--serving-references",
+        "data/serving_references_wide.jsonl",
+        "--max-tokens",
+        "56",
+        "--temperature",
+        "0.2",
+        "--repeats",
+        "1"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\serving_matrix.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:52:29.915662+00:00",
+          "finished_utc": "2026-02-27T06:57:21.539736+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\serving_matrix.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T06:57:21.541386+00:00",
+      "returncode": 0
+    },
+    "external_profiles": {
+      "status": "completed",
+      "started_utc": "2026-02-27T06:57:21.545005+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/run_external_profile_suite.py",
+        "--profiles",
+        "core,wide",
+        "--host",
+        "http://127.0.0.1:11434",
+        "--candidate-model",
+        "elara-npc:latest",
+        "--baseline-model",
+        "phi3:mini",
+        "--repeats",
+        "1",
+        "--max-tokens",
+        "56",
+        "--temperature",
+        "0.2"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\external_profiles.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T06:57:21.546024+00:00",
+          "finished_utc": "2026-02-27T07:01:59.140850+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\external_profiles.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T07:01:59.142982+00:00",
+      "returncode": 0
+    },
+    "build_preference": {
+      "status": "completed",
+      "started_utc": "2026-02-27T07:01:59.149815+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/build_preference_dataset_from_eval.py",
+        "--run-dir",
+        "artifacts\\proposal\\20260225T080711Z",
+        "--human-eval-file",
+        "artifacts\\proposal\\20260225T080711Z\\human_eval_llm_multirater_consistent.csv",
+        "--target-arm",
+        "proposed_contextual_controlled",
+        "--baseline-arms",
+        "baseline_no_context,baseline_no_context_phi3_latest",
+        "--metric",
+        "overall_quality",
+        "--min-raters",
+        "2",
+        "--min-margin",
+        "0.25"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\build_preference.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T07:01:59.152443+00:00",
+          "finished_utc": "2026-02-27T07:01:59.290922+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\build_preference.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T07:01:59.294764+00:00",
+      "returncode": 0
+    },
+    "build_hard_negatives": {
+      "status": "completed",
+      "started_utc": "2026-02-27T07:01:59.298280+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/build_retrieval_hard_negative_set.py",
+        "--retrieval-gold",
+        "data/retrieval_gold_wide.jsonl",
+        "--retrieval-corpus",
+        "data/retrieval_corpus_wide.jsonl",
+        "--hard-negatives-per-query",
+        "10",
+        "--cross-domain-negatives-per-query",
+        "4"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\build_hard_negatives.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T07:01:59.305791+00:00",
+          "finished_utc": "2026-02-27T07:01:59.673976+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\build_hard_negatives.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T07:01:59.674999+00:00",
+      "returncode": 0
+    },
+    "quality_gate": {
+      "status": "completed",
+      "started_utc": "2026-02-27T07:01:59.677667+00:00",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "scripts/proposal_quality_gate.py",
+        "--proposal-run",
+        "artifacts\\proposal\\20260225T080711Z",
+        "--publication-run",
+        "artifacts\\publication\\20260227T065119Z",
+        "--require-human-eval",
+        "--output-json",
+        "artifacts\\proposal\\20260225T080711Z\\quality_gate_report_final.json",
+        "--output-md",
+        "artifacts\\proposal\\20260225T080711Z\\quality_gate_report_final.md",
+        "--require-security-benchmark"
+      ],
+      "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\quality_gate.attempt1.log",
+      "attempts": [
+        {
+          "attempt": 1,
+          "started_utc": "2026-02-27T07:01:59.678602+00:00",
+          "finished_utc": "2026-02-27T07:01:59.882535+00:00",
+          "returncode": 0,
+          "timed_out": false,
+          "log_path": "artifacts\\laptop_full\\20260227T065106Z\\logs\\quality_gate.attempt1.log"
+        }
+      ],
+      "finished_utc": "2026-02-27T07:01:59.884835+00:00",
+      "returncode": 0
+    }
+  },
+  "context": {
+    "ollama_available": true,
+    "proposal_run": "artifacts\\proposal\\20260225T080711Z",
+    "publication_run": "artifacts\\publication\\20260227T065119Z",
+    "serving_efficiency_run": "artifacts\\serving_efficiency\\20260227T065230Z",
+    "publication_profile_suite": "artifacts\\publication_profiles\\20260227T065721Z"
+  },
+  "finished_utc": "2026-02-27T07:01:59.887971+00:00"
+}

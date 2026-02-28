@@ -1,0 +1,23 @@
+{
+  "run_dir": "artifacts\\laptop_full\\20260227T064507Z",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "proposal_run": "artifacts\\proposal\\20260225T080711Z",
+  "publication_run": "artifacts\\publication\\20260227T064507Z",
+  "serving_efficiency_run": "",
+  "publication_profile_suite": "",
+  "human_eval_csv": "artifacts\\proposal\\20260225T080711Z\\human_eval_llm_multirater_consistent.csv",
+  "quality_gate_json": "artifacts\\proposal\\20260225T080711Z\\quality_gate_report_final.json",
+  "quality_gate_md": "artifacts\\proposal\\20260225T080711Z\\quality_gate_report_final.md",
+  "preference_dataset": "artifacts\\proposal\\20260225T080711Z\\preference_dataset.jsonl",
+  "retrieval_hard_negatives": "data/retrieval_hard_negatives_wide.jsonl",
+  "retrieval_reranker_pairs": "data/retrieval_reranker_pairs_wide.jsonl",
+  "skip_ablation_baselines": false,
+  "run_dpo": false,
+  "dpo_adapter": "",
+  "dpo_model_tag": "",
+  "stage_status": "artifacts\\laptop_full\\20260227T064507Z\\stage_status.json",
+  "dry_run": false,
+  "generated_utc": "2026-02-27T06:46:22.311046+00:00"
+}

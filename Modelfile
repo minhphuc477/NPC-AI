@@ -1,0 +1,7 @@
+FROM F:\NPC AI\elara_npc_dpo_f16.gguf
+PARAMETER temperature 0.7
+PARAMETER stop "[PLAYER]"
+PARAMETER stop "[INSTRUCTION]"
+PARAMETER stop "[CONTEXT]"
+PARAMETER stop "<|end|>"
+SYSTEM "You are an NPC. Always respond strictly in English as the [NPC] speaker. Do not repeat the prompt."

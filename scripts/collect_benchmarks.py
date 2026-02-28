@@ -87,7 +87,7 @@ class BenchmarkCollector:
             ("bench_engine", ["--runs", "100"]),
             ("bench_memory", ["--duration", "60"]),
             ("bench_retrieval", ["--samples", "100"]),
-            ("ablation_suite", []),
+            ("ablation_suite", ["--model-dir", "models/phi3_onnx_official/cpu_and_mobile/cpu-int4-rtn-block-32"]),
         ]
         
         for exe, args in benchmarks:

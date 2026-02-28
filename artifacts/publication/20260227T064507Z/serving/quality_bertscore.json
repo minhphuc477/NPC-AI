@@ -1,0 +1,99 @@
+{
+  "lang": "en",
+  "models": {
+    "elara-npc:latest": {
+      "aligned_request_count": 8,
+      "empty_prediction_count": 0,
+      "ok": true,
+      "bertscore_f1": {
+        "n": 8,
+        "mean": -0.05188412731513381,
+        "median": -0.036290040239691734,
+        "p95": 0.058152373880147906,
+        "ci95_low": -0.11285482917446643,
+        "ci95_high": 0.005364837625529613
+      },
+      "per_request": [
+        {
+          "index": 0,
+          "bertscore_f1": 0.011230550706386566
+        },
+        {
+          "index": 1,
+          "bertscore_f1": -0.11463778465986252
+        },
+        {
+          "index": 2,
+          "bertscore_f1": -0.20623034238815308
+        },
+        {
+          "index": 3,
+          "bertscore_f1": 0.07642848789691925
+        },
+        {
+          "index": 4,
+          "bertscore_f1": -0.052557915449142456
+        },
+        {
+          "index": 5,
+          "bertscore_f1": -0.020022165030241013
+        },
+        {
+          "index": 6,
+          "bertscore_f1": 0.024211019277572632
+        },
+        {
+          "index": 7,
+          "bertscore_f1": -0.13349486887454987
+        }
+      ]
+    },
+    "phi3:mini": {
+      "aligned_request_count": 8,
+      "empty_prediction_count": 0,
+      "ok": true,
+      "bertscore_f1": {
+        "n": 8,
+        "mean": 0.15125600318424404,
+        "median": 0.14774760603904724,
+        "p95": 0.2643773525953293,
+        "ci95_low": 0.09203295972547494,
+        "ci95_high": 0.2087810413155238
+      },
+      "per_request": [
+        {
+          "index": 0,
+          "bertscore_f1": 0.02691729925572872
+        },
+        {
+          "index": 1,
+          "bertscore_f1": 0.15904861688613892
+        },
+        {
+          "index": 2,
+          "bertscore_f1": 0.19797800481319427
+        },
+        {
+          "index": 3,
+          "bertscore_f1": 0.2649569511413574
+        },
+        {
+          "index": 4,
+          "bertscore_f1": 0.028068959712982178
+        },
+        {
+          "index": 5,
+          "bertscore_f1": 0.13333064317703247
+        },
+        {
+          "index": 6,
+          "bertscore_f1": 0.13644659519195557
+        },
+        {
+          "index": 7,
+          "bertscore_f1": 0.26330095529556274
+        }
+      ]
+    }
+  }
+}

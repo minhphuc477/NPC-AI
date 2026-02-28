@@ -1,0 +1,154 @@
+[
+  {
+    "config_name": "Baseline",
+    "enable_grammar": false,
+    "enable_graph": true,
+    "enable_hybrid": true,
+    "enable_planner": true,
+    "enable_rag": true,
+    "enable_reflection": true,
+    "enable_speculative": true,
+    "enable_truth_guard": true,
+    "results": {
+      "latency_p50_ms": 398.9687,
+      "latency_p95_ms": 398.9687,
+      "latency_p99_ms": 398.9687,
+      "memory_usage_mb": 1843.0,
+      "throughput_tokens_per_sec": 85.21971773725608,
+      "total_runs": 1
+    }
+  },
+  {
+    "config_name": "No_RAG",
+    "enable_grammar": false,
+    "enable_graph": true,
+    "enable_hybrid": true,
+    "enable_planner": true,
+    "enable_rag": false,
+    "enable_reflection": true,
+    "enable_speculative": true,
+    "enable_truth_guard": true,
+    "results": {
+      "latency_p50_ms": 429.5968,
+      "latency_p95_ms": 429.5968,
+      "latency_p99_ms": 429.5968,
+      "memory_usage_mb": 802.0,
+      "throughput_tokens_per_sec": 79.14397872609852,
+      "total_runs": 1
+    }
+  },
+  {
+    "config_name": "No_Graph",
+    "enable_grammar": false,
+    "enable_graph": false,
+    "enable_hybrid": true,
+    "enable_planner": true,
+    "enable_rag": true,
+    "enable_reflection": true,
+    "enable_speculative": true,
+    "enable_truth_guard": true,
+    "results": {
+      "latency_p50_ms": 353.7463,
+      "latency_p95_ms": 353.7463,
+      "latency_p99_ms": 353.7463,
+      "memory_usage_mb": 2276.0,
+      "throughput_tokens_per_sec": 96.1140794970859,
+      "total_runs": 1
+    }
+  },
+  {
+    "config_name": "No_Hybrid",
+    "enable_grammar": false,
+    "enable_graph": true,
+    "enable_hybrid": false,
+    "enable_planner": true,
+    "enable_rag": true,
+    "enable_reflection": true,
+    "enable_speculative": true,
+    "enable_truth_guard": true,
+    "results": {
+      "latency_p50_ms": 367.4788,
+      "latency_p95_ms": 367.4788,
+      "latency_p99_ms": 367.4788,
+      "memory_usage_mb": 2276.0,
+      "throughput_tokens_per_sec": 92.5223441461113,
+      "total_runs": 1
+    }
+  },
+  {
+    "config_name": "No_Speculative",
+    "enable_grammar": false,
+    "enable_graph": true,
+    "enable_hybrid": true,
+    "enable_planner": true,
+    "enable_rag": true,
+    "enable_reflection": true,
+    "enable_speculative": false,
+    "enable_truth_guard": true,
+    "results": {
+      "latency_p50_ms": 387.8116,
+      "latency_p95_ms": 387.8116,
+      "latency_p99_ms": 387.8116,
+      "memory_usage_mb": 2278.0,
+      "throughput_tokens_per_sec": 87.67143633661293,
+      "total_runs": 1
+    }
+  },
+  {
+    "config_name": "No_Reflection",
+    "enable_grammar": false,
+    "enable_graph": true,
+    "enable_hybrid": true,
+    "enable_planner": true,
+    "enable_rag": true,
+    "enable_reflection": false,
+    "enable_speculative": true,
+    "enable_truth_guard": true,
+    "results": {
+      "latency_p50_ms": 251.2774,
+      "latency_p95_ms": 251.2774,
+      "latency_p99_ms": 251.2774,
+      "memory_usage_mb": 2269.0,
+      "throughput_tokens_per_sec": 135.30862703928008,
+      "total_runs": 1
+    }
+  },
+  {
+    "config_name": "No_Planner",
+    "enable_grammar": false,
+    "enable_graph": true,
+    "enable_hybrid": true,
+    "enable_planner": false,
+    "enable_rag": true,
+    "enable_reflection": true,
+    "enable_speculative": true,
+    "enable_truth_guard": true,
+    "results": {
+      "latency_p50_ms": 366.933,
+      "latency_p95_ms": 366.933,
+      "latency_p99_ms": 366.933,
+      "memory_usage_mb": 2275.0,
+      "throughput_tokens_per_sec": 92.65996789604642,
+      "total_runs": 1
+    }
+  },
+  {
+    "config_name": "No_TruthGuard",
+    "enable_grammar": false,
+    "enable_graph": true,
+    "enable_hybrid": true,
+    "enable_planner": true,
+    "enable_rag": true,
+    "enable_reflection": true,
+    "enable_speculative": true,
+    "enable_truth_guard": false,
+    "results": {
+      "latency_p50_ms": 336.7088,
+      "latency_p95_ms": 336.7088,
+      "latency_p99_ms": 336.7088,
+      "memory_usage_mb": 2278.0,
+      "throughput_tokens_per_sec": 100.97746183051943,
+      "total_runs": 1
+    }
+  }
+]

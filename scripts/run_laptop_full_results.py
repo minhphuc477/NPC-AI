@@ -7,6 +7,7 @@ import argparse
 import json
 import subprocess
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Sequence
@@ -120,6 +121,33 @@ def stage_enabled(stage: str, only: set[str]) -> bool:
     return "all" in only or stage in only
 
 
+def update_stage_state(
+    *,
+    state: Dict[str, Any],
+    state_path: Path,
+    name: str,
+    status: str,
+    command: List[str] | None = None,
+    log_path: Path | None = None,
+    extra: Dict[str, Any] | None = None,
+) -> None:
+    stages = state.setdefault("stages", {})
+    payload: Dict[str, Any] = {
+        "status": status,
+        "updated_utc": utc_iso(),
+    }
+    if command is not None:
+        payload["command"] = command
+    if log_path is not None:
+        payload["log_path"] = str(log_path)
+    if extra:
+        payload.update(extra)
+    previous = stages.get(name, {})
+    previous.update(payload)
+    stages[name] = previous
+    write_json(state_path, state)
+
+
 def run_stage(
     *,
     name: str,
@@ -129,6 +157,9 @@ def run_stage(
     logs_dir: Path,
     dry_run: bool,
     skip_if_completed: bool = True,
+    timeout_s: int = 0,
+    retries: int = 1,
+    retry_delay_s: int = 3,
 ) -> None:
     stages = state.setdefault("stages", {})
     current = stages.get(name, {})
@@ -136,41 +167,84 @@ def run_stage(
         print(f"[skip] {name} already completed")
         return
 
-    log_path = logs_dir / f"{name}.log"
+    if retries < 1:
+        retries = 1
+
+    stage_log_path = logs_dir / f"{name}.log"
     stages[name] = {
         "status": "running",
         "started_utc": utc_iso(),
         "command": command,
-        "log_path": str(log_path),
+        "log_path": str(stage_log_path),
+        "attempts": [],
     }
     write_json(state_path, state)
 
     printable = " ".join(command)
-    print(f"[stage:{name}] {printable}")
+    print(f"[stage:{name}] {printable} (retries={retries}, timeout_s={timeout_s})")
     if dry_run:
         stages[name].update({"status": "completed", "finished_utc": utc_iso(), "returncode": 0, "dry_run": True})
         write_json(state_path, state)
         return
 
-    proc = subprocess.run(
-        command,
-        check=False,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-    )
-    log_path.write_text((proc.stdout or "") + "\n\n[stderr]\n" + (proc.stderr or ""), encoding="utf-8")
+    last_rc = 1
+    last_log = stage_log_path
+    for attempt in range(1, retries + 1):
+        attempt_log = logs_dir / f"{name}.attempt{attempt}.log"
+        last_log = attempt_log
+        attempt_started = utc_iso()
+        try:
+            proc = subprocess.run(
+                command,
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=(timeout_s if timeout_s > 0 else None),
+            )
+            stdout = proc.stdout or ""
+            stderr = proc.stderr or ""
+            last_rc = proc.returncode
+            timed_out = False
+        except subprocess.TimeoutExpired as exc:
+            stdout = (exc.stdout or "") if isinstance(exc.stdout, str) else ""
+            stderr = (exc.stderr or "") if isinstance(exc.stderr, str) else ""
+            stderr += f"\n[timeout] stage exceeded timeout_s={timeout_s}"
+            last_rc = 124
+            timed_out = True
+
+        attempt_log.write_text(stdout + "\n\n[stderr]\n" + stderr, encoding="utf-8")
+        stages[name].setdefault("attempts", []).append(
+            {
+                "attempt": attempt,
+                "started_utc": attempt_started,
+                "finished_utc": utc_iso(),
+                "returncode": last_rc,
+                "timed_out": timed_out,
+                "log_path": str(attempt_log),
+            }
+        )
+        write_json(state_path, state)
+
+        if last_rc == 0:
+            break
+
+        if attempt < retries:
+            print(f"[stage:{name}] attempt {attempt}/{retries} failed (rc={last_rc}), retrying in {retry_delay_s}s...")
+            time.sleep(max(0, int(retry_delay_s)))
+
     stages[name].update(
         {
             "finished_utc": utc_iso(),
-            "returncode": proc.returncode,
-            "status": "completed" if proc.returncode == 0 else "failed",
+            "returncode": last_rc,
+            "status": "completed" if last_rc == 0 else "failed",
+            "log_path": str(last_log),
         }
     )
     write_json(state_path, state)
-    if proc.returncode != 0:
-        raise RuntimeError(f"Stage '{name}' failed ({proc.returncode}). Log: {log_path}")
+    if last_rc != 0:
+        raise RuntimeError(f"Stage '{name}' failed ({last_rc}). Log: {last_log}")
 
 
 def main() -> None:
@@ -196,6 +270,14 @@ def main() -> None:
     parser.add_argument("--skip-ablation-baselines", action="store_true")
     parser.add_argument("--run-security-benchmark", action="store_true")
     parser.add_argument("--require-security-benchmark", action="store_true")
+    parser.add_argument(
+        "--allow-missing-ollama",
+        action="store_true",
+        help="If Ollama is unavailable, continue and skip Ollama-dependent stages where possible.",
+    )
+    parser.add_argument("--stage-timeout-s", type=int, default=0, help="Per-stage subprocess timeout in seconds; 0 disables timeout.")
+    parser.add_argument("--stage-retries", type=int, default=2, help="Retries per stage on non-zero return codes/timeouts.")
+    parser.add_argument("--stage-retry-delay-s", type=int, default=4, help="Delay between stage retries.")
     parser.add_argument("--run-dpo", action="store_true", help="Run DPO training stage.")
     parser.add_argument("--dpo-base-model", default="microsoft/Phi-3-mini-4k-instruct")
     parser.add_argument("--dpo-output", default="", help="DPO adapter output dir.")
@@ -244,20 +326,62 @@ def main() -> None:
         write_json(state_path, state)
 
     context = state.setdefault("context", {})
+    context.setdefault("ollama_available", True)
 
     if stage_enabled("check_ollama", selected):
-        run_stage(
-            name="check_ollama",
-            command=[sys.executable, "-c", "print('ollama check delegated')"],
-            state=state,
-            state_path=state_path,
-            logs_dir=logs_dir,
-            dry_run=args.dry_run,
-        )
-        if not args.dry_run:
+        check_cmd = [sys.executable, "-c", "print('ollama readiness check')"]
+        if args.dry_run:
+            run_stage(
+                name="check_ollama",
+                command=check_cmd,
+                state=state,
+                state_path=state_path,
+                logs_dir=logs_dir,
+                dry_run=True,
+                timeout_s=int(args.stage_timeout_s),
+                retries=int(args.stage_retries),
+                retry_delay_s=int(args.stage_retry_delay_s),
+            )
+        else:
+            log_path = logs_dir / "check_ollama.log"
+            update_stage_state(
+                state=state,
+                state_path=state_path,
+                name="check_ollama",
+                status="running",
+                command=check_cmd,
+                log_path=log_path,
+                extra={"started_utc": utc_iso()},
+            )
             model_checks = [str(args.candidate_model), str(args.baseline_model)]
             model_checks.extend([x.strip() for x in str(args.baseline_models).split(",") if x.strip()])
-            ollama_ready(args.host, model_checks)
+            try:
+                ollama_ready(args.host, model_checks)
+                log_path.write_text(f"Ollama OK at {args.host}\nmodels={model_checks}\n", encoding="utf-8")
+                update_stage_state(
+                    state=state,
+                    state_path=state_path,
+                    name="check_ollama",
+                    status="completed",
+                    command=check_cmd,
+                    log_path=log_path,
+                    extra={"finished_utc": utc_iso(), "returncode": 0},
+                )
+                context["ollama_available"] = True
+            except Exception as exc:
+                log_path.write_text(f"Ollama check failed at {args.host}\n{exc}\n", encoding="utf-8")
+                update_stage_state(
+                    state=state,
+                    state_path=state_path,
+                    name="check_ollama",
+                    status="failed",
+                    command=check_cmd,
+                    log_path=log_path,
+                    extra={"finished_utc": utc_iso(), "returncode": 1, "error": str(exc)},
+                )
+                context["ollama_available"] = False
+                if not args.allow_missing_ollama:
+                    raise
 
     if stage_enabled("generate_inputs", selected):
         run_stage(
@@ -267,6 +391,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
         maybe_generate_inputs(dry_run=args.dry_run)
 
@@ -274,6 +401,8 @@ def main() -> None:
     if proposal_token:
         context["proposal_run"] = str(resolve_run_path(proposal_token, Path("artifacts/proposal")))
     elif stage_enabled("proposal_eval", selected):
+        if not context.get("ollama_available", True):
+            raise RuntimeError("proposal_eval requires Ollama. Use --proposal-run to reuse an existing run.")
         run_stage(
             name="proposal_eval",
             command=[
@@ -306,6 +435,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
         if not args.dry_run:
             context["proposal_run"] = str(latest_subdir(Path("artifacts/proposal")))
@@ -316,6 +448,8 @@ def main() -> None:
 
     human_csv = proposal_run / "human_eval_llm_multirater_consistent.csv"
     if stage_enabled("multirater", selected):
+        if not context.get("ollama_available", True):
+            raise RuntimeError("multirater requires Ollama.")
         run_stage(
             name="multirater",
             command=[
@@ -342,6 +476,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
 
     if stage_enabled("attach_human_eval", selected):
@@ -359,6 +496,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
 
     if stage_enabled("lexical", selected):
@@ -369,12 +509,17 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
 
     publication_token = str(args.publication_run).strip()
     if publication_token:
         context["publication_run"] = str(resolve_run_path(publication_token, Path("artifacts/publication")))
     elif stage_enabled("publication", selected):
+        if not context.get("ollama_available", True):
+            raise RuntimeError("publication stage requires Ollama. Use --publication-run to reuse an existing run.")
         pub_cmd = [
             sys.executable,
             "scripts/run_publication_benchmark_suite.py",
@@ -408,6 +553,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
         if not args.dry_run:
             context["publication_run"] = str(latest_subdir(Path("artifacts/publication")))
@@ -417,6 +565,8 @@ def main() -> None:
     publication_run = Path(context["publication_run"])
 
     if stage_enabled("serving_matrix", selected):
+        if not context.get("ollama_available", True):
+            raise RuntimeError("serving_matrix requires Ollama.")
         run_stage(
             name="serving_matrix",
             command=[
@@ -443,12 +593,17 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
         if not args.dry_run:
             context["serving_efficiency_run"] = str(latest_subdir(Path("artifacts/serving_efficiency")))
             write_json(state_path, state)
 
     if stage_enabled("external_profiles", selected):
+        if not context.get("ollama_available", True):
+            raise RuntimeError("external_profiles requires Ollama.")
         run_stage(
             name="external_profiles",
             command=[
@@ -473,6 +628,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
         if not args.dry_run:
             context["publication_profile_suite"] = str(latest_subdir(Path("artifacts/publication_profiles")))
@@ -503,6 +661,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
 
     if stage_enabled("build_hard_negatives", selected):
@@ -524,6 +685,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
 
     dpo_output = Path(args.dpo_output) if str(args.dpo_output).strip() else Path("outputs") / f"dpo_adapter_{run_dir.name}"
@@ -560,6 +724,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
         context["dpo_adapter"] = str(dpo_output)
         write_json(state_path, state)
@@ -579,6 +746,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
         context["dpo_model_tag"] = str(args.dpo_model_tag)
         write_json(state_path, state)
@@ -606,6 +776,9 @@ def main() -> None:
             state_path=state_path,
             logs_dir=logs_dir,
             dry_run=args.dry_run,
+            timeout_s=int(args.stage_timeout_s),
+            retries=int(args.stage_retries),
+            retry_delay_s=int(args.stage_retry_delay_s),
         )
 
     manifest = {
@@ -642,4 +815,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

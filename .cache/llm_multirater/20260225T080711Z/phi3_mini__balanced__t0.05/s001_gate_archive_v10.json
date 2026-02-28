@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "4",
+      "notes": "proposed_contextual_controlled<TAB>4<TAB>5<TAB>3<TAB>4<TAB>The response shows awareness of the guard's role and protocol but lacks naturalness in tone.<br>baseline_no_context<TAB>2<TAB>3<TAB>4<TAB>3<TAB>A standard, impersonal reply that misses context relevance to the scenario.<br>baseline_no_context_phi3_latest<TAB>5<TAB>5<TAB>5<TAB>5<TAB>Perfectly consistent with persona and naturalness but lack"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "1",
+      "persona_consistency": "2",
+      "naturalness": "3",
+      "overall_quality": "2.5",
+      "notes": "Response was relevant but lacked the persona's strict and suspicious nature, which could have added tension to the interaction."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "ab5",
+      "persona_consistency": "ab4",
+      "naturalness": "ab4",
+      "overall_quality": "ab4.5",
+      "notes": "the response is relevant, consistent with the persona and natural for a guard at an inner checkpoint"
+    }
+  ]
+}
