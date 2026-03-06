@@ -56,24 +56,95 @@ def main() -> None:
     parser.add_argument("--candidate-model", default="elara-npc:latest")
     parser.add_argument("--baseline-model", default="phi3:mini")
     parser.add_argument("--baseline-models", default="")
+    parser.add_argument("--skip-external-baselines", action="store_true")
     parser.add_argument("--scenarios", default="data/proposal_eval_scenarios_large.jsonl")
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--max-tokens", type=int, default=96)
     parser.add_argument("--repeats", type=int, default=1)
+    parser.add_argument("--min-template-signature-ratio", type=float, default=0.0)
+    parser.add_argument("--min-effective-source-n", type=float, default=0.0)
+    parser.add_argument("--enforce-scenario-diversity", action="store_true")
     parser.add_argument("--seed", type=int, default=19)
     parser.add_argument("--timeout-s", type=int, default=180)
+    parser.add_argument(
+        "--min-arm-success-rate",
+        type=float,
+        default=0.90,
+        help="Minimum fraction of successful API calls required per arm.",
+    )
+    parser.add_argument("--preflight-operational-gate", action="store_true")
+    parser.add_argument("--preflight-gate-arm", default="proposed_contextual_controlled")
+    parser.add_argument("--preflight-max-fallback-rate", type=float, default=0.45)
+    parser.add_argument("--preflight-max-retry-rate", type=float, default=0.75)
+    parser.add_argument("--preflight-min-first-pass-accept-rate", type=float, default=0.25)
     parser.add_argument("--bertscore-lang", default="en")
     parser.add_argument("--bertscore-model-type", default="roberta-large")
     parser.add_argument("--bertscore-batch-size", type=int, default=16)
     parser.add_argument("--bertscore-cache-dir", default="")
-    parser.add_argument("--control-min-context-coverage", type=float, default=0.35)
-    parser.add_argument("--control-min-persona-coverage", type=float, default=0.20)
+    parser.add_argument("--disable-bertscore", action="store_true")
+    parser.add_argument("--control-min-context-coverage", type=float, default=0.33)
+    parser.add_argument("--control-min-persona-coverage", type=float, default=0.18)
+    parser.add_argument("--control-min-response-tokens", type=int, default=8)
     parser.add_argument("--control-rewrite-max-tokens", type=int, default=96)
     parser.add_argument("--control-rewrite-candidates", type=int, default=3)
     parser.add_argument("--control-rewrite-temperature-step", type=float, default=0.15)
     parser.add_argument("--control-rewrite-temperature", type=float, default=0.2)
+    parser.add_argument("--control-rewrite-budget-ms", type=float, default=0.0)
+    parser.add_argument("--control-rewrite-budget-multiplier", type=float, default=0.0)
+    parser.add_argument("--control-relaxed-context-coverage", type=float, default=0.18)
+    parser.add_argument("--control-relaxed-persona-coverage", type=float, default=0.09)
+    parser.add_argument("--control-relaxed-candidate-score", type=float, default=0.44)
+    parser.add_argument("--control-min-rewrite-gain", type=float, default=0.015)
+    parser.add_argument("--control-early-stop-score", type=float, default=0.70)
+    parser.add_argument("--control-adaptive-candidate-score", type=float, default=0.38)
+    parser.add_argument("--control-adaptive-context-coverage", type=float, default=0.14)
+    parser.add_argument("--control-adaptive-persona-coverage", type=float, default=0.10)
+    parser.add_argument("--control-adaptive-high-score", type=float, default=0.53)
+    parser.add_argument("--control-adaptive-mid-score", type=float, default=0.40)
+    parser.add_argument("--control-adaptive-high-rewrites", type=int, default=1)
+    parser.add_argument("--control-adaptive-mid-rewrites", type=int, default=2)
+    parser.add_argument("--control-adaptive-low-rewrites", type=int, default=3)
+    parser.add_argument("--control-low-confidence-retry-min-score-gain", type=float, default=0.01)
+    parser.add_argument("--control-low-confidence-retry-min-coverage-gain", type=float, default=0.02)
+    parser.add_argument("--disable-control-relaxed-acceptance", action="store_true")
+    parser.add_argument("--disable-control-adaptive-acceptance", action="store_true")
+    parser.add_argument("--disable-control-behavior-adaptation", action="store_true")
+    parser.add_argument("--enable-control-intent-risk-adaptation", action="store_true")
+    parser.add_argument("--enable-control-latency-adaptation", action="store_true")
+    parser.add_argument("--control-latency-relax-start-pressure", type=float, default=0.55)
+    parser.add_argument("--control-latency-relax-max-delta", type=float, default=0.12)
+    parser.add_argument("--enable-control-intent-focused-context", action="store_true")
+    parser.add_argument("--control-intent-focus-min-keep", type=int, default=3)
+    parser.add_argument("--control-intent-focus-keep-ratio-low", type=float, default=0.45)
+    parser.add_argument("--control-intent-focus-keep-ratio-medium", type=float, default=0.65)
+    parser.add_argument("--control-intent-focus-keep-ratio-high", type=float, default=1.0)
+    parser.add_argument("--control-intent-focus-min-relevance", type=float, default=0.20)
+    parser.add_argument("--enable-control-near-pass", action="store_true")
+    parser.add_argument("--control-near-pass-max-context-gap", type=float, default=0.05)
+    parser.add_argument("--control-near-pass-max-persona-gap", type=float, default=0.04)
+    parser.add_argument("--control-near-pass-score-floor", type=float, default=0.34)
+    parser.add_argument("--disable-control-near-pass-block-high-risk", action="store_true")
+    parser.add_argument("--disable-control-early-stop", action="store_true")
+    parser.add_argument("--disable-control-low-confidence-retry-gain", action="store_true")
     parser.add_argument("--disable-control-rewrite", action="store_true")
     parser.add_argument("--disable-control-best-effort-rewrite", action="store_true")
+    parser.add_argument(
+        "--control-alt-profile",
+        choices=[
+            "none",
+            "runtime_optimized",
+            "quality_optimized",
+            "risk_latency_aware",
+            "hybrid_balanced",
+            "intent_focus_adaptive",
+            "blend_balanced",
+            "custom",
+        ],
+        default="none",
+    )
+    parser.add_argument("--control-alt-arm-id", default="proposed_contextual_controlled_alt")
+    parser.add_argument("--control-alt-overrides-file", default="")
+    parser.add_argument("--control-alt-overrides-json", default="")
     parser.add_argument("--target-arm", default="proposed_contextual_controlled")
     parser.add_argument("--slice-keys", default="persona_archetype,conflict_type,location_type,behavior_state")
     parser.add_argument("--human-eval-file", default="")
@@ -156,10 +227,24 @@ def main() -> None:
             str(args.max_tokens),
             "--repeats",
             str(args.repeats),
+            "--min-template-signature-ratio",
+            str(args.min_template_signature_ratio),
+            "--min-effective-source-n",
+            str(args.min_effective_source_n),
             "--seed",
             str(args.seed),
             "--timeout-s",
             str(args.timeout_s),
+            "--min-arm-success-rate",
+            str(args.min_arm_success_rate),
+            "--preflight-gate-arm",
+            str(args.preflight_gate_arm),
+            "--preflight-max-fallback-rate",
+            str(args.preflight_max_fallback_rate),
+            "--preflight-max-retry-rate",
+            str(args.preflight_max_retry_rate),
+            "--preflight-min-first-pass-accept-rate",
+            str(args.preflight_min_first_pass_accept_rate),
             "--bertscore-lang",
             str(args.bertscore_lang),
             "--bertscore-model-type",
@@ -172,6 +257,8 @@ def main() -> None:
             str(args.control_min_context_coverage),
             "--control-min-persona-coverage",
             str(args.control_min_persona_coverage),
+            "--control-min-response-tokens",
+            str(args.control_min_response_tokens),
             "--control-rewrite-max-tokens",
             str(args.control_rewrite_max_tokens),
             "--control-rewrite-candidates",
@@ -180,6 +267,68 @@ def main() -> None:
             str(args.control_rewrite_temperature_step),
             "--control-rewrite-temperature",
             str(args.control_rewrite_temperature),
+            "--control-rewrite-budget-ms",
+            str(args.control_rewrite_budget_ms),
+            "--control-rewrite-budget-multiplier",
+            str(args.control_rewrite_budget_multiplier),
+            "--control-relaxed-context-coverage",
+            str(args.control_relaxed_context_coverage),
+            "--control-relaxed-persona-coverage",
+            str(args.control_relaxed_persona_coverage),
+            "--control-relaxed-candidate-score",
+            str(args.control_relaxed_candidate_score),
+            "--control-min-rewrite-gain",
+            str(args.control_min_rewrite_gain),
+            "--control-early-stop-score",
+            str(args.control_early_stop_score),
+            "--control-adaptive-candidate-score",
+            str(args.control_adaptive_candidate_score),
+            "--control-adaptive-context-coverage",
+            str(args.control_adaptive_context_coverage),
+            "--control-adaptive-persona-coverage",
+            str(args.control_adaptive_persona_coverage),
+            "--control-adaptive-high-score",
+            str(args.control_adaptive_high_score),
+            "--control-adaptive-mid-score",
+            str(args.control_adaptive_mid_score),
+            "--control-adaptive-high-rewrites",
+            str(args.control_adaptive_high_rewrites),
+            "--control-adaptive-mid-rewrites",
+            str(args.control_adaptive_mid_rewrites),
+            "--control-adaptive-low-rewrites",
+            str(args.control_adaptive_low_rewrites),
+            "--control-low-confidence-retry-min-score-gain",
+            str(args.control_low_confidence_retry_min_score_gain),
+            "--control-low-confidence-retry-min-coverage-gain",
+            str(args.control_low_confidence_retry_min_coverage_gain),
+            "--control-latency-relax-start-pressure",
+            str(args.control_latency_relax_start_pressure),
+            "--control-latency-relax-max-delta",
+            str(args.control_latency_relax_max_delta),
+            "--control-intent-focus-min-keep",
+            str(args.control_intent_focus_min_keep),
+            "--control-intent-focus-keep-ratio-low",
+            str(args.control_intent_focus_keep_ratio_low),
+            "--control-intent-focus-keep-ratio-medium",
+            str(args.control_intent_focus_keep_ratio_medium),
+            "--control-intent-focus-keep-ratio-high",
+            str(args.control_intent_focus_keep_ratio_high),
+            "--control-intent-focus-min-relevance",
+            str(args.control_intent_focus_min_relevance),
+            "--control-near-pass-max-context-gap",
+            str(args.control_near_pass_max_context_gap),
+            "--control-near-pass-max-persona-gap",
+            str(args.control_near_pass_max_persona_gap),
+            "--control-near-pass-score-floor",
+            str(args.control_near_pass_score_floor),
+            "--control-alt-profile",
+            str(args.control_alt_profile),
+            "--control-alt-arm-id",
+            str(args.control_alt_arm_id),
+            "--control-alt-overrides-file",
+            str(args.control_alt_overrides_file),
+            "--control-alt-overrides-json",
+            str(args.control_alt_overrides_json),
             "--target-arm",
             str(args.target_arm),
             "--slice-keys",
@@ -194,6 +343,40 @@ def main() -> None:
             str(batch_runs_root),
         ]
         maybe_append(command, "--disable-control-rewrite", bool(args.disable_control_rewrite))
+        maybe_append(command, "--skip-external-baselines", bool(args.skip_external_baselines))
+        maybe_append(command, "--disable-bertscore", bool(args.disable_bertscore))
+        maybe_append(command, "--disable-control-relaxed-acceptance", bool(args.disable_control_relaxed_acceptance))
+        maybe_append(command, "--disable-control-adaptive-acceptance", bool(args.disable_control_adaptive_acceptance))
+        maybe_append(command, "--disable-control-behavior-adaptation", bool(args.disable_control_behavior_adaptation))
+        maybe_append(
+            command,
+            "--enable-control-intent-risk-adaptation",
+            bool(args.enable_control_intent_risk_adaptation),
+        )
+        maybe_append(
+            command,
+            "--enable-control-latency-adaptation",
+            bool(args.enable_control_latency_adaptation),
+        )
+        maybe_append(
+            command,
+            "--enable-control-intent-focused-context",
+            bool(args.enable_control_intent_focused_context),
+        )
+        maybe_append(command, "--enable-control-near-pass", bool(args.enable_control_near_pass))
+        maybe_append(
+            command,
+            "--disable-control-near-pass-block-high-risk",
+            bool(args.disable_control_near_pass_block_high_risk),
+        )
+        maybe_append(command, "--disable-control-early-stop", bool(args.disable_control_early_stop))
+        maybe_append(
+            command,
+            "--disable-control-low-confidence-retry-gain",
+            bool(args.disable_control_low_confidence_retry_gain),
+        )
+        maybe_append(command, "--enforce-scenario-diversity", bool(args.enforce_scenario_diversity))
+        maybe_append(command, "--preflight-operational-gate", bool(args.preflight_operational_gate))
         maybe_append(
             command,
             "--disable-control-best-effort-rewrite",
@@ -248,6 +431,7 @@ def main() -> None:
             model=str(item.get("model", "")),
             include_dynamic_context=bool(item.get("include_dynamic_context", False)),
             use_response_control=bool(item.get("use_response_control", False)),
+            control_profile=str(item.get("control_profile", "none")),
         )
         for item in merged_config.get("arms", [])
     ]
@@ -292,6 +476,7 @@ def main() -> None:
 
     metric_list = comparison_plan.get("metrics", evalmod.metric_names(include_bertscore=include_bertscore))
     comparisons = comparison_plan.get("comparisons", [])
+    scenarios_by_id = {str(row.get("scenario_id", "")): row for row in all_scenarios}
     deltas: Dict[str, Any] = {}
     paired_deltas: Dict[str, Any] = {}
     win_rates: Dict[str, Any] = {}
@@ -313,6 +498,7 @@ def main() -> None:
             baseline_arm,
             seed=int(args.seed) + 5001 + 997 * (comp_idx + 1),
             metrics=metric_list,
+            scenarios_by_id=scenarios_by_id,
         )
         win_rates[comp_name] = evalmod.paired_metric_win_rates(
             all_scores,
@@ -327,7 +513,8 @@ def main() -> None:
     write_json(final_run_dir / "win_rates.json", win_rates)
     write_json(final_run_dir / "comparison_plan.json", comparison_plan)
 
-    scenarios_by_id = {str(row.get("scenario_id", "")): row for row in all_scenarios}
+    scenario_dependence = evalmod.analyze_scenario_dependence(scenarios_by_id)
+    write_json(final_run_dir / "scenario_dependence.json", scenario_dependence)
     slice_summary = evalmod.summarize_scores_by_slice(
         scored_by_arm=all_scores,
         scenarios_by_id=scenarios_by_id,
@@ -341,6 +528,11 @@ def main() -> None:
     for arm_id in arm_ids:
         error_analysis[arm_id] = evalmod.analyze_errors(all_scores.get(arm_id, []))
     write_json(final_run_dir / "error_analysis.json", error_analysis)
+    operational_metrics = evalmod.summarize_operational_metrics(
+        responses_by_arm=all_responses,
+        scenarios_by_id=scenarios_by_id,
+    )
+    write_json(final_run_dir / "operational_metrics.json", operational_metrics)
 
     human_eval_summary = None
     human_eval_file = str(args.human_eval_file).strip()
@@ -389,6 +581,8 @@ def main() -> None:
         win_rates=win_rates,
         slice_summary=slice_summary,
         human_eval=human_eval_summary,
+        operational_metrics=operational_metrics,
+        scenario_dependence=scenario_dependence,
     )
 
     if args.quality_gate:
@@ -430,6 +624,8 @@ def main() -> None:
     print(f"  - {final_run_dir / 'paired_delta_significance.json'}")
     print(f"  - {final_run_dir / 'win_rates.json'}")
     print(f"  - {final_run_dir / 'slice_summary.json'}")
+    print(f"  - {final_run_dir / 'operational_metrics.json'}")
+    print(f"  - {final_run_dir / 'scenario_dependence.json'}")
     print(f"  - {final_run_dir / 'comparison_plan.json'}")
     print(f"  - {final_run_dir / 'batch_manifest.json'}")
     if human_eval_summary is not None:

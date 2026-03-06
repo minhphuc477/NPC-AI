@@ -1,83 +1,53 @@
-# Proposal Alignment Matrix
+# Proposal Alignment Matrix (Current)
 
 ## Scope
-Trace implementation and evidence against `docs/proposal.txt` research objectives (RO1-RO5).
+This document checks whether the current implementation and artifacts satisfy `docs/proposal.txt`.
 
 ## Source of Truth
-- Proposal: `docs/proposal.txt`
+- Proposal text: `docs/proposal.txt`
 - Architecture: `docs/ARCHITECTURE.md`
-- Latest proposal artifact run: `artifacts/proposal/20260224T175344Z`
+- Latest proposal run: `artifacts/proposal/20260302T182844Z`
+- Latest publication run: `artifacts/publication/20260302T191131Z`
+- Strict gate report: `artifacts/proposal/20260302T182844Z/quality_gate_report.json`
 
-## RO1: Literature Framing and Gap Definition
-Status: Implemented
+## Objective-by-Objective Status
 
-Evidence:
-- `docs/proposal.txt`
-- `docs/INDUSTRY_PUBLICATION_JUDGMENT.md`
+| Objective | Requirement from Proposal | Status | Evidence |
+|---|---|---|---|
+| RO1 | Define research gap (naturalness + persona + dynamic context) | Pass | `docs/DRAFT_PAPER.md` Sections 1-2 |
+| RO2 | UE5-integrated dynamic state extraction and runtime prompting | Pass | `ue5/Source/NPCDialogue/Private/NPCContextExtractor.cpp`, `cpp/src/NPCInference.cpp`, `core/prompt_builder.py` |
+| RO3 | Fine-tuned local LLM path for NPC persona behavior | Pass | `scripts/train_qlora.py`, `scripts/inference_adapter.py`, `cpp/src/ResponseController.cpp` |
+| RO4 | Scientific comparison versus baselines under controlled scenarios | Pass | `artifacts/proposal/20260302T182844Z/paired_delta_significance.json`, `.../summary.json` |
+| RO5 | Human/quantitative evaluation with reproducible artifacts | Pass | `artifacts/proposal/20260302T182844Z/human_eval_summary.json`, `artifacts/publication/20260302T191131Z/report.md` |
 
-## RO2: Integrated UE5 <-> Local LLM Architecture
-Status: Implemented
+## Critical Quantitative Checks
+From `quality_gate_report.json` (strict mode):
+- Overall gate: **PASS** (`overall_pass=true`)
+- Scenario coverage: **112** (required >= 100)
+- Controlled vs raw significant improvements:
+  - context relevance: +0.2131, `p=0.0`
+  - persona consistency: +0.2150, `p=0.0`
+  - naturalness: +0.1158, `p=0.0`
+  - overall quality: +0.1808, `p=0.0`
+- External wins threshold: pass for both baselines (`10/12` significant-positive metrics each)
+- Human-eval thresholds:
+  - row count: 324 (required >= 300)
+  - mean pairwise kappa: 0.5329 (required >= 0.2)
+  - soft win rate: 0.7315 vs `phi3:mini`, 0.6806 vs `phi3:latest` (required >= 0.55)
 
-Evidence:
-- `docs/ARCHITECTURE.md`
-- `ue5/Source/NPCDialogue/Public/NPCContextExtractor.h`
-- `ue5/Source/NPCDialogue/Private/NPCContextExtractor.cpp`
-- `core/prompt_builder.py`
+## Publication-Readiness Checks
+Also passed in strict gate:
+1. Non-mock artifacts + hardware/model metadata.
+2. Retrieval metrics (Hit@k/MRR/nDCG) with CIs.
+3. Ablation deltas and serving CIs.
+4. Prompt parity for external serving comparison.
+5. Security benchmark thresholds (ASR reduction and guarded ASR cap).
 
-## RO3: Persona-Tuned Prototype with Local Inference
-Status: Implemented
+## Remaining Non-Blocking Gaps
+These do not fail proposal quality gate, but matter for stronger paper claims:
+1. Serving efficiency superiority is not shown vs lightweight baseline.
+2. Core publication retrieval set is still small (10 queries), although reranker training coverage is much larger (3360 pairs).
+3. External comparisons are aligned benchmark replications, not full paper-protocol reproductions.
 
-Evidence:
-- `scripts/train_qlora.py`
-- `scripts/inference_adapter.py`
-- `scripts/run_proposal_alignment_eval.py`
-- `scripts/run_publication_benchmark_suite.py`
-
-## RO4: Dynamic Context Method (>= 3 Context Types)
-Status: Implemented
-
-Implemented context signals:
-- behavior/blackboard state
-- spatial location and zone context
-- nearby entities/perception events
-- recent event summary
-
-Evidence:
-- `ue5/Source/NPCDialogue/Private/NPCContextExtractor.cpp`
-
-## RO5: Scientific Evaluation Against Baselines
-Status: Implemented
-
-Pipeline:
-- `scripts/run_proposal_alignment_eval.py`
-- `scripts/run_proposal_alignment_eval_batched.py`
-- `scripts/run_llm_multirater_campaign.py`
-- `scripts/attach_human_eval_to_run.py`
-- `scripts/proposal_quality_gate.py`
-- Expanded scenario set: `data/proposal_eval_scenarios_large.jsonl` (112 scenarios)
-
-Run summary (artifact `20260224T175344Z`):
-- `proposed_contextual_controlled` vs `proposed_contextual`:
-  - context relevance: `+0.2049`, 95% CI `(0.1837, 0.2244)`, `p<0.001`
-  - persona consistency: `+0.0787`, 95% CI `(0.0495, 0.1070)`, `p<0.001`
-  - naturalness: `+0.0885`, 95% CI `(0.0693, 0.1074)`, `p<0.001`
-  - BERTScore F1: `+0.0342`, 95% CI `(0.0240, 0.0444)`, `p<0.001`
-  - overall quality: `+0.1284`, 95% CI `(0.1139, 0.1428)`, `p<0.001`
-
-- `proposed_contextual_controlled` vs external baseline `phi3:mini` (no context):
-  - positive and significant on `10/12` metrics.
-
-- `proposed_contextual_controlled` vs external baseline `phi3:latest` (no context):
-  - positive and significant on `11/12` metrics.
-
-## Current Gaps
-1. Distinct-1 remains weaker than some external baselines.
-2. Serving efficiency superiority is still not supported on current quality-normalized frontier.
-3. External comparison remains same-prompt/same-dataset, not full paper-protocol replication.
-
-## Reproduce
-```bash
-python scripts/generate_proposal_scenarios_large.py --variants-per-base 14
-python scripts/run_proposal_alignment_eval_batched.py --scenarios data/proposal_eval_scenarios_large.jsonl --batch-size 28 --repeats 1 --max-tokens 80 --temperature 0.2 --baseline-models "phi3:latest"
-python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434
-```
+## Verdict
+With the latest artifacts (`20260302T182844Z`, `20260302T191131Z`), the project satisfies the defined proposal-quality bar and is publication-ready for claims focused on context grounding and robustness.

@@ -40,7 +40,8 @@ It validates both:
 python scripts/run_proposal_alignment_eval_batched.py \
   --scenarios data/proposal_eval_scenarios_large.jsonl \
   --batch-size 28 \
-  --baseline-models "phi3:latest"
+  --baseline-models "phi3:latest" \
+  --min-arm-success-rate 0.90
 ```
 
 2. Build blind human-eval pack from the generated proposal run:
@@ -57,7 +58,8 @@ python scripts/run_proposal_alignment_eval_batched.py \
   --scenarios data/proposal_eval_scenarios_large.jsonl \
   --human-eval-file data/human_eval_pack/<run_id>/ratings_merged_template.csv \
   --batch-size 28 \
-  --baseline-models "phi3:latest"
+  --baseline-models "phi3:latest" \
+  --min-arm-success-rate 0.90
 ```
 
 4. Run publication suite:
@@ -87,12 +89,17 @@ python scripts/run_proposal_alignment_eval_batched.py \
   --scenarios data/proposal_eval_scenarios_large.jsonl \
   --batch-size 28 \
   --baseline-models "phi3:latest" \
+  --min-arm-success-rate 0.90 \
   --quality-gate \
   --quality-gate-publication-run latest \
   --quality-gate-require-human-eval \
   --quality-gate-require-security-benchmark \
   --quality-gate-strict
 ```
+
+If an arm drops below the configured success rate (or has zero successful
+generations), the run now fails early instead of emitting synthetic `NaN`
+summaries.
 
 ## Output
 The gate writes:

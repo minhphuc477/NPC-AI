@@ -1,0 +1,107 @@
+{
+  "generated_utc": "2026-03-06T09:18:12.200734+00:00",
+  "seeds": [
+    29,
+    31
+  ],
+  "thresholds": {
+    "max_fallback_rate": 0.45,
+    "max_retry_rate": 0.75,
+    "min_first_pass_accept_rate": 0.25,
+    "max_overall_drift": 0.05,
+    "max_context_drift": 0.06,
+    "max_persona_drift": 0.12,
+    "max_naturalness_drift": 0.06,
+    "max_fallback_drift": 0.15,
+    "max_retry_drift": 0.15
+  },
+  "per_seed": [
+    {
+      "seed": 29,
+      "run_dir": "artifacts\\proposal_control_tuning\\preflight_blend\\20260306T085717Z\\seed_runs\\seed_29\\20260306T085717Z",
+      "gate_pass": true,
+      "quality": {
+        "context_relevance": 0.2825924927517462,
+        "persona_consistency": 0.3672463768115942,
+        "naturalness": 0.8647938484639606,
+        "overall_quality": 0.3925991924255757
+      },
+      "paired_delta_vs_raw": {
+        "context_relevance": 0.22861300317159905,
+        "persona_consistency": 0.2315060121038382,
+        "naturalness": 0.0744421379250461,
+        "overall_quality": 0.18407177820391762
+      },
+      "operational": {
+        "fallback_rate": 0.2916666666666667,
+        "retry_rate": 0.5416666666666666,
+        "first_pass_accept_rate": 0.4583333333333333
+      }
+    },
+    {
+      "seed": 31,
+      "run_dir": "artifacts\\proposal_control_tuning\\preflight_blend\\20260306T085717Z\\seed_runs\\seed_31\\20260306T091139Z",
+      "gate_pass": true,
+      "quality": {
+        "context_relevance": 0.26407274749720455,
+        "persona_consistency": 0.3200541125541126,
+        "naturalness": 0.8748550997954498,
+        "overall_quality": 0.3719982183550579
+      },
+      "paired_delta_vs_raw": {
+        "context_relevance": 0.15716656612660101,
+        "persona_consistency": 0.15161991943241945,
+        "naturalness": 0.08125945436044164,
+        "overall_quality": 0.129352924282255
+      },
+      "operational": {
+        "fallback_rate": 0.2916666666666667,
+        "retry_rate": 0.4583333333333333,
+        "first_pass_accept_rate": 0.5416666666666666
+      }
+    }
+  ],
+  "drift": {
+    "quality": {
+      "overall_quality": 0.020600974070517808,
+      "context_relevance": 0.018519745254541642,
+      "persona_consistency": 0.04719226425748163,
+      "naturalness": 0.010061251331489274
+    },
+    "operational": {
+      "fallback_rate": 0.0,
+      "retry_rate": 0.08333333333333331
+    }
+  },
+  "checks": [
+    {
+      "name": "all_seed_gates_pass",
+      "pass": true
+    },
+    {
+      "name": "overall_drift",
+      "pass": true
+    },
+    {
+      "name": "context_drift",
+      "pass": true
+    },
+    {
+      "name": "persona_drift",
+      "pass": true
+    },
+    {
+      "name": "naturalness_drift",
+      "pass": true
+    },
+    {
+      "name": "fallback_drift",
+      "pass": true
+    },
+    {
+      "name": "retry_drift",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

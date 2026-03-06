@@ -264,6 +264,37 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=20)
     parser.add_argument("--proposal-max-tokens", type=int, default=80)
     parser.add_argument("--proposal-temperature", type=float, default=0.2)
+    parser.add_argument(
+        "--proposal-control-alt-profile",
+        choices=[
+            "none",
+            "runtime_optimized",
+            "quality_optimized",
+            "risk_latency_aware",
+            "hybrid_balanced",
+            "intent_focus_adaptive",
+            "blend_balanced",
+            "custom",
+        ],
+        default="none",
+        help="Optional alternate response-control profile to add as a second controlled arm.",
+    )
+    parser.add_argument(
+        "--proposal-control-alt-arm-id",
+        default="proposed_contextual_controlled_alt",
+        help="Arm ID for alternate proposal control profile.",
+    )
+    parser.add_argument(
+        "--proposal-min-arm-success-rate",
+        type=float,
+        default=0.90,
+        help="Minimum required successful-request rate per arm in proposal eval.",
+    )
+    parser.add_argument("--proposal-enable-control-near-pass", action="store_true")
+    parser.add_argument("--proposal-control-near-pass-max-context-gap", type=float, default=0.05)
+    parser.add_argument("--proposal-control-near-pass-max-persona-gap", type=float, default=0.04)
+    parser.add_argument("--proposal-control-near-pass-score-floor", type=float, default=0.34)
+    parser.add_argument("--proposal-disable-control-near-pass-block-high-risk", action="store_true")
     parser.add_argument("--multirater-scenarios", type=int, default=36)
     parser.add_argument("--serving-max-tokens", type=int, default=56)
     parser.add_argument("--serving-temperature", type=float, default=0.2)
@@ -403,34 +434,51 @@ def main() -> None:
     elif stage_enabled("proposal_eval", selected):
         if not context.get("ollama_available", True):
             raise RuntimeError("proposal_eval requires Ollama. Use --proposal-run to reuse an existing run.")
+        proposal_eval_cmd = [
+            sys.executable,
+            "scripts/run_proposal_alignment_eval_batched.py",
+            "--host",
+            str(args.host),
+            "--candidate-model",
+            str(args.candidate_model),
+            "--baseline-model",
+            str(args.baseline_model),
+            "--baseline-models",
+            str(args.baseline_models),
+            "--scenarios",
+            str(args.scenario_file),
+            "--batch-size",
+            str(args.batch_size),
+            "--repeats",
+            "1",
+            "--max-tokens",
+            str(args.proposal_max_tokens),
+            "--temperature",
+            str(args.proposal_temperature),
+            "--min-arm-success-rate",
+            str(args.proposal_min_arm_success_rate),
+            "--bertscore-model-type",
+            "roberta-large",
+            "--bertscore-batch-size",
+            "16",
+            "--control-alt-profile",
+            str(args.proposal_control_alt_profile),
+            "--control-alt-arm-id",
+            str(args.proposal_control_alt_arm_id),
+            "--control-near-pass-max-context-gap",
+            str(args.proposal_control_near_pass_max_context_gap),
+            "--control-near-pass-max-persona-gap",
+            str(args.proposal_control_near_pass_max_persona_gap),
+            "--control-near-pass-score-floor",
+            str(args.proposal_control_near_pass_score_floor),
+        ]
+        if bool(args.proposal_enable_control_near_pass):
+            proposal_eval_cmd.append("--enable-control-near-pass")
+        if bool(args.proposal_disable_control_near_pass_block_high_risk):
+            proposal_eval_cmd.append("--disable-control-near-pass-block-high-risk")
         run_stage(
             name="proposal_eval",
-            command=[
-                sys.executable,
-                "scripts/run_proposal_alignment_eval_batched.py",
-                "--host",
-                str(args.host),
-                "--candidate-model",
-                str(args.candidate_model),
-                "--baseline-model",
-                str(args.baseline_model),
-                "--baseline-models",
-                str(args.baseline_models),
-                "--scenarios",
-                str(args.scenario_file),
-                "--batch-size",
-                str(args.batch_size),
-                "--repeats",
-                "1",
-                "--max-tokens",
-                str(args.proposal_max_tokens),
-                "--temperature",
-                str(args.proposal_temperature),
-                "--bertscore-model-type",
-                "roberta-large",
-                "--bertscore-batch-size",
-                "16",
-            ],
+            command=proposal_eval_cmd,
             state=state,
             state_path=state_path,
             logs_dir=logs_dir,

@@ -1,0 +1,90 @@
+{
+  "proposed_contextual_controlled": {
+    "counts": {
+      "context_miss": 1,
+      "persona_drift": 1,
+      "low_naturalness": 0,
+      "too_short": 0
+    },
+    "per_case": [
+      {
+        "scenario_id": "s005_scholar_watchtower_v12",
+        "labels": [
+          "context_miss",
+          "persona_drift"
+        ]
+      }
+    ]
+  },
+  "proposed_contextual_controlled_alt": {
+    "counts": {
+      "context_miss": 1,
+      "persona_drift": 2,
+      "low_naturalness": 0,
+      "too_short": 0
+    },
+    "per_case": [
+      {
+        "scenario_id": "s003_healer_poison_v02",
+        "labels": [
+          "context_miss",
+          "persona_drift"
+        ]
+      },
+      {
+        "scenario_id": "s005_scholar_watchtower_v12",
+        "labels": [
+          "persona_drift"
+        ]
+      }
+    ]
+  },
+  "proposed_contextual": {
+    "counts": {
+      "context_miss": 2,
+      "persona_drift": 2,
+      "low_naturalness": 0,
+      "too_short": 0
+    },
+    "per_case": [
+      {
+        "scenario_id": "s003_healer_poison_v02",
+        "labels": [
+          "context_miss",
+          "persona_drift"
+        ]
+      },
+      {
+        "scenario_id": "s005_scholar_watchtower_v12",
+        "labels": [
+          "context_miss",
+          "persona_drift"
+        ]
+      }
+    ]
+  },
+  "candidate_no_context": {
+    "counts": {
+      "context_miss": 2,
+      "persona_drift": 2,
+      "low_naturalness": 0,
+      "too_short": 0
+    },
+    "per_case": [
+      {
+        "scenario_id": "s003_healer_poison_v02",
+        "labels": [
+          "context_miss",
+          "persona_drift"
+        ]
+      },
+      {
+        "scenario_id": "s005_scholar_watchtower_v12",
+        "labels": [
+          "context_miss",
+          "persona_drift"
+        ]
+      }
+    ]
+  }
+}

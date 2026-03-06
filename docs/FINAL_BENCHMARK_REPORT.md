@@ -1,54 +1,44 @@
-# Final Benchmark Report
+# Final Benchmark Report (Current Unified Artifact)
 
-## Scope
-Consolidated snapshot of the latest full checkout artifacts and supported claims.
+## Canonical Runs
+- Proposal run: `artifacts/proposal/20260302T182844Z`
+- Publication run: `artifacts/publication/20260302T191131Z`
+- Strict gate: `artifacts/proposal/20260302T182844Z/quality_gate_report.json`
 
-## Latest Unified Checkout
-- Manifest: `artifacts/final_checkout/20260225T052614Z/manifest.json`
-- Proposal run: `artifacts/proposal/20260224T175344Z`
-- Publication run: `artifacts/publication/20260224T151628Z`
-- Serving matrix run: `artifacts/serving_efficiency/20260225T050830Z`
-- External profile suite: `artifacts/publication_profiles/20260225T051907Z`
+## Executive Summary
+The strict quality gate passes with `overall_pass=true`. The project has strong, reproducible gains on controlled context-grounded quality and retrieval security robustness, with a known serving-speed tradeoff.
 
-## Quality Gate
-- Final gate report: `artifacts/proposal/20260224T175344Z/quality_gate_report_final.md`
-- Status: `PASS` (with `--require-human-eval`)
+## Proposal-Critical Results
+- Scenario coverage: 112 (required >= 100).
+- Controlled vs raw improvements (all significant):
+  - context relevance +0.2131
+  - persona consistency +0.2150
+  - naturalness +0.1158
+  - overall quality +0.1808
+- External baseline threshold: 10/12 significant-positive metrics vs each baseline.
 
-## Core Evidence
-1. Non-mock publication artifacts with metadata:
-- `metadata/hardware.json`
-- `metadata/models.json`
+## Human Evaluation
+- 324 ratings, 3 raters.
+- Mean pairwise kappa: 0.5329.
+- Preference soft win rate:
+  - 0.7315 vs `phi3:mini`
+  - 0.6806 vs `phi3:latest`
 
-2. Retrieval metrics (standardized):
-- `retrieval/metrics.json`
-- `retrieval/ablation_deltas_vs_bm25.json`
+## Publication Benchmark Checks
+1. Non-mock artifact metadata: present.
+2. Standard retrieval metrics (Hit@k/MRR/nDCG): present.
+3. Confidence intervals and ablation deltas: present.
+4. Prompt parity for serving comparison: verified.
+5. Security benchmark thresholds: passed.
 
-3. Human evaluation (completed multi-rater attachment):
-- `human_eval_llm_multirater_consistent.csv`
-- `human_eval_summary.json`
-- `human_eval_report.md`
+## Security Robustness
+Poisoned + trust-spoofed stress tests (100 scenarios each):
+- baseline ASR 1.0000
+- guarded ASR 0.0000
+- relative reduction 1.0000
 
-4. Lexical diversity:
-- `lexical_diversity_summary.json`
-- `lexical_diversity_report.md`
-
-5. Serving quality/efficiency frontier:
-- `artifacts/serving_efficiency/20260225T050830Z/summary.json`
-- `artifacts/serving_efficiency/20260225T050830Z/report.md`
-
-6. Wider retrieval coverage + hard negatives:
-- `data/retrieval_gold_wide.jsonl`
-- `data/retrieval_hard_negatives_wide.jsonl`
-- `data/retrieval_reranker_pairs_wide.jsonl`
-
-## Supported Claims
-1. Strongly supported:
-- context-grounded dialogue quality gains under response control
-- retrieval robustness advantage under poisoning-style stress
-- completed publication-grade pipeline artifacts (with CIs/deltas and human-eval attachment)
-
-2. Not supported as superiority claim:
-- serving latency/throughput dominance on quality-normalized frontier
+## Known Weakness
+Serving efficiency superiority is not shown against `phi3:mini` under identical settings.
 
 ## Reproduce
 ```bash

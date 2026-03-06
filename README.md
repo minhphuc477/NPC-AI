@@ -10,6 +10,7 @@ Behavior-Driven Neuro-Symbolic Cognitive Architecture for context-grounded NPC d
 ## Canonical Docs
 - [Documentation Index](docs/README.md)
 - [Architecture](docs/ARCHITECTURE.md)
+- [Draft Paper](docs/DRAFT_PAPER.md)
 - [Proposal Alignment](docs/PROPOSAL_ALIGNMENT.md)
 - [Proposal Quality Bar](docs/PROPOSAL_QUALITY_BAR.md)
 - [Industry Judgment](docs/INDUSTRY_PUBLICATION_JUDGMENT.md)
@@ -49,4 +50,7 @@ python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434 --skip-a
 
 ## Notes
 - Publication/benchmark claims are grounded in `artifacts/` runs referenced from `docs/`.
-- Older planning notes and superseded deployment docs are kept under `docs/archive/legacy_20260225/`.
+- Older planning notes and superseded deployment docs are kept under:
+  - `docs/archive/legacy_20260225/`
+  - `docs/archive/legacy_20260303/`
+

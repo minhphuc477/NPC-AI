@@ -15,7 +15,8 @@ import re
 import statistics
 import subprocess
 import sys
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, fields, replace
 from datetime import datetime, timezone
 from itertools import combinations
 from pathlib import Path
@@ -55,6 +56,7 @@ class EvaluationArm:
     model: str
     include_dynamic_context: bool
     use_response_control: bool = False
+    control_profile: str = "none"
 
 
 def parse_list_arg(raw: str) -> List[str]:
@@ -76,6 +78,285 @@ def sanitize_model_id(model: str) -> str:
     if not lowered:
         return "model"
     return lowered
+
+
+def normalize_control_config(config: ControlConfig) -> ControlConfig:
+    return replace(
+        config,
+        min_context_coverage=max(0.0, min(1.0, float(config.min_context_coverage))),
+        min_persona_coverage=max(0.0, min(1.0, float(config.min_persona_coverage))),
+        min_response_tokens=max(1, int(config.min_response_tokens)),
+        rewrite_temperature=max(0.0, float(config.rewrite_temperature)),
+        rewrite_max_tokens=max(8, int(config.rewrite_max_tokens)),
+        rewrite_candidates=max(1, int(config.rewrite_candidates)),
+        rewrite_temperature_step=max(0.0, float(config.rewrite_temperature_step)),
+        early_stop_score=max(0.0, min(1.0, float(config.early_stop_score))),
+        relaxed_context_coverage=max(0.0, min(1.0, float(config.relaxed_context_coverage))),
+        relaxed_persona_coverage=max(0.0, min(1.0, float(config.relaxed_persona_coverage))),
+        relaxed_candidate_score=max(0.0, min(1.0, float(config.relaxed_candidate_score))),
+        min_rewrite_gain=max(0.0, float(config.min_rewrite_gain)),
+        adaptive_candidate_score=max(0.0, min(1.0, float(config.adaptive_candidate_score))),
+        adaptive_context_coverage=max(0.0, min(1.0, float(config.adaptive_context_coverage))),
+        adaptive_persona_coverage=max(0.0, min(1.0, float(config.adaptive_persona_coverage))),
+        adaptive_high_confidence_score=max(0.0, min(1.0, float(config.adaptive_high_confidence_score))),
+        adaptive_mid_confidence_score=max(0.0, min(1.0, float(config.adaptive_mid_confidence_score))),
+        adaptive_high_confidence_rewrites=max(1, int(config.adaptive_high_confidence_rewrites)),
+        adaptive_mid_confidence_rewrites=max(1, int(config.adaptive_mid_confidence_rewrites)),
+        adaptive_low_confidence_rewrites=max(1, int(config.adaptive_low_confidence_rewrites)),
+        low_confidence_retry_min_score_gain=max(0.0, float(config.low_confidence_retry_min_score_gain)),
+        low_confidence_retry_min_coverage_gain=max(0.0, float(config.low_confidence_retry_min_coverage_gain)),
+        latency_relax_start_pressure=max(0.0, min(1.0, float(config.latency_relax_start_pressure))),
+        latency_relax_max_delta=max(0.0, min(0.25, float(config.latency_relax_max_delta))),
+        low_risk_context_relax=max(0.0, min(0.25, float(config.low_risk_context_relax))),
+        low_risk_persona_relax=max(0.0, min(0.25, float(config.low_risk_persona_relax))),
+        low_risk_candidate_score_relax=max(0.0, min(0.25, float(config.low_risk_candidate_score_relax))),
+        high_risk_context_tighten=max(0.0, min(0.25, float(config.high_risk_context_tighten))),
+        high_risk_persona_tighten=max(0.0, min(0.25, float(config.high_risk_persona_tighten))),
+        high_risk_candidate_score_tighten=max(0.0, min(0.25, float(config.high_risk_candidate_score_tighten))),
+        intent_focus_min_keep=max(1, int(config.intent_focus_min_keep)),
+        intent_focus_keep_ratio_low=max(0.2, min(1.0, float(config.intent_focus_keep_ratio_low))),
+        intent_focus_keep_ratio_medium=max(0.2, min(1.0, float(config.intent_focus_keep_ratio_medium))),
+        intent_focus_keep_ratio_high=max(0.2, min(1.0, float(config.intent_focus_keep_ratio_high))),
+        intent_focus_min_relevance=max(0.0, min(1.0, float(config.intent_focus_min_relevance))),
+        near_pass_max_context_gap=max(0.0, min(0.5, float(config.near_pass_max_context_gap))),
+        near_pass_max_persona_gap=max(0.0, min(0.5, float(config.near_pass_max_persona_gap))),
+        near_pass_score_floor=max(0.0, min(1.0, float(config.near_pass_score_floor))),
+    )
+
+
+def apply_control_overrides(base: ControlConfig, overrides: Dict[str, Any]) -> ControlConfig:
+    if not overrides:
+        return base
+    valid_fields = {f.name: f for f in fields(ControlConfig)}
+    updates: Dict[str, Any] = {}
+    for key, raw_val in overrides.items():
+        if key not in valid_fields:
+            raise ValueError(f"Unsupported control override key: {key}")
+        current_val = getattr(base, key)
+        if isinstance(current_val, bool):
+            if isinstance(raw_val, str):
+                val = raw_val.strip().lower()
+                if val in {"1", "true", "yes", "y", "on"}:
+                    updates[key] = True
+                elif val in {"0", "false", "no", "n", "off"}:
+                    updates[key] = False
+                else:
+                    raise ValueError(f"Invalid boolean for {key}: {raw_val}")
+            else:
+                updates[key] = bool(raw_val)
+            continue
+        if isinstance(current_val, int):
+            updates[key] = int(raw_val)
+            continue
+        if isinstance(current_val, float):
+            updates[key] = float(raw_val)
+            continue
+        updates[key] = raw_val
+    return normalize_control_config(replace(base, **updates))
+
+
+def build_alternate_control_config(base: ControlConfig, profile: str) -> ControlConfig:
+    normalized = str(profile or "").strip().lower()
+    if normalized in ("", "none"):
+        return base
+    if normalized == "custom":
+        return base
+    if normalized == "runtime_optimized":
+        return replace(
+            base,
+            min_context_coverage=max(0.28, base.min_context_coverage - 0.02),
+            min_persona_coverage=max(0.15, base.min_persona_coverage - 0.02),
+            relaxed_context_coverage=max(0.15, base.relaxed_context_coverage - 0.02),
+            relaxed_persona_coverage=max(0.08, base.relaxed_persona_coverage - 0.01),
+            relaxed_candidate_score=max(0.40, base.relaxed_candidate_score - 0.02),
+            adaptive_candidate_score=max(0.34, base.adaptive_candidate_score - 0.02),
+            adaptive_context_coverage=max(0.12, base.adaptive_context_coverage - 0.02),
+            adaptive_persona_coverage=max(0.09, base.adaptive_persona_coverage - 0.01),
+            rewrite_candidates=max(2, min(base.rewrite_candidates, 3)),
+            adaptive_high_confidence_rewrites=1,
+            adaptive_mid_confidence_rewrites=1,
+            adaptive_low_confidence_rewrites=2,
+            low_confidence_retry_requires_gain=True,
+            low_confidence_retry_min_score_gain=max(0.015, base.low_confidence_retry_min_score_gain),
+            low_confidence_retry_min_coverage_gain=max(0.03, base.low_confidence_retry_min_coverage_gain),
+        )
+    if normalized == "quality_optimized":
+        return replace(
+            base,
+            min_context_coverage=min(0.42, base.min_context_coverage + 0.03),
+            min_persona_coverage=min(0.24, base.min_persona_coverage + 0.02),
+            relaxed_context_coverage=min(0.24, base.relaxed_context_coverage + 0.02),
+            relaxed_persona_coverage=min(0.14, base.relaxed_persona_coverage + 0.01),
+            relaxed_candidate_score=min(0.52, base.relaxed_candidate_score + 0.03),
+            adaptive_candidate_score=min(0.47, base.adaptive_candidate_score + 0.04),
+            adaptive_context_coverage=min(0.22, base.adaptive_context_coverage + 0.04),
+            adaptive_persona_coverage=min(0.15, base.adaptive_persona_coverage + 0.03),
+            rewrite_candidates=max(base.rewrite_candidates, 3),
+            adaptive_high_confidence_rewrites=max(1, base.adaptive_high_confidence_rewrites),
+            adaptive_mid_confidence_rewrites=max(2, base.adaptive_mid_confidence_rewrites),
+            adaptive_low_confidence_rewrites=max(3, base.adaptive_low_confidence_rewrites),
+            low_confidence_retry_requires_gain=True,
+            low_confidence_retry_min_score_gain=min(0.01, base.low_confidence_retry_min_score_gain),
+            low_confidence_retry_min_coverage_gain=min(0.02, base.low_confidence_retry_min_coverage_gain),
+        )
+    if normalized == "risk_latency_aware":
+        return replace(
+            base,
+            intent_risk_adaptation_enabled=True,
+            latency_adaptation_enabled=True,
+            latency_relax_start_pressure=0.52,
+            latency_relax_max_delta=0.10,
+            low_risk_context_relax=max(base.low_risk_context_relax, 0.06),
+            low_risk_persona_relax=max(base.low_risk_persona_relax, 0.04),
+            low_risk_candidate_score_relax=max(base.low_risk_candidate_score_relax, 0.04),
+            high_risk_context_tighten=max(base.high_risk_context_tighten, 0.05),
+            high_risk_persona_tighten=max(base.high_risk_persona_tighten, 0.03),
+            high_risk_candidate_score_tighten=max(base.high_risk_candidate_score_tighten, 0.04),
+            adaptive_acceptance_enabled=True,
+            allow_relaxed_acceptance=True,
+            rewrite_candidates=max(2, min(base.rewrite_candidates, 3)),
+            adaptive_high_confidence_rewrites=1,
+            adaptive_mid_confidence_rewrites=max(1, min(base.adaptive_mid_confidence_rewrites, 2)),
+            adaptive_low_confidence_rewrites=max(1, min(base.adaptive_low_confidence_rewrites, 2)),
+        )
+    if normalized == "hybrid_balanced":
+        return replace(
+            base,
+            min_context_coverage=0.31,
+            min_persona_coverage=0.17,
+            relaxed_context_coverage=0.16,
+            relaxed_persona_coverage=0.08,
+            relaxed_candidate_score=0.42,
+            adaptive_candidate_score=0.35,
+            rewrite_candidates=2,
+            adaptive_mid_confidence_rewrites=1,
+            adaptive_low_confidence_rewrites=2,
+            intent_risk_adaptation_enabled=True,
+            latency_adaptation_enabled=True,
+            latency_relax_start_pressure=0.50,
+            latency_relax_max_delta=0.08,
+            low_risk_context_relax=0.06,
+            low_risk_persona_relax=0.04,
+            low_risk_candidate_score_relax=0.04,
+            high_risk_context_tighten=0.02,
+            high_risk_persona_tighten=0.01,
+            high_risk_candidate_score_tighten=0.01,
+        )
+    if normalized == "intent_focus_adaptive":
+        return replace(
+            base,
+            min_context_coverage=max(0.30, base.min_context_coverage - 0.01),
+            min_persona_coverage=max(0.16, base.min_persona_coverage - 0.01),
+            relaxed_context_coverage=max(0.16, base.relaxed_context_coverage - 0.01),
+            relaxed_persona_coverage=max(0.08, base.relaxed_persona_coverage - 0.005),
+            relaxed_candidate_score=max(0.41, base.relaxed_candidate_score - 0.01),
+            adaptive_candidate_score=max(0.34, base.adaptive_candidate_score - 0.01),
+            rewrite_candidates=max(2, min(base.rewrite_candidates, 3)),
+            adaptive_mid_confidence_rewrites=1,
+            adaptive_low_confidence_rewrites=2,
+            intent_risk_adaptation_enabled=True,
+            latency_adaptation_enabled=True,
+            latency_relax_start_pressure=0.52,
+            latency_relax_max_delta=0.08,
+            intent_focused_context_enabled=True,
+            intent_focus_min_keep=3,
+            intent_focus_keep_ratio_low=0.42,
+            intent_focus_keep_ratio_medium=0.62,
+            intent_focus_keep_ratio_high=0.95,
+            intent_focus_min_relevance=0.18,
+        )
+    if normalized == "blend_balanced":
+        return replace(
+            base,
+            min_context_coverage=0.31,
+            min_persona_coverage=0.17,
+            relaxed_context_coverage=0.16,
+            relaxed_persona_coverage=0.08,
+            relaxed_candidate_score=0.41,
+            adaptive_candidate_score=0.34,
+            adaptive_context_coverage=0.12,
+            adaptive_persona_coverage=0.09,
+            rewrite_candidates=2,
+            adaptive_mid_confidence_rewrites=1,
+            adaptive_low_confidence_rewrites=2,
+            intent_risk_adaptation_enabled=True,
+            latency_adaptation_enabled=True,
+            latency_relax_start_pressure=0.52,
+            latency_relax_max_delta=0.08,
+            intent_focused_context_enabled=True,
+            intent_focus_min_keep=3,
+            intent_focus_keep_ratio_low=0.48,
+            intent_focus_keep_ratio_medium=0.68,
+            intent_focus_keep_ratio_high=1.0,
+            intent_focus_min_relevance=0.20,
+            near_pass_enabled=True,
+            near_pass_max_context_gap=0.04,
+            near_pass_max_persona_gap=0.03,
+            near_pass_score_floor=0.35,
+            near_pass_block_high_risk=True,
+        )
+    raise ValueError(f"Unsupported control-alt profile: {profile}")
+
+
+def control_config_payload(
+    config: ControlConfig,
+    rewrite_budget_ms: float,
+    rewrite_budget_multiplier: float,
+) -> Dict[str, Any]:
+    return {
+        "min_context_coverage": config.min_context_coverage,
+        "min_persona_coverage": config.min_persona_coverage,
+        "min_response_tokens": config.min_response_tokens,
+        "rewrite_temperature": config.rewrite_temperature,
+        "rewrite_max_tokens": config.rewrite_max_tokens,
+        "rewrite_candidates": config.rewrite_candidates,
+        "rewrite_temperature_step": config.rewrite_temperature_step,
+        "early_stop_on_pass": config.early_stop_on_pass,
+        "early_stop_score": config.early_stop_score,
+        "allow_relaxed_acceptance": config.allow_relaxed_acceptance,
+        "relaxed_context_coverage": config.relaxed_context_coverage,
+        "relaxed_persona_coverage": config.relaxed_persona_coverage,
+        "relaxed_candidate_score": config.relaxed_candidate_score,
+        "min_rewrite_gain": config.min_rewrite_gain,
+        "enable_rewrite": config.enable_rewrite,
+        "allow_best_effort_rewrite": config.allow_best_effort_rewrite,
+        "behavior_adaptation_enabled": config.behavior_adaptation_enabled,
+        "adaptive_acceptance_enabled": config.adaptive_acceptance_enabled,
+        "adaptive_candidate_score": config.adaptive_candidate_score,
+        "adaptive_context_coverage": config.adaptive_context_coverage,
+        "adaptive_persona_coverage": config.adaptive_persona_coverage,
+        "adaptive_high_confidence_score": config.adaptive_high_confidence_score,
+        "adaptive_mid_confidence_score": config.adaptive_mid_confidence_score,
+        "adaptive_high_confidence_rewrites": config.adaptive_high_confidence_rewrites,
+        "adaptive_mid_confidence_rewrites": config.adaptive_mid_confidence_rewrites,
+        "adaptive_low_confidence_rewrites": config.adaptive_low_confidence_rewrites,
+        "low_confidence_retry_requires_gain": config.low_confidence_retry_requires_gain,
+        "low_confidence_retry_min_score_gain": config.low_confidence_retry_min_score_gain,
+        "low_confidence_retry_min_coverage_gain": config.low_confidence_retry_min_coverage_gain,
+        "intent_risk_adaptation_enabled": config.intent_risk_adaptation_enabled,
+        "latency_adaptation_enabled": config.latency_adaptation_enabled,
+        "latency_relax_start_pressure": config.latency_relax_start_pressure,
+        "latency_relax_max_delta": config.latency_relax_max_delta,
+        "low_risk_context_relax": config.low_risk_context_relax,
+        "low_risk_persona_relax": config.low_risk_persona_relax,
+        "low_risk_candidate_score_relax": config.low_risk_candidate_score_relax,
+        "high_risk_context_tighten": config.high_risk_context_tighten,
+        "high_risk_persona_tighten": config.high_risk_persona_tighten,
+        "high_risk_candidate_score_tighten": config.high_risk_candidate_score_tighten,
+        "intent_focused_context_enabled": config.intent_focused_context_enabled,
+        "intent_focus_min_keep": config.intent_focus_min_keep,
+        "intent_focus_keep_ratio_low": config.intent_focus_keep_ratio_low,
+        "intent_focus_keep_ratio_medium": config.intent_focus_keep_ratio_medium,
+        "intent_focus_keep_ratio_high": config.intent_focus_keep_ratio_high,
+        "intent_focus_min_relevance": config.intent_focus_min_relevance,
+        "near_pass_enabled": config.near_pass_enabled,
+        "near_pass_max_context_gap": config.near_pass_max_context_gap,
+        "near_pass_max_persona_gap": config.near_pass_max_persona_gap,
+        "near_pass_score_floor": config.near_pass_score_floor,
+        "near_pass_block_high_risk": config.near_pass_block_high_risk,
+        "rewrite_budget_ms": rewrite_budget_ms,
+        "rewrite_budget_multiplier": rewrite_budget_multiplier,
+    }
 
 
 def metric_names(include_bertscore: bool) -> List[str]:
@@ -263,6 +544,62 @@ def paired_bootstrap_delta_ci(
     }
 
 
+def paired_cluster_bootstrap_delta_ci(
+    deltas_by_cluster: Dict[str, List[float]],
+    seed: int,
+    iters: int = 3000,
+) -> Dict[str, float]:
+    cluster_ids = sorted([cid for cid, vals in deltas_by_cluster.items() if vals])
+    n_clusters = len(cluster_ids)
+    n_pairs = sum(len(deltas_by_cluster[cid]) for cid in cluster_ids)
+    if n_clusters == 0 or n_pairs == 0:
+        return {
+            "n_clusters": 0,
+            "n_pairs": 0,
+            "mean_delta": float("nan"),
+            "ci95_low": float("nan"),
+            "ci95_high": float("nan"),
+            "p_delta_le_0": float("nan"),
+        }
+
+    all_vals: List[float] = []
+    for cid in cluster_ids:
+        all_vals.extend(deltas_by_cluster[cid])
+    mean_delta = statistics.fmean(all_vals)
+    if n_clusters == 1:
+        return {
+            "n_clusters": 1,
+            "n_pairs": n_pairs,
+            "mean_delta": mean_delta,
+            "ci95_low": mean_delta,
+            "ci95_high": mean_delta,
+            "p_delta_le_0": 1.0 if mean_delta <= 0 else 0.0,
+        }
+
+    rng = random.Random(seed)
+    sampled_means: List[float] = []
+    for _ in range(iters):
+        sampled_vals: List[float] = []
+        for __ in range(n_clusters):
+            cid = cluster_ids[rng.randrange(n_clusters)]
+            sampled_vals.extend(deltas_by_cluster[cid])
+        if sampled_vals:
+            sampled_means.append(statistics.fmean(sampled_vals))
+    if not sampled_means:
+        sampled_means = [mean_delta]
+    ci95_low = percentile(sampled_means, 0.025)
+    ci95_high = percentile(sampled_means, 0.975)
+    p_delta_le_0 = sum(1 for x in sampled_means if x <= 0.0) / float(len(sampled_means))
+    return {
+        "n_clusters": n_clusters,
+        "n_pairs": n_pairs,
+        "mean_delta": mean_delta,
+        "ci95_low": ci95_low,
+        "ci95_high": ci95_high,
+        "p_delta_le_0": p_delta_le_0,
+    }
+
+
 def safe_shell(command: Sequence[str], timeout_s: int = 15) -> str:
     try:
         result = subprocess.run(
@@ -344,6 +681,41 @@ def gather_hardware_metadata() -> Dict[str, Any]:
                     }
                 )
     return metadata
+
+
+def gather_code_revision_metadata(root_dir: Path) -> Dict[str, Any]:
+    root = str(root_dir.resolve())
+    commit = safe_shell(["git", "-C", root, "rev-parse", "HEAD"])
+    short_commit = safe_shell(["git", "-C", root, "rev-parse", "--short", "HEAD"])
+    branch = safe_shell(["git", "-C", root, "rev-parse", "--abbrev-ref", "HEAD"])
+    status = safe_shell(["git", "-C", root, "status", "--porcelain"])
+    metadata: Dict[str, Any] = {
+        "git_available": bool(commit),
+        "commit": commit,
+        "short_commit": short_commit,
+        "branch": branch,
+        "dirty": bool(status.strip()),
+    }
+    if status.strip():
+        lines = [line.strip() for line in status.splitlines() if line.strip()]
+        metadata["dirty_file_count"] = len(lines)
+        metadata["dirty_file_preview"] = lines[:25]
+    return metadata
+
+
+def collect_tracked_file_hashes(root_dir: Path, rel_paths: Sequence[str]) -> Dict[str, Any]:
+    out: Dict[str, Any] = {}
+    for rel in rel_paths:
+        path = (root_dir / rel).resolve()
+        if not path.exists():
+            out[rel] = {"exists": False}
+            continue
+        out[rel] = {
+            "exists": True,
+            "sha256": sha256_file(path),
+            "bytes": path.stat().st_size,
+        }
+    return out
 
 
 def query_ollama_model(host: str, model: str) -> Dict[str, Any]:
@@ -724,6 +1096,8 @@ def paired_metric_deltas(
     baseline_arm: str,
     seed: int,
     metrics: Optional[Sequence[str]] = None,
+    scenarios_by_id: Optional[Dict[str, Dict[str, Any]]] = None,
+    cluster_field: str = "source_scenario_id",
 ) -> Dict[str, Any]:
     metric_list = list(metrics) if metrics else metric_names(include_bertscore=True)
     target_rows = scored_by_arm.get(target_arm, [])
@@ -748,6 +1122,7 @@ def paired_metric_deltas(
     for metric_idx, metric in enumerate(metric_list):
         target_vals: List[float] = []
         baseline_vals: List[float] = []
+        metric_keys: List[tuple[str, int]] = []
         for key in common_keys:
             t_row = target_map[key]
             b_row = baseline_map[key]
@@ -763,14 +1138,28 @@ def paired_metric_deltas(
                 continue
             target_vals.append(t_val)
             baseline_vals.append(b_val)
+            metric_keys.append(key)
 
         if not target_vals or not baseline_vals:
             continue
-        out[metric] = paired_bootstrap_delta_ci(
+        metric_payload: Dict[str, Any] = paired_bootstrap_delta_ci(
             target_values=target_vals,
             baseline_values=baseline_vals,
             seed=seed + 101 * (metric_idx + 1),
         )
+        if scenarios_by_id:
+            deltas_by_cluster: Dict[str, List[float]] = {}
+            for idx, key in enumerate(metric_keys):
+                sid = str(key[0])
+                scenario = scenarios_by_id.get(sid, {})
+                cluster_id = str(scenario.get(cluster_field, "")).strip() or sid
+                deltas_by_cluster.setdefault(cluster_id, []).append(float(target_vals[idx] - baseline_vals[idx]))
+            metric_payload["cluster_bootstrap"] = paired_cluster_bootstrap_delta_ci(
+                deltas_by_cluster=deltas_by_cluster,
+                seed=seed + 10001 + 131 * (metric_idx + 1),
+            )
+            metric_payload["cluster_field"] = cluster_field
+        out[metric] = metric_payload
     return out
 
 
@@ -945,6 +1334,62 @@ def get_scenario_tags(scenario: Dict[str, Any]) -> Dict[str, str]:
     if "persona_archetype" not in tags:
         tags["persona_archetype"] = infer_persona_archetype(str(scenario.get("persona", "")))
     return tags
+
+
+def analyze_scenario_dependence(scenarios_by_id: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+    rows = list(scenarios_by_id.values())
+    n = len(rows)
+    by_source: Dict[str, int] = {}
+    by_signature: Dict[str, int] = {}
+    by_source_rows: Dict[str, List[Dict[str, Any]]] = {}
+
+    for row in rows:
+        sid = str(row.get("scenario_id", "")).strip()
+        source_id = str(row.get("source_scenario_id", "")).strip() or sid
+        by_source[source_id] = by_source.get(source_id, 0) + 1
+        by_source_rows.setdefault(source_id, []).append(row)
+
+        tags = get_scenario_tags(row)
+        signature = str(tags.get("template_signature", "")).strip()
+        if not signature:
+            signature = "|".join(
+                [
+                    str(tags.get("conflict_type", "")).strip() or "na",
+                    str(tags.get("location_type", "")).strip() or "na",
+                    str(tags.get("behavior_state", "")).strip() or "na",
+                ]
+            )
+        by_signature[signature] = by_signature.get(signature, 0) + 1
+
+    def effective_n(counter: Dict[str, int]) -> float:
+        denom = float(sum(v * v for v in counter.values()))
+        numer = float(n * n)
+        return (numer / denom) if denom > 0 else 0.0
+
+    within_source_input_jaccard: List[float] = []
+    for srows in by_source_rows.values():
+        if len(srows) <= 1:
+            continue
+        base = str(srows[0].get("player_input", ""))
+        sims = [jaccard_overlap(base, str(r.get("player_input", ""))) for r in srows[1:]]
+        if sims:
+            within_source_input_jaccard.append(statistics.fmean(sims))
+
+    return {
+        "scenario_count": n,
+        "unique_source_count": len(by_source),
+        "unique_template_signature_count": len(by_signature),
+        "source_distribution": dict(sorted(by_source.items())),
+        "template_signature_distribution": dict(sorted(by_signature.items())),
+        "template_signature_ratio": (len(by_signature) / float(n)) if n > 0 else 0.0,
+        "effective_sample_size_by_source": effective_n(by_source),
+        "effective_sample_size_by_template_signature": effective_n(by_signature),
+        "source_max_share": (max(by_source.values()) / float(n)) if n > 0 and by_source else 0.0,
+        "template_max_share": (max(by_signature.values()) / float(n)) if n > 0 and by_signature else 0.0,
+        "mean_within_source_player_input_jaccard": (
+            statistics.fmean(within_source_input_jaccard) if within_source_input_jaccard else float("nan")
+        ),
+    }
 
 
 def summarize_scores_by_slice(
@@ -1296,6 +1741,158 @@ def analyze_errors(scored_rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
+def summarize_operational_metrics(
+    responses_by_arm: Dict[str, List[Dict[str, Any]]],
+    scenarios_by_id: Dict[str, Dict[str, Any]],
+) -> Dict[str, Any]:
+    output: Dict[str, Any] = {"arms": {}}
+    for arm_id, rows in responses_by_arm.items():
+        total = len(rows)
+        if total == 0:
+            output["arms"][arm_id] = {
+                "total_requests": 0,
+                "timeout_rate": float("nan"),
+                "error_rate": float("nan"),
+                "fallback_rate": float("nan"),
+                "first_pass_accept_rate": float("nan"),
+                "rewrite_attempt_rate": float("nan"),
+                "retry_rate": float("nan"),
+                "multi_retry_rate": float("nan"),
+                "rewrite_failure_rate": float("nan"),
+                "by_behavior_state": {},
+            }
+            continue
+
+        timeout_count = 0
+        error_count = 0
+        fallback_count = 0
+        first_pass_count = 0
+        rewrite_attempt_count = 0
+        retry_count = 0
+        multi_retry_count = 0
+        rewrite_failure_count = 0
+        by_behavior: Dict[str, Dict[str, int]] = {}
+        source_counts: Dict[str, int] = {}
+
+        for row in rows:
+            ok = bool(row.get("ok"))
+            err = str(row.get("error", "")).lower()
+            if (not ok) and ("timeout" in err):
+                timeout_count += 1
+            if not ok:
+                error_count += 1
+            if bool(row.get("response_fallback")) or str(row.get("response_control_source", "")) == "fallback":
+                fallback_count += 1
+
+            source = str(row.get("response_control_source", "")).strip()
+            if source:
+                source_counts[source] = int(source_counts.get(source, 0)) + 1
+            if source in ("raw", "raw_relaxed", "raw_adaptive", "raw_grounded_repair"):
+                first_pass_count += 1
+
+            attempts = int(row.get("rewrite_attempts", 0) or 0)
+            success_attempts = int(row.get("rewrite_successful_attempts", 0) or 0)
+            if attempts > 0:
+                rewrite_attempt_count += 1
+                retry_count += 1
+                if attempts > 1:
+                    multi_retry_count += 1
+                if success_attempts <= 0:
+                    rewrite_failure_count += 1
+
+            sid = str(row.get("scenario_id", "")).strip()
+            scenario = scenarios_by_id.get(sid, {})
+            tags = get_scenario_tags(scenario)
+            behavior = str(tags.get("behavior_state", "unknown")).strip() or "unknown"
+            bucket = by_behavior.setdefault(
+                behavior,
+                {"count": 0, "fallback": 0, "timeout": 0, "errors": 0, "rewrite_attempted": 0},
+            )
+            bucket["count"] += 1
+            if bool(row.get("response_fallback")) or source == "fallback":
+                bucket["fallback"] += 1
+            if (not ok) and ("timeout" in err):
+                bucket["timeout"] += 1
+            if not ok:
+                bucket["errors"] += 1
+            if attempts > 0:
+                bucket["rewrite_attempted"] += 1
+
+        by_behavior_rates: Dict[str, Any] = {}
+        for behavior, counts in sorted(by_behavior.items()):
+            denom = max(1, int(counts.get("count", 0)))
+            by_behavior_rates[behavior] = {
+                "count": denom,
+                "fallback_rate": float(counts.get("fallback", 0)) / float(denom),
+                "timeout_rate": float(counts.get("timeout", 0)) / float(denom),
+                "error_rate": float(counts.get("errors", 0)) / float(denom),
+                "rewrite_attempt_rate": float(counts.get("rewrite_attempted", 0)) / float(denom),
+            }
+
+        output["arms"][arm_id] = {
+            "total_requests": total,
+            "timeout_rate": timeout_count / float(total),
+            "error_rate": error_count / float(total),
+            "fallback_rate": fallback_count / float(total),
+            "first_pass_accept_rate": first_pass_count / float(total),
+            "rewrite_attempt_rate": rewrite_attempt_count / float(total),
+            "retry_rate": retry_count / float(total),
+            "multi_retry_rate": multi_retry_count / float(total),
+            "rewrite_failure_rate": rewrite_failure_count / float(total),
+            "control_source_breakdown": dict(sorted(source_counts.items(), key=lambda kv: kv[0])),
+            "by_behavior_state": by_behavior_rates,
+        }
+    return output
+
+
+def evaluate_operational_gate(
+    operational_metrics: Dict[str, Any],
+    arm_id: str,
+    max_fallback_rate: float,
+    max_retry_rate: float,
+    min_first_pass_accept_rate: float,
+) -> Dict[str, Any]:
+    arms_payload = operational_metrics.get("arms", {})
+    arm_payload = arms_payload.get(arm_id, {})
+
+    fallback_rate = float(arm_payload.get("fallback_rate", float("nan")))
+    retry_rate = float(arm_payload.get("retry_rate", float("nan")))
+    first_pass_accept_rate = float(arm_payload.get("first_pass_accept_rate", float("nan")))
+
+    checks = [
+        {
+            "name": "fallback_rate",
+            "observed": fallback_rate,
+            "rule": f"<= {max_fallback_rate:.4f}",
+            "pass": (not math.isnan(fallback_rate)) and (fallback_rate <= max_fallback_rate),
+        },
+        {
+            "name": "retry_rate",
+            "observed": retry_rate,
+            "rule": f"<= {max_retry_rate:.4f}",
+            "pass": (not math.isnan(retry_rate)) and (retry_rate <= max_retry_rate),
+        },
+        {
+            "name": "first_pass_accept_rate",
+            "observed": first_pass_accept_rate,
+            "rule": f">= {min_first_pass_accept_rate:.4f}",
+            "pass": (not math.isnan(first_pass_accept_rate))
+            and (first_pass_accept_rate >= min_first_pass_accept_rate),
+        },
+    ]
+    passed = all(bool(item.get("pass")) for item in checks)
+    return {
+        "arm_id": arm_id,
+        "pass": passed,
+        "thresholds": {
+            "max_fallback_rate": max_fallback_rate,
+            "max_retry_rate": max_retry_rate,
+            "min_first_pass_accept_rate": min_first_pass_accept_rate,
+        },
+        "checks": checks,
+    }
+
+
 def render_report(
     output_path: Path,
     run_id: str,
@@ -1308,6 +1905,8 @@ def render_report(
     win_rates: Optional[Dict[str, Any]] = None,
     slice_summary: Optional[Dict[str, Any]] = None,
     human_eval: Optional[Dict[str, Any]] = None,
+    operational_metrics: Optional[Dict[str, Any]] = None,
+    scenario_dependence: Optional[Dict[str, Any]] = None,
 ) -> None:
     lines: List[str] = []
     lines.append("# Proposal Alignment Evaluation Report")
@@ -1367,14 +1966,26 @@ def render_report(
 
     if paired_deltas:
         lines.append("## Paired Bootstrap Delta Significance")
-        lines.append("| Comparison | Metric | Mean Delta | 95% CI | p(delta<=0) |")
-        lines.append("|---|---|---:|---:|---:|")
+        lines.append(
+            "| Comparison | Metric | Mean Delta | 95% CI | p(delta<=0) | Cluster Mean Delta | Cluster 95% CI | Cluster p(delta<=0) |"
+        )
+        lines.append("|---|---|---:|---:|---:|---:|---:|---:|")
         for comp_name, comp_metrics in paired_deltas.items():
             for metric_name, vals in comp_metrics.items():
+                cluster = vals.get("cluster_bootstrap", {}) if isinstance(vals, dict) else {}
+                if cluster:
+                    cluster_mean = f"{cluster.get('mean_delta', float('nan')):.4f}"
+                    cluster_ci = f"({cluster.get('ci95_low', float('nan')):.4f}, {cluster.get('ci95_high', float('nan')):.4f})"
+                    cluster_p = f"{cluster.get('p_delta_le_0', float('nan')):.4f}"
+                else:
+                    cluster_mean = "n/a"
+                    cluster_ci = "n/a"
+                    cluster_p = "n/a"
                 lines.append(
                     f"| {comp_name} | {metric_name} | {vals.get('mean_delta', float('nan')):.4f} | "
                     f"({vals.get('ci95_low', float('nan')):.4f}, {vals.get('ci95_high', float('nan')):.4f}) | "
-                    f"{vals.get('p_delta_le_0', float('nan')):.4f} |"
+                    f"{vals.get('p_delta_le_0', float('nan')):.4f} | "
+                    f"{cluster_mean} | {cluster_ci} | {cluster_p} |"
                 )
         lines.append("")
 
@@ -1396,6 +2007,41 @@ def render_report(
         lines.append("## Scenario Slice Coverage")
         lines.append(f"- Slice keys: `{', '.join(slice_summary.get('slice_keys', []))}`")
         lines.append("- Detailed slice metrics are published in `slice_summary.json`.")
+        lines.append("")
+
+    if operational_metrics:
+        lines.append("## Operational Metrics")
+        lines.append("| Arm | Timeout Rate | Error Rate | Fallback Rate | First-pass Accept Rate | Retry Rate |")
+        lines.append("|---|---:|---:|---:|---:|---:|")
+        for arm in arms:
+            payload = operational_metrics.get("arms", {}).get(arm.arm_id, {})
+            lines.append(
+                f"| {arm.arm_id} | {payload.get('timeout_rate', float('nan')):.4f} | "
+                f"{payload.get('error_rate', float('nan')):.4f} | "
+                f"{payload.get('fallback_rate', float('nan')):.4f} | "
+                f"{payload.get('first_pass_accept_rate', float('nan')):.4f} | "
+                f"{payload.get('retry_rate', float('nan')):.4f} |"
+            )
+        lines.append("")
+
+    if scenario_dependence:
+        lines.append("## Scenario Dependence Diagnostics")
+        lines.append(f"- Unique source scenarios: `{scenario_dependence.get('unique_source_count', 0)}`")
+        lines.append(
+            f"- Unique template signatures: `{scenario_dependence.get('unique_template_signature_count', 0)}`"
+        )
+        lines.append(
+            f"- Template signature ratio: `{scenario_dependence.get('template_signature_ratio', float('nan')):.4f}`"
+        )
+        lines.append(
+            f"- Effective sample size by source clustering: "
+            f"`{scenario_dependence.get('effective_sample_size_by_source', float('nan')):.2f}`"
+        )
+        lines.append(
+            f"- Effective sample size by template-signature clustering: "
+            f"`{scenario_dependence.get('effective_sample_size_by_template_signature', float('nan')):.2f}`"
+        )
+        lines.append("- Detailed diagnostics are published in `scenario_dependence.json`.")
         lines.append("")
 
     if human_eval:
@@ -1424,6 +2070,11 @@ def main() -> None:
         default="",
         help="Optional comma-separated additional external baseline models (all no-context).",
     )
+    parser.add_argument(
+        "--skip-external-baselines",
+        action="store_true",
+        help="Skip external no-context baseline arms (useful for rapid control tuning).",
+    )
     parser.add_argument("--scenarios", default="data/proposal_eval_scenarios_large.jsonl", help="Scenario JSONL path")
     parser.add_argument("--temperature", type=float, default=0.2, help="Generation temperature")
     parser.add_argument("--max-tokens", type=int, default=96, help="Max generated tokens")
@@ -1434,8 +2085,59 @@ def main() -> None:
         default=0,
         help="Optional cap on scenario count (0 means use all scenarios). Uses deterministic shuffled sampling.",
     )
+    parser.add_argument(
+        "--min-template-signature-ratio",
+        type=float,
+        default=0.0,
+        help="Optional lower bound for scenario template-signature diversity ratio.",
+    )
+    parser.add_argument(
+        "--min-effective-source-n",
+        type=float,
+        default=0.0,
+        help="Optional lower bound for effective sample size under source clustering.",
+    )
+    parser.add_argument(
+        "--enforce-scenario-diversity",
+        action="store_true",
+        help="Fail fast when scenario dependence diagnostics violate configured thresholds.",
+    )
     parser.add_argument("--seed", type=int, default=19, help="Random seed")
     parser.add_argument("--timeout-s", type=int, default=180, help="Generation timeout seconds")
+    parser.add_argument(
+        "--min-arm-success-rate",
+        type=float,
+        default=0.90,
+        help="Minimum fraction of successful API calls required per arm.",
+    )
+    parser.add_argument(
+        "--preflight-operational-gate",
+        action="store_true",
+        help="Enable hard operational gate on fallback/retry/first-pass acceptance before scoring.",
+    )
+    parser.add_argument(
+        "--preflight-gate-arm",
+        default="proposed_contextual_controlled",
+        help="Arm id to validate for operational preflight gate.",
+    )
+    parser.add_argument(
+        "--preflight-max-fallback-rate",
+        type=float,
+        default=0.45,
+        help="Maximum allowed fallback rate for operational preflight gate.",
+    )
+    parser.add_argument(
+        "--preflight-max-retry-rate",
+        type=float,
+        default=0.75,
+        help="Maximum allowed retry rate for operational preflight gate.",
+    )
+    parser.add_argument(
+        "--preflight-min-first-pass-accept-rate",
+        type=float,
+        default=0.25,
+        help="Minimum required first-pass acceptance rate for operational preflight gate.",
+    )
     parser.add_argument("--bertscore-lang", default="en", help="Language for BERTScore")
     parser.add_argument(
         "--bertscore-model-type",
@@ -1454,16 +2156,27 @@ def main() -> None:
         help="Optional local cache dir for deterministic BERTScore model downloads.",
     )
     parser.add_argument(
+        "--disable-bertscore",
+        action="store_true",
+        help="Disable BERTScore computation for faster tuning runs.",
+    )
+    parser.add_argument(
         "--control-min-context-coverage",
         type=float,
-        default=0.35,
+        default=0.33,
         help="Minimum context keyword coverage for response control.",
     )
     parser.add_argument(
         "--control-min-persona-coverage",
         type=float,
-        default=0.20,
+        default=0.18,
         help="Minimum persona keyword coverage for response control.",
+    )
+    parser.add_argument(
+        "--control-min-response-tokens",
+        type=int,
+        default=8,
+        help="Minimum token length before a response is considered too short.",
     )
     parser.add_argument(
         "--control-rewrite-max-tokens",
@@ -1490,6 +2203,221 @@ def main() -> None:
         help="Temperature for response-control rewrite pass.",
     )
     parser.add_argument(
+        "--control-rewrite-budget-ms",
+        type=float,
+        default=0.0,
+        help="Max cumulative rewrite generation latency per turn in milliseconds (0 disables cap).",
+    )
+    parser.add_argument(
+        "--control-rewrite-budget-multiplier",
+        type=float,
+        default=0.0,
+        help=(
+            "Optional per-turn rewrite latency cap as a multiplier of raw generation latency "
+            "(e.g., 0.75 means rewrite budget <= 75%% of raw generation time)."
+        ),
+    )
+    parser.add_argument(
+        "--control-relaxed-context-coverage",
+        type=float,
+        default=0.18,
+        help="Relaxed context floor for accepting best-effort outputs.",
+    )
+    parser.add_argument(
+        "--control-relaxed-persona-coverage",
+        type=float,
+        default=0.09,
+        help="Relaxed persona floor for accepting best-effort outputs.",
+    )
+    parser.add_argument(
+        "--control-relaxed-candidate-score",
+        type=float,
+        default=0.44,
+        help="Relaxed candidate score threshold before forcing fallback.",
+    )
+    parser.add_argument(
+        "--control-min-rewrite-gain",
+        type=float,
+        default=0.015,
+        help="Minimum score margin required to select best-effort rewrite over fallback.",
+    )
+    parser.add_argument(
+        "--control-early-stop-score",
+        type=float,
+        default=0.70,
+        help="Stop rewrite sampling early once this strict-pass score is achieved.",
+    )
+    parser.add_argument(
+        "--control-adaptive-candidate-score",
+        type=float,
+        default=0.38,
+        help="Adaptive first-pass acceptance score threshold before rewrite/fallback.",
+    )
+    parser.add_argument(
+        "--control-adaptive-context-coverage",
+        type=float,
+        default=0.14,
+        help="Adaptive context floor for first-pass acceptance.",
+    )
+    parser.add_argument(
+        "--control-adaptive-persona-coverage",
+        type=float,
+        default=0.10,
+        help="Adaptive persona floor for first-pass acceptance.",
+    )
+    parser.add_argument(
+        "--control-adaptive-high-score",
+        type=float,
+        default=0.53,
+        help="Raw-score threshold for high-confidence rewrite budget.",
+    )
+    parser.add_argument(
+        "--control-adaptive-mid-score",
+        type=float,
+        default=0.40,
+        help="Raw-score threshold for mid-confidence rewrite budget.",
+    )
+    parser.add_argument(
+        "--control-adaptive-high-rewrites",
+        type=int,
+        default=1,
+        help="Rewrite budget when raw score is in high-confidence regime.",
+    )
+    parser.add_argument(
+        "--control-adaptive-mid-rewrites",
+        type=int,
+        default=2,
+        help="Rewrite budget when raw score is in mid-confidence regime.",
+    )
+    parser.add_argument(
+        "--control-adaptive-low-rewrites",
+        type=int,
+        default=3,
+        help="Rewrite budget when raw score is below the mid-confidence regime.",
+    )
+    parser.add_argument(
+        "--disable-control-low-confidence-retry-gain",
+        action="store_true",
+        help="Disable low-confidence rewrite early-abort gate based on first-attempt gain.",
+    )
+    parser.add_argument(
+        "--control-low-confidence-retry-min-score-gain",
+        type=float,
+        default=0.01,
+        help="Minimum first-attempt score gain required to continue low-confidence retries.",
+    )
+    parser.add_argument(
+        "--control-low-confidence-retry-min-coverage-gain",
+        type=float,
+        default=0.02,
+        help="Minimum first-attempt context/persona coverage gain required to continue low-confidence retries.",
+    )
+    parser.add_argument(
+        "--disable-control-relaxed-acceptance",
+        action="store_true",
+        help="Disable relaxed acceptance and force strict thresholds before fallback.",
+    )
+    parser.add_argument(
+        "--disable-control-adaptive-acceptance",
+        action="store_true",
+        help="Disable adaptive first-pass acceptance prior to rewrite/fallback.",
+    )
+    parser.add_argument(
+        "--disable-control-behavior-adaptation",
+        action="store_true",
+        help="Disable behavior-state-specific control threshold adaptation.",
+    )
+    parser.add_argument(
+        "--enable-control-intent-risk-adaptation",
+        action="store_true",
+        help="Enable intent-risk-aware control threshold adaptation.",
+    )
+    parser.add_argument(
+        "--enable-control-latency-adaptation",
+        action="store_true",
+        help="Enable latency-pressure-aware control threshold adaptation.",
+    )
+    parser.add_argument(
+        "--control-latency-relax-start-pressure",
+        type=float,
+        default=0.55,
+        help="Latency pressure (raw_latency/timeout_budget) above which thresholds start relaxing.",
+    )
+    parser.add_argument(
+        "--control-latency-relax-max-delta",
+        type=float,
+        default=0.12,
+        help="Maximum threshold relaxation applied under severe latency pressure.",
+    )
+    parser.add_argument(
+        "--enable-control-intent-focused-context",
+        action="store_true",
+        help="Enable intent-focused context keyword selection inside response control.",
+    )
+    parser.add_argument(
+        "--control-intent-focus-min-keep",
+        type=int,
+        default=3,
+        help="Minimum number of context keywords kept after intent-focused filtering.",
+    )
+    parser.add_argument(
+        "--control-intent-focus-keep-ratio-low",
+        type=float,
+        default=0.45,
+        help="Context keyword keep ratio for low-risk intents.",
+    )
+    parser.add_argument(
+        "--control-intent-focus-keep-ratio-medium",
+        type=float,
+        default=0.65,
+        help="Context keyword keep ratio for medium-risk intents.",
+    )
+    parser.add_argument(
+        "--control-intent-focus-keep-ratio-high",
+        type=float,
+        default=1.0,
+        help="Context keyword keep ratio for high-risk intents.",
+    )
+    parser.add_argument(
+        "--control-intent-focus-min-relevance",
+        type=float,
+        default=0.20,
+        help="Minimum top relevance score required before applying context-key filtering.",
+    )
+    parser.add_argument(
+        "--enable-control-near-pass",
+        action="store_true",
+        help="Enable near-pass acceptance to reduce unnecessary rewrite/fallback when candidates are close to thresholds.",
+    )
+    parser.add_argument(
+        "--control-near-pass-max-context-gap",
+        type=float,
+        default=0.05,
+        help="Maximum context-coverage shortfall allowed for near-pass acceptance.",
+    )
+    parser.add_argument(
+        "--control-near-pass-max-persona-gap",
+        type=float,
+        default=0.04,
+        help="Maximum persona-coverage shortfall allowed for near-pass acceptance.",
+    )
+    parser.add_argument(
+        "--control-near-pass-score-floor",
+        type=float,
+        default=0.34,
+        help="Minimum candidate score required for near-pass acceptance.",
+    )
+    parser.add_argument(
+        "--disable-control-near-pass-block-high-risk",
+        action="store_true",
+        help="Allow near-pass acceptance for high-risk intents (disabled by default for safety).",
+    )
+    parser.add_argument(
+        "--disable-control-early-stop",
+        action="store_true",
+        help="Disable early stopping in rewrite sampling.",
+    )
+    parser.add_argument(
         "--disable-control-rewrite",
         action="store_true",
         help="Disable rewrite pass in response control and use fallback directly.",
@@ -1498,6 +2426,39 @@ def main() -> None:
         "--disable-control-best-effort-rewrite",
         action="store_true",
         help="Disable best-effort rewrite acceptance when strict thresholds are missed.",
+    )
+    parser.add_argument(
+        "--control-alt-profile",
+        choices=[
+            "none",
+            "runtime_optimized",
+            "quality_optimized",
+            "risk_latency_aware",
+            "hybrid_balanced",
+            "intent_focus_adaptive",
+            "blend_balanced",
+            "custom",
+        ],
+        default="none",
+        help=(
+            "Optional second controlled architecture profile added as an extra arm for in-run "
+            "architecture-vs-architecture comparisons."
+        ),
+    )
+    parser.add_argument(
+        "--control-alt-arm-id",
+        default="proposed_contextual_controlled_alt",
+        help="Arm ID for the optional alternate controlled profile.",
+    )
+    parser.add_argument(
+        "--control-alt-overrides-file",
+        default="",
+        help="Optional JSON file with ControlConfig field overrides for the alternate profile.",
+    )
+    parser.add_argument(
+        "--control-alt-overrides-json",
+        default="",
+        help="Optional JSON object string with ControlConfig overrides (applied after profile).",
     )
     parser.add_argument(
         "--target-arm",
@@ -1548,16 +2509,34 @@ def main() -> None:
         rng.shuffle(sampled)
         scenarios = sampled[: int(args.max_scenarios)]
     scenarios_by_id = {str(row.get("scenario_id")): row for row in scenarios}
+    scenario_dependence = analyze_scenario_dependence(scenarios_by_id)
+    min_sig_ratio = max(0.0, float(args.min_template_signature_ratio))
+    min_eff_source_n = max(0.0, float(args.min_effective_source_n))
+    sig_ratio = float(scenario_dependence.get("template_signature_ratio", 0.0) or 0.0)
+    eff_source_n = float(scenario_dependence.get("effective_sample_size_by_source", float("nan")))
+    if bool(args.enforce_scenario_diversity):
+        fail_reasons: List[str] = []
+        if sig_ratio < min_sig_ratio:
+            fail_reasons.append(
+                f"template_signature_ratio={sig_ratio:.4f} < min_template_signature_ratio={min_sig_ratio:.4f}"
+            )
+        if (not math.isnan(eff_source_n)) and eff_source_n < min_eff_source_n:
+            fail_reasons.append(
+                f"effective_sample_size_by_source={eff_source_n:.2f} < min_effective_source_n={min_eff_source_n:.2f}"
+            )
+        if fail_reasons:
+            raise RuntimeError("Scenario diversity gate failed: " + "; ".join(fail_reasons))
     extra_baselines = parse_list_arg(str(args.baseline_models))
     baseline_models: List[str] = []
-    for model_name in [str(args.baseline_model)] + extra_baselines:
-        if model_name.lower() == str(args.candidate_model).lower():
-            continue
-        if model_name.lower() in {m.lower() for m in baseline_models}:
-            continue
-        baseline_models.append(model_name)
-    if not baseline_models:
-        baseline_models = [str(args.baseline_model)]
+    if not bool(args.skip_external_baselines):
+        for model_name in [str(args.baseline_model)] + extra_baselines:
+            if model_name.lower() == str(args.candidate_model).lower():
+                continue
+            if model_name.lower() in {m.lower() for m in baseline_models}:
+                continue
+            baseline_models.append(model_name)
+        if not baseline_models:
+            baseline_models = [str(args.baseline_model)]
 
     baseline_arm_ids: List[str] = []
     for idx, model_name in enumerate(baseline_models):
@@ -1569,13 +2548,78 @@ def main() -> None:
     base_control_config = ControlConfig(
         min_context_coverage=float(args.control_min_context_coverage),
         min_persona_coverage=float(args.control_min_persona_coverage),
+        min_response_tokens=max(1, int(args.control_min_response_tokens)),
         rewrite_temperature=float(args.control_rewrite_temperature),
         rewrite_max_tokens=int(args.control_rewrite_max_tokens),
         rewrite_candidates=max(1, int(args.control_rewrite_candidates)),
         rewrite_temperature_step=float(args.control_rewrite_temperature_step),
+        early_stop_on_pass=not bool(args.disable_control_early_stop),
+        early_stop_score=float(args.control_early_stop_score),
+        allow_relaxed_acceptance=not bool(args.disable_control_relaxed_acceptance),
+        relaxed_context_coverage=max(0.0, float(args.control_relaxed_context_coverage)),
+        relaxed_persona_coverage=max(0.0, float(args.control_relaxed_persona_coverage)),
+        relaxed_candidate_score=max(0.0, min(1.0, float(args.control_relaxed_candidate_score))),
+        min_rewrite_gain=max(0.0, float(args.control_min_rewrite_gain)),
         enable_rewrite=not bool(args.disable_control_rewrite),
         allow_best_effort_rewrite=not bool(args.disable_control_best_effort_rewrite),
+        behavior_adaptation_enabled=not bool(args.disable_control_behavior_adaptation),
+        adaptive_acceptance_enabled=not bool(args.disable_control_adaptive_acceptance),
+        adaptive_candidate_score=max(0.0, min(1.0, float(args.control_adaptive_candidate_score))),
+        adaptive_context_coverage=max(0.0, min(1.0, float(args.control_adaptive_context_coverage))),
+        adaptive_persona_coverage=max(0.0, min(1.0, float(args.control_adaptive_persona_coverage))),
+        adaptive_high_confidence_score=max(0.0, min(1.0, float(args.control_adaptive_high_score))),
+        adaptive_mid_confidence_score=max(0.0, min(1.0, float(args.control_adaptive_mid_score))),
+        adaptive_high_confidence_rewrites=max(1, int(args.control_adaptive_high_rewrites)),
+        adaptive_mid_confidence_rewrites=max(1, int(args.control_adaptive_mid_rewrites)),
+        adaptive_low_confidence_rewrites=max(1, int(args.control_adaptive_low_rewrites)),
+        low_confidence_retry_requires_gain=not bool(args.disable_control_low_confidence_retry_gain),
+        low_confidence_retry_min_score_gain=max(0.0, float(args.control_low_confidence_retry_min_score_gain)),
+        low_confidence_retry_min_coverage_gain=max(
+            0.0, float(args.control_low_confidence_retry_min_coverage_gain)
+        ),
+        intent_risk_adaptation_enabled=bool(args.enable_control_intent_risk_adaptation),
+        latency_adaptation_enabled=bool(args.enable_control_latency_adaptation),
+        latency_relax_start_pressure=max(0.0, min(1.0, float(args.control_latency_relax_start_pressure))),
+        latency_relax_max_delta=max(0.0, min(0.25, float(args.control_latency_relax_max_delta))),
+        intent_focused_context_enabled=bool(args.enable_control_intent_focused_context),
+        intent_focus_min_keep=max(1, int(args.control_intent_focus_min_keep)),
+        intent_focus_keep_ratio_low=max(0.2, min(1.0, float(args.control_intent_focus_keep_ratio_low))),
+        intent_focus_keep_ratio_medium=max(0.2, min(1.0, float(args.control_intent_focus_keep_ratio_medium))),
+        intent_focus_keep_ratio_high=max(0.2, min(1.0, float(args.control_intent_focus_keep_ratio_high))),
+        intent_focus_min_relevance=max(0.0, min(1.0, float(args.control_intent_focus_min_relevance))),
+        near_pass_enabled=bool(args.enable_control_near_pass),
+        near_pass_max_context_gap=max(0.0, min(0.5, float(args.control_near_pass_max_context_gap))),
+        near_pass_max_persona_gap=max(0.0, min(0.5, float(args.control_near_pass_max_persona_gap))),
+        near_pass_score_floor=max(0.0, min(1.0, float(args.control_near_pass_score_floor))),
+        near_pass_block_high_risk=not bool(args.disable_control_near_pass_block_high_risk),
     )
+    base_control_config = normalize_control_config(base_control_config)
+    control_rewrite_budget_ms = max(0.0, float(args.control_rewrite_budget_ms))
+    control_rewrite_budget_multiplier = max(0.0, float(args.control_rewrite_budget_multiplier))
+    alt_profile = str(args.control_alt_profile).strip().lower()
+    alt_arm_id = str(args.control_alt_arm_id).strip() or "proposed_contextual_controlled_alt"
+    alt_overrides: Dict[str, Any] = {}
+    alt_overrides_file = str(args.control_alt_overrides_file).strip()
+    if alt_overrides_file:
+        override_path = Path(alt_overrides_file)
+        if not override_path.exists():
+            raise FileNotFoundError(f"control-alt-overrides-file not found: {override_path}")
+        loaded = json.loads(override_path.read_text(encoding="utf-8"))
+        if not isinstance(loaded, dict):
+            raise ValueError("control-alt-overrides-file must contain a JSON object.")
+        alt_overrides.update(loaded)
+    alt_overrides_json = str(args.control_alt_overrides_json).strip()
+    if alt_overrides_json:
+        loaded_inline = json.loads(alt_overrides_json)
+        if not isinstance(loaded_inline, dict):
+            raise ValueError("control-alt-overrides-json must be a JSON object.")
+        alt_overrides.update(loaded_inline)
+    if alt_arm_id in {"proposed_contextual", "candidate_no_context", "proposed_contextual_controlled"}:
+        raise ValueError(f"control-alt-arm-id collides with reserved arm id: {alt_arm_id}")
+    alt_control_config: Optional[ControlConfig] = None
+    if alt_profile != "none":
+        alt_control_config = build_alternate_control_config(base_control_config, alt_profile)
+        alt_control_config = apply_control_overrides(alt_control_config, alt_overrides)
 
     arms = [
         EvaluationArm(
@@ -1583,6 +2627,7 @@ def main() -> None:
             model=args.candidate_model,
             include_dynamic_context=True,
             use_response_control=True,
+            control_profile="default",
         ),
         EvaluationArm(
             arm_id="proposed_contextual",
@@ -1595,6 +2640,17 @@ def main() -> None:
             include_dynamic_context=False,
         ),
     ]
+    if alt_control_config is not None:
+        arms.insert(
+            1,
+            EvaluationArm(
+                arm_id=alt_arm_id,
+                model=args.candidate_model,
+                include_dynamic_context=True,
+                use_response_control=True,
+                control_profile=alt_profile,
+            ),
+        )
     for arm_id, model_name in zip(baseline_arm_ids, baseline_models):
         arms.append(
             EvaluationArm(
@@ -1603,6 +2659,49 @@ def main() -> None:
                 include_dynamic_context=False,
             )
         )
+    arm_ids_seen: Dict[str, int] = {}
+    for arm in arms:
+        arm_ids_seen[arm.arm_id] = int(arm_ids_seen.get(arm.arm_id, 0)) + 1
+    duplicate_arm_ids = sorted([k for k, v in arm_ids_seen.items() if v > 1])
+    if duplicate_arm_ids:
+        raise ValueError(f"Duplicate arm IDs detected: {duplicate_arm_ids}")
+
+    response_control_config_payload = control_config_payload(
+        config=base_control_config,
+        rewrite_budget_ms=control_rewrite_budget_ms,
+        rewrite_budget_multiplier=control_rewrite_budget_multiplier,
+    )
+    control_profiles_payload: Dict[str, Dict[str, Any]] = {"default": response_control_config_payload}
+    control_config_by_profile: Dict[str, ControlConfig] = {"default": base_control_config}
+    if alt_control_config is not None:
+        control_profiles_payload[alt_profile] = control_config_payload(
+            config=alt_control_config,
+            rewrite_budget_ms=control_rewrite_budget_ms,
+            rewrite_budget_multiplier=control_rewrite_budget_multiplier,
+        )
+        control_config_by_profile[alt_profile] = alt_control_config
+    control_profile_id = hashlib.sha256(
+        json.dumps(control_profiles_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()[:16]
+    tracked_files = [
+        "core/response_controller.py",
+        "scripts/inference_adapter.py",
+        "scripts/run_proposal_alignment_eval.py",
+        "scripts/run_proposal_alignment_eval_batched.py",
+        "cpp/include/ResponseController.h",
+        "cpp/src/ResponseController.cpp",
+        "cpp/include/NPCInference.h",
+        "cpp/src/NPCInference.cpp",
+    ]
+    code_revision = gather_code_revision_metadata(ROOT_DIR)
+    tracked_hashes = collect_tracked_file_hashes(ROOT_DIR, tracked_files)
+    preflight_gate_config = {
+        "enabled": bool(args.preflight_operational_gate),
+        "arm_id": str(args.preflight_gate_arm).strip() or "proposed_contextual_controlled",
+        "max_fallback_rate": float(args.preflight_max_fallback_rate),
+        "max_retry_rate": float(args.preflight_max_retry_rate),
+        "min_first_pass_accept_rate": float(args.preflight_min_first_pass_accept_rate),
+    }
 
     run_config = {
         "run_id": run_id,
@@ -1612,15 +2711,24 @@ def main() -> None:
         "baseline_model": args.baseline_model,
         "baseline_models": baseline_models,
         "baseline_arm_ids": baseline_arm_ids,
+        "skip_external_baselines": bool(args.skip_external_baselines),
         "temperature": args.temperature,
         "max_tokens": args.max_tokens,
         "repeats": args.repeats,
         "max_scenarios": int(args.max_scenarios),
+        "scenario_diversity_gate": {
+            "enforce": bool(args.enforce_scenario_diversity),
+            "min_template_signature_ratio": min_sig_ratio,
+            "min_effective_source_n": min_eff_source_n,
+        },
         "seed": args.seed,
+        "timeout_s": int(args.timeout_s),
+        "min_arm_success_rate": float(args.min_arm_success_rate),
         "bertscore_lang": args.bertscore_lang,
         "bertscore_model_type": str(args.bertscore_model_type),
         "bertscore_batch_size": int(args.bertscore_batch_size),
         "bertscore_cache_dir": str(args.bertscore_cache_dir),
+        "disable_bertscore": bool(args.disable_bertscore),
         "target_arm": args.target_arm,
         "slice_keys": parse_list_arg(str(args.slice_keys)),
         "human_eval_file": str(args.human_eval_file),
@@ -1634,22 +2742,34 @@ def main() -> None:
                 "model": arm.model,
                 "include_dynamic_context": arm.include_dynamic_context,
                 "use_response_control": arm.use_response_control,
+                "control_profile": arm.control_profile,
             }
             for arm in arms
         ],
-        "response_control_config": {
-            "min_context_coverage": base_control_config.min_context_coverage,
-            "min_persona_coverage": base_control_config.min_persona_coverage,
-            "rewrite_temperature": base_control_config.rewrite_temperature,
-            "rewrite_max_tokens": base_control_config.rewrite_max_tokens,
-            "rewrite_candidates": base_control_config.rewrite_candidates,
-            "rewrite_temperature_step": base_control_config.rewrite_temperature_step,
-            "enable_rewrite": base_control_config.enable_rewrite,
-            "allow_best_effort_rewrite": base_control_config.allow_best_effort_rewrite,
+        "response_control_config": response_control_config_payload,
+        "response_control_profiles": control_profiles_payload,
+        "control_alt_profile": alt_profile,
+        "control_alt_arm_id": alt_arm_id if alt_control_config is not None else "",
+        "control_alt_overrides": alt_overrides if alt_control_config is not None else {},
+        "control_alt_overrides_file": alt_overrides_file if alt_control_config is not None else "",
+        "reproducibility_lock": {
+            "control_profile_id": control_profile_id,
+            "code_revision": code_revision,
+            "tracked_files_sha256": tracked_hashes,
+        },
+        "operational_preflight_gate": preflight_gate_config,
+        "scenario_dependence_summary": {
+            "unique_source_count": int(scenario_dependence.get("unique_source_count", 0)),
+            "unique_template_signature_count": int(scenario_dependence.get("unique_template_signature_count", 0)),
+            "template_signature_ratio": float(scenario_dependence.get("template_signature_ratio", 0.0) or 0.0),
+            "effective_sample_size_by_source": float(
+                scenario_dependence.get("effective_sample_size_by_source", float("nan"))
+            ),
         },
     }
     write_json(run_dir / "run_config.json", run_config)
     write_jsonl(run_dir / "scenarios.jsonl", scenarios)
+    write_json(run_dir / "scenario_dependence.json", scenario_dependence)
 
     hardware = gather_hardware_metadata()
     write_json(metadata_dir / "hardware.json", hardware)
@@ -1665,7 +2785,7 @@ def main() -> None:
     for arm in arms:
         print(
             f"[arm] {arm.arm_id} model={arm.model} dynamic_context={arm.include_dynamic_context} "
-            f"response_control={arm.use_response_control}"
+            f"response_control={arm.use_response_control} profile={arm.control_profile}"
         )
         for repeat_idx in range(max(1, args.repeats)):
             for scenario in scenarios:
@@ -1705,18 +2825,70 @@ def main() -> None:
                     scenario_input = str(scenario.get("player_input", ""))
                     context_keywords = [str(x) for x in scenario.get("context_keywords", [])] if arm.include_dynamic_context else []
                     persona_keywords = [str(x) for x in scenario.get("persona_keywords", [])]
+                    arm_profile = str(arm.control_profile or "default")
+                    active_control = control_config_by_profile.get(arm_profile, base_control_config)
                     control_config = ControlConfig(
                         min_context_coverage=(
-                            base_control_config.min_context_coverage if arm.include_dynamic_context else 0.0
+                            active_control.min_context_coverage if arm.include_dynamic_context else 0.0
                         ),
-                        min_persona_coverage=base_control_config.min_persona_coverage,
-                        rewrite_temperature=base_control_config.rewrite_temperature,
-                        rewrite_max_tokens=base_control_config.rewrite_max_tokens,
-                        rewrite_candidates=base_control_config.rewrite_candidates,
-                        rewrite_temperature_step=base_control_config.rewrite_temperature_step,
-                        enable_rewrite=base_control_config.enable_rewrite,
-                        allow_best_effort_rewrite=base_control_config.allow_best_effort_rewrite,
+                        min_persona_coverage=active_control.min_persona_coverage,
+                        min_response_tokens=active_control.min_response_tokens,
+                        rewrite_temperature=active_control.rewrite_temperature,
+                        rewrite_max_tokens=active_control.rewrite_max_tokens,
+                        rewrite_candidates=active_control.rewrite_candidates,
+                        rewrite_temperature_step=active_control.rewrite_temperature_step,
+                        early_stop_on_pass=active_control.early_stop_on_pass,
+                        early_stop_score=active_control.early_stop_score,
+                        allow_relaxed_acceptance=active_control.allow_relaxed_acceptance,
+                        relaxed_context_coverage=(
+                            active_control.relaxed_context_coverage if arm.include_dynamic_context else 0.0
+                        ),
+                        relaxed_persona_coverage=active_control.relaxed_persona_coverage,
+                        relaxed_candidate_score=active_control.relaxed_candidate_score,
+                        min_rewrite_gain=active_control.min_rewrite_gain,
+                        enable_rewrite=active_control.enable_rewrite,
+                        allow_best_effort_rewrite=active_control.allow_best_effort_rewrite,
+                        behavior_adaptation_enabled=active_control.behavior_adaptation_enabled,
+                        adaptive_acceptance_enabled=active_control.adaptive_acceptance_enabled,
+                        adaptive_candidate_score=active_control.adaptive_candidate_score,
+                        adaptive_context_coverage=(
+                            active_control.adaptive_context_coverage if arm.include_dynamic_context else 0.0
+                        ),
+                        adaptive_persona_coverage=active_control.adaptive_persona_coverage,
+                        adaptive_high_confidence_score=active_control.adaptive_high_confidence_score,
+                        adaptive_mid_confidence_score=active_control.adaptive_mid_confidence_score,
+                        adaptive_high_confidence_rewrites=active_control.adaptive_high_confidence_rewrites,
+                        adaptive_mid_confidence_rewrites=active_control.adaptive_mid_confidence_rewrites,
+                        adaptive_low_confidence_rewrites=active_control.adaptive_low_confidence_rewrites,
+                        low_confidence_retry_requires_gain=active_control.low_confidence_retry_requires_gain,
+                        low_confidence_retry_min_score_gain=active_control.low_confidence_retry_min_score_gain,
+                        low_confidence_retry_min_coverage_gain=(
+                            active_control.low_confidence_retry_min_coverage_gain
+                        ),
+                        intent_risk_adaptation_enabled=active_control.intent_risk_adaptation_enabled,
+                        latency_adaptation_enabled=active_control.latency_adaptation_enabled,
+                        latency_relax_start_pressure=active_control.latency_relax_start_pressure,
+                        latency_relax_max_delta=active_control.latency_relax_max_delta,
+                        low_risk_context_relax=active_control.low_risk_context_relax,
+                        low_risk_persona_relax=active_control.low_risk_persona_relax,
+                        low_risk_candidate_score_relax=active_control.low_risk_candidate_score_relax,
+                        high_risk_context_tighten=active_control.high_risk_context_tighten,
+                        high_risk_persona_tighten=active_control.high_risk_persona_tighten,
+                        high_risk_candidate_score_tighten=active_control.high_risk_candidate_score_tighten,
+                        intent_focused_context_enabled=active_control.intent_focused_context_enabled,
+                        intent_focus_min_keep=active_control.intent_focus_min_keep,
+                        intent_focus_keep_ratio_low=active_control.intent_focus_keep_ratio_low,
+                        intent_focus_keep_ratio_medium=active_control.intent_focus_keep_ratio_medium,
+                        intent_focus_keep_ratio_high=active_control.intent_focus_keep_ratio_high,
+                        intent_focus_min_relevance=active_control.intent_focus_min_relevance,
+                        near_pass_enabled=active_control.near_pass_enabled,
+                        near_pass_max_context_gap=active_control.near_pass_max_context_gap,
+                        near_pass_max_persona_gap=active_control.near_pass_max_persona_gap,
+                        near_pass_score_floor=active_control.near_pass_score_floor,
+                        near_pass_block_high_risk=active_control.near_pass_block_high_risk,
                     )
+                    scenario_tags = get_scenario_tags(scenario)
+                    behavior_state = str(scenario_tags.get("behavior_state", "")).strip()
 
                     rewrite_meta: Dict[str, Any] = {
                         "attempts": 0,
@@ -1724,10 +2896,26 @@ def main() -> None:
                         "last_error": "",
                         "total_eval_count": 0,
                         "total_duration_ns": 0,
+                        "budget_exhausted": False,
                     }
+                    raw_total_duration_ns = int(record.get("total_duration_ns", 0) or 0)
+                    raw_total_duration_ms = raw_total_duration_ns / 1_000_000.0
+                    rewrite_budget_ms = float("inf")
+                    if control_rewrite_budget_ms > 0.0:
+                        rewrite_budget_ms = min(rewrite_budget_ms, control_rewrite_budget_ms)
+                    if control_rewrite_budget_multiplier > 0.0 and raw_total_duration_ms > 0.0:
+                        rewrite_budget_ms = min(
+                            rewrite_budget_ms,
+                            control_rewrite_budget_multiplier * raw_total_duration_ms,
+                        )
 
                     def rewrite_fn(rewrite_prompt: str, rewrite_max_tokens: int, rewrite_temperature: float) -> str:
+                        spent_ms = int(rewrite_meta.get("total_duration_ns", 0) or 0) / 1_000_000.0
+                        if spent_ms >= rewrite_budget_ms:
+                            rewrite_meta["budget_exhausted"] = True
+                            return ""
                         rewrite_meta["attempts"] = int(rewrite_meta.get("attempts", 0) or 0) + 1
+                        start_ns = time.perf_counter_ns()
                         rewrite_gen = generate_ollama_response(
                             host=args.host,
                             model=arm.model,
@@ -1746,9 +2934,12 @@ def main() -> None:
                         rewrite_meta["total_eval_count"] = int(rewrite_meta.get("total_eval_count", 0) or 0) + int(
                             rewrite_gen.get("eval_count", 0) or 0
                         )
+                        duration_ns = int(rewrite_gen.get("total_duration_ns", 0) or 0)
+                        if duration_ns <= 0:
+                            duration_ns = max(0, time.perf_counter_ns() - start_ns)
                         rewrite_meta["total_duration_ns"] = int(
                             rewrite_meta.get("total_duration_ns", 0) or 0
-                        ) + int(rewrite_gen.get("total_duration_ns", 0) or 0)
+                        ) + duration_ns
                         return str(rewrite_gen.get("response", ""))
 
                     control_result = control_response(
@@ -1760,11 +2951,15 @@ def main() -> None:
                         persona_keywords=persona_keywords,
                         rewrite_fn=rewrite_fn,
                         config=control_config,
+                        behavior_state=behavior_state,
+                        raw_latency_ms=raw_total_duration_ms,
+                        timeout_s=float(args.timeout_s),
                     )
 
                     record["response"] = control_result.response
                     record["response_sanitized"] = (sanitize_npc_response(raw_response) != control_result.response)
                     record["response_control_source"] = control_result.source
+                    record["response_control_profile"] = arm_profile
                     record["response_repaired"] = control_result.repaired
                     record["response_repair_reason"] = control_result.repair_reason
                     record["response_context_coverage"] = control_result.context_coverage
@@ -1779,8 +2974,11 @@ def main() -> None:
                         record["rewrite_error"] = str(rewrite_meta.get("last_error", ""))
                         record["rewrite_eval_count"] = int(rewrite_meta.get("total_eval_count", 0) or 0)
                         record["rewrite_total_duration_ns"] = int(rewrite_meta.get("total_duration_ns", 0) or 0)
+                        record["rewrite_budget_exhausted"] = bool(rewrite_meta.get("budget_exhausted", False))
                     if control_result.source == "fallback":
                         record["response_fallback"] = True
+                    if behavior_state:
+                        record["behavior_state"] = behavior_state
                 else:
                     sanitized = sanitize_npc_response(raw_response)
                     if sanitized:
@@ -1800,41 +2998,97 @@ def main() -> None:
     for arm in arms:
         write_jsonl(responses_dir / f"{arm.arm_id}.jsonl", all_responses[arm.arm_id])
 
+    arm_request_health: Dict[str, Dict[str, Any]] = {}
+    low_success_arms: List[str] = []
+    min_success_rate = max(0.0, min(1.0, float(args.min_arm_success_rate)))
+    for arm in arms:
+        rows = all_responses.get(arm.arm_id, [])
+        total = len(rows)
+        ok_count = sum(1 for row in rows if bool(row.get("ok")))
+        success_rate = (ok_count / total) if total > 0 else 0.0
+        arm_request_health[arm.arm_id] = {
+            "total_requests": total,
+            "successful_requests": ok_count,
+            "success_rate": success_rate,
+        }
+        if total == 0 or ok_count == 0 or success_rate < min_success_rate:
+            low_success_arms.append(f"{arm.arm_id}={ok_count}/{total} ({success_rate:.3f})")
+
+    run_config["arm_request_health"] = arm_request_health
+    write_json(run_dir / "run_config.json", run_config)
+    if low_success_arms:
+        details = "; ".join(low_success_arms)
+        raise RuntimeError(
+            "Insufficient successful generations for one or more arms. "
+            f"Required min-arm-success-rate={min_success_rate:.2f}. Details: {details}"
+        )
+
+    operational_metrics = summarize_operational_metrics(
+        responses_by_arm=all_responses,
+        scenarios_by_id=scenarios_by_id,
+    )
+    write_json(run_dir / "operational_metrics.json", operational_metrics)
+    gate_arm_id = str(args.preflight_gate_arm).strip() or "proposed_contextual_controlled"
+    if gate_arm_id not in operational_metrics.get("arms", {}):
+        gate_arm_id = "proposed_contextual_controlled" if "proposed_contextual_controlled" in operational_metrics.get("arms", {}) else arms[0].arm_id
+    operational_gate = evaluate_operational_gate(
+        operational_metrics=operational_metrics,
+        arm_id=gate_arm_id,
+        max_fallback_rate=float(args.preflight_max_fallback_rate),
+        max_retry_rate=float(args.preflight_max_retry_rate),
+        min_first_pass_accept_rate=float(args.preflight_min_first_pass_accept_rate),
+    )
+    write_json(run_dir / "preflight_operational_gate.json", operational_gate)
+    run_config["operational_preflight_gate_result"] = operational_gate
+    write_json(run_dir / "run_config.json", run_config)
+    if bool(args.preflight_operational_gate) and not bool(operational_gate.get("pass")):
+        details = ", ".join(
+            f"{c.get('name')}={c.get('observed')} ({c.get('rule')})"
+            for c in operational_gate.get("checks", [])
+            if not bool(c.get("pass"))
+        )
+        raise RuntimeError(
+            "Operational preflight gate failed before scoring. "
+            f"Arm={operational_gate.get('arm_id')}. Failing checks: {details}"
+        )
+
     all_scores: Dict[str, List[Dict[str, Any]]] = {}
     summary: Dict[str, Dict[str, Any]] = {}
 
-    bertscore_meta: Dict[str, Any] = {"available": False}
+    bertscore_disabled = bool(args.disable_bertscore)
+    bertscore_meta: Dict[str, Any] = {"available": False, "reason": "disabled_by_flag"} if bertscore_disabled else {"available": False}
     bertscore_available_any = False
 
     for idx, arm in enumerate(arms):
         rows = [r for r in all_responses[arm.arm_id] if r.get("ok")]
         scored = evaluate_responses_for_arm(rows, scenarios_by_id=scenarios_by_id)
 
-        refs = [str(row.get("reference_response", "")) for row in scored]
-        hyps = [str(row.get("response", "")) for row in scored]
-        bert = compute_optional_bertscore(
-            hyps,
-            refs,
-            lang=args.bertscore_lang,
-            model_type=str(args.bertscore_model_type),
-            batch_size=int(args.bertscore_batch_size),
-            cache_dir=str(args.bertscore_cache_dir),
-        )
-        if bert.get("available"):
-            bertscore_meta = {
-                "available": True,
-                "lang": bert.get("lang", args.bertscore_lang),
-                "model_type": bert.get("model_type", str(args.bertscore_model_type).strip() or "auto"),
-                "batch_size": int(bert.get("batch_size", int(args.bertscore_batch_size))),
-                "cache_dir": str(bert.get("cache_dir", str(args.bertscore_cache_dir))),
-            }
-            bertscore_available_any = True
-            vals = bert.get("values", [])
-            for row, f1 in zip(scored, vals):
-                row["bertscore_f1"] = float(f1)
-        else:
-            if "reason" in bert and not bertscore_available_any:
-                bertscore_meta = {"available": False, "reason": bert["reason"]}
+        if not bertscore_disabled:
+            refs = [str(row.get("reference_response", "")) for row in scored]
+            hyps = [str(row.get("response", "")) for row in scored]
+            bert = compute_optional_bertscore(
+                hyps,
+                refs,
+                lang=args.bertscore_lang,
+                model_type=str(args.bertscore_model_type),
+                batch_size=int(args.bertscore_batch_size),
+                cache_dir=str(args.bertscore_cache_dir),
+            )
+            if bert.get("available"):
+                bertscore_meta = {
+                    "available": True,
+                    "lang": bert.get("lang", args.bertscore_lang),
+                    "model_type": bert.get("model_type", str(args.bertscore_model_type).strip() or "auto"),
+                    "batch_size": int(bert.get("batch_size", int(args.bertscore_batch_size))),
+                    "cache_dir": str(bert.get("cache_dir", str(args.bertscore_cache_dir))),
+                }
+                bertscore_available_any = True
+                vals = bert.get("values", [])
+                for row, f1 in zip(scored, vals):
+                    row["bertscore_f1"] = float(f1)
+            else:
+                if "reason" in bert and not bertscore_available_any:
+                    bertscore_meta = {"available": False, "reason": bert["reason"]}
 
         for row in scored:
             row["overall_quality"] = row_overall_quality(row)
@@ -1887,6 +3141,13 @@ def main() -> None:
                 )
             )
 
+    if alt_control_config is not None and alt_arm_id in available_arm_ids:
+        comparison_plan.append(("controlled_alt_vs_controlled_default", alt_arm_id, "proposed_contextual_controlled"))
+        comparison_plan.append(("controlled_alt_vs_proposed_raw", alt_arm_id, "proposed_contextual"))
+        comparison_plan.append(("controlled_alt_vs_candidate_no_context", alt_arm_id, "candidate_no_context"))
+        for baseline_arm in baseline_arm_ids:
+            comparison_plan.append((f"controlled_alt_vs_{baseline_arm}", alt_arm_id, baseline_arm))
+
     if target_arm_for_external in available_arm_ids:
         for baseline_arm in baseline_arm_ids:
             custom_name = f"{target_arm_for_external}_vs_{baseline_arm}"
@@ -1913,6 +3174,7 @@ def main() -> None:
             baseline_arm,
             seed=args.seed + 5001 + 997 * (comp_idx + 1),
             metrics=metrics_for_compare,
+            scenarios_by_id=scenarios_by_id,
         )
         win_rates[comp_name] = paired_metric_win_rates(
             scored_by_arm,
@@ -1962,6 +3224,8 @@ def main() -> None:
         {
             "target_arm_for_external": target_arm_for_external,
             "baseline_arm_ids": baseline_arm_ids,
+            "control_alt_arm_id": alt_arm_id if alt_control_config is not None else "",
+            "control_alt_profile": alt_profile if alt_control_config is not None else "none",
             "comparisons": [
                 {"comparison_id": comp_name, "target_arm": target_arm, "baseline_arm": baseline_arm}
                 for comp_name, target_arm, baseline_arm in comparison_plan
@@ -1982,6 +3246,8 @@ def main() -> None:
         win_rates=win_rates,
         slice_summary=slice_summary,
         human_eval=human_eval_summary,
+        operational_metrics=operational_metrics,
+        scenario_dependence=scenario_dependence,
     )
 
     print(f"\nPublished proposal artifact bundle: {run_dir}")
@@ -1992,6 +3258,9 @@ def main() -> None:
     print(f"  - {run_dir / 'win_rates.json'}")
     print(f"  - {run_dir / 'slice_summary.json'}")
     print(f"  - {run_dir / 'error_analysis.json'}")
+    print(f"  - {run_dir / 'operational_metrics.json'}")
+    print(f"  - {run_dir / 'preflight_operational_gate.json'}")
+    print(f"  - {run_dir / 'scenario_dependence.json'}")
     if human_eval_summary is not None:
         print(f"  - {run_dir / 'human_eval_summary.json'}")
         print(f"  - {run_dir / 'human_eval_report.md'}")

@@ -1,0 +1,742 @@
+{
+  "proposed_vs_candidate_no_context": {
+    "context_relevance": {
+      "target_mean": 0.05826881401199663,
+      "baseline_mean": 0.027697443785678382,
+      "absolute_delta": 0.030571370226318246,
+      "relative_delta": 1.1037614323862586
+    },
+    "persona_consistency": {
+      "target_mean": 0.16446516106442577,
+      "baseline_mean": 0.15933620022867903,
+      "absolute_delta": 0.0051289608357467376,
+      "relative_delta": 0.032189551579525945
+    },
+    "naturalness": {
+      "target_mean": 0.800681236917918,
+      "baseline_mean": 0.820134481157785,
+      "absolute_delta": -0.01945324423986694,
+      "relative_delta": -0.023719578540832436
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.06313131313131314,
+      "baseline_mean": 0.022474747474747477,
+      "absolute_delta": 0.040656565656565655,
+      "relative_delta": 1.8089887640449436
+    },
+    "context_overlap": {
+      "target_mean": 0.04692298273359147,
+      "baseline_mean": 0.039883735177850495,
+      "absolute_delta": 0.0070392475557409726,
+      "relative_delta": 0.17649419053534965
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.07142857142857142,
+      "baseline_mean": 0.06349206349206349,
+      "absolute_delta": 0.007936507936507936,
+      "relative_delta": 0.125
+    },
+    "persona_style": {
+      "target_mean": 0.5366115196078431,
+      "baseline_mean": 0.5427127471751413,
+      "absolute_delta": -0.00610122756729814,
+      "relative_delta": -0.011242093720951767
+    },
+    "distinct1": {
+      "target_mean": 0.9459739256281287,
+      "baseline_mean": 0.9367945362277958,
+      "absolute_delta": 0.009179389400332805,
+      "relative_delta": 0.009798722180101077
+    },
+    "length_score": {
+      "target_mean": 0.25,
+      "baseline_mean": 0.32916666666666666,
+      "absolute_delta": -0.07916666666666666,
+      "relative_delta": -0.24050632911392406
+    },
+    "sentence_score": {
+      "target_mean": 0.7229166666666668,
+      "baseline_mean": 0.7958333333333334,
+      "absolute_delta": -0.07291666666666663,
+      "relative_delta": -0.0916230366492146
+    },
+    "bertscore_f1": {
+      "target_mean": 0.04527589358622208,
+      "baseline_mean": 0.0482429105322808,
+      "absolute_delta": -0.0029670169460587204,
+      "relative_delta": -0.06150161574669917
+    },
+    "overall_quality": {
+      "target_mean": 0.22006390118849947,
+      "baseline_mean": 0.2097159460423048,
+      "absolute_delta": 0.01034795514619466,
+      "relative_delta": 0.0493427197191158
+    }
+  },
+  "proposed_vs_baseline_no_context": {
+    "context_relevance": {
+      "target_mean": 0.05826881401199663,
+      "baseline_mean": 0.04290699944124585,
+      "absolute_delta": 0.015361814570750781,
+      "relative_delta": 0.35802584125665293
+    },
+    "persona_consistency": {
+      "target_mean": 0.16446516106442577,
+      "baseline_mean": 0.1716097308488613,
+      "absolute_delta": -0.007144569784435534,
+      "relative_delta": -0.041632661208051425
+    },
+    "naturalness": {
+      "target_mean": 0.800681236917918,
+      "baseline_mean": 0.9009802263990947,
+      "absolute_delta": -0.10029898948117666,
+      "relative_delta": -0.11132207627023838
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.06313131313131314,
+      "baseline_mean": 0.04551767676767677,
+      "absolute_delta": 0.017613636363636366,
+      "relative_delta": 0.38696255201109575
+    },
+    "context_overlap": {
+      "target_mean": 0.04692298273359147,
+      "baseline_mean": 0.03681541901290705,
+      "absolute_delta": 0.010107563720684415,
+      "relative_delta": 0.27454702382012336
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.07142857142857142,
+      "baseline_mean": 0.06845238095238095,
+      "absolute_delta": 0.0029761904761904795,
+      "relative_delta": 0.04347826086956527
+    },
+    "persona_style": {
+      "target_mean": 0.5366115196078431,
+      "baseline_mean": 0.5842391304347826,
+      "absolute_delta": -0.04762761082693945,
+      "relative_delta": -0.08152074783401729
+    },
+    "distinct1": {
+      "target_mean": 0.9459739256281287,
+      "baseline_mean": 0.9758880659977369,
+      "absolute_delta": -0.029914140369608266,
+      "relative_delta": -0.030653249498470286
+    },
+    "length_score": {
+      "target_mean": 0.25,
+      "baseline_mean": 0.6041666666666666,
+      "absolute_delta": -0.35416666666666663,
+      "relative_delta": -0.5862068965517241
+    },
+    "sentence_score": {
+      "target_mean": 0.7229166666666668,
+      "baseline_mean": 0.8979166666666667,
+      "absolute_delta": -0.17499999999999993,
+      "relative_delta": -0.1948955916473317
+    },
+    "bertscore_f1": {
+      "target_mean": 0.04527589358622208,
+      "baseline_mean": 0.03480118301619465,
+      "absolute_delta": 0.010474710570027433,
+      "relative_delta": 0.3009871981982064
+    },
+    "overall_quality": {
+      "target_mean": 0.22006390118849947,
+      "baseline_mean": 0.2326233430643799,
+      "absolute_delta": -0.012559441875880428,
+      "relative_delta": -0.053990462480820456
+    }
+  },
+  "controlled_vs_proposed_raw": {
+    "context_relevance": {
+      "target_mean": 0.28811167659281217,
+      "baseline_mean": 0.05826881401199663,
+      "absolute_delta": 0.22984286258081554,
+      "relative_delta": 3.9445261839977475
+    },
+    "persona_consistency": {
+      "target_mean": 0.34475000000000006,
+      "baseline_mean": 0.16446516106442577,
+      "absolute_delta": 0.1802848389355743,
+      "relative_delta": 1.0961886260212368
+    },
+    "naturalness": {
+      "target_mean": 0.8788969334001963,
+      "baseline_mean": 0.800681236917918,
+      "absolute_delta": 0.07821569648227822,
+      "relative_delta": 0.09768643609453848
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.3659722222222222,
+      "baseline_mean": 0.06313131313131314,
+      "absolute_delta": 0.30284090909090905,
+      "relative_delta": 4.796999999999999
+    },
+    "context_overlap": {
+      "target_mean": 0.10643707012418864,
+      "baseline_mean": 0.04692298273359147,
+      "absolute_delta": 0.05951408739059717,
+      "relative_delta": 1.2683355559149465
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.2736111111111111,
+      "baseline_mean": 0.07142857142857142,
+      "absolute_delta": 0.20218253968253966,
+      "relative_delta": 2.8305555555555553
+    },
+    "persona_style": {
+      "target_mean": 0.6293055555555556,
+      "baseline_mean": 0.5366115196078431,
+      "absolute_delta": 0.09269403594771242,
+      "relative_delta": 0.17273955657055856
+    },
+    "distinct1": {
+      "target_mean": 0.9351099579153712,
+      "baseline_mean": 0.9459739256281287,
+      "absolute_delta": -0.010863967712757439,
+      "relative_delta": -0.011484426175429456
+    },
+    "length_score": {
+      "target_mean": 0.5777777777777778,
+      "baseline_mean": 0.25,
+      "absolute_delta": 0.32777777777777783,
+      "relative_delta": 1.3111111111111113
+    },
+    "sentence_score": {
+      "target_mean": 0.8979166666666667,
+      "baseline_mean": 0.7229166666666668,
+      "absolute_delta": 0.17499999999999993,
+      "relative_delta": 0.24207492795389038
+    },
+    "bertscore_f1": {
+      "target_mean": 0.08476774569135159,
+      "baseline_mean": 0.04527589358622208,
+      "absolute_delta": 0.03949185210512951,
+      "relative_delta": 0.8722489823402908
+    },
+    "overall_quality": {
+      "target_mean": 0.3908479138061745,
+      "baseline_mean": 0.22006390118849947,
+      "absolute_delta": 0.17078401261767504,
+      "relative_delta": 0.7760655504847526
+    }
+  },
+  "controlled_vs_candidate_no_context": {
+    "context_relevance": {
+      "target_mean": 0.28811167659281217,
+      "baseline_mean": 0.027697443785678382,
+      "absolute_delta": 0.26041423280713377,
+      "relative_delta": 9.402103487318461
+    },
+    "persona_consistency": {
+      "target_mean": 0.34475000000000006,
+      "baseline_mean": 0.15933620022867903,
+      "absolute_delta": 0.18541379977132103,
+      "relative_delta": 1.163663997918963
+    },
+    "naturalness": {
+      "target_mean": 0.8788969334001963,
+      "baseline_mean": 0.820134481157785,
+      "absolute_delta": 0.05876245224241128,
+      "relative_delta": 0.07164977646038763
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.3659722222222222,
+      "baseline_mean": 0.022474747474747477,
+      "absolute_delta": 0.3434974747474747,
+      "relative_delta": 15.283707865168536
+    },
+    "context_overlap": {
+      "target_mean": 0.10643707012418864,
+      "baseline_mean": 0.039883735177850495,
+      "absolute_delta": 0.06655333494633814,
+      "relative_delta": 1.6686836037187072
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.2736111111111111,
+      "baseline_mean": 0.06349206349206349,
+      "absolute_delta": 0.2101190476190476,
+      "relative_delta": 3.3093749999999997
+    },
+    "persona_style": {
+      "target_mean": 0.6293055555555556,
+      "baseline_mean": 0.5427127471751413,
+      "absolute_delta": 0.08659280838041428,
+      "relative_delta": 0.15955550856532494
+    },
+    "distinct1": {
+      "target_mean": 0.9351099579153712,
+      "baseline_mean": 0.9367945362277958,
+      "absolute_delta": -0.0016845783124246339,
+      "relative_delta": -0.0017982366968192938
+    },
+    "length_score": {
+      "target_mean": 0.5777777777777778,
+      "baseline_mean": 0.32916666666666666,
+      "absolute_delta": 0.24861111111111117,
+      "relative_delta": 0.7552742616033757
+    },
+    "sentence_score": {
+      "target_mean": 0.8979166666666667,
+      "baseline_mean": 0.7958333333333334,
+      "absolute_delta": 0.1020833333333333,
+      "relative_delta": 0.12827225130890046
+    },
+    "bertscore_f1": {
+      "target_mean": 0.08476774569135159,
+      "baseline_mean": 0.0482429105322808,
+      "absolute_delta": 0.03652483515907079,
+      "relative_delta": 0.7571026448462497
+    },
+    "overall_quality": {
+      "target_mean": 0.3908479138061745,
+      "baseline_mean": 0.2097159460423048,
+      "absolute_delta": 0.1811319677638697,
+      "relative_delta": 0.8637014551450988
+    }
+  },
+  "controlled_vs_baseline_no_context": {
+    "context_relevance": {
+      "target_mean": 0.28811167659281217,
+      "baseline_mean": 0.04290699944124585,
+      "absolute_delta": 0.24520467715156632,
+      "relative_delta": 5.714794330639089
+    },
+    "persona_consistency": {
+      "target_mean": 0.34475000000000006,
+      "baseline_mean": 0.1716097308488613,
+      "absolute_delta": 0.17314026915113875,
+      "relative_delta": 1.0089187151259238
+    },
+    "naturalness": {
+      "target_mean": 0.8788969334001963,
+      "baseline_mean": 0.9009802263990947,
+      "absolute_delta": -0.02208329299889844,
+      "relative_delta": -0.024510297065183883
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.3659722222222222,
+      "baseline_mean": 0.04551767676767677,
+      "absolute_delta": 0.32045454545454544,
+      "relative_delta": 7.040221914008321
+    },
+    "context_overlap": {
+      "target_mean": 0.10643707012418864,
+      "baseline_mean": 0.03681541901290705,
+      "absolute_delta": 0.06962165111128159,
+      "relative_delta": 1.89110033181676
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.2736111111111111,
+      "baseline_mean": 0.06845238095238095,
+      "absolute_delta": 0.20515873015873015,
+      "relative_delta": 2.9971014492753625
+    },
+    "persona_style": {
+      "target_mean": 0.6293055555555556,
+      "baseline_mean": 0.5842391304347826,
+      "absolute_delta": 0.04506642512077297,
+      "relative_delta": 0.0771369509043928
+    },
+    "distinct1": {
+      "target_mean": 0.9351099579153712,
+      "baseline_mean": 0.9758880659977369,
+      "absolute_delta": -0.040778108082365705,
+      "relative_delta": -0.04178564069299754
+    },
+    "length_score": {
+      "target_mean": 0.5777777777777778,
+      "baseline_mean": 0.6041666666666666,
+      "absolute_delta": -0.026388888888888795,
+      "relative_delta": -0.04367816091954008
+    },
+    "sentence_score": {
+      "target_mean": 0.8979166666666667,
+      "baseline_mean": 0.8979166666666667,
+      "absolute_delta": 0.0,
+      "relative_delta": 0.0
+    },
+    "bertscore_f1": {
+      "target_mean": 0.08476774569135159,
+      "baseline_mean": 0.03480118301619465,
+      "absolute_delta": 0.04996656267515694,
+      "relative_delta": 1.4357719578643382
+    },
+    "overall_quality": {
+      "target_mean": 0.3908479138061745,
+      "baseline_mean": 0.2326233430643799,
+      "absolute_delta": 0.1582245707417946,
+      "relative_delta": 0.6801749500178278
+    }
+  },
+  "controlled_alt_vs_controlled_default": {
+    "context_relevance": {
+      "target_mean": 0.29059534198909615,
+      "baseline_mean": 0.28811167659281217,
+      "absolute_delta": 0.002483665396283974,
+      "relative_delta": 0.008620495446958696
+    },
+    "persona_consistency": {
+      "target_mean": 0.31296176046176044,
+      "baseline_mean": 0.34475000000000006,
+      "absolute_delta": -0.031788239538239615,
+      "relative_delta": -0.09220664115515478
+    },
+    "naturalness": {
+      "target_mean": 0.8833537432352956,
+      "baseline_mean": 0.8788969334001963,
+      "absolute_delta": 0.004456809835099329,
+      "relative_delta": 0.005070912942951376
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.36723484848484844,
+      "baseline_mean": 0.3659722222222222,
+      "absolute_delta": 0.001262626262626243,
+      "relative_delta": 0.0034500603760565275
+    },
+    "context_overlap": {
+      "target_mean": 0.11176982683234064,
+      "baseline_mean": 0.10643707012418864,
+      "absolute_delta": 0.005332756708152003,
+      "relative_delta": 0.05010243801271352
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.2390873015873016,
+      "baseline_mean": 0.2736111111111111,
+      "absolute_delta": -0.034523809523809484,
+      "relative_delta": -0.12617839013778087
+    },
+    "persona_style": {
+      "target_mean": 0.608459595959596,
+      "baseline_mean": 0.6293055555555556,
+      "absolute_delta": -0.020845959595959584,
+      "relative_delta": -0.0331253385766738
+    },
+    "distinct1": {
+      "target_mean": 0.9439746358660169,
+      "baseline_mean": 0.9351099579153712,
+      "absolute_delta": 0.008864677950645716,
+      "relative_delta": 0.009479824137909546
+    },
+    "length_score": {
+      "target_mean": 0.5652777777777778,
+      "baseline_mean": 0.5777777777777778,
+      "absolute_delta": -0.012500000000000067,
+      "relative_delta": -0.0216346153846155
+    },
+    "sentence_score": {
+      "target_mean": 0.9270833333333334,
+      "baseline_mean": 0.8979166666666667,
+      "absolute_delta": 0.029166666666666674,
+      "relative_delta": 0.03248259860788864
+    },
+    "bertscore_f1": {
+      "target_mean": 0.09587826494437952,
+      "baseline_mean": 0.08476774569135159,
+      "absolute_delta": 0.011110519253027931,
+      "relative_delta": 0.13107012770497067
+    },
+    "overall_quality": {
+      "target_mean": 0.3835204964552359,
+      "baseline_mean": 0.3908479138061745,
+      "absolute_delta": -0.007327417350938614,
+      "relative_delta": -0.018747489988068237
+    }
+  },
+  "controlled_alt_vs_proposed_raw": {
+    "context_relevance": {
+      "target_mean": 0.29059534198909615,
+      "baseline_mean": 0.05826881401199663,
+      "absolute_delta": 0.23232652797709952,
+      "relative_delta": 3.987150449454268
+    },
+    "persona_consistency": {
+      "target_mean": 0.31296176046176044,
+      "baseline_mean": 0.16446516106442577,
+      "absolute_delta": 0.14849659939733467,
+      "relative_delta": 0.9029061135881796
+    },
+    "naturalness": {
+      "target_mean": 0.8833537432352956,
+      "baseline_mean": 0.800681236917918,
+      "absolute_delta": 0.08267250631737755,
+      "relative_delta": 0.10325270845063243
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.36723484848484844,
+      "baseline_mean": 0.06313131313131314,
+      "absolute_delta": 0.3041035353535353,
+      "relative_delta": 4.816999999999998
+    },
+    "context_overlap": {
+      "target_mean": 0.11176982683234064,
+      "baseline_mean": 0.04692298273359147,
+      "absolute_delta": 0.06484684409874918,
+      "relative_delta": 1.3819846974972092
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.2390873015873016,
+      "baseline_mean": 0.07142857142857142,
+      "absolute_delta": 0.16765873015873017,
+      "relative_delta": 2.3472222222222228
+    },
+    "persona_style": {
+      "target_mean": 0.608459595959596,
+      "baseline_mean": 0.5366115196078431,
+      "absolute_delta": 0.07184807635175283,
+      "relative_delta": 0.13389216169690052
+    },
+    "distinct1": {
+      "target_mean": 0.9439746358660169,
+      "baseline_mean": 0.9459739256281287,
+      "absolute_delta": -0.0019992897621117223,
+      "relative_delta": -0.0021134723779877864
+    },
+    "length_score": {
+      "target_mean": 0.5652777777777778,
+      "baseline_mean": 0.25,
+      "absolute_delta": 0.31527777777777777,
+      "relative_delta": 1.261111111111111
+    },
+    "sentence_score": {
+      "target_mean": 0.9270833333333334,
+      "baseline_mean": 0.7229166666666668,
+      "absolute_delta": 0.2041666666666666,
+      "relative_delta": 0.2824207492795388
+    },
+    "bertscore_f1": {
+      "target_mean": 0.09587826494437952,
+      "baseline_mean": 0.04527589358622208,
+      "absolute_delta": 0.05060237135815744,
+      "relative_delta": 1.117644895551134
+    },
+    "overall_quality": {
+      "target_mean": 0.3835204964552359,
+      "baseline_mean": 0.22006390118849947,
+      "absolute_delta": 0.16345659526673642,
+      "relative_delta": 0.7427687793588867
+    }
+  },
+  "controlled_alt_vs_candidate_no_context": {
+    "context_relevance": {
+      "target_mean": 0.29059534198909615,
+      "baseline_mean": 0.027697443785678382,
+      "absolute_delta": 0.26289789820341775,
+      "relative_delta": 9.491774773069684
+    },
+    "persona_consistency": {
+      "target_mean": 0.31296176046176044,
+      "baseline_mean": 0.15933620022867903,
+      "absolute_delta": 0.1536255602330814,
+      "relative_delta": 0.9641598080825216
+    },
+    "naturalness": {
+      "target_mean": 0.8833537432352956,
+      "baseline_mean": 0.820134481157785,
+      "absolute_delta": 0.06321926207751061,
+      "relative_delta": 0.07708401918215155
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.36723484848484844,
+      "baseline_mean": 0.022474747474747477,
+      "absolute_delta": 0.34476010101010096,
+      "relative_delta": 15.339887640449435
+    },
+    "context_overlap": {
+      "target_mean": 0.11176982683234064,
+      "baseline_mean": 0.039883735177850495,
+      "absolute_delta": 0.07188609165449014,
+      "relative_delta": 1.8023911585495687
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.2390873015873016,
+      "baseline_mean": 0.06349206349206349,
+      "absolute_delta": 0.1755952380952381,
+      "relative_delta": 2.7656250000000004
+    },
+    "persona_style": {
+      "target_mean": 0.608459595959596,
+      "baseline_mean": 0.5427127471751413,
+      "absolute_delta": 0.06574684878445469,
+      "relative_delta": 0.12114483974565135
+    },
+    "distinct1": {
+      "target_mean": 0.9439746358660169,
+      "baseline_mean": 0.9367945362277958,
+      "absolute_delta": 0.0071800996382210824,
+      "relative_delta": 0.007664540473446071
+    },
+    "length_score": {
+      "target_mean": 0.5652777777777778,
+      "baseline_mean": 0.32916666666666666,
+      "absolute_delta": 0.2361111111111111,
+      "relative_delta": 0.7172995780590717
+    },
+    "sentence_score": {
+      "target_mean": 0.9270833333333334,
+      "baseline_mean": 0.7958333333333334,
+      "absolute_delta": 0.13124999999999998,
+      "relative_delta": 0.16492146596858634
+    },
+    "bertscore_f1": {
+      "target_mean": 0.09587826494437952,
+      "baseline_mean": 0.0482429105322808,
+      "absolute_delta": 0.04763535441209872,
+      "relative_delta": 0.9874063128969893
+    },
+    "overall_quality": {
+      "target_mean": 0.3835204964552359,
+      "baseline_mean": 0.2097159460423048,
+      "absolute_delta": 0.17380455041293108,
+      "relative_delta": 0.8287617307740178
+    }
+  },
+  "controlled_alt_vs_baseline_no_context": {
+    "context_relevance": {
+      "target_mean": 0.29059534198909615,
+      "baseline_mean": 0.04290699944124585,
+      "absolute_delta": 0.2476883425478503,
+      "relative_delta": 5.772679184593628
+    },
+    "persona_consistency": {
+      "target_mean": 0.31296176046176044,
+      "baseline_mean": 0.1716097308488613,
+      "absolute_delta": 0.14135202961289914,
+      "relative_delta": 0.8236830680504331
+    },
+    "naturalness": {
+      "target_mean": 0.8833537432352956,
+      "baseline_mean": 0.9009802263990947,
+      "absolute_delta": -0.01762648316379911,
+      "relative_delta": -0.01956367370485593
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.36723484848484844,
+      "baseline_mean": 0.04551767676767677,
+      "absolute_delta": 0.3217171717171717,
+      "relative_delta": 7.067961165048542
+    },
+    "context_overlap": {
+      "target_mean": 0.11176982683234064,
+      "baseline_mean": 0.03681541901290705,
+      "absolute_delta": 0.07495440781943359,
+      "relative_delta": 2.035951506980145
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.2390873015873016,
+      "baseline_mean": 0.06845238095238095,
+      "absolute_delta": 0.17063492063492064,
+      "relative_delta": 2.492753623188406
+    },
+    "persona_style": {
+      "target_mean": 0.608459595959596,
+      "baseline_mean": 0.5842391304347826,
+      "absolute_delta": 0.024220465524813384,
+      "relative_delta": 0.041456424712238725
+    },
+    "distinct1": {
+      "target_mean": 0.9439746358660169,
+      "baseline_mean": 0.9758880659977369,
+      "absolute_delta": -0.03191343013171999,
+      "relative_delta": -0.032701937080347486
+    },
+    "length_score": {
+      "target_mean": 0.5652777777777778,
+      "baseline_mean": 0.6041666666666666,
+      "absolute_delta": -0.03888888888888886,
+      "relative_delta": -0.06436781609195398
+    },
+    "sentence_score": {
+      "target_mean": 0.9270833333333334,
+      "baseline_mean": 0.8979166666666667,
+      "absolute_delta": 0.029166666666666674,
+      "relative_delta": 0.03248259860788864
+    },
+    "bertscore_f1": {
+      "target_mean": 0.09587826494437952,
+      "baseline_mean": 0.03480118301619465,
+      "absolute_delta": 0.061077081928184875,
+      "relative_delta": 1.7550288994418033
+    },
+    "overall_quality": {
+      "target_mean": 0.3835204964552359,
+      "baseline_mean": 0.2326233430643799,
+      "absolute_delta": 0.150897153390856,
+      "relative_delta": 0.6486758869641656
+    }
+  },
+  "proposed_contextual_controlled_vs_baseline_no_context": {
+    "context_relevance": {
+      "target_mean": 0.28811167659281217,
+      "baseline_mean": 0.04290699944124585,
+      "absolute_delta": 0.24520467715156632,
+      "relative_delta": 5.714794330639089
+    },
+    "persona_consistency": {
+      "target_mean": 0.34475000000000006,
+      "baseline_mean": 0.1716097308488613,
+      "absolute_delta": 0.17314026915113875,
+      "relative_delta": 1.0089187151259238
+    },
+    "naturalness": {
+      "target_mean": 0.8788969334001963,
+      "baseline_mean": 0.9009802263990947,
+      "absolute_delta": -0.02208329299889844,
+      "relative_delta": -0.024510297065183883
+    },
+    "context_keyword_coverage": {
+      "target_mean": 0.3659722222222222,
+      "baseline_mean": 0.04551767676767677,
+      "absolute_delta": 0.32045454545454544,
+      "relative_delta": 7.040221914008321
+    },
+    "context_overlap": {
+      "target_mean": 0.10643707012418864,
+      "baseline_mean": 0.03681541901290705,
+      "absolute_delta": 0.06962165111128159,
+      "relative_delta": 1.89110033181676
+    },
+    "persona_keyword_coverage": {
+      "target_mean": 0.2736111111111111,
+      "baseline_mean": 0.06845238095238095,
+      "absolute_delta": 0.20515873015873015,
+      "relative_delta": 2.9971014492753625
+    },
+    "persona_style": {
+      "target_mean": 0.6293055555555556,
+      "baseline_mean": 0.5842391304347826,
+      "absolute_delta": 0.04506642512077297,
+      "relative_delta": 0.0771369509043928
+    },
+    "distinct1": {
+      "target_mean": 0.9351099579153712,
+      "baseline_mean": 0.9758880659977369,
+      "absolute_delta": -0.040778108082365705,
+      "relative_delta": -0.04178564069299754
+    },
+    "length_score": {
+      "target_mean": 0.5777777777777778,
+      "baseline_mean": 0.6041666666666666,
+      "absolute_delta": -0.026388888888888795,
+      "relative_delta": -0.04367816091954008
+    },
+    "sentence_score": {
+      "target_mean": 0.8979166666666667,
+      "baseline_mean": 0.8979166666666667,
+      "absolute_delta": 0.0,
+      "relative_delta": 0.0
+    },
+    "bertscore_f1": {
+      "target_mean": 0.08476774569135159,
+      "baseline_mean": 0.03480118301619465,
+      "absolute_delta": 0.04996656267515694,
+      "relative_delta": 1.4357719578643382
+    },
+    "overall_quality": {
+      "target_mean": 0.3908479138061745,
+      "baseline_mean": 0.2326233430643799,
+      "absolute_delta": 0.1582245707417946,
+      "relative_delta": 0.6801749500178278
+    }
+  }
+}

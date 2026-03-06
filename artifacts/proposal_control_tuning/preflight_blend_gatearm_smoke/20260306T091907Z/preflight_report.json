@@ -1,0 +1,88 @@
+{
+  "generated_utc": "2026-03-06T09:22:07.400460+00:00",
+  "seeds": [
+    31
+  ],
+  "gate_arm": "proposed_contextual_controlled_alt",
+  "paired_key": "controlled_alt_vs_proposed_raw",
+  "thresholds": {
+    "max_fallback_rate": 0.45,
+    "max_retry_rate": 0.75,
+    "min_first_pass_accept_rate": 0.25,
+    "max_overall_drift": 0.05,
+    "max_context_drift": 0.06,
+    "max_persona_drift": 0.12,
+    "max_naturalness_drift": 0.06,
+    "max_fallback_drift": 0.15,
+    "max_retry_drift": 0.15
+  },
+  "per_seed": [
+    {
+      "seed": 31,
+      "run_dir": "artifacts\\proposal_control_tuning\\preflight_blend_gatearm_smoke\\20260306T091907Z\\seed_runs\\seed_31\\20260306T091907Z",
+      "gate_arm": "proposed_contextual_controlled_alt",
+      "paired_key": "controlled_alt_vs_proposed_raw",
+      "gate_pass": true,
+      "quality": {
+        "context_relevance": 0.31144913310069433,
+        "persona_consistency": 0.2607738095238095,
+        "naturalness": 0.8418498338856327,
+        "overall_quality": 0.36602676932162403
+      },
+      "paired_delta_vs_raw": {
+        "context_relevance": 0.23753004886009058,
+        "persona_consistency": 0.1256547619047619,
+        "naturalness": 0.027663231014819364,
+        "overall_quality": 0.14291288615356235
+      },
+      "operational": {
+        "fallback_rate": 0.125,
+        "retry_rate": 0.5,
+        "first_pass_accept_rate": 0.5
+      }
+    }
+  ],
+  "drift": {
+    "quality": {
+      "overall_quality": 0.0,
+      "context_relevance": 0.0,
+      "persona_consistency": 0.0,
+      "naturalness": 0.0
+    },
+    "operational": {
+      "fallback_rate": 0.0,
+      "retry_rate": 0.0
+    }
+  },
+  "checks": [
+    {
+      "name": "all_seed_gates_pass",
+      "pass": true
+    },
+    {
+      "name": "overall_drift",
+      "pass": true
+    },
+    {
+      "name": "context_drift",
+      "pass": true
+    },
+    {
+      "name": "persona_drift",
+      "pass": true
+    },
+    {
+      "name": "naturalness_drift",
+      "pass": true
+    },
+    {
+      "name": "fallback_drift",
+      "pass": true
+    },
+    {
+      "name": "retry_drift",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

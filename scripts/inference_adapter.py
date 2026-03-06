@@ -13,6 +13,7 @@ import logging
 import os
 import re
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
@@ -84,13 +85,43 @@ class InferenceConfig:
     timeout: float = 30.0
     use_json_prompt: bool = False
     use_response_control: bool = True
-    control_min_context_coverage: float = 0.25
-    control_min_persona_coverage: float = 0.15
+    control_min_context_coverage: float = 0.33
+    control_min_persona_coverage: float = 0.18
     control_rewrite_temperature: float = 0.2
     control_rewrite_max_tokens: int = 96
-    control_rewrite_candidates: int = 3
+    control_rewrite_candidates: int = 2
     control_rewrite_temperature_step: float = 0.15
+    control_rewrite_budget_ms: float = 0.0
+    control_rewrite_budget_multiplier: float = 0.0
     control_allow_best_effort_rewrite: bool = True
+    control_behavior_adaptation_enabled: bool = True
+    control_adaptive_acceptance_enabled: bool = True
+    control_adaptive_candidate_score: float = 0.38
+    control_adaptive_context_coverage: float = 0.14
+    control_adaptive_persona_coverage: float = 0.10
+    control_adaptive_high_confidence_score: float = 0.53
+    control_adaptive_mid_confidence_score: float = 0.40
+    control_adaptive_high_confidence_rewrites: int = 1
+    control_adaptive_mid_confidence_rewrites: int = 2
+    control_adaptive_low_confidence_rewrites: int = 3
+    control_low_confidence_retry_requires_gain: bool = True
+    control_low_confidence_retry_min_score_gain: float = 0.01
+    control_low_confidence_retry_min_coverage_gain: float = 0.02
+    control_intent_risk_adaptation_enabled: bool = True
+    control_latency_adaptation_enabled: bool = False
+    control_latency_relax_start_pressure: float = 0.55
+    control_latency_relax_max_delta: float = 0.12
+    control_intent_focused_context_enabled: bool = True
+    control_intent_focus_min_keep: int = 3
+    control_intent_focus_keep_ratio_low: float = 0.45
+    control_intent_focus_keep_ratio_medium: float = 0.65
+    control_intent_focus_keep_ratio_high: float = 1.0
+    control_intent_focus_min_relevance: float = 0.20
+    control_near_pass_enabled: bool = True
+    control_near_pass_max_context_gap: float = 0.05
+    control_near_pass_max_persona_gap: float = 0.04
+    control_near_pass_score_floor: float = 0.34
+    control_near_pass_block_high_risk: bool = True
     disable_control_rewrite: bool = False
 
 
@@ -256,11 +287,13 @@ class BDNSCAInference:
     ) -> str:
         """Generate an NPC response using Ollama + optional response control."""
         prompt = self.format_prompt(persona, plot, context, player_input, npc_name, language)
+        raw_start_ns = time.perf_counter_ns()
         raw_response = self._request_generation(
             prompt=prompt,
             temperature=self.config.temperature,
             max_tokens=self.config.max_tokens,
         )
+        raw_elapsed_ms = max(0.0, (time.perf_counter_ns() - raw_start_ns) / 1_000_000.0)
         if not raw_response:
             return ""
 
@@ -272,6 +305,14 @@ class BDNSCAInference:
         context_keywords = self._extract_context_keywords(context)
         persona_keywords = self._extract_persona_keywords(persona)
         dynamic_context = self._context_to_string(context)
+        behavior_state = (
+            str(
+                context.get("behavior_state")
+                or context.get("BehaviorTreeState")
+                or context.get("behaviortreestate")
+                or ""
+            ).strip()
+        )
         config = ControlConfig(
             min_context_coverage=self.config.control_min_context_coverage if context_keywords else 0.0,
             min_persona_coverage=self.config.control_min_persona_coverage if persona_keywords else 0.0,
@@ -281,14 +322,62 @@ class BDNSCAInference:
             rewrite_temperature_step=self.config.control_rewrite_temperature_step,
             enable_rewrite=not self.config.disable_control_rewrite,
             allow_best_effort_rewrite=self.config.control_allow_best_effort_rewrite,
+            behavior_adaptation_enabled=self.config.control_behavior_adaptation_enabled,
+            adaptive_acceptance_enabled=self.config.control_adaptive_acceptance_enabled,
+            adaptive_candidate_score=self.config.control_adaptive_candidate_score,
+            adaptive_context_coverage=self.config.control_adaptive_context_coverage,
+            adaptive_persona_coverage=self.config.control_adaptive_persona_coverage,
+            adaptive_high_confidence_score=self.config.control_adaptive_high_confidence_score,
+            adaptive_mid_confidence_score=self.config.control_adaptive_mid_confidence_score,
+            adaptive_high_confidence_rewrites=self.config.control_adaptive_high_confidence_rewrites,
+            adaptive_mid_confidence_rewrites=self.config.control_adaptive_mid_confidence_rewrites,
+            adaptive_low_confidence_rewrites=self.config.control_adaptive_low_confidence_rewrites,
+            low_confidence_retry_requires_gain=self.config.control_low_confidence_retry_requires_gain,
+            low_confidence_retry_min_score_gain=self.config.control_low_confidence_retry_min_score_gain,
+            low_confidence_retry_min_coverage_gain=self.config.control_low_confidence_retry_min_coverage_gain,
+            intent_risk_adaptation_enabled=self.config.control_intent_risk_adaptation_enabled,
+            latency_adaptation_enabled=self.config.control_latency_adaptation_enabled,
+            latency_relax_start_pressure=self.config.control_latency_relax_start_pressure,
+            latency_relax_max_delta=self.config.control_latency_relax_max_delta,
+            intent_focused_context_enabled=self.config.control_intent_focused_context_enabled,
+            intent_focus_min_keep=self.config.control_intent_focus_min_keep,
+            intent_focus_keep_ratio_low=self.config.control_intent_focus_keep_ratio_low,
+            intent_focus_keep_ratio_medium=self.config.control_intent_focus_keep_ratio_medium,
+            intent_focus_keep_ratio_high=self.config.control_intent_focus_keep_ratio_high,
+            intent_focus_min_relevance=self.config.control_intent_focus_min_relevance,
+            near_pass_enabled=self.config.control_near_pass_enabled,
+            near_pass_max_context_gap=self.config.control_near_pass_max_context_gap,
+            near_pass_max_persona_gap=self.config.control_near_pass_max_persona_gap,
+            near_pass_score_floor=self.config.control_near_pass_score_floor,
+            near_pass_block_high_risk=self.config.control_near_pass_block_high_risk,
         )
 
+        rewrite_state: Dict[str, Any] = {
+            "spent_ms": 0.0,
+            "budget_exhausted": False,
+        }
+
         def rewrite_fn(rewrite_prompt: str, rewrite_max_tokens: int, rewrite_temperature: float) -> str:
-            return self._request_generation(
+            budget_ms = float("inf")
+            if self.config.control_rewrite_budget_ms > 0.0:
+                budget_ms = min(budget_ms, float(self.config.control_rewrite_budget_ms))
+            if self.config.control_rewrite_budget_multiplier > 0.0 and raw_elapsed_ms > 0.0:
+                budget_ms = min(budget_ms, float(self.config.control_rewrite_budget_multiplier) * raw_elapsed_ms)
+            spent_ms = float(rewrite_state.get("spent_ms", 0.0))
+            if spent_ms >= budget_ms:
+                rewrite_state["budget_exhausted"] = True
+                return ""
+            start_ns = time.perf_counter_ns()
+            out = self._request_generation(
                 prompt=rewrite_prompt,
                 temperature=rewrite_temperature,
                 max_tokens=rewrite_max_tokens,
             )
+            rewrite_state["spent_ms"] = spent_ms + max(
+                0.0,
+                (time.perf_counter_ns() - start_ns) / 1_000_000.0,
+            )
+            return out
 
         controlled = control_response(
             raw_response=extracted,
@@ -299,6 +388,9 @@ class BDNSCAInference:
             persona_keywords=persona_keywords,
             rewrite_fn=rewrite_fn,
             config=config,
+            behavior_state=behavior_state,
+            raw_latency_ms=raw_elapsed_ms,
+            timeout_s=float(self.config.timeout),
         )
 
         if controlled.repaired:

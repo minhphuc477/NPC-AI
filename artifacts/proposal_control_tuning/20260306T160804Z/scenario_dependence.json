@@ -1,0 +1,43 @@
+{
+  "scenario_count": 24,
+  "unique_source_count": 8,
+  "unique_template_signature_count": 20,
+  "source_distribution": {
+    "s001_gate_archive": 3,
+    "s002_merchant_potions": 3,
+    "s003_healer_poison": 4,
+    "s004_blacksmith_goblins": 1,
+    "s005_scholar_watchtower": 5,
+    "s006_captain_theft": 2,
+    "s007_prisoner_bargain": 4,
+    "s008_witch_curse": 2
+  },
+  "template_signature_distribution": {
+    "access_control|security|investigating|s|u0|i0": 1,
+    "access_control|security|observing|s|u0|i0": 2,
+    "advisory_request|commerce|forging|q|u0|i1": 1,
+    "assistance_request|medical|observing|q|u0|i1": 1,
+    "assistance_request|medical|treatingpatient|q|u0|i0": 1,
+    "assistance_request|medical|treatingpatient|q|u0|i1": 1,
+    "assistance_request|medical|treatingpatient|q|u1|i1": 1,
+    "credibility_dispute|other|patrolling|q|u0|i0": 2,
+    "economic_negotiation|commerce|assisting|s|u1|i0": 1,
+    "economic_negotiation|commerce|trading|s|u0|i0": 2,
+    "general_dialogue|detention|assisting|q|u0|i1": 2,
+    "general_dialogue|detention|assisting|q|u1|i1": 1,
+    "general_dialogue|detention|negotiating|q|u0|i0": 1,
+    "general_dialogue|knowledge|assisting|q|u1|i0": 1,
+    "general_dialogue|knowledge|assisting|q|u1|i1": 1,
+    "general_dialogue|knowledge|researching|q|u0|i0": 1,
+    "general_dialogue|knowledge|researching|q|u0|i1": 1,
+    "general_dialogue|knowledge|researching|q|u1|i1": 1,
+    "general_dialogue|wilderness|assisting|q|u0|i1": 1,
+    "general_dialogue|wilderness|observing|q|u0|i1": 1
+  },
+  "template_signature_ratio": 0.8333333333333334,
+  "effective_sample_size_by_source": 6.857142857142857,
+  "effective_sample_size_by_template_signature": 18.0,
+  "source_max_share": 0.20833333333333334,
+  "template_max_share": 0.08333333333333333,
+  "mean_within_source_player_input_jaccard": 0.421349239249769
+}

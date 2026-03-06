@@ -1,0 +1,36 @@
+{
+  "scenario_count": 16,
+  "unique_source_count": 5,
+  "unique_template_signature_count": 16,
+  "source_distribution": {
+    "s001_gate_archive": 3,
+    "s002_merchant_potions": 4,
+    "s003_healer_poison": 2,
+    "s006_captain_theft": 3,
+    "s007_prisoner_bargain": 4
+  },
+  "template_signature_distribution": {
+    "access_control|security|investigating|s|u0|i0": 1,
+    "access_control|security|observing|s|u0|i1": 1,
+    "access_control|security|patrolling|s|u0|i0": 1,
+    "assistance_request|medical|researching|q|u0|i0": 1,
+    "assistance_request|medical|researching|q|u1|i0": 1,
+    "credibility_dispute|detention|detained|q|u0|i0": 1,
+    "credibility_dispute|other|investigating|q|u0|i0": 1,
+    "credibility_dispute|other|negotiating|q|u0|i1": 1,
+    "credibility_dispute|other|patrolling|q|u0|i1": 1,
+    "economic_negotiation|commerce|assisting|s|u0|i0": 1,
+    "economic_negotiation|commerce|assisting|s|u0|i1": 1,
+    "economic_negotiation|commerce|observing|s|u0|i1": 1,
+    "economic_negotiation|commerce|trading|s|u0|i1": 1,
+    "general_dialogue|detention|detained|q|u1|i1": 1,
+    "general_dialogue|detention|negotiating|q|u0|i1": 1,
+    "general_dialogue|detention|observing|q|u0|i1": 1
+  },
+  "template_signature_ratio": 1.0,
+  "effective_sample_size_by_source": 4.7407407407407405,
+  "effective_sample_size_by_template_signature": 16.0,
+  "source_max_share": 0.25,
+  "template_max_share": 0.0625,
+  "mean_within_source_player_input_jaccard": 0.4822629977297496
+}

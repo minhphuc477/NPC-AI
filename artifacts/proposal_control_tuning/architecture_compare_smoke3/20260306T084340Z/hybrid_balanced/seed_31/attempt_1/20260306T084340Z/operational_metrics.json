@@ -1,0 +1,152 @@
+{
+  "arms": {
+    "proposed_contextual_controlled": {
+      "total_requests": 4,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.25,
+      "first_pass_accept_rate": 0.25,
+      "rewrite_attempt_rate": 0.75,
+      "retry_rate": 0.75,
+      "multi_retry_rate": 0.75,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {
+        "fallback": 1,
+        "raw_grounded_repair": 1,
+        "rewritten": 1,
+        "rewritten_grounded_repair": 1
+      },
+      "by_behavior_state": {
+        "Negotiating": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Observing": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.5
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        }
+      }
+    },
+    "proposed_contextual_controlled_alt": {
+      "total_requests": 4,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.0,
+      "first_pass_accept_rate": 0.5,
+      "rewrite_attempt_rate": 0.5,
+      "retry_rate": 0.5,
+      "multi_retry_rate": 0.5,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {
+        "raw_grounded_repair": 2,
+        "rewritten": 2
+      },
+      "by_behavior_state": {
+        "Negotiating": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Observing": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.5
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "proposed_contextual": {
+      "total_requests": 4,
+      "timeout_rate": 0.75,
+      "error_rate": 0.75,
+      "fallback_rate": 1.0,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Negotiating": {
+          "count": 1,
+          "fallback_rate": 1.0,
+          "timeout_rate": 1.0,
+          "error_rate": 1.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 2,
+          "fallback_rate": 1.0,
+          "timeout_rate": 1.0,
+          "error_rate": 1.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "candidate_no_context": {
+      "total_requests": 4,
+      "timeout_rate": 0.5,
+      "error_rate": 0.5,
+      "fallback_rate": 0.75,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Negotiating": {
+          "count": 1,
+          "fallback_rate": 1.0,
+          "timeout_rate": 1.0,
+          "error_rate": 1.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 2,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 1.0,
+          "timeout_rate": 1.0,
+          "error_rate": 1.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    }
+  }
+}

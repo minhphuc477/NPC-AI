@@ -1,0 +1,29 @@
+{
+  "arm_id": "proposed_contextual_controlled",
+  "pass": true,
+  "thresholds": {
+    "max_fallback_rate": 0.45,
+    "max_retry_rate": 0.75,
+    "min_first_pass_accept_rate": 0.25
+  },
+  "checks": [
+    {
+      "name": "fallback_rate",
+      "observed": 0.4375,
+      "rule": "<= 0.4500",
+      "pass": true
+    },
+    {
+      "name": "retry_rate",
+      "observed": 0.625,
+      "rule": "<= 0.7500",
+      "pass": true
+    },
+    {
+      "name": "first_pass_accept_rate",
+      "observed": 0.375,
+      "rule": ">= 0.2500",
+      "pass": true
+    }
+  ]
+}

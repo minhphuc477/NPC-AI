@@ -1,0 +1,375 @@
+{
+  "generated_utc": "2026-03-05T22:28:08.920250+00:00",
+  "run_root": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z",
+  "config": {
+    "host": "http://127.0.0.1:11434",
+    "candidate_model": "elara-npc:latest",
+    "baseline_model": "phi3:mini",
+    "scenarios": "data\\proposal_eval_scenarios_112_diverse.jsonl",
+    "train_ratio": 0.67,
+    "train_seeds": [
+      19
+    ],
+    "valid_seeds": [
+      29
+    ],
+    "trials": 3,
+    "topk_validate": 2,
+    "train_max_scenarios": 12,
+    "valid_max_scenarios": 12
+  },
+  "split": {
+    "all_count": 112,
+    "train_count": 70,
+    "valid_count": 42,
+    "train_path": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\data\\train.jsonl",
+    "valid_path": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\data\\valid.jsonl"
+  },
+  "constraints": {
+    "min_overall_delta": 0.0,
+    "min_context_delta": -0.005,
+    "min_persona_delta": -0.005,
+    "max_fallback_increase": 0.03,
+    "max_retry_increase": 0.04,
+    "max_first_pass_drop": 0.04
+  },
+  "candidates": [
+    {
+      "trial_index": 2,
+      "overrides": {
+        "min_context_coverage": 0.31,
+        "min_persona_coverage": 0.16,
+        "relaxed_context_coverage": 0.16,
+        "relaxed_persona_coverage": 0.08,
+        "relaxed_candidate_score": 0.42,
+        "adaptive_candidate_score": 0.34,
+        "rewrite_candidates": 2,
+        "adaptive_high_confidence_rewrites": 1,
+        "adaptive_mid_confidence_rewrites": 1,
+        "adaptive_low_confidence_rewrites": 2,
+        "low_confidence_retry_requires_gain": true,
+        "low_confidence_retry_min_score_gain": 0.015,
+        "low_confidence_retry_min_coverage_gain": 0.03,
+        "intent_risk_adaptation_enabled": false,
+        "latency_adaptation_enabled": true,
+        "latency_relax_start_pressure": 0.55,
+        "latency_relax_max_delta": 0.08
+      },
+      "overrides_path": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\candidates\\trial_002.json",
+      "train_outcomes": [
+        {
+          "run_dir": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\train_runs\\trial_002\\seed_19\\20260305T221847Z",
+          "overall_delta": -0.016143223466709277,
+          "context_delta": 0.013775108837801689,
+          "persona_delta": -0.06840277777777777,
+          "naturalness_delta": 0.014668611000834738,
+          "fallback_default": 0.25,
+          "retry_default": 0.5833333333333334,
+          "first_pass_default": 0.4166666666666667,
+          "fallback_alt": 0.25,
+          "retry_alt": 0.5833333333333334,
+          "first_pass_alt": 0.4166666666666667
+        }
+      ],
+      "train_summary": {
+        "overall_delta": -0.016143223466709277,
+        "context_delta": 0.013775108837801689,
+        "persona_delta": -0.06840277777777777,
+        "naturalness_delta": 0.014668611000834738,
+        "fallback_gap": 0.0,
+        "retry_gap": 0.0,
+        "first_pass_gap": 0.0
+      },
+      "train_score": {
+        "feasible": false,
+        "objective": -0.12158449308583402,
+        "penalty": 0.09568922471119631
+      },
+      "validation_outcomes": [
+        {
+          "run_dir": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\valid_runs\\trial_002\\seed_29\\20260305T222544Z",
+          "overall_delta": -0.015810382817710605,
+          "context_delta": -0.031014343198980592,
+          "persona_delta": -0.008003144654088057,
+          "naturalness_delta": 0.008186990059113636,
+          "fallback_default": 0.25,
+          "retry_default": 0.5833333333333334,
+          "first_pass_default": 0.4166666666666667,
+          "fallback_alt": 0.08333333333333333,
+          "retry_alt": 0.25,
+          "first_pass_alt": 0.75
+        }
+      ],
+      "validation_summary": {
+        "overall_delta": -0.015810382817710605,
+        "context_delta": -0.031014343198980592,
+        "persona_delta": -0.008003144654088057,
+        "naturalness_delta": 0.008186990059113636,
+        "fallback_gap": -0.16666666666666669,
+        "retry_gap": -0.33333333333333337,
+        "first_pass_gap": 0.3333333333333333
+      },
+      "validation_score": {
+        "feasible": false,
+        "objective": -0.09010076047183024,
+        "penalty": 0.067141839288235
+      }
+    },
+    {
+      "trial_index": 1,
+      "overrides": {
+        "min_context_coverage": 0.31,
+        "min_persona_coverage": 0.17,
+        "relaxed_context_coverage": 0.16,
+        "relaxed_persona_coverage": 0.08,
+        "relaxed_candidate_score": 0.42,
+        "adaptive_candidate_score": 0.35,
+        "rewrite_candidates": 2,
+        "adaptive_mid_confidence_rewrites": 1,
+        "adaptive_low_confidence_rewrites": 2,
+        "intent_risk_adaptation_enabled": true,
+        "latency_adaptation_enabled": true,
+        "latency_relax_start_pressure": 0.5,
+        "latency_relax_max_delta": 0.08,
+        "low_risk_context_relax": 0.06,
+        "low_risk_persona_relax": 0.04,
+        "low_risk_candidate_score_relax": 0.04,
+        "high_risk_context_tighten": 0.02,
+        "high_risk_persona_tighten": 0.01,
+        "high_risk_candidate_score_tighten": 0.01
+      },
+      "overrides_path": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\candidates\\trial_001.json",
+      "train_outcomes": [
+        {
+          "run_dir": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\train_runs\\trial_001\\seed_19\\20260305T221650Z",
+          "overall_delta": 0.01060712148829041,
+          "context_delta": 0.01426599502012421,
+          "persona_delta": 0.015892857142857163,
+          "naturalness_delta": -0.008971646798234728,
+          "fallback_default": 0.5,
+          "retry_default": 0.6666666666666666,
+          "first_pass_default": 0.3333333333333333,
+          "fallback_alt": 0.25,
+          "retry_alt": 0.5833333333333334,
+          "first_pass_alt": 0.4166666666666667
+        }
+      ],
+      "train_summary": {
+        "overall_delta": 0.01060712148829041,
+        "context_delta": 0.01426599502012421,
+        "persona_delta": 0.015892857142857163,
+        "naturalness_delta": -0.008971646798234728,
+        "fallback_gap": -0.25,
+        "retry_gap": -0.08333333333333326,
+        "first_pass_gap": 0.08333333333333337
+      },
+      "train_score": {
+        "feasible": true,
+        "objective": 0.015921160177027906,
+        "penalty": 0.0
+      },
+      "validation_outcomes": [
+        {
+          "run_dir": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\valid_runs\\trial_001\\seed_29\\20260305T222331Z",
+          "overall_delta": -0.024478585444626586,
+          "context_delta": -0.03432561674344723,
+          "persona_delta": -0.02160138248847926,
+          "naturalness_delta": -0.002071987219452972,
+          "fallback_default": 0.4166666666666667,
+          "retry_default": 0.6666666666666666,
+          "first_pass_default": 0.3333333333333333,
+          "fallback_alt": 0.08333333333333333,
+          "retry_alt": 0.16666666666666666,
+          "first_pass_alt": 0.8333333333333334
+        }
+      ],
+      "validation_summary": {
+        "overall_delta": -0.024478585444626586,
+        "context_delta": -0.03432561674344723,
+        "persona_delta": -0.02160138248847926,
+        "naturalness_delta": -0.002071987219452972,
+        "fallback_gap": -0.33333333333333337,
+        "retry_gap": -0.5,
+        "first_pass_gap": 0.5
+      },
+      "validation_score": {
+        "feasible": false,
+        "objective": -0.13804531857560962,
+        "penalty": 0.10221557430704148
+      }
+    },
+    {
+      "trial_index": 0,
+      "overrides": {},
+      "overrides_path": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\candidates\\trial_000.json",
+      "train_outcomes": [
+        {
+          "run_dir": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\train_runs\\trial_000\\seed_19\\20260305T221441Z",
+          "overall_delta": -0.0008871492986501269,
+          "context_delta": 0.015557920554354218,
+          "persona_delta": -0.03500992063492065,
+          "naturalness_delta": 0.026752366638781888,
+          "fallback_default": 0.16666666666666666,
+          "retry_default": 0.5,
+          "first_pass_default": 0.5,
+          "fallback_alt": 0.4166666666666667,
+          "retry_alt": 0.6666666666666666,
+          "first_pass_alt": 0.3333333333333333
+        }
+      ],
+      "train_summary": {
+        "overall_delta": -0.0008871492986501269,
+        "context_delta": 0.015557920554354218,
+        "persona_delta": -0.03500992063492065,
+        "naturalness_delta": 0.026752366638781888,
+        "fallback_gap": 0.25,
+        "retry_gap": 0.16666666666666663,
+        "first_pass_gap": -0.16666666666666669
+      },
+      "train_score": {
+        "feasible": false,
+        "objective": -1.1060882458825485,
+        "penalty": 0.8201175525655543
+      }
+    },
+    {
+      "trial_index": 3,
+      "overrides": {
+        "min_context_coverage": 0.362,
+        "min_persona_coverage": 0.149,
+        "relaxed_context_coverage": 0.202,
+        "relaxed_persona_coverage": 0.129,
+        "relaxed_candidate_score": 0.5,
+        "adaptive_candidate_score": 0.382,
+        "adaptive_context_coverage": 0.163,
+        "adaptive_persona_coverage": 0.106,
+        "adaptive_high_confidence_rewrites": 1,
+        "adaptive_mid_confidence_rewrites": 3,
+        "adaptive_low_confidence_rewrites": 2,
+        "low_confidence_retry_requires_gain": true,
+        "low_confidence_retry_min_score_gain": 0.025,
+        "low_confidence_retry_min_coverage_gain": 0.029,
+        "early_stop_score": 0.735,
+        "intent_risk_adaptation_enabled": false,
+        "latency_adaptation_enabled": false,
+        "latency_relax_start_pressure": 0.539,
+        "latency_relax_max_delta": 0.117,
+        "low_risk_context_relax": 0.079,
+        "low_risk_persona_relax": 0.045,
+        "low_risk_candidate_score_relax": 0.023,
+        "high_risk_context_tighten": 0.013,
+        "high_risk_persona_tighten": 0.012,
+        "high_risk_candidate_score_tighten": 0.018
+      },
+      "overrides_path": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\candidates\\trial_003.json",
+      "train_outcomes": [
+        {
+          "run_dir": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\train_runs\\trial_003\\seed_19\\20260305T222101Z",
+          "overall_delta": 0.04785123637314575,
+          "context_delta": 0.0016604639322323478,
+          "persona_delta": 0.11996031746031749,
+          "naturalness_delta": 0.012279251549615103,
+          "fallback_default": 0.16666666666666666,
+          "retry_default": 0.4166666666666667,
+          "first_pass_default": 0.5833333333333334,
+          "fallback_alt": 0.25,
+          "retry_alt": 0.8333333333333334,
+          "first_pass_alt": 0.16666666666666666
+        }
+      ],
+      "train_summary": {
+        "overall_delta": 0.04785123637314575,
+        "context_delta": 0.0016604639322323478,
+        "persona_delta": 0.11996031746031749,
+        "naturalness_delta": 0.012279251549615103,
+        "fallback_gap": 0.08333333333333334,
+        "retry_gap": 0.4166666666666667,
+        "first_pass_gap": -0.41666666666666674
+      },
+      "train_score": {
+        "feasible": false,
+        "objective": -1.4526756005577086,
+        "penalty": 1.1425000000000003
+      }
+    }
+  ],
+  "recommended": {
+    "trial_index": 2,
+    "overrides": {
+      "min_context_coverage": 0.31,
+      "min_persona_coverage": 0.16,
+      "relaxed_context_coverage": 0.16,
+      "relaxed_persona_coverage": 0.08,
+      "relaxed_candidate_score": 0.42,
+      "adaptive_candidate_score": 0.34,
+      "rewrite_candidates": 2,
+      "adaptive_high_confidence_rewrites": 1,
+      "adaptive_mid_confidence_rewrites": 1,
+      "adaptive_low_confidence_rewrites": 2,
+      "low_confidence_retry_requires_gain": true,
+      "low_confidence_retry_min_score_gain": 0.015,
+      "low_confidence_retry_min_coverage_gain": 0.03,
+      "intent_risk_adaptation_enabled": false,
+      "latency_adaptation_enabled": true,
+      "latency_relax_start_pressure": 0.55,
+      "latency_relax_max_delta": 0.08
+    },
+    "overrides_path": "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\recommended_overrides.json",
+    "train_score": {
+      "feasible": false,
+      "objective": -0.12158449308583402,
+      "penalty": 0.09568922471119631
+    },
+    "train_summary": {
+      "overall_delta": -0.016143223466709277,
+      "context_delta": 0.013775108837801689,
+      "persona_delta": -0.06840277777777777,
+      "naturalness_delta": 0.014668611000834738,
+      "fallback_gap": 0.0,
+      "retry_gap": 0.0,
+      "first_pass_gap": 0.0
+    },
+    "validation_score": {
+      "feasible": false,
+      "objective": -0.09010076047183024,
+      "penalty": 0.067141839288235
+    },
+    "validation_summary": {
+      "overall_delta": -0.015810382817710605,
+      "context_delta": -0.031014343198980592,
+      "persona_delta": -0.008003144654088057,
+      "naturalness_delta": 0.008186990059113636,
+      "fallback_gap": -0.16666666666666669,
+      "retry_gap": -0.33333333333333337,
+      "first_pass_gap": 0.3333333333333333
+    }
+  },
+  "full112_command": [
+    "C:\\Python313\\python.exe",
+    "F:\\NPC AI\\scripts\\run_proposal_alignment_eval_batched.py",
+    "--host",
+    "http://127.0.0.1:11434",
+    "--candidate-model",
+    "elara-npc:latest",
+    "--baseline-model",
+    "phi3:mini",
+    "--scenarios",
+    "data\\proposal_eval_scenarios_112_diverse.jsonl",
+    "--batch-size",
+    "28",
+    "--repeats",
+    "1",
+    "--max-tokens",
+    "72",
+    "--temperature",
+    "0.2",
+    "--control-alt-profile",
+    "custom",
+    "--control-alt-arm-id",
+    "proposed_contextual_controlled_tuned",
+    "--control-alt-overrides-file",
+    "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\recommended_overrides.json",
+    "--output-root",
+    "artifacts\\proposal_control_tuning\\auto_tune_v3_smoke\\20260305T221440Z\\full112_recommended"
+  ]
+}

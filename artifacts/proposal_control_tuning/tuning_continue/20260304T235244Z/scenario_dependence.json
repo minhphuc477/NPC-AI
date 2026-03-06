@@ -1,0 +1,31 @@
+{
+  "scenario_count": 10,
+  "unique_source_count": 7,
+  "unique_template_signature_count": 9,
+  "source_distribution": {
+    "s001_gate_archive": 1,
+    "s002_merchant_potions": 1,
+    "s003_healer_poison": 1,
+    "s004_blacksmith_goblins": 2,
+    "s005_scholar_watchtower": 1,
+    "s007_prisoner_bargain": 2,
+    "s008_witch_curse": 2
+  },
+  "template_signature_distribution": {
+    "access_control|security|investigating|s|u1|i1": 1,
+    "advisory_request|craft|observing|q|u0|i1": 1,
+    "advisory_request|other|forging|q|u0|i0": 1,
+    "assistance_request|medical|researching|q|u1|i0": 1,
+    "economic_negotiation|commerce|assisting|s|u0|i1": 1,
+    "general_dialogue|detention|assisting|q|u0|i1": 2,
+    "general_dialogue|knowledge|assisting|q|u1|i0": 1,
+    "general_dialogue|wilderness|assisting|q|u1|i1": 1,
+    "general_dialogue|wilderness|ritualpreparation|q|u1|i1": 1
+  },
+  "template_signature_ratio": 0.9,
+  "effective_sample_size_by_source": 6.25,
+  "effective_sample_size_by_template_signature": 8.333333333333334,
+  "source_max_share": 0.2,
+  "template_max_share": 0.2,
+  "mean_within_source_player_input_jaccard": 0.3463327859879584
+}

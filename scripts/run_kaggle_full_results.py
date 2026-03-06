@@ -134,6 +134,12 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=28)
     parser.add_argument("--proposal-max-tokens", type=int, default=80)
     parser.add_argument("--proposal-temperature", type=float, default=0.2)
+    parser.add_argument(
+        "--proposal-min-arm-success-rate",
+        type=float,
+        default=0.90,
+        help="Minimum required successful-request rate per arm in proposal eval.",
+    )
     parser.add_argument("--multirater-annotators", default="phi3:mini|balanced|0.00,phi3:mini|balanced|0.05,phi3:mini|balanced|0.10")
     parser.add_argument("--multirater-scenarios", type=int, default=36)
     parser.add_argument("--serving-models", default="elara-npc:latest,phi3:mini,phi3:latest")
@@ -202,6 +208,8 @@ def main() -> None:
                 str(args.proposal_max_tokens),
                 "--temperature",
                 str(args.proposal_temperature),
+                "--min-arm-success-rate",
+                str(args.proposal_min_arm_success_rate),
                 "--bertscore-model-type",
                 "roberta-large",
                 "--bertscore-batch-size",

@@ -1,0 +1,402 @@
+{
+  "run_id": "20260306T091139Z",
+  "generated_utc": "2026-03-06T09:11:39.842322+00:00",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "baseline_models": [
+    "phi3:mini"
+  ],
+  "baseline_arm_ids": [
+    "baseline_no_context"
+  ],
+  "skip_external_baselines": false,
+  "temperature": 0.2,
+  "max_tokens": 96,
+  "repeats": 1,
+  "max_scenarios": 24,
+  "scenario_diversity_gate": {
+    "enforce": false,
+    "min_template_signature_ratio": 0.0,
+    "min_effective_source_n": 0.0
+  },
+  "seed": 31,
+  "timeout_s": 180,
+  "min_arm_success_rate": 0.9,
+  "bertscore_lang": "en",
+  "bertscore_model_type": "",
+  "bertscore_batch_size": 16,
+  "bertscore_cache_dir": "",
+  "disable_bertscore": false,
+  "target_arm": "proposed_contextual_controlled",
+  "slice_keys": [
+    "persona_archetype",
+    "conflict_type",
+    "location_type",
+    "behavior_state"
+  ],
+  "human_eval_file": "",
+  "human_eval_metrics": [
+    "context_relevance",
+    "persona_consistency",
+    "naturalness",
+    "overall_quality"
+  ],
+  "human_eval_scale_max": 5.0,
+  "scenario_path": "data\\proposal_eval_scenarios_112_diverse.jsonl",
+  "scenario_sha256": "2e3f3010f4197a80bf12236313d5d69828cb42d74ce650aa9b2b5494c48cc97a",
+  "arms": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": true,
+      "use_response_control": true,
+      "control_profile": "default"
+    },
+    {
+      "arm_id": "proposed_contextual_controlled_alt",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": true,
+      "use_response_control": true,
+      "control_profile": "blend_balanced"
+    },
+    {
+      "arm_id": "proposed_contextual",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": true,
+      "use_response_control": false,
+      "control_profile": "none"
+    },
+    {
+      "arm_id": "candidate_no_context",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": false,
+      "use_response_control": false,
+      "control_profile": "none"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "model": "phi3:mini",
+      "include_dynamic_context": false,
+      "use_response_control": false,
+      "control_profile": "none"
+    }
+  ],
+  "response_control_config": {
+    "min_context_coverage": 0.33,
+    "min_persona_coverage": 0.18,
+    "min_response_tokens": 8,
+    "rewrite_temperature": 0.2,
+    "rewrite_max_tokens": 96,
+    "rewrite_candidates": 3,
+    "rewrite_temperature_step": 0.15,
+    "early_stop_on_pass": true,
+    "early_stop_score": 0.7,
+    "allow_relaxed_acceptance": true,
+    "relaxed_context_coverage": 0.18,
+    "relaxed_persona_coverage": 0.09,
+    "relaxed_candidate_score": 0.44,
+    "min_rewrite_gain": 0.015,
+    "enable_rewrite": true,
+    "allow_best_effort_rewrite": true,
+    "behavior_adaptation_enabled": true,
+    "adaptive_acceptance_enabled": true,
+    "adaptive_candidate_score": 0.38,
+    "adaptive_context_coverage": 0.14,
+    "adaptive_persona_coverage": 0.1,
+    "adaptive_high_confidence_score": 0.53,
+    "adaptive_mid_confidence_score": 0.4,
+    "adaptive_high_confidence_rewrites": 1,
+    "adaptive_mid_confidence_rewrites": 2,
+    "adaptive_low_confidence_rewrites": 3,
+    "low_confidence_retry_requires_gain": true,
+    "low_confidence_retry_min_score_gain": 0.01,
+    "low_confidence_retry_min_coverage_gain": 0.02,
+    "intent_risk_adaptation_enabled": false,
+    "latency_adaptation_enabled": false,
+    "latency_relax_start_pressure": 0.55,
+    "latency_relax_max_delta": 0.12,
+    "low_risk_context_relax": 0.05,
+    "low_risk_persona_relax": 0.03,
+    "low_risk_candidate_score_relax": 0.03,
+    "high_risk_context_tighten": 0.04,
+    "high_risk_persona_tighten": 0.02,
+    "high_risk_candidate_score_tighten": 0.03,
+    "intent_focused_context_enabled": false,
+    "intent_focus_min_keep": 3,
+    "intent_focus_keep_ratio_low": 0.45,
+    "intent_focus_keep_ratio_medium": 0.65,
+    "intent_focus_keep_ratio_high": 1.0,
+    "intent_focus_min_relevance": 0.2,
+    "near_pass_enabled": true,
+    "near_pass_max_context_gap": 0.04,
+    "near_pass_max_persona_gap": 0.03,
+    "near_pass_score_floor": 0.35,
+    "near_pass_block_high_risk": true,
+    "rewrite_budget_ms": 0.0,
+    "rewrite_budget_multiplier": 0.0
+  },
+  "response_control_profiles": {
+    "default": {
+      "min_context_coverage": 0.33,
+      "min_persona_coverage": 0.18,
+      "min_response_tokens": 8,
+      "rewrite_temperature": 0.2,
+      "rewrite_max_tokens": 96,
+      "rewrite_candidates": 3,
+      "rewrite_temperature_step": 0.15,
+      "early_stop_on_pass": true,
+      "early_stop_score": 0.7,
+      "allow_relaxed_acceptance": true,
+      "relaxed_context_coverage": 0.18,
+      "relaxed_persona_coverage": 0.09,
+      "relaxed_candidate_score": 0.44,
+      "min_rewrite_gain": 0.015,
+      "enable_rewrite": true,
+      "allow_best_effort_rewrite": true,
+      "behavior_adaptation_enabled": true,
+      "adaptive_acceptance_enabled": true,
+      "adaptive_candidate_score": 0.38,
+      "adaptive_context_coverage": 0.14,
+      "adaptive_persona_coverage": 0.1,
+      "adaptive_high_confidence_score": 0.53,
+      "adaptive_mid_confidence_score": 0.4,
+      "adaptive_high_confidence_rewrites": 1,
+      "adaptive_mid_confidence_rewrites": 2,
+      "adaptive_low_confidence_rewrites": 3,
+      "low_confidence_retry_requires_gain": true,
+      "low_confidence_retry_min_score_gain": 0.01,
+      "low_confidence_retry_min_coverage_gain": 0.02,
+      "intent_risk_adaptation_enabled": false,
+      "latency_adaptation_enabled": false,
+      "latency_relax_start_pressure": 0.55,
+      "latency_relax_max_delta": 0.12,
+      "low_risk_context_relax": 0.05,
+      "low_risk_persona_relax": 0.03,
+      "low_risk_candidate_score_relax": 0.03,
+      "high_risk_context_tighten": 0.04,
+      "high_risk_persona_tighten": 0.02,
+      "high_risk_candidate_score_tighten": 0.03,
+      "intent_focused_context_enabled": false,
+      "intent_focus_min_keep": 3,
+      "intent_focus_keep_ratio_low": 0.45,
+      "intent_focus_keep_ratio_medium": 0.65,
+      "intent_focus_keep_ratio_high": 1.0,
+      "intent_focus_min_relevance": 0.2,
+      "near_pass_enabled": true,
+      "near_pass_max_context_gap": 0.04,
+      "near_pass_max_persona_gap": 0.03,
+      "near_pass_score_floor": 0.35,
+      "near_pass_block_high_risk": true,
+      "rewrite_budget_ms": 0.0,
+      "rewrite_budget_multiplier": 0.0
+    },
+    "blend_balanced": {
+      "min_context_coverage": 0.31,
+      "min_persona_coverage": 0.17,
+      "min_response_tokens": 8,
+      "rewrite_temperature": 0.2,
+      "rewrite_max_tokens": 96,
+      "rewrite_candidates": 2,
+      "rewrite_temperature_step": 0.15,
+      "early_stop_on_pass": true,
+      "early_stop_score": 0.7,
+      "allow_relaxed_acceptance": true,
+      "relaxed_context_coverage": 0.16,
+      "relaxed_persona_coverage": 0.08,
+      "relaxed_candidate_score": 0.41,
+      "min_rewrite_gain": 0.015,
+      "enable_rewrite": true,
+      "allow_best_effort_rewrite": true,
+      "behavior_adaptation_enabled": true,
+      "adaptive_acceptance_enabled": true,
+      "adaptive_candidate_score": 0.34,
+      "adaptive_context_coverage": 0.12,
+      "adaptive_persona_coverage": 0.09,
+      "adaptive_high_confidence_score": 0.53,
+      "adaptive_mid_confidence_score": 0.4,
+      "adaptive_high_confidence_rewrites": 1,
+      "adaptive_mid_confidence_rewrites": 1,
+      "adaptive_low_confidence_rewrites": 2,
+      "low_confidence_retry_requires_gain": true,
+      "low_confidence_retry_min_score_gain": 0.01,
+      "low_confidence_retry_min_coverage_gain": 0.02,
+      "intent_risk_adaptation_enabled": true,
+      "latency_adaptation_enabled": true,
+      "latency_relax_start_pressure": 0.52,
+      "latency_relax_max_delta": 0.08,
+      "low_risk_context_relax": 0.05,
+      "low_risk_persona_relax": 0.03,
+      "low_risk_candidate_score_relax": 0.03,
+      "high_risk_context_tighten": 0.04,
+      "high_risk_persona_tighten": 0.02,
+      "high_risk_candidate_score_tighten": 0.03,
+      "intent_focused_context_enabled": true,
+      "intent_focus_min_keep": 3,
+      "intent_focus_keep_ratio_low": 0.48,
+      "intent_focus_keep_ratio_medium": 0.68,
+      "intent_focus_keep_ratio_high": 1.0,
+      "intent_focus_min_relevance": 0.2,
+      "near_pass_enabled": true,
+      "near_pass_max_context_gap": 0.04,
+      "near_pass_max_persona_gap": 0.03,
+      "near_pass_score_floor": 0.35,
+      "near_pass_block_high_risk": true,
+      "rewrite_budget_ms": 0.0,
+      "rewrite_budget_multiplier": 0.0
+    }
+  },
+  "control_alt_profile": "blend_balanced",
+  "control_alt_arm_id": "proposed_contextual_controlled_alt",
+  "control_alt_overrides": {},
+  "control_alt_overrides_file": "",
+  "reproducibility_lock": {
+    "control_profile_id": "4898adf36d7b82f3",
+    "code_revision": {
+      "git_available": true,
+      "commit": "bcaabaca58f4c9f88d7cfada4577229e0eb77fb0",
+      "short_commit": "bcaabac",
+      "branch": "main",
+      "dirty": true,
+      "dirty_file_count": 167,
+      "dirty_file_preview": [
+        "M README.md",
+        "M core/response_controller.py",
+        "M cpp/include/NPCInference.h",
+        "M cpp/include/ResponseController.h",
+        "M cpp/src/ResponseController.cpp",
+        "M cpp/tests/test_response_controller.cpp",
+        "M docs/ABLATION_REPORT.md",
+        "D docs/CASE_STUDIES.md",
+        "D docs/COMPARATIVE_ANALYSIS.md",
+        "D docs/DRAFT_PAPER.md",
+        "D docs/DRAFT_PAPER_VN.md",
+        "M docs/FINAL_BENCHMARK_REPORT.md",
+        "M docs/INDUSTRY_PUBLICATION_JUDGMENT.md",
+        "D docs/PAPER_OUTLINE.md",
+        "M docs/PROPOSAL_ALIGNMENT.md",
+        "M docs/PROPOSAL_QUALITY_BAR.md",
+        "M docs/README.md",
+        "M docs/VERIFICATION.md",
+        "M docs/comparison_analysis.md",
+        "M scripts/build_human_eval_pack.py",
+        "M scripts/generate_proposal_scenarios_large.py",
+        "M scripts/inference_adapter.py",
+        "M scripts/run_benchmark.py",
+        "M scripts/run_kaggle_full_results.py",
+        "M scripts/run_laptop_full_results.py"
+      ]
+    },
+    "tracked_files_sha256": {
+      "core/response_controller.py": {
+        "exists": true,
+        "sha256": "af6a5a9321808e63924df6b3a62a166e8e35141f9b86b2c1e4fea2291d06334f",
+        "bytes": 47100
+      },
+      "scripts/inference_adapter.py": {
+        "exists": true,
+        "sha256": "e17396bcce411f8e550f77b6ba8fd07bbe07982fbe88234845668a5e5ba0cac0",
+        "bytes": 17119
+      },
+      "scripts/run_proposal_alignment_eval.py": {
+        "exists": true,
+        "sha256": "51628efb3e2f09b8152f96fdbf1ac3b213ab5f20059b9d6984986ff644c5483f",
+        "bytes": 139665
+      },
+      "scripts/run_proposal_alignment_eval_batched.py": {
+        "exists": true,
+        "sha256": "32acb6dcc4ba532eaaa323fa8cf366f02f974c13c9e6f9e9eb7978e76c0f3bf3",
+        "bytes": 30059
+      },
+      "cpp/include/ResponseController.h": {
+        "exists": true,
+        "sha256": "5cf6a34bda1d3da1be5fb4c12578d884ba2b59c27d1e48f9113990555e296d4c",
+        "bytes": 2611
+      },
+      "cpp/src/ResponseController.cpp": {
+        "exists": true,
+        "sha256": "20b894fef5d07d42027e11b91725e781ea81fff04f6ed6f592dedfb307e639ad",
+        "bytes": 52038
+      },
+      "cpp/include/NPCInference.h": {
+        "exists": true,
+        "sha256": "3af9752cdd79d7cbf8129ea3ac8a91d525eefd1ef10cd63308a9c668a320184e",
+        "bytes": 11551
+      },
+      "cpp/src/NPCInference.cpp": {
+        "exists": true,
+        "sha256": "60d0a92343ff0bdc311bac76baa873ca2ec2962f35126152837c22d48bc44d76",
+        "bytes": 61513
+      }
+    }
+  },
+  "operational_preflight_gate": {
+    "enabled": true,
+    "arm_id": "proposed_contextual_controlled",
+    "max_fallback_rate": 0.45,
+    "max_retry_rate": 0.75,
+    "min_first_pass_accept_rate": 0.25
+  },
+  "scenario_dependence_summary": {
+    "unique_source_count": 8,
+    "unique_template_signature_count": 23,
+    "template_signature_ratio": 0.9583333333333334,
+    "effective_sample_size_by_source": 7.2
+  },
+  "arm_request_health": {
+    "proposed_contextual_controlled": {
+      "total_requests": 24,
+      "successful_requests": 24,
+      "success_rate": 1.0
+    },
+    "proposed_contextual_controlled_alt": {
+      "total_requests": 24,
+      "successful_requests": 24,
+      "success_rate": 1.0
+    },
+    "proposed_contextual": {
+      "total_requests": 24,
+      "successful_requests": 24,
+      "success_rate": 1.0
+    },
+    "candidate_no_context": {
+      "total_requests": 24,
+      "successful_requests": 24,
+      "success_rate": 1.0
+    },
+    "baseline_no_context": {
+      "total_requests": 24,
+      "successful_requests": 24,
+      "success_rate": 1.0
+    }
+  },
+  "operational_preflight_gate_result": {
+    "arm_id": "proposed_contextual_controlled",
+    "pass": true,
+    "thresholds": {
+      "max_fallback_rate": 0.45,
+      "max_retry_rate": 0.75,
+      "min_first_pass_accept_rate": 0.25
+    },
+    "checks": [
+      {
+        "name": "fallback_rate",
+        "observed": 0.2916666666666667,
+        "rule": "<= 0.4500",
+        "pass": true
+      },
+      {
+        "name": "retry_rate",
+        "observed": 0.4583333333333333,
+        "rule": "<= 0.7500",
+        "pass": true
+      },
+      {
+        "name": "first_pass_accept_rate",
+        "observed": 0.5416666666666666,
+        "rule": ">= 0.2500",
+        "pass": true
+      }
+    ]
+  }
+}

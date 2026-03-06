@@ -1,0 +1,19 @@
+{
+  "min_context_coverage": 0.31,
+  "min_persona_coverage": 0.16,
+  "relaxed_context_coverage": 0.16,
+  "relaxed_persona_coverage": 0.08,
+  "relaxed_candidate_score": 0.42,
+  "adaptive_candidate_score": 0.34,
+  "rewrite_candidates": 2,
+  "adaptive_high_confidence_rewrites": 1,
+  "adaptive_mid_confidence_rewrites": 1,
+  "adaptive_low_confidence_rewrites": 2,
+  "low_confidence_retry_requires_gain": true,
+  "low_confidence_retry_min_score_gain": 0.015,
+  "low_confidence_retry_min_coverage_gain": 0.03,
+  "intent_risk_adaptation_enabled": false,
+  "latency_adaptation_enabled": true,
+  "latency_relax_start_pressure": 0.55,
+  "latency_relax_max_delta": 0.08
+}

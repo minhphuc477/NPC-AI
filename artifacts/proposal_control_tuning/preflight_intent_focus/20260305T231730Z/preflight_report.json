@@ -1,0 +1,107 @@
+{
+  "generated_utc": "2026-03-05T23:29:59.947372+00:00",
+  "seeds": [
+    29,
+    31
+  ],
+  "thresholds": {
+    "max_fallback_rate": 0.45,
+    "max_retry_rate": 0.75,
+    "min_first_pass_accept_rate": 0.25,
+    "max_overall_drift": 0.05,
+    "max_context_drift": 0.06,
+    "max_persona_drift": 0.12,
+    "max_naturalness_drift": 0.06,
+    "max_fallback_drift": 0.15,
+    "max_retry_drift": 0.15
+  },
+  "per_seed": [
+    {
+      "seed": 29,
+      "run_dir": "artifacts\\proposal_control_tuning\\preflight_intent_focus\\20260305T231730Z\\seed_runs\\seed_29\\20260305T231731Z",
+      "gate_pass": true,
+      "quality": {
+        "context_relevance": 0.32044940003695094,
+        "persona_consistency": 0.33897991741741745,
+        "naturalness": 0.8326987967005776,
+        "overall_quality": 0.3942378009003468
+      },
+      "paired_delta_vs_raw": {
+        "context_relevance": 0.24220130240112026,
+        "persona_consistency": 0.21221156424281426,
+        "naturalness": 0.05654289191695546,
+        "overall_quality": 0.18198439724311455
+      },
+      "operational": {
+        "fallback_rate": 0.20833333333333334,
+        "retry_rate": 0.625,
+        "first_pass_accept_rate": 0.375
+      }
+    },
+    {
+      "seed": 31,
+      "run_dir": "artifacts\\proposal_control_tuning\\preflight_intent_focus\\20260305T231730Z\\seed_runs\\seed_31\\20260305T232402Z",
+      "gate_pass": true,
+      "quality": {
+        "context_relevance": 0.28811167659281217,
+        "persona_consistency": 0.34475000000000006,
+        "naturalness": 0.8788969334001963,
+        "overall_quality": 0.3908479138061745
+      },
+      "paired_delta_vs_raw": {
+        "context_relevance": 0.22984286258081552,
+        "persona_consistency": 0.18028483893557423,
+        "naturalness": 0.07821569648227823,
+        "overall_quality": 0.17078401261767504
+      },
+      "operational": {
+        "fallback_rate": 0.25,
+        "retry_rate": 0.5833333333333334,
+        "first_pass_accept_rate": 0.4166666666666667
+      }
+    }
+  ],
+  "drift": {
+    "quality": {
+      "overall_quality": 0.003389887094172317,
+      "context_relevance": 0.032337723444138766,
+      "persona_consistency": 0.005770082582582603,
+      "naturalness": 0.0461981366996187
+    },
+    "operational": {
+      "fallback_rate": 0.04166666666666666,
+      "retry_rate": 0.04166666666666663
+    }
+  },
+  "checks": [
+    {
+      "name": "all_seed_gates_pass",
+      "pass": true
+    },
+    {
+      "name": "overall_drift",
+      "pass": true
+    },
+    {
+      "name": "context_drift",
+      "pass": true
+    },
+    {
+      "name": "persona_drift",
+      "pass": true
+    },
+    {
+      "name": "naturalness_drift",
+      "pass": true
+    },
+    {
+      "name": "fallback_drift",
+      "pass": true
+    },
+    {
+      "name": "retry_drift",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

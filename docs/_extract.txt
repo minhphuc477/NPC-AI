@@ -1,0 +1,234 @@
+BỘ GIÁO DỤC VÀ ĐÀO TẠO
+TRƯỜNG ĐẠI HỌC MỞ THÀNH PHỐ HỒ CHÍ MINH
+
+Nâng cao tính tự nhiên và tính ngữ cảnh trong tương tác hội
+thoại với NPC bằng mô hình ngôn ngữ tinh chỉnh được thông
+tin bởi trạng thái thế giới game động trong game tường thuật
+
+Mã số đề tài: 866
+
+TP. Hồ Chí Minh, 2026
+
+BỘ GIÁO DỤC VÀ ĐÀO TẠO
+TRƯỜNG ĐẠI HỌC MỞ THÀNH PHỐ HỒ CHÍ MINH
+
+Dynamic Game State-Informed Fine-Tuned Language
+Models for Natural and Context-Aware NPC Dialogue in
+Narrative Games
+
+Mã số đề tài: 866
+
+Chủ nhiệm đề tài: Lê Trần Minh Phúc
+Khoa: Đào Tạo Đặc Biệt
+Người hướng dẫn: TS. Lê Đăng Giáp
+
+TP. Hồ Chí Minh, 2026
+
+BỘ GIÁO DỤC VÀ ĐÀO TẠO
+
+CỘNG HOÀ XÃ HỘI CHỦ
+
+TRƯỜNG ĐẠI HỌC MỞ
+
+NGHĨA VIỆT NAM
+
+THÀNH PHỐ HỒ CHÍ MINH
+
+Độc lập - Tự do - Hạnh phúc
+
+THÔNG TIN KẾT QUẢ NGHIÊN CỨU CỦA ĐỀ TÀI
+
+1. Thông tin chung:
+- Tên đề tài: Nâng cao tính tự nhiên và tính ngữ cảnh trong tương tác hội thoại với NPC
+bằng mô hình ngôn ngữ tinh chỉnh được thông tin bởi trạng thái thế giới game động trong
+game tường thuật
+- Tên đề tài (tiếng Anh): Dynamic Game State-Informed Fine-Tuned Language Models
+for Natural and Context-Aware NPC Dialogue in Narrative Games
+- Mã số đề tài: 866
+- Sinh viên chủ nhiệm đề tài: Lê Trần Minh Phúc
+- Khoa: Đào Tạo Đặc Biệt
+
+Mã số sinh viên: 2251010074
+
+- Giảng viên hướng dẫn: TS. Lê Đăng Giáp
+2. Mục tiêu đề tài:
+Xây dựng và đánh giá một hệ thống hội thoại NPC tích hợp đầu-cuối cho trò chơi tường
+thuật, trong đó mô hình ngôn ngữ cục bộ được điều kiện hóa theo trạng thái trò chơi động
+nhằm nâng cao độ bám ngữ cảnh, tính nhất quán vai trò nhân vật và chất lượng phản hồi
+trong điều kiện triển khai thời gian thực.
+3. Tính mới và sáng tạo:
+Đề tài kết hợp đồng thời trích xuất ngữ cảnh từ UE5, truy hồi lai có cơ chế guard chống
+poisoning/trust-spoof, sinh phản hồi bằng mô hình tinh chỉnh cục bộ và lớp kiểm soát
+hậu sinh có cơ chế fallback trong cả hai nhánh triển khai Python và C++. Thiết kế này
+cho phép đồng nhất hành vi giữa môi trường đánh giá và runtime trong game, đồng thời
+hỗ trợ phân tích ablation theo từng thành phần.
+
+4. Kết quả nghiên cứu:
+Trên bộ 112 kịch bản cố định, cấu hình kiểm soát theo ngữ cảnh cải thiện có ý nghĩa thống
+kê so với cấu hình ngữ cảnh thô ở các chỉ số chính: context relevance (+0.2131), persona
+consistency (+0.2150), naturalness (+0.1158) và overall quality (+0.1808). Trong kiểm
+thử đối kháng, tỷ lệ tấn công thành công giảm từ 1.0 xuống 0.0 dưới cấu hình guard.
+5. Đóng góp về mặt kinh tế - xã hội, giáo dục và đào tạo, an ninh, quốc phòng và
+khả năng áp dụng của đề tài:
+Kết quả đề tài đóng góp quy trình kỹ thuật có thể kiểm chứng cho phát triển NPC hội
+thoại trong sản phẩm trò chơi số, hỗ trợ đào tạo liên ngành giữa AI và phát triển game,
+đồng thời nhấn mạnh cơ chế kiểm soát rủi ro nội dung khi ứng dụng mô hình ngôn ngữ
+trong hệ thống tương tác.
+6. Công bố khoa học của sinh viên từ kết quả nghiên cứu của đề tài:
+Hiện chưa có công bố khoa học chính thức; kết quả đang được hoàn thiện dưới dạng bản
+thảo học thuật và báo cáo kỹ thuật nội bộ.
+
+TP. Hồ Chí Minh, 2026
+
+i
+
+Table of contents
+List of tables
+
+ii
+
+List of figures
+
+iii
+
+List of abbreviations
+
+iv
+
+Abstract
+
+1
+
+Keywords
+
+1
+
+1
+
+2
+
+2
+
+3
+
+Research problem, scope, and contributions
+1.1 Limitations of scripted and unconstrained NPC dialogue paradigms . . . .
+
+2
+
+1.2 Research focus: dynamic state-grounded local NPC dialogue in UE5 . . .
+
+2
+
+1.3 Scope, assumptions, and boundary conditions . . . . . . . . . . . . . . . .
+
+3
+
+1.4 Evidence strategy and inferential criteria . . . . . . . . . . . . . . . . . . .
+
+3
+
+1.5 Contributions and claim boundaries . . . . . . . . . . . . . . . . . . . . .
+
+3
+
+1.6 Research questions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+3
+
+1.7 Formal objective and optimization formulation . . . . . . . . . . . . . . .
+
+4
+
+Theoretical and empirical foundations
+
+5
+
+2.1 International research landscape for LLM-driven game interaction . . . .
+
+5
+
+2.2 Domestic research landscape and deployment context in Vietnam . . . . .
+
+6
+
+2.3 Core constructs and operational definitions . . . . . . . . . . . . . . . . .
+
+6
+
+2.4 Theoretical foundations for adaptation, retrieval, and runtime control . . .
+
+7
+
+2.5 Hypotheses and analytical model . . . . . . . . . . . . . . . . . . . . . . .
+
+8
+
+System architecture and empirical methodology
+3.1 Evidence-gating protocol and study design . . . . . . . . . . . . . . . . . .
+
+9
+9
+
+3.2 Online runtime architecture and data flow . . . . . . . . . . . . . . . . . . 10
+3.3 Model adaptation, retrieval training, and data pipeline . . . . . . . . . . . 14
+3.4 Evaluation methodology: quantitative and qualitative components . . . . 16
+3.5 Analytical derivations of decision and evaluation formulas . . . . . . . . . 20
+
+ii
+
+4
+
+Empirical findings and integrated analysis
+
+21
+
+4.1 Primary benchmark results under matched settings . . . . . . . . . . . . . 22
+4.2 Human evaluation and inter-rater agreement . . . . . . . . . . . . . . . . . 23
+4.3 Serving and retrieval performance trade-offs . . . . . . . . . . . . . . . . . 24
+4.4 Component-level ablation results . . . . . . . . . . . . . . . . . . . . . . . 25
+4.5 Threats to validity and interpretive boundaries . . . . . . . . . . . . . . . . 27
+4.6 Comparison with prior work and practical implications . . . . . . . . . . . 29
+5
+
+Conclusions, implications, and future directions
+
+30
+
+5.1 Ethical and policy implications for NPC deployment . . . . . . . . . . . . 30
+5.2 Principal findings and bounded claims . . . . . . . . . . . . . . . . . . . . 31
+5.3 Study limitations . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+5.4 Future research agenda . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+A
+
+Reproducibility protocols and extended methods
+
+32
+
+A.1 Scenario taxonomy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+A.2 Prompt and context serialization specification . . . . . . . . . . . . . . . . 33
+A.3 Response-control specification . . . . . . . . . . . . . . . . . . . . . . . . 33
+A.4 Adversarial retrieval protocol . . . . . . . . . . . . . . . . . . . . . . . . . 34
+A.5 Human evaluation protocol . . . . . . . . . . . . . . . . . . . . . . . . . . 34
+A.6 Compute and runtime environment . . . . . . . . . . . . . . . . . . . . . . 34
+B
+
+Extended interpretation and comparative notes
+
+34
+
+B.1 Comparative-scope limitations . . . . . . . . . . . . . . . . . . . . . . . . 34
+B.2 Future work plan . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+B.3 Detailed reproducibility report . . . . . . . . . . . . . . . . . . . . . . . . 35
+B.4 Supplementary comparative discussion . . . . . . . . . . . . . . . . . . . . 37
+B.5 Failure taxonomy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+B.6 Qualitative case analyses . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+C
+
+Comprehensive tables and scenario catalog
+
+39
+
+C.1 Supplementary tables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+
+

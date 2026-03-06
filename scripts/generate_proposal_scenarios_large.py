@@ -85,7 +85,30 @@ PLAYER_SUFFIXES = [
     " We are running out of time.",
     " I need a direct answer.",
     " Treat this as priority.",
+    " Keep this between us for now.",
+    " I need an actionable answer, not a lecture.",
+    " I will comply with procedure if you state it clearly.",
 ]
+
+PLAYER_REPHRASE_PATTERNS = [
+    "{core}",
+    "Given the current situation, {core}",
+    "Under these conditions, {core}",
+    "Based on what just happened, {core}",
+    "From your position here, {core}",
+    "I need a concrete response: {core}",
+]
+
+LEXICAL_SUBSTITUTIONS: Dict[str, List[str]] = {
+    "urgent": ["time-sensitive", "critical", "immediate"],
+    "answer": ["response", "clarification", "guidance"],
+    "allow": ["permit", "authorize", "approve"],
+    "entry": ["access", "passage", "clearance"],
+    "prove": ["verify", "substantiate", "confirm"],
+    "help": ["assist", "support", "guide"],
+    "price": ["cost", "rate", "fee"],
+    "trust": ["credibility", "reliability", "assurance"],
+}
 
 
 def read_jsonl(path: Path) -> List[Dict[str, Any]]:
@@ -209,6 +232,26 @@ def pick_behavior(local_rng: random.Random, base_behavior: str, persona_archetyp
     return str(local_rng.choice(pool))
 
 
+def _substitute_lexicon(local_rng: random.Random, text: str) -> str:
+    out = text
+    for src, choices in LEXICAL_SUBSTITUTIONS.items():
+        if re.search(rf"\b{re.escape(src)}\b", out, flags=re.IGNORECASE) is None:
+            continue
+        repl = local_rng.choice(choices)
+        out = re.sub(rf"\b{re.escape(src)}\b", repl, out, count=1, flags=re.IGNORECASE)
+    return out
+
+
+def _rephrase_core_text(local_rng: random.Random, text: str) -> str:
+    core = _substitute_lexicon(local_rng, text.strip())
+    pattern = local_rng.choice(PLAYER_REPHRASE_PATTERNS)
+    merged = pattern.format(core=core)
+    merged = re.sub(r"\s+", " ", merged).strip()
+    if merged and merged[-1] not in ".!?":
+        merged += "?"
+    return merged
+
+
 def build_player_input(local_rng: random.Random, base_input: str) -> str:
     core = base_input.strip()
     prefix = local_rng.choice(PLAYER_PREFIXES)
@@ -217,7 +260,55 @@ def build_player_input(local_rng: random.Random, base_input: str) -> str:
         prefix = prefix + " "
     if core and core[0].islower():
         core = core[0].upper() + core[1:]
+    core = _rephrase_core_text(local_rng, core)
     return (prefix + core + suffix).strip()
+
+
+def template_signature(player_input: str, dynamic_context: str) -> str:
+    ctx = parse_dynamic_context_map(dynamic_context)
+    behavior = str(ctx.get("behaviortreestate", "")).strip().lower() or "na"
+    location = str(ctx.get("location", "")).strip()
+    location_type = infer_location_type(location) if location else "na"
+    conflict = infer_conflict_type(player_input)
+    low = player_input.lower()
+    has_question = "q" if "?" in player_input else "s"
+    has_urgency = "u1" if any(k in low for k in ("urgent", "immediate", "critical", "priority")) else "u0"
+    starts_imperative = "i1" if re.match(r"^(please|listen|no delays|for the record|under|given|based)", low) else "i0"
+    return "|".join([conflict, location_type, behavior, has_question, has_urgency, starts_imperative])
+
+
+def jaccard_tokens(a: str, b: str) -> float:
+    ta = set(TOKEN_RE.findall(a.lower()))
+    tb = set(TOKEN_RE.findall(b.lower()))
+    if not ta and not tb:
+        return 1.0
+    if not ta or not tb:
+        return 0.0
+    inter = len(ta.intersection(tb))
+    union = len(ta.union(tb))
+    return inter / float(union) if union > 0 else 0.0
+
+
+def max_jaccard_to_existing(text: str, existing: List[str]) -> float:
+    if not existing:
+        return 0.0
+    return max(jaccard_tokens(text, ref) for ref in existing)
+
+
+def infer_primary_stress_axis(conflict_type: str, behavior_state: str, player_input: str) -> str:
+    conflict = str(conflict_type).strip().lower()
+    behavior = str(behavior_state).strip().lower()
+    low = str(player_input).strip().lower()
+
+    if any(k in conflict for k in ("access_control", "credibility_dispute")):
+        return "context_grounding"
+    if any(k in conflict for k in ("economic_negotiation", "assistance_request")):
+        return "persona_consistency"
+    if any(k in behavior for k in ("guard", "investigat", "detain", "combat")):
+        return "security_resilience"
+    if any(k in low for k in ("again", "before", "already", "previous", "remember")):
+        return "temporal_consistency"
+    return "dialogue_naturalness"
 
 
 def build_reference_response(
@@ -240,7 +331,13 @@ def build_reference_response(
     return " ".join([first, second, context_line])
 
 
-def expand_seed_row(row: Dict[str, Any], variants_per_base: int, seed: int) -> List[Dict[str, Any]]:
+def expand_seed_row(
+    row: Dict[str, Any],
+    variants_per_base: int,
+    seed: int,
+    max_player_jaccard: float,
+    rephrase_attempts: int,
+) -> List[Dict[str, Any]]:
     base_id = str(row.get("scenario_id", "")).strip()
     persona = str(row.get("persona", "")).strip()
     base_context = parse_dynamic_context_map(str(row.get("dynamic_context", "")))
@@ -253,6 +350,7 @@ def expand_seed_row(row: Dict[str, Any], variants_per_base: int, seed: int) -> L
     base_context_kws = [str(x).strip() for x in row.get("context_keywords", []) if str(x).strip()]
     base_persona_kws = [str(x).strip() for x in row.get("persona_keywords", []) if str(x).strip()]
     persona_archetype = infer_persona_archetype(persona)
+    prior_player_inputs: List[str] = []
 
     out: List[Dict[str, Any]] = []
     for idx in range(max(1, variants_per_base)):
@@ -270,7 +368,20 @@ def expand_seed_row(row: Dict[str, Any], variants_per_base: int, seed: int) -> L
             else:
                 recent_event = extra_event
 
-        player_input = base_input if idx == 0 else build_player_input(local_rng, base_input)
+        if idx == 0:
+            player_input = base_input
+        else:
+            best_candidate = ""
+            best_similarity = float("inf")
+            for _ in range(max(1, int(rephrase_attempts))):
+                candidate = build_player_input(local_rng, base_input)
+                sim = max_jaccard_to_existing(candidate, prior_player_inputs + [base_input])
+                if sim < best_similarity:
+                    best_candidate = candidate
+                    best_similarity = sim
+                if sim <= float(max_player_jaccard):
+                    break
+            player_input = best_candidate or build_player_input(local_rng, base_input)
         reference_response = (
             base_ref
             if idx == 0
@@ -290,13 +401,24 @@ def expand_seed_row(row: Dict[str, Any], variants_per_base: int, seed: int) -> L
         )
         persona_keywords = dedupe_keep_order(base_persona_kws + keywordize(persona, max_terms=3))
 
+        dynamic_context_text = format_dynamic_context(
+            {
+                "behaviortreestate": behavior,
+                "location": location,
+                "nearbyentity": nearby,
+                "recentevent": recent_event,
+            }
+        )
         scenario_id = f"{base_id}_v{idx:02d}"
+        conflict_type = infer_conflict_type(player_input)
         scenario_tags = {
             "persona_archetype": persona_archetype,
-            "conflict_type": infer_conflict_type(player_input),
+            "conflict_type": conflict_type,
             "location_type": infer_location_type(location),
             "behavior_state": behavior,
+            "primary_stress_axis": infer_primary_stress_axis(conflict_type, behavior, player_input),
             "coverage_band": "core" if idx == 0 else ("expanded_a" if idx % 2 == 0 else "expanded_b"),
+            "template_signature": template_signature(player_input, dynamic_context_text),
         }
 
         expanded = {
@@ -304,14 +426,7 @@ def expand_seed_row(row: Dict[str, Any], variants_per_base: int, seed: int) -> L
             "source_scenario_id": base_id,
             "variant_index": idx,
             "persona": persona,
-            "dynamic_context": format_dynamic_context(
-                {
-                    "behaviortreestate": behavior,
-                    "location": location,
-                    "nearbyentity": nearby,
-                    "recentevent": recent_event,
-                }
-            ),
+            "dynamic_context": dynamic_context_text,
             "player_input": player_input,
             "reference_response": reference_response,
             "context_keywords": context_keywords,
@@ -319,6 +434,7 @@ def expand_seed_row(row: Dict[str, Any], variants_per_base: int, seed: int) -> L
             "scenario_tags": scenario_tags,
         }
         out.append(expanded)
+        prior_player_inputs.append(player_input)
     return out
 
 
@@ -328,13 +444,53 @@ def summarize(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     by_conflict = Counter(str(r.get("scenario_tags", {}).get("conflict_type", "")) for r in rows)
     by_location = Counter(str(r.get("scenario_tags", {}).get("location_type", "")) for r in rows)
     by_behavior = Counter(str(r.get("scenario_tags", {}).get("behavior_state", "")) for r in rows)
+    by_stress = Counter(str(r.get("scenario_tags", {}).get("primary_stress_axis", "")) for r in rows)
+    by_signature = Counter(str(r.get("scenario_tags", {}).get("template_signature", "")) for r in rows)
+
+    n = len(rows)
+    n_sources = len(by_source)
+    signature_count = len([k for k in by_signature.keys() if str(k).strip()])
+
+    source_numer = float(n * n)
+    source_denom = float(sum(v * v for v in by_source.values())) if by_source else 0.0
+    n_eff_source = (source_numer / source_denom) if source_denom > 0 else 0.0
+
+    sig_numer = float(n * n)
+    sig_denom = float(sum(v * v for v in by_signature.values())) if by_signature else 0.0
+    n_eff_signature = (sig_numer / sig_denom) if sig_denom > 0 else 0.0
+
+    source_to_rows: Dict[str, List[Dict[str, Any]]] = {}
+    for row in rows:
+        sid = str(row.get("source_scenario_id", ""))
+        source_to_rows.setdefault(sid, []).append(row)
+    within_source_sim: List[float] = []
+    for srows in source_to_rows.values():
+        if len(srows) <= 1:
+            continue
+        base = str(srows[0].get("player_input", ""))
+        sims = [jaccard_tokens(base, str(r.get("player_input", ""))) for r in srows[1:]]
+        if sims:
+            within_source_sim.append(float(sum(sims) / len(sims)))
+
     return {
-        "scenario_count": len(rows),
+        "scenario_count": n,
         "source_distribution": dict(sorted(by_source.items())),
         "persona_distribution": dict(sorted(by_persona.items())),
         "conflict_distribution": dict(sorted(by_conflict.items())),
         "location_distribution": dict(sorted(by_location.items())),
         "behavior_distribution": dict(sorted(by_behavior.items())),
+        "primary_stress_axis_distribution": dict(sorted(by_stress.items())),
+        "template_signature_distribution": dict(sorted(by_signature.items())),
+        "unique_source_count": n_sources,
+        "unique_template_signature_count": signature_count,
+        "template_signature_ratio": (signature_count / float(n)) if n > 0 else 0.0,
+        "effective_sample_size_by_source": n_eff_source,
+        "effective_sample_size_by_template_signature": n_eff_signature,
+        "source_max_share": (max(by_source.values()) / float(n)) if n > 0 and by_source else 0.0,
+        "template_max_share": (max(by_signature.values()) / float(n)) if n > 0 and by_signature else 0.0,
+        "mean_within_source_player_input_jaccard": (
+            float(sum(within_source_sim) / len(within_source_sim)) if within_source_sim else float("nan")
+        ),
     }
 
 
@@ -354,6 +510,29 @@ def main() -> None:
     )
     parser.add_argument("--seed", type=int, default=29, help="Deterministic generation seed")
     parser.add_argument(
+        "--max-player-jaccard",
+        type=float,
+        default=0.88,
+        help="Maximum token Jaccard similarity allowed between variants from the same seed scenario.",
+    )
+    parser.add_argument(
+        "--rephrase-attempts",
+        type=int,
+        default=8,
+        help="Rephrase attempts per variant to satisfy similarity constraint.",
+    )
+    parser.add_argument(
+        "--min-template-signature-ratio",
+        type=float,
+        default=0.20,
+        help="Minimum acceptable unique-signature/row ratio for diversity diagnostics.",
+    )
+    parser.add_argument(
+        "--fail-on-low-diversity",
+        action="store_true",
+        help="Fail generation when template-signature diversity is below threshold.",
+    )
+    parser.add_argument(
         "--summary-output",
         default="",
         help="Optional JSON summary path; defaults to <output>.summary.json",
@@ -368,7 +547,15 @@ def main() -> None:
     seeds = read_jsonl(input_path)
     rows: List[Dict[str, Any]] = []
     for seed_row in seeds:
-        rows.extend(expand_seed_row(seed_row, variants_per_base=int(args.variants_per_base), seed=int(args.seed)))
+        rows.extend(
+            expand_seed_row(
+                seed_row,
+                variants_per_base=int(args.variants_per_base),
+                seed=int(args.seed),
+                max_player_jaccard=max(0.0, min(1.0, float(args.max_player_jaccard))),
+                rephrase_attempts=max(1, int(args.rephrase_attempts)),
+            )
+        )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     write_jsonl(output_path, rows)
@@ -377,6 +564,12 @@ def main() -> None:
     summary_path = Path(args.summary_output) if str(args.summary_output).strip() else output_path.with_suffix(".summary.json")
     with summary_path.open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2, ensure_ascii=False)
+
+    ratio = float(summary.get("template_signature_ratio", 0.0) or 0.0)
+    if bool(args.fail_on_low_diversity) and ratio < float(args.min_template_signature_ratio):
+        raise RuntimeError(
+            f"Template-signature diversity too low: {ratio:.4f} < {float(args.min_template_signature_ratio):.4f}"
+        )
 
     print(f"Generated expanded scenarios: {output_path} ({summary.get('scenario_count', 0)} rows)")
     print(f"Summary: {summary_path}")

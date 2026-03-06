@@ -1,0 +1,130 @@
+{
+  "generated_utc": "2026-03-05T23:30:17.038598+00:00",
+  "config": {
+    "host": "http://127.0.0.1:11434",
+    "candidate_model": "elara-npc:latest",
+    "baseline_model": "phi3:mini",
+    "baseline_models": "phi3:mini",
+    "scenarios": "data/proposal_eval_scenarios_112_diverse.jsonl",
+    "profiles": [
+      "hybrid_balanced",
+      "intent_focus_adaptive"
+    ],
+    "seeds": [
+      29,
+      31
+    ],
+    "max_scenarios": 24,
+    "max_tokens": 72,
+    "temperature": 0.2,
+    "timeout_s": 120
+  },
+  "profiles": {
+    "hybrid_balanced": {
+      "summary": {
+        "delta_context_mean": 0.025179574893941136,
+        "delta_persona_mean": 0.015651549895914652,
+        "delta_naturalness_mean": -0.02003679847604948,
+        "delta_overall_mean": 0.013235796968428035,
+        "fallback_gap_mean": -0.08333333333333331,
+        "retry_gap_mean": -0.02083333333333337,
+        "first_pass_gap_mean": 0.020833333333333315,
+        "quality_score": 0.019398342078794244,
+        "operational_score": 0.11249999999999999
+      },
+      "per_seed": [
+        {
+          "seed": 29,
+          "run_dir": "artifacts\\proposal_control_tuning\\architecture_compare_seeded\\20260305T233017Z\\hybrid_balanced\\seed_29\\20260305T233017Z",
+          "delta_context": 0.020666581304547568,
+          "delta_persona": 0.045969742063492074,
+          "delta_naturalness": -0.023087706476544238,
+          "delta_overall": 0.021937304417329714,
+          "default_fallback": 0.3333333333333333,
+          "default_retry": 0.5833333333333334,
+          "default_first_pass": 0.4166666666666667,
+          "alt_fallback": 0.20833333333333334,
+          "alt_retry": 0.5416666666666666,
+          "alt_first_pass": 0.4583333333333333
+        },
+        {
+          "seed": 31,
+          "run_dir": "artifacts\\proposal_control_tuning\\architecture_compare_seeded\\20260305T233017Z\\hybrid_balanced\\seed_31\\20260305T233521Z",
+          "delta_context": 0.029692568483334705,
+          "delta_persona": -0.014666642271662771,
+          "delta_naturalness": -0.01698589047555472,
+          "delta_overall": 0.004534289519526356,
+          "default_fallback": 0.16666666666666666,
+          "default_retry": 0.4583333333333333,
+          "default_first_pass": 0.5416666666666666,
+          "alt_fallback": 0.125,
+          "alt_retry": 0.4583333333333333,
+          "alt_first_pass": 0.5416666666666666
+        }
+      ]
+    },
+    "intent_focus_adaptive": {
+      "summary": {
+        "delta_context_mean": 0.0001449062376854346,
+        "delta_persona_mean": 0.015792025378889792,
+        "delta_naturalness_mean": 0.008977523906592415,
+        "delta_overall_mean": 0.007546497976771512,
+        "fallback_gap_mean": 0.0,
+        "retry_gap_mean": 0.041666666666666685,
+        "first_pass_gap_mean": -0.04166666666666666,
+        "quality_score": 0.011631636690745798,
+        "operational_score": -0.058333333333333334
+      },
+      "per_seed": [
+        {
+          "seed": 29,
+          "run_dir": "artifacts\\proposal_control_tuning\\architecture_compare_seeded\\20260305T233017Z\\intent_focus_adaptive\\seed_29\\20260305T234037Z",
+          "delta_context": 0.00015224523156665928,
+          "delta_persona": -0.04449074074074074,
+          "delta_naturalness": 0.002844220287682752,
+          "delta_overall": -0.01615538806313987,
+          "default_fallback": 0.16666666666666666,
+          "default_retry": 0.5833333333333334,
+          "default_first_pass": 0.4166666666666667,
+          "alt_fallback": 0.20833333333333334,
+          "alt_retry": 0.5833333333333334,
+          "alt_first_pass": 0.4166666666666667
+        },
+        {
+          "seed": 31,
+          "run_dir": "artifacts\\proposal_control_tuning\\architecture_compare_seeded\\20260305T233017Z\\intent_focus_adaptive\\seed_31\\20260305T234544Z",
+          "delta_context": 0.00013756724380420993,
+          "delta_persona": 0.07607479149852032,
+          "delta_naturalness": 0.01511082752550208,
+          "delta_overall": 0.031248384016682895,
+          "default_fallback": 0.375,
+          "default_retry": 0.5416666666666666,
+          "default_first_pass": 0.4583333333333333,
+          "alt_fallback": 0.3333333333333333,
+          "alt_retry": 0.625,
+          "alt_first_pass": 0.375
+        }
+      ]
+    }
+  },
+  "ranking": [
+    {
+      "profile": "hybrid_balanced",
+      "quality_score": 0.019398342078794244,
+      "operational_score": 0.11249999999999999,
+      "delta_overall_mean": 0.013235796968428035,
+      "fallback_gap_mean": -0.08333333333333331,
+      "retry_gap_mean": -0.02083333333333337,
+      "first_pass_gap_mean": 0.020833333333333315
+    },
+    {
+      "profile": "intent_focus_adaptive",
+      "quality_score": 0.011631636690745798,
+      "operational_score": -0.058333333333333334,
+      "delta_overall_mean": 0.007546497976771512,
+      "fallback_gap_mean": 0.0,
+      "retry_gap_mean": 0.041666666666666685,
+      "first_pass_gap_mean": -0.04166666666666666
+    }
+  ]
+}

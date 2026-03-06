@@ -4,6 +4,7 @@
 #include <cctype>
 #include <cmath>
 #include <map>
+#include <regex>
 #include <sstream>
 #include <unordered_set>
 
@@ -18,12 +19,41 @@ const std::vector<std::string> kBlockedFragments = {
     "temporal memories",
     "ambient awareness",
     "behaviortreestate",
+    "rewrite the npc response",
+    "return only the rewritten",
+    "do not give an explanation",
+    "persona cues in dialogue",
+    "game state details used",
+    "response length determined",
+    "follow-up question",
+    "query :",
+    "constraints:",
+    "draft response:",
+    "player says:",
+    "assistant:",
+};
+
+const std::vector<std::string> kLeakTailMarkers = {
+    "persona cues in dialogue",
+    "game state details used",
+    "response length determined",
+    "follow-up question",
+    "query :",
+    "query:",
+    "assistant:",
+    "player says:",
+    "constraints:",
+    "draft response:",
+    "return only the rewritten",
 };
 
 const std::unordered_set<std::string> kIntentStopwords = {
     "i", "me", "my", "you", "your", "we", "us", "please", "can", "could", "would", "should",
     "let", "need", "want", "now", "to", "in", "into", "at", "the", "a", "an", "is", "are",
-    "do", "does",
+    "do", "does", "under", "these", "conditions", "record", "given", "current", "position",
+    "listen", "carefully", "concrete", "response", "huge", "discount", "why", "anything",
+    "say", "from", "based", "on", "what", "just", "happened", "answer", "direct",
+    "credibility", "did", "happen",
 };
 
 const std::unordered_set<std::string> kContextStopwords = {
@@ -77,6 +107,50 @@ std::string TrimQuotes(const std::string& text) {
 bool StartsWith(const std::string& text, const std::string& prefix) {
     return text.size() >= prefix.size() &&
            std::equal(prefix.begin(), prefix.end(), text.begin());
+}
+
+size_t FindCaseInsensitive(const std::string& text, const std::string& needle) {
+    if (needle.empty() || text.empty()) {
+        return std::string::npos;
+    }
+    const std::string lowered_text = ToLower(text);
+    const std::string lowered_needle = ToLower(needle);
+    return lowered_text.find(lowered_needle);
+}
+
+std::string TrimLeakTail(const std::string& input) {
+    if (input.empty()) {
+        return input;
+    }
+    const std::string lowered = ToLower(input);
+    size_t cut_pos = std::string::npos;
+    for (const auto& marker : kLeakTailMarkers) {
+        const size_t pos = lowered.find(marker);
+        if (pos != std::string::npos) {
+            cut_pos = (cut_pos == std::string::npos) ? pos : std::min(cut_pos, pos);
+        }
+    }
+    if (cut_pos == std::string::npos) {
+        return input;
+    }
+    return Trim(input.substr(0, cut_pos));
+}
+
+std::string RemoveCaseInsensitiveLabels(
+    const std::string& text,
+    const std::vector<std::string>& labels
+) {
+    std::string out = text;
+    for (const auto& label : labels) {
+        while (true) {
+            const size_t pos = FindCaseInsensitive(out, label);
+            if (pos == std::string::npos) {
+                break;
+            }
+            out.erase(pos, label.size());
+        }
+    }
+    return out;
 }
 
 bool ContainsAny(const std::string& lowered_text, const std::vector<std::string>& fragments) {
@@ -189,6 +263,28 @@ std::string RemoveLeadingSpeakerLabel(const std::string& text) {
         }
     }
     return output;
+}
+
+std::string StripMarkdownPrefix(const std::string& input) {
+    std::string line = Trim(input);
+    if (line.empty()) {
+        return line;
+    }
+    size_t pos = 0;
+    while (pos < line.size() && line[pos] == '#') {
+        ++pos;
+    }
+    if (pos > 0) {
+        while (pos < line.size() && std::isspace(static_cast<unsigned char>(line[pos]))) {
+            ++pos;
+        }
+        line = line.substr(pos);
+    }
+    if (line.size() >= 2 && (line[0] == '-' || line[0] == '*') &&
+        std::isspace(static_cast<unsigned char>(line[1]))) {
+        line = Trim(line.substr(2));
+    }
+    return line;
 }
 
 std::vector<std::string> SplitSentences(const std::string& text) {
@@ -334,19 +430,26 @@ std::pair<bool, std::string> NeedsRepair(
     const std::string& response,
     float context_cov,
     float persona_cov,
-    const ResponseControlConfig& config
+    const ResponseControlConfig& config,
+    int context_keyword_count
 ) {
     const std::string lowered = ToLower(response);
     if (response.empty()) {
         return {true, "empty_response"};
     }
-    if (Tokenize(response).size() < 8) {
+    if (Tokenize(response).size() < static_cast<size_t>(std::max(1, config.min_response_tokens))) {
         return {true, "too_short"};
     }
     if (ContainsAny(lowered, kBlockedFragments)) {
         return {true, "meta_artifact"};
     }
-    if (context_cov < config.min_context_coverage) {
+    const float scale =
+        (context_keyword_count <= 6 || context_keyword_count <= 0)
+            ? 1.0f
+            : std::sqrt(6.0f / static_cast<float>(context_keyword_count));
+    const float required_context =
+        std::max(0.12f, std::min(config.min_context_coverage, config.min_context_coverage * scale));
+    if (context_cov < required_context) {
         return {true, "low_context_coverage"};
     }
     if (persona_cov < config.min_persona_coverage) {
@@ -354,6 +457,92 @@ std::pair<bool, std::string> NeedsRepair(
     }
     return {false, ""};
 }
+
+float Clamp01(float x) {
+    return std::max(0.0f, std::min(1.0f, x));
+}
+
+std::string NormalizeBehaviorState(const std::string& raw) {
+    std::string lowered = ToLower(raw);
+    std::replace(lowered.begin(), lowered.end(), '_', ' ');
+    std::vector<std::string> parts = SplitByDelimiters(lowered, "\t\n\r ");
+    return Join(parts, " ");
+}
+
+ResponseControlConfig ApplyBehaviorProfile(
+    const ResponseControlConfig& base,
+    const std::string& behavior_state
+) {
+    ResponseControlConfig cfg = base;
+    if (!cfg.behavior_adaptation_enabled) {
+        return cfg;
+    }
+
+    const std::string state = NormalizeBehaviorState(behavior_state);
+    if (state.empty()) {
+        return cfg;
+    }
+
+    const std::unordered_set<std::string> high_risk = {
+        "guarding", "detained", "investigating", "patrolling", "combat ready", "combat-ready"
+    };
+    const std::unordered_set<std::string> commerce_social = {
+        "assisting", "trading", "negotiating"
+    };
+    const std::unordered_set<std::string> support_roles = {
+        "observing", "researching", "forging", "ritual preparation", "treating patient", "idle social"
+    };
+
+    auto in_set = [&](const std::unordered_set<std::string>& bag) {
+        return bag.find(state) != bag.end();
+    };
+
+    if (in_set(high_risk)) {
+        cfg.min_context_coverage = Clamp01(cfg.min_context_coverage + 0.04f);
+        cfg.min_persona_coverage = Clamp01(cfg.min_persona_coverage + 0.02f);
+        cfg.relaxed_candidate_score = Clamp01(cfg.relaxed_candidate_score + 0.03f);
+        cfg.rewrite_candidates = std::max(1, std::min(cfg.rewrite_candidates, 2));
+        return cfg;
+    }
+
+    if (in_set(commerce_social)) {
+        cfg.min_context_coverage = Clamp01(cfg.min_context_coverage - 0.14f);
+        cfg.min_persona_coverage = Clamp01(cfg.min_persona_coverage - 0.07f);
+        cfg.relaxed_context_coverage = Clamp01(cfg.relaxed_context_coverage - 0.07f);
+        cfg.relaxed_persona_coverage = Clamp01(cfg.relaxed_persona_coverage - 0.035f);
+        cfg.relaxed_candidate_score = Clamp01(cfg.relaxed_candidate_score - 0.10f);
+        cfg.adaptive_candidate_score = Clamp01(cfg.adaptive_candidate_score - 0.02f);
+        cfg.adaptive_context_coverage = Clamp01(cfg.adaptive_context_coverage - 0.02f);
+        cfg.adaptive_persona_coverage = Clamp01(cfg.adaptive_persona_coverage - 0.01f);
+        cfg.min_response_tokens = std::max(6, cfg.min_response_tokens - 2);
+        cfg.rewrite_candidates = std::max(1, std::min(cfg.rewrite_candidates, 2));
+        if (state == "assisting") {
+            cfg.min_context_coverage = Clamp01(cfg.min_context_coverage - 0.02f);
+            cfg.relaxed_candidate_score = Clamp01(cfg.relaxed_candidate_score - 0.02f);
+            cfg.min_response_tokens = std::max(5, cfg.min_response_tokens - 1);
+        } else if (state == "negotiating") {
+            cfg.min_context_coverage = Clamp01(cfg.min_context_coverage - 0.01f);
+            cfg.min_persona_coverage = Clamp01(cfg.min_persona_coverage - 0.005f);
+        }
+        return cfg;
+    }
+
+    if (in_set(support_roles)) {
+        cfg.min_context_coverage = Clamp01(cfg.min_context_coverage - 0.08f);
+        cfg.min_persona_coverage = Clamp01(cfg.min_persona_coverage - 0.03f);
+        cfg.relaxed_candidate_score = Clamp01(cfg.relaxed_candidate_score - 0.05f);
+        cfg.rewrite_candidates = std::max(1, std::min(cfg.rewrite_candidates, 2));
+        if (state == "observing") {
+            cfg.min_context_coverage = Clamp01(cfg.min_context_coverage - 0.04f);
+            cfg.relaxed_candidate_score = Clamp01(cfg.relaxed_candidate_score - 0.03f);
+            cfg.adaptive_context_coverage = Clamp01(cfg.adaptive_context_coverage - 0.02f);
+        }
+        return cfg;
+    }
+    return cfg;
+}
+
+std::string PersonaStyle(const std::string& persona);
 
 float CandidateLengthScore(const std::string& response) {
     const float wc = static_cast<float>(Tokenize(response).size());
@@ -364,6 +553,17 @@ float CandidateLengthScore(const std::string& response) {
     const float spread = 28.0f;
     const float score = 1.0f - std::abs(wc - target) / spread;
     return std::max(0.0f, score);
+}
+
+float CandidateSentenceScore(const std::string& response) {
+    const int count = static_cast<int>(SplitSentences(response).size());
+    if (count >= 2 && count <= 3) {
+        return 1.0f;
+    }
+    if (count == 1 || count == 4) {
+        return 0.65f;
+    }
+    return 0.35f;
 }
 
 float CandidateDiversityScore(const std::string& response) {
@@ -400,8 +600,50 @@ float CandidateDiversityScore(const std::string& response) {
     return std::max(0.0f, std::min(1.0f, score));
 }
 
+float CandidatePersonaStyleScore(
+    const std::string& persona,
+    const std::string& response
+) {
+    const std::string style = PersonaStyle(persona);
+    const auto words = Tokenize(response);
+    const int wc = static_cast<int>(words.size());
+    const std::string lowered = ToLower(response);
+
+    auto cue_cov = [&](const std::vector<std::string>& cues) {
+        return KeywordCoverage(lowered, cues);
+    };
+
+    if (style == "strict") {
+        return 0.4f + 0.6f * cue_cov({"protocol", "verify", "cannot", "clearance", "authorized"});
+    }
+    if (style == "talkative") {
+        const float base = wc >= 28 ? 0.6f : std::max(0.2f, static_cast<float>(wc) / 40.0f);
+        return std::min(1.0f, 0.5f * base + 0.5f * cue_cov({"deal", "price", "terms", "trade", "fair"}));
+    }
+    if (style == "calm") {
+        return 0.4f + 0.6f * cue_cov({"steady", "carefully", "safe", "breathe", "step"});
+    }
+    if (style == "mysterious") {
+        return 0.4f + 0.6f * cue_cov({"perhaps", "shadow", "cost", "moon", "omen", "price"});
+    }
+    if (style == "formal") {
+        int long_words = 0;
+        for (const auto& w : words) {
+            if (w.size() >= 7) {
+                ++long_words;
+            }
+        }
+        const float long_ratio = wc > 0 ? static_cast<float>(long_words) / static_cast<float>(wc) : 0.0f;
+        const float vocab_score = std::min(1.0f, long_ratio / 0.25f);
+        const float cue_score = cue_cov({"evidence", "conclusion", "therefore", "proceed", "verify"});
+        return std::min(1.0f, 0.5f * vocab_score + 0.5f * cue_score);
+    }
+    return 0.5f;
+}
+
 float CandidateScore(
     const std::string& response,
+    const std::string& persona,
     const std::vector<std::string>& context_keywords,
     const std::vector<std::string>& persona_keywords
 ) {
@@ -415,7 +657,40 @@ float CandidateScore(
     const float persona_cov = KeywordCoverage(response, persona_keywords);
     const float length_score = CandidateLengthScore(response);
     const float diversity_score = CandidateDiversityScore(response);
-    return 0.50f * context_cov + 0.30f * persona_cov + 0.10f * length_score + 0.10f * diversity_score;
+    const float sentence_score = CandidateSentenceScore(response);
+    const float style_score = CandidatePersonaStyleScore(persona, response);
+    return 0.40f * context_cov + 0.20f * persona_cov + 0.15f * style_score +
+           0.10f * length_score + 0.10f * diversity_score + 0.05f * sentence_score;
+}
+
+bool IsUsableCandidate(
+    const std::string& response,
+    float context_cov,
+    float persona_cov,
+    float score,
+    const ResponseControlConfig& config,
+    bool require_context,
+    float context_floor,
+    float persona_floor,
+    float score_floor
+) {
+    if (response.empty()) {
+        return false;
+    }
+    if (ContainsAny(ToLower(response), kBlockedFragments)) {
+        return false;
+    }
+    const int min_tokens = std::max(4, config.min_response_tokens - 2);
+    if (static_cast<int>(Tokenize(response).size()) < min_tokens) {
+        return false;
+    }
+    if (require_context && context_cov < context_floor) {
+        return false;
+    }
+    if (persona_cov < persona_floor) {
+        return false;
+    }
+    return score >= score_floor;
 }
 
 std::vector<float> RewriteTemperatures(const ResponseControlConfig& config) {
@@ -447,6 +722,17 @@ std::vector<float> RewriteTemperatures(const ResponseControlConfig& config) {
         temps.resize(static_cast<size_t>(n));
     }
     return temps;
+}
+
+int EffectiveRewriteBudget(float raw_score, const ResponseControlConfig& config) {
+    const int max_candidates = std::max(1, config.rewrite_candidates);
+    if (raw_score >= config.adaptive_high_confidence_score) {
+        return std::max(1, std::min(max_candidates, config.adaptive_high_confidence_rewrites));
+    }
+    if (raw_score >= config.adaptive_mid_confidence_score) {
+        return std::max(1, std::min(max_candidates, config.adaptive_mid_confidence_rewrites));
+    }
+    return std::max(1, std::min(max_candidates, config.adaptive_low_confidence_rewrites));
 }
 
 std::map<std::string, std::string> ParseDynamicContext(const std::string& dynamic_context) {
@@ -575,6 +861,27 @@ std::string PersonaStyle(const std::string& persona) {
 }
 
 std::string IntentFragment(const std::string& player_input) {
+    const std::string lowered = ToLower(player_input);
+    const std::vector<std::pair<std::regex, std::string>> patterns = {
+        {std::regex(R"(let me (?:into|in to|in)\s+([^.!?,;]+))"), "entry to "},
+        {std::regex(R"((?:access|enter)\s+([^.!?,;]+))"), "access to "},
+        {std::regex(R"((?:buy|sell|trade)\s+([^.!?,;]+))"), "trade on "},
+        {std::regex(R"((?:heal|treat|cure)\s+([^.!?,;]+))"), "treatment for "},
+        {std::regex(R"((?:investigate|review|check)\s+([^.!?,;]+))"), "review of "},
+    };
+    for (const auto& [pattern, prefix] : patterns) {
+        std::smatch match;
+        if (std::regex_search(lowered, match, pattern) && match.size() > 1) {
+            auto core_tokens = Tokenize(match[1].str());
+            if (!core_tokens.empty()) {
+                if (core_tokens.size() > 6) {
+                    core_tokens.resize(6);
+                }
+                return prefix + Join(core_tokens, " ");
+            }
+        }
+    }
+
     const auto tokens = Tokenize(player_input);
     if (tokens.empty()) {
         return "your request";
@@ -600,14 +907,207 @@ std::string IntentFragment(const std::string& player_input) {
     return Join(fallback, " ");
 }
 
+std::string IntentCategory(const std::string& player_input) {
+    const std::string text = ToLower(player_input);
+    auto has_any = [&](std::initializer_list<const char*> terms) {
+        for (const char* term : terms) {
+            if (text.find(term) != std::string::npos) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    if (has_any({"archive", "gate", "entry", "access", "checkpoint", "permit", "pass"})) {
+        return "access";
+    }
+    if (has_any({"buy", "sell", "price", "trade", "discount", "potion", "market", "deal"})) {
+        return "trade";
+    }
+    if (has_any({"heal", "cure", "poison", "symptom", "medicine", "treat", "infirmary"})) {
+        return "medical";
+    }
+    if (has_any({"investigate", "theft", "evidence", "innocent", "suspect", "report"})) {
+        return "investigation";
+    }
+    if (has_any({"prison", "cell", "release", "escape", "detain"})) {
+        return "detention";
+    }
+    return "general";
+}
+
+std::string PersonaAnchor(const std::vector<std::string>& persona_keywords) {
+    const std::vector<std::string> preferred = {
+        "strict", "fair", "brief", "suspicious", "talkative", "calm", "caring",
+        "formal", "procedural", "mysterious", "indirect", "precise", "practical",
+    };
+
+    std::vector<std::string> normalized;
+    normalized.reserve(persona_keywords.size());
+    for (const auto& kw : persona_keywords) {
+        const std::string norm = Trim(ToLower(kw));
+        if (!norm.empty()) {
+            normalized.push_back(norm);
+        }
+    }
+
+    for (const auto& term : preferred) {
+        if (std::find(normalized.begin(), normalized.end(), term) != normalized.end()) {
+            return term;
+        }
+    }
+    return "";
+}
+
+std::string GroundedStyleRepair(
+    const std::string& response,
+    const std::string& dynamic_context,
+    const std::vector<std::string>& persona_keywords
+) {
+    const std::string cleaned = ResponseController::SanitizeResponse(response);
+    if (cleaned.empty()) {
+        return "";
+    }
+    const std::string lowered = ToLower(cleaned);
+    const std::vector<std::string> blocked_markers = {
+        "do not ",
+        "return ",
+        "rewrite ",
+        "your task",
+        "assistant",
+        "response should",
+        "begin your rewrite",
+    };
+    for (const auto& marker : blocked_markers) {
+        if (lowered.find(marker) != std::string::npos) {
+            return "";
+        }
+    }
+    const auto details = ContextDetailPhrases(dynamic_context);
+    std::string detail_clause;
+    if (!details.empty()) {
+        if (details.size() == 1) {
+            detail_clause = details[0];
+        } else {
+            detail_clause = details[0] + " and " + details[1];
+        }
+    }
+    const std::string anchor = PersonaAnchor(persona_keywords);
+    std::string anchor_clause;
+    if (!anchor.empty() && lowered.find(anchor) == std::string::npos) {
+        anchor_clause = "in a " + anchor + " manner";
+    }
+
+    std::vector<std::string> prefix_parts;
+    if (!detail_clause.empty() && lowered.find(ToLower(detail_clause)) == std::string::npos) {
+        prefix_parts.push_back(detail_clause);
+    }
+    if (!anchor_clause.empty()) {
+        prefix_parts.push_back(anchor_clause);
+    }
+    if (prefix_parts.empty()) {
+        return cleaned;
+    }
+
+    std::string prefix = Join(prefix_parts, " ");
+    if (prefix.empty()) {
+        return cleaned;
+    }
+    if (!prefix.empty()) {
+        prefix[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(prefix[0])));
+    }
+    return ResponseController::SanitizeResponse(prefix + ", " + cleaned);
+}
+
+std::string StructuredRepairResponse(
+    const std::string& persona,
+    const std::string& dynamic_context,
+    const std::string& player_input,
+    const std::vector<std::string>& persona_keywords
+) {
+    const auto details = ContextDetailPhrases(dynamic_context);
+    const std::string style = PersonaStyle(persona);
+    const std::string intent = IntentFragment(player_input);
+    const std::string category = IntentCategory(player_input);
+    const std::string anchor = PersonaAnchor(persona_keywords);
+
+    std::string intro = "Given the current situation";
+    if (!details.empty()) {
+        if (StartsWith(details[0], "at ")) {
+            intro = "At " + details[0].substr(3);
+        } else {
+            intro = "At " + details[0];
+        }
+        if (details.size() > 1) {
+            if (StartsWith(details[1], "while on ")) {
+                intro += " and " + details[1];
+            } else {
+                intro += ", " + details[1];
+            }
+        }
+    }
+
+    if (style == "strict") {
+        std::string body = "I cannot approve " + intent + " until verification is complete.";
+        if (category == "access") {
+            body = "I cannot authorize entry until verification is complete.";
+        }
+        const std::string close =
+            "Follow protocol and I will proceed as a " + (anchor.empty() ? "strict" : anchor) +
+            " guardian.";
+        return ResponseController::SanitizeResponse(intro + ", " + body + " " + close);
+    }
+
+    if (style == "talkative") {
+        const std::string body = "I can help with " + intent + ", but the terms must stay fair today.";
+        const std::string close =
+            "Keep it honest and we can settle this quickly in my " +
+            (anchor.empty() ? "merchant" : anchor) + " style.";
+        return ResponseController::SanitizeResponse(intro + ", " + body + " " + close);
+    }
+
+    if (style == "calm") {
+        const std::string body = "We can handle " + intent + " safely, one step at a time.";
+        const std::string close =
+            "Stay steady and I will guide the next action in a " +
+            (anchor.empty() ? "calm" : anchor) + " voice.";
+        return ResponseController::SanitizeResponse(intro + ", " + body + " " + close);
+    }
+
+    if (style == "formal") {
+        const std::string body = "The request concerning " + intent + " requires verifiable evidence.";
+        const std::string close =
+            "Provide concrete details and I will continue with " +
+            (anchor.empty() ? "formal" : anchor) + " precision.";
+        return ResponseController::SanitizeResponse(intro + ", " + body + " " + close);
+    }
+
+    if (style == "mysterious") {
+        const std::string body = "Your path around " + intent + " has a cost in these conditions.";
+        const std::string close =
+            "Choose carefully, because timing matters as much as power to one who stays " +
+            (anchor.empty() ? "mysterious" : anchor) + ".";
+        return ResponseController::SanitizeResponse(intro + ", " + body + " " + close);
+    }
+
+    const std::string body = "I can respond to " + intent + " within these conditions.";
+    const std::string close =
+        "Give one clear detail and I will proceed with " + (anchor.empty() ? "practical" : anchor) +
+        " precision.";
+    return ResponseController::SanitizeResponse(intro + ", " + body + " " + close);
+}
+
 std::string GroundedFallbackResponse(
     const std::string& persona,
     const std::string& dynamic_context,
-    const std::string& player_input
+    const std::string& player_input,
+    const std::vector<std::string>& persona_keywords
 ) {
     const auto detail_phrases = ContextDetailPhrases(dynamic_context);
     const std::string style = PersonaStyle(persona);
     const std::string intent = IntentFragment(player_input);
+    const std::string intent_category = IntentCategory(player_input);
+    const std::string anchor = PersonaAnchor(persona_keywords);
 
     std::string context_sentence;
     if (!detail_phrases.empty()) {
@@ -622,58 +1122,92 @@ std::string GroundedFallbackResponse(
     }
 
     if (style == "strict") {
-        return context_sentence +
-               " I cannot approve " + intent +
-               " until verification is complete. Follow protocol and I will move this forward.";
+        std::string body = "I cannot approve " + intent + " until verification is complete.";
+        if (intent_category == "access") {
+            body = "I cannot authorize entry until identity and purpose are verified.";
+        } else if (intent_category == "investigation") {
+            body = "I cannot close this matter until evidence is verified.";
+        }
+        return context_sentence + " " + body +
+               " Follow protocol and I will move this forward as a " +
+               (anchor.empty() ? "strict" : anchor) + " guardian.";
     }
     if (style == "talkative") {
-        return context_sentence +
-               " I can work with " + intent +
-               ", but the terms must stay fair. Keep it honest and we can close this deal quickly.";
+        std::string body = "I can work with " + intent + ", but the terms must stay fair.";
+        if (intent_category == "trade") {
+            body = "I can work with this trade request, but terms must remain fair.";
+        }
+        return context_sentence + " " + body +
+               " Keep it honest and we can close this deal quickly in my " +
+               (anchor.empty() ? "merchant" : anchor) + " style.";
     }
     if (style == "calm") {
         return context_sentence +
                " we can handle " + intent +
-               " safely, step by step. Stay steady and I will guide the next action.";
+               " safely, step by step. Stay steady and I will guide the next action in a " +
+               (anchor.empty() ? "calm" : anchor) + " voice.";
     }
     if (style == "mysterious") {
         return context_sentence +
                " your path around " + intent +
-               " has a cost. Choose carefully, because timing matters as much as power.";
+               " has a cost. Choose carefully, because timing matters as much as power to one who stays " +
+               (anchor.empty() ? "mysterious" : anchor) + ".";
     }
     if (style == "formal") {
         return context_sentence +
                " the request regarding " + intent +
-               " requires evidence before any conclusion. Provide verifiable details and I will continue.";
+               " requires evidence before any conclusion. Provide verifiable details and I will continue with " +
+               (anchor.empty() ? "formal" : anchor) + " precision.";
     }
     return context_sentence +
            " I can respond to " + intent +
-           " within these conditions. Give one clear detail and I will proceed precisely.";
+           " within these conditions. Give one clear detail and I will proceed with " +
+           (anchor.empty() ? "practical" : anchor) + " precision.";
 }
 
 std::string BuildRewritePrompt(
     const std::string& persona,
     const std::string& dynamic_context,
     const std::string& player_input,
-    const std::string& draft_response
+    const std::string& draft_response,
+    const std::vector<std::string>& persona_keywords
 ) {
     std::vector<std::string> lines;
     lines.reserve(16);
-    lines.push_back("Rewrite the NPC response to satisfy strict quality constraints.");
+    lines.push_back("You are repairing one NPC utterance for in-game dialogue.");
     lines.push_back("Persona: " + persona);
-    lines.push_back("Dynamic game state:");
+    lines.push_back("Runtime context:");
     for (const auto& sentence : ContextDetailSentences(dynamic_context)) {
         lines.push_back("- " + sentence);
     }
     lines.push_back("Player says: " + player_input);
-    lines.push_back("Draft response: " + draft_response);
-    lines.push_back("Constraints:");
-    lines.push_back("- Keep 2-3 natural sentences.");
+    lines.push_back("Current draft: " + draft_response);
+    if (!persona_keywords.empty()) {
+        std::vector<std::string> hints;
+        for (const auto& kw : persona_keywords) {
+            const std::string cleaned = Trim(kw);
+            if (!cleaned.empty()) {
+                hints.push_back(cleaned);
+            }
+            if (hints.size() >= 5) {
+                break;
+            }
+        }
+        if (!hints.empty()) {
+            lines.push_back("Persona cue terms: " + Join(hints, ", "));
+        }
+    }
+    lines.push_back("Output requirements:");
+    lines.push_back("- Output only NPC spoken dialogue.");
+    lines.push_back("- Exactly 2 or 3 sentences, natural and concise.");
     lines.push_back("- Keep role-play tone consistent with persona.");
-    lines.push_back("- Use at least two concrete dynamic game details.");
-    lines.push_back("- Avoid repeated phrasing; prefer precise varied wording.");
-    lines.push_back("- No labels, no metadata, no JSON, no analysis.");
-    lines.push_back("Return only the rewritten NPC dialogue.");
+    lines.push_back("- Include at least two concrete runtime details.");
+    lines.push_back("- Do not include labels, bullets, metadata, JSON, or analysis.");
+    lines.push_back("- Do not echo this instruction text.");
+    if (!persona_keywords.empty()) {
+        lines.push_back("- Use at least one persona cue term naturally.");
+    }
+    lines.push_back("Return only the final NPC dialogue.");
     return Join(lines, "\n");
 }
 
@@ -688,7 +1222,7 @@ std::string ResponseController::SanitizeResponse(const std::string& text) {
     cleaned_lines.reserve(8);
 
     for (const auto& raw_line : SplitLines(text)) {
-        std::string line = Trim(raw_line);
+        std::string line = StripMarkdownPrefix(raw_line);
         if (line.empty()) {
             continue;
         }
@@ -698,19 +1232,43 @@ std::string ResponseController::SanitizeResponse(const std::string& text) {
             StartsWith(low, "rules:") || StartsWith(low, "npc reply")) {
             continue;
         }
-        if (StartsWith(low, "[your response here]")) {
+        if (StartsWith(low, "your task:") || StartsWith(low, "constraints:") ||
+            StartsWith(low, "instruction:") || StartsWith(low, "instructions:") ||
+            StartsWith(low, "do not return")) {
             continue;
         }
-        if (StartsWith(low, "**solution")) {
+        if (StartsWith(low, "response:") || StartsWith(low, "final response:") ||
+            StartsWith(low, "revised response:") || StartsWith(low, "output:")) {
+            const size_t colon = line.find(':');
+            if (colon != std::string::npos) {
+                line = Trim(line.substr(colon + 1));
+            }
+            if (line.empty()) {
+                continue;
+            }
+        }
+        line = TrimLeakTail(line);
+        if (line.empty()) {
             continue;
         }
-        if (StartsWith(low, "as elara") && low.find("respond") != std::string::npos) {
+        const std::string trimmed_low = ToLower(line);
+        if (StartsWith(trimmed_low, "query:") || StartsWith(trimmed_low, "assistant:") ||
+            StartsWith(trimmed_low, "player says:") || StartsWith(trimmed_low, "draft response:")) {
             continue;
         }
-        if (StartsWith(low, "elara") && line.find('=') != std::string::npos) {
+        if (StartsWith(trimmed_low, "[your response here]")) {
             continue;
         }
-        if (ContainsAny(low, kBlockedFragments)) {
+        if (StartsWith(trimmed_low, "**solution")) {
+            continue;
+        }
+        if (StartsWith(trimmed_low, "as elara") && trimmed_low.find("respond") != std::string::npos) {
+            continue;
+        }
+        if (StartsWith(trimmed_low, "elara") && line.find('=') != std::string::npos) {
+            continue;
+        }
+        if (ContainsAny(trimmed_low, kBlockedFragments)) {
             continue;
         }
         cleaned_lines.push_back(line);
@@ -721,7 +1279,13 @@ std::string ResponseController::SanitizeResponse(const std::string& text) {
         return "";
     }
 
+    merged = TrimLeakTail(merged);
+    if (merged.empty()) {
+        return "";
+    }
     merged = RemoveLeadingSpeakerLabel(merged);
+    merged = RemoveCaseInsensitiveLabels(merged, {"assistant:", "system:", "query:"});
+    merged = Trim(merged);
     merged = TrimQuotes(merged);
     if (merged.empty()) {
         return "";
@@ -879,11 +1443,22 @@ ResponseControlResult ResponseController::ControlResponse(
     const ResponseControlConfig& config,
     const RewriteFn& rewrite_fn
 ) {
+    const auto context_map = ParseDynamicContext(dynamic_context);
+    auto it_state = context_map.find("behavior_state");
+    if (it_state == context_map.end()) {
+        it_state = context_map.find("behaviortreestate");
+    }
+    const std::string behavior_state = (it_state != context_map.end()) ? it_state->second : "";
+    const ResponseControlConfig effective_config = ApplyBehaviorProfile(config, behavior_state);
+
     const std::string cleaned = SanitizeResponse(raw_response);
     const float context_cov = KeywordCoverage(cleaned, context_keywords);
     const float persona_cov = KeywordCoverage(cleaned, persona_keywords);
+    const float raw_score = CandidateScore(cleaned, persona, context_keywords, persona_keywords);
 
-    auto [repair_needed, reason] = NeedsRepair(cleaned, context_cov, persona_cov, config);
+    const int context_keyword_count = static_cast<int>(context_keywords.size());
+    auto [repair_needed, reason] =
+        NeedsRepair(cleaned, context_cov, persona_cov, effective_config, context_keyword_count);
     if (!repair_needed) {
         return ResponseControlResult{
             cleaned,
@@ -893,6 +1468,138 @@ ResponseControlResult ResponseController::ControlResponse(
             false,
             "",
         };
+    }
+    const bool context_required = !context_keywords.empty();
+    const float relaxed_scale =
+        (context_keyword_count <= 6 || context_keyword_count <= 0)
+            ? 1.0f
+            : std::sqrt(6.0f / static_cast<float>(context_keyword_count));
+    const float relaxed_context_floor = context_required
+                                            ? std::max(
+                                                  0.12f,
+                                                  std::min(
+                                                      effective_config.relaxed_context_coverage,
+                                                      effective_config.relaxed_context_coverage * relaxed_scale
+                                                  )
+                                              )
+                                            : 0.0f;
+    const float adaptive_context_floor = context_required
+                                             ? std::max(
+                                                   0.12f,
+                                                   std::min(
+                                                       effective_config.adaptive_context_coverage,
+                                                       effective_config.adaptive_context_coverage * relaxed_scale
+                                                   )
+                                               )
+                                             : 0.0f;
+    if (effective_config.allow_relaxed_acceptance &&
+        IsUsableCandidate(
+            cleaned,
+            context_cov,
+            persona_cov,
+            raw_score,
+            effective_config,
+            context_required,
+            relaxed_context_floor,
+            effective_config.relaxed_persona_coverage,
+            effective_config.relaxed_candidate_score
+        )) {
+        return ResponseControlResult{
+            cleaned,
+            "raw_relaxed",
+            context_cov,
+            persona_cov,
+            false,
+            reason,
+        };
+    }
+    if (effective_config.adaptive_acceptance_enabled &&
+        IsUsableCandidate(
+            cleaned,
+            context_cov,
+            persona_cov,
+            raw_score,
+            effective_config,
+            false,
+            adaptive_context_floor,
+            effective_config.adaptive_persona_coverage,
+            effective_config.adaptive_candidate_score
+        )) {
+        return ResponseControlResult{
+            cleaned,
+            "raw_adaptive",
+            context_cov,
+            persona_cov,
+            false,
+            reason,
+        };
+    }
+
+    if (!cleaned.empty()) {
+        const std::string grounded_candidate =
+            GroundedStyleRepair(cleaned, dynamic_context, persona_keywords);
+        if (!grounded_candidate.empty()) {
+            const float grounded_context_cov = KeywordCoverage(grounded_candidate, context_keywords);
+            const float grounded_persona_cov = KeywordCoverage(grounded_candidate, persona_keywords);
+            const float grounded_score =
+                CandidateScore(grounded_candidate, persona, context_keywords, persona_keywords);
+            if (IsUsableCandidate(
+                    grounded_candidate,
+                    grounded_context_cov,
+                    grounded_persona_cov,
+                    grounded_score,
+                    effective_config,
+                    context_required,
+                    relaxed_context_floor,
+                    effective_config.relaxed_persona_coverage,
+                    effective_config.relaxed_candidate_score
+                )) {
+                return ResponseControlResult{
+                    grounded_candidate,
+                    "raw_grounded_repair",
+                    grounded_context_cov,
+                    grounded_persona_cov,
+                    true,
+                    reason,
+                };
+            }
+        }
+    }
+
+    std::string structured_candidate = StructuredRepairResponse(
+        persona,
+        dynamic_context,
+        player_input,
+        persona_keywords
+    );
+    float structured_context_cov = 0.0f;
+    float structured_persona_cov = 0.0f;
+    float structured_score = -1.0f;
+    if (!structured_candidate.empty()) {
+        structured_context_cov = KeywordCoverage(structured_candidate, context_keywords);
+        structured_persona_cov = KeywordCoverage(structured_candidate, persona_keywords);
+        structured_score =
+            CandidateScore(structured_candidate, persona, context_keywords, persona_keywords);
+        if (IsUsableCandidate(
+                structured_candidate,
+                structured_context_cov,
+                structured_persona_cov,
+                structured_score,
+                effective_config,
+                context_required,
+                relaxed_context_floor,
+                effective_config.relaxed_persona_coverage,
+                effective_config.relaxed_candidate_score
+            )) {
+            return ResponseControlResult{
+                structured_candidate,
+                "structured_repair",
+                structured_context_cov,
+                structured_persona_cov,
+                true,
+                reason,
+            };
+        }
     }
 
     struct Candidate {
@@ -907,12 +1614,25 @@ ResponseControlResult ResponseController::ControlResponse(
     Candidate best_candidate;
     bool has_best_candidate = false;
 
-    if (config.enable_rewrite && rewrite_fn) {
+    if (effective_config.enable_rewrite && rewrite_fn) {
         const std::string rewrite_prompt =
-            BuildRewritePrompt(persona, dynamic_context, player_input, cleaned.empty() ? raw_response : cleaned);
-        for (float temp : RewriteTemperatures(config)) {
+            BuildRewritePrompt(
+                persona,
+                dynamic_context,
+                player_input,
+                cleaned.empty() ? raw_response : cleaned,
+                persona_keywords
+            );
+        auto temps = RewriteTemperatures(effective_config);
+        const int budget = EffectiveRewriteBudget(raw_score, effective_config);
+        if (static_cast<int>(temps.size()) > budget) {
+            temps.resize(static_cast<size_t>(budget));
+        }
+        const bool low_confidence_band = raw_score < effective_config.adaptive_mid_confidence_score;
+        for (size_t attempt_idx = 0; attempt_idx < temps.size(); ++attempt_idx) {
+            const float temp = temps[attempt_idx];
             const std::string rewritten_raw =
-                rewrite_fn(rewrite_prompt, config.rewrite_max_tokens, temp);
+                rewrite_fn(rewrite_prompt, effective_config.rewrite_max_tokens, temp);
             const std::string rewritten = SanitizeResponse(rewritten_raw);
             if (rewritten.empty()) {
                 continue;
@@ -920,7 +1640,7 @@ ResponseControlResult ResponseController::ControlResponse(
 
             const float rewritten_context_cov = KeywordCoverage(rewritten, context_keywords);
             const float rewritten_persona_cov = KeywordCoverage(rewritten, persona_keywords);
-            const float rewritten_score = CandidateScore(rewritten, context_keywords, persona_keywords);
+            const float rewritten_score = CandidateScore(rewritten, persona, context_keywords, persona_keywords);
 
             Candidate candidate{
                 rewritten,
@@ -934,13 +1654,35 @@ ResponseControlResult ResponseController::ControlResponse(
                 has_best_candidate = true;
             }
 
-            auto [rewrite_needed, _rewrite_reason] =
-                NeedsRepair(rewritten, rewritten_context_cov, rewritten_persona_cov, config);
+            auto [rewrite_needed, _rewrite_reason] = NeedsRepair(
+                rewritten,
+                rewritten_context_cov,
+                rewritten_persona_cov,
+                effective_config,
+                context_keyword_count
+            );
             (void)_rewrite_reason;
+            if (effective_config.low_confidence_retry_requires_gain &&
+                low_confidence_band &&
+                budget > 1 &&
+                attempt_idx == 0 &&
+                rewrite_needed) {
+                const float score_gain = rewritten_score - raw_score;
+                const float coverage_gain =
+                    std::max(rewritten_context_cov - context_cov, rewritten_persona_cov - persona_cov);
+                if (score_gain < effective_config.low_confidence_retry_min_score_gain &&
+                    coverage_gain < effective_config.low_confidence_retry_min_coverage_gain) {
+                    break;
+                }
+            }
             if (!rewrite_needed) {
                 if (!has_best_passing || candidate.score > best_passing.score) {
                     best_passing = candidate;
                     has_best_passing = true;
+                    if (effective_config.early_stop_on_pass &&
+                        candidate.score >= effective_config.early_stop_score) {
+                        break;
+                    }
                 }
             }
         }
@@ -957,14 +1699,42 @@ ResponseControlResult ResponseController::ControlResponse(
         };
     }
 
-    std::string fallback = GroundedFallbackResponse(persona, dynamic_context, player_input);
+    std::string fallback = GroundedFallbackResponse(
+        persona,
+        dynamic_context,
+        player_input,
+        persona_keywords
+    );
     fallback = SanitizeResponse(fallback);
     const float fallback_context_cov = KeywordCoverage(fallback, context_keywords);
     const float fallback_persona_cov = KeywordCoverage(fallback, persona_keywords);
+    const float fallback_score = CandidateScore(fallback, persona, context_keywords, persona_keywords);
 
-    if (config.allow_best_effort_rewrite && has_best_candidate) {
-        const float fallback_score = CandidateScore(fallback, context_keywords, persona_keywords);
-        if (best_candidate.score >= (fallback_score + 0.05f)) {
+    if (!structured_candidate.empty() && reason == "empty_response" && structured_score >= 0.0f) {
+        return ResponseControlResult{
+            structured_candidate,
+            "structured_recovery",
+            structured_context_cov,
+            structured_persona_cov,
+            true,
+            reason,
+        };
+    }
+
+    if (!structured_candidate.empty() &&
+        structured_score >= (fallback_score + effective_config.min_rewrite_gain)) {
+        return ResponseControlResult{
+            structured_candidate,
+            "structured_best_effort",
+            structured_context_cov,
+            structured_persona_cov,
+            true,
+            reason,
+        };
+    }
+
+    if (effective_config.allow_best_effort_rewrite && has_best_candidate) {
+        if (best_candidate.score >= (fallback_score + effective_config.min_rewrite_gain)) {
             return ResponseControlResult{
                 best_candidate.text,
                 "rewritten_best_effort",
@@ -973,6 +1743,37 @@ ResponseControlResult ResponseController::ControlResponse(
                 true,
                 reason,
             };
+        }
+    }
+
+    if (has_best_candidate) {
+        const std::string rewrite_grounded =
+            GroundedStyleRepair(best_candidate.text, dynamic_context, persona_keywords);
+        if (!rewrite_grounded.empty()) {
+            const float rewrite_grounded_context_cov = KeywordCoverage(rewrite_grounded, context_keywords);
+            const float rewrite_grounded_persona_cov = KeywordCoverage(rewrite_grounded, persona_keywords);
+            const float rewrite_grounded_score =
+                CandidateScore(rewrite_grounded, persona, context_keywords, persona_keywords);
+            if (IsUsableCandidate(
+                    rewrite_grounded,
+                    rewrite_grounded_context_cov,
+                    rewrite_grounded_persona_cov,
+                    rewrite_grounded_score,
+                    effective_config,
+                    context_required,
+                    relaxed_context_floor,
+                    effective_config.relaxed_persona_coverage,
+                    effective_config.relaxed_candidate_score
+                )) {
+                return ResponseControlResult{
+                    rewrite_grounded,
+                    "rewritten_grounded_repair",
+                    rewrite_grounded_context_cov,
+                    rewrite_grounded_persona_cov,
+                    true,
+                    reason,
+                };
+            }
         }
     }
 

@@ -1,24 +1,30 @@
-# Documentation Index
+# Documentation Index (Unified Current Set)
 
-## Unified Current Set
-- [ARCHITECTURE.md](ARCHITECTURE.md): system design and runtime/training flow.
-- [PROPOSAL_ALIGNMENT.md](PROPOSAL_ALIGNMENT.md): mapping to `proposal.txt`.
-- [PROPOSAL_QUALITY_BAR.md](PROPOSAL_QUALITY_BAR.md): publication quality gate criteria.
-- [INDUSTRY_PUBLICATION_JUDGMENT.md](INDUSTRY_PUBLICATION_JUDGMENT.md): competitive/publication judgment.
-- [comparison_analysis.md](comparison_analysis.md): scientific-style external comparison.
-- [FINAL_BENCHMARK_REPORT.md](FINAL_BENCHMARK_REPORT.md): latest benchmark summary.
-- [HUMAN_EVAL_PIPELINE.md](HUMAN_EVAL_PIPELINE.md): human/LLM multi-rater process.
-- [BENCHMARK_STANDARDS.md](BENCHMARK_STANDARDS.md): benchmark/reporting standards.
-- [ABLATION_REPORT.md](ABLATION_REPORT.md): ablation evidence and interpretation.
-- [VERIFICATION.md](VERIFICATION.md): executed verification and remaining gaps.
-- [KAGGLE_GUIDE.md](KAGGLE_GUIDE.md): Kaggle/local reproducible execution.
-- [proposal.txt](proposal.txt): original proposal baseline.
+## Core Documents
+- [ARCHITECTURE.md](ARCHITECTURE.md): architecture source of truth and system diagrams.
+- [DRAFT_PAPER.md](DRAFT_PAPER.md): current publication-style paper draft (artifact-backed).
+- [PROPOSAL_ALIGNMENT.md](PROPOSAL_ALIGNMENT.md): objective-by-objective proposal satisfaction matrix.
+- [INDUSTRY_PUBLICATION_JUDGMENT.md](INDUSTRY_PUBLICATION_JUDGMENT.md): claim-safe industry comparison verdict.
+- [comparison_analysis.md](comparison_analysis.md): scientific comparison against selected publications.
+- [FINAL_BENCHMARK_REPORT.md](FINAL_BENCHMARK_REPORT.md): latest unified benchmark summary.
+- [ABLATION_REPORT.md](ABLATION_REPORT.md): response-control/retrieval/serving ablation view.
+- [VERIFICATION.md](VERIFICATION.md): strict verification checklist.
+- [PROPOSAL_QUALITY_BAR.md](PROPOSAL_QUALITY_BAR.md): pass/fail gate definitions.
+- [ACADEMIC_WRITING_STANDARD.md](ACADEMIC_WRITING_STANDARD.md): writing-standard checklist (IEEE/ACM/NeurIPS style).
+- [KAGGLE_GUIDE.md](KAGGLE_GUIDE.md): Kaggle execution and reproducibility flow.
+- [proposal.txt](proposal.txt): original project proposal text.
 
-## Reproduction Commands
-- Full checkout: `python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434`
-- Ablation option:
-  `python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434 --skip-ablation-baselines`
+## Repro Commands
+- Full unified run:
+```bash
+python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434
+```
+- Strict gate check:
+```bash
+python scripts/proposal_quality_gate.py --proposal-run latest --publication-run latest --require-human-eval --require-security-benchmark --strict
+```
 
 ## Archive
-- Superseded docs were pruned from the top-level set and moved to:
-  `docs/archive/legacy_20260225/`
+Legacy/outdated docs are kept under:
+- `docs/archive/legacy_20260225/`
+- `docs/archive/legacy_20260303/`

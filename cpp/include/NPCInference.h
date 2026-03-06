@@ -282,11 +282,11 @@ public:
         bool enable_reflection = true;
         bool enable_truth_guard = true; // Phase 2: Neuro-symbolic Truth Guard
         bool enable_response_control = true; // Proposal-aligned response control in runtime
-        float response_control_min_context_coverage = 0.25f;
-        float response_control_min_persona_coverage = 0.15f;
+        float response_control_min_context_coverage = 0.33f;
+        float response_control_min_persona_coverage = 0.18f;
         float response_control_rewrite_temperature = 0.2f;
         int response_control_rewrite_max_tokens = 96;
-        int response_control_rewrite_candidates = 3;
+        int response_control_rewrite_candidates = 2;
         float response_control_rewrite_temperature_step = 0.15f;
         bool response_control_enable_rewrite = true;
         bool response_control_allow_best_effort_rewrite = true;

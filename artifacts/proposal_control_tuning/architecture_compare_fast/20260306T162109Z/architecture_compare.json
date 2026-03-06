@@ -1,0 +1,184 @@
+{
+  "generated_utc": "2026-03-06T16:21:09.894044+00:00",
+  "config": {
+    "host": "http://127.0.0.1:11434",
+    "candidate_model": "elara-npc:latest",
+    "baseline_model": "phi3:mini",
+    "baseline_models": "phi3:mini",
+    "scenarios": "data/proposal_eval_scenarios_112_diverse.jsonl",
+    "profiles": [
+      "runtime_optimized",
+      "hybrid_balanced",
+      "intent_focus_adaptive",
+      "blend_balanced"
+    ],
+    "seeds": [
+      29
+    ],
+    "max_scenarios": 20,
+    "max_tokens": 72,
+    "temperature": 0.2,
+    "timeout_s": 120,
+    "min_arm_success_rate": 0.0
+  },
+  "profiles": {
+    "runtime_optimized": {
+      "summary": {
+        "delta_context_mean": 0.017349308286155656,
+        "delta_persona_mean": -0.020714285714285713,
+        "delta_naturalness_mean": -0.0019879660354306604,
+        "delta_overall_mean": -0.0003401539123817993,
+        "fallback_gap_mean": 0.0,
+        "retry_gap_mean": 0.04999999999999999,
+        "first_pass_gap_mean": -0.050000000000000044,
+        "quality_score": -0.0012119460015508764,
+        "operational_score": -0.07000000000000003
+      },
+      "per_seed": [
+        {
+          "seed": 29,
+          "run_dir": "artifacts\\proposal_control_tuning\\architecture_compare_fast\\20260306T162109Z\\runtime_optimized\\seed_29\\attempt_1\\20260306T162110Z",
+          "delta_context": 0.017349308286155656,
+          "delta_persona": -0.020714285714285713,
+          "delta_naturalness": -0.0019879660354306604,
+          "delta_overall": -0.0003401539123817993,
+          "default_fallback": 0.0,
+          "default_retry": 0.2,
+          "default_first_pass": 0.55,
+          "alt_fallback": 0.0,
+          "alt_retry": 0.25,
+          "alt_first_pass": 0.5
+        }
+      ],
+      "failed_seeds": []
+    },
+    "hybrid_balanced": {
+      "summary": {
+        "delta_context_mean": 0.006686454799038041,
+        "delta_persona_mean": -0.009833782569631624,
+        "delta_naturalness_mean": -0.009614718381330411,
+        "delta_overall_mean": -0.002076344329891508,
+        "fallback_gap_mean": 0.0,
+        "retry_gap_mean": 0.0,
+        "first_pass_gap_mean": 0.0,
+        "quality_score": -0.0036672817221432654,
+        "operational_score": 0.0
+      },
+      "per_seed": [
+        {
+          "seed": 29,
+          "run_dir": "artifacts\\proposal_control_tuning\\architecture_compare_fast\\20260306T162109Z\\hybrid_balanced\\seed_29\\attempt_1\\20260306T162445Z",
+          "delta_context": 0.006686454799038041,
+          "delta_persona": -0.009833782569631624,
+          "delta_naturalness": -0.009614718381330411,
+          "delta_overall": -0.002076344329891508,
+          "default_fallback": 0.0,
+          "default_retry": 0.2,
+          "default_first_pass": 0.45,
+          "alt_fallback": 0.0,
+          "alt_retry": 0.2,
+          "alt_first_pass": 0.45
+        }
+      ],
+      "failed_seeds": []
+    },
+    "intent_focus_adaptive": {
+      "summary": {
+        "delta_context_mean": -0.024749509060952756,
+        "delta_persona_mean": 0.02270112044817928,
+        "delta_naturalness_mean": -0.006560705954101809,
+        "delta_overall_mean": -0.004407732214413476,
+        "fallback_gap_mean": 0.0,
+        "retry_gap_mean": 0.0,
+        "first_pass_gap_mean": 0.0,
+        "quality_score": -0.005473480532378353,
+        "operational_score": 0.0
+      },
+      "per_seed": [
+        {
+          "seed": 29,
+          "run_dir": "artifacts\\proposal_control_tuning\\architecture_compare_fast\\20260306T162109Z\\intent_focus_adaptive\\seed_29\\attempt_1\\20260306T162809Z",
+          "delta_context": -0.024749509060952756,
+          "delta_persona": 0.02270112044817928,
+          "delta_naturalness": -0.006560705954101809,
+          "delta_overall": -0.004407732214413476,
+          "default_fallback": 0.0,
+          "default_retry": 0.25,
+          "default_first_pass": 0.35,
+          "alt_fallback": 0.0,
+          "alt_retry": 0.25,
+          "alt_first_pass": 0.35
+        }
+      ],
+      "failed_seeds": []
+    },
+    "blend_balanced": {
+      "summary": {
+        "delta_context_mean": -0.003933195434043064,
+        "delta_persona_mean": 0.027701499511490597,
+        "delta_naturalness_mean": -0.007512045107529747,
+        "delta_overall_mean": 0.007157025540620779,
+        "fallback_gap_mean": 0.0,
+        "retry_gap_mean": 0.0,
+        "first_pass_gap_mean": 0.15000000000000002,
+        "quality_score": 0.011159481845357313,
+        "operational_score": 0.12000000000000002
+      },
+      "per_seed": [
+        {
+          "seed": 29,
+          "run_dir": "artifacts\\proposal_control_tuning\\architecture_compare_fast\\20260306T162109Z\\blend_balanced\\seed_29\\attempt_1\\20260306T163125Z",
+          "delta_context": -0.003933195434043064,
+          "delta_persona": 0.027701499511490597,
+          "delta_naturalness": -0.007512045107529747,
+          "delta_overall": 0.007157025540620779,
+          "default_fallback": 0.0,
+          "default_retry": 0.25,
+          "default_first_pass": 0.3,
+          "alt_fallback": 0.0,
+          "alt_retry": 0.25,
+          "alt_first_pass": 0.45
+        }
+      ],
+      "failed_seeds": []
+    }
+  },
+  "ranking": [
+    {
+      "profile": "blend_balanced",
+      "quality_score": 0.011159481845357313,
+      "operational_score": 0.12000000000000002,
+      "delta_overall_mean": 0.007157025540620779,
+      "fallback_gap_mean": 0.0,
+      "retry_gap_mean": 0.0,
+      "first_pass_gap_mean": 0.15000000000000002
+    },
+    {
+      "profile": "runtime_optimized",
+      "quality_score": -0.0012119460015508764,
+      "operational_score": -0.07000000000000003,
+      "delta_overall_mean": -0.0003401539123817993,
+      "fallback_gap_mean": 0.0,
+      "retry_gap_mean": 0.04999999999999999,
+      "first_pass_gap_mean": -0.050000000000000044
+    },
+    {
+      "profile": "hybrid_balanced",
+      "quality_score": -0.0036672817221432654,
+      "operational_score": 0.0,
+      "delta_overall_mean": -0.002076344329891508,
+      "fallback_gap_mean": 0.0,
+      "retry_gap_mean": 0.0,
+      "first_pass_gap_mean": 0.0
+    },
+    {
+      "profile": "intent_focus_adaptive",
+      "quality_score": -0.005473480532378353,
+      "operational_score": 0.0,
+      "delta_overall_mean": -0.004407732214413476,
+      "fallback_gap_mean": 0.0,
+      "retry_gap_mean": 0.0,
+      "first_pass_gap_mean": 0.0
+    }
+  ]
+}

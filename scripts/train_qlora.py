@@ -227,6 +227,18 @@ def latest_checkpoint(output_dir: str) -> str | None:
     return str(checkpoints[-1]) if checkpoints else None
 
 
+def checkpoint_progress(checkpoint_dir: str) -> Dict[str, Any]:
+    state_path = Path(checkpoint_dir) / "trainer_state.json"
+    if not state_path.exists():
+        return {}
+    try:
+        with state_path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except Exception:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
 def resolve_target_modules(model: Any, requested: List[str]) -> List[str]:
     module_names = [name for name, _ in model.named_modules()]
     name_set = set(module_names)
@@ -422,11 +434,38 @@ def run_training(config: TrainingConfig, data_path: str) -> str:
     )
 
     resume_ckpt = latest_checkpoint(config.output_dir)
+    resume_from_checkpoint: str | None = None
     if resume_ckpt:
-        logger.info("Resuming from checkpoint: %s", resume_ckpt)
+        state = checkpoint_progress(resume_ckpt)
+        ckpt_epoch = float(state.get("epoch", 0.0) or 0.0)
+        ckpt_steps = int(state.get("global_step", 0) or 0)
+        target_epochs = float(training_args.num_train_epochs)
+        target_steps = int(getattr(trainer.state, "max_steps", 0) or 0)
+        finished = False
+        if target_steps > 0 and ckpt_steps >= target_steps:
+            finished = True
+        elif ckpt_epoch >= target_epochs - 1e-9:
+            finished = True
+
+        if finished:
+            raise RuntimeError(
+                "Latest checkpoint already reached the requested training schedule "
+                f"(checkpoint={resume_ckpt}, global_step={ckpt_steps}, epoch={ckpt_epoch}, "
+                f"target_steps={target_steps}, target_epochs={target_epochs}). "
+                "Increase --epochs/--max-steps, or train into a new --output-dir."
+            )
+        resume_from_checkpoint = resume_ckpt
+        logger.info(
+            "Resuming from checkpoint: %s (global_step=%s epoch=%.4f target_steps=%s target_epochs=%.4f)",
+            resume_ckpt,
+            ckpt_steps,
+            ckpt_epoch,
+            target_steps,
+            target_epochs,
+        )
 
     logger.info("Starting training...")
-    trainer.train(resume_from_checkpoint=resume_ckpt)
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 
     Path(config.output_dir).mkdir(parents=True, exist_ok=True)
     trainer.save_model(config.output_dir)

@@ -1,0 +1,30 @@
+{
+  "scenario_count": 12,
+  "unique_source_count": 4,
+  "unique_template_signature_count": 11,
+  "source_distribution": {
+    "s001_gate_archive": 4,
+    "s003_healer_poison": 3,
+    "s004_blacksmith_goblins": 3,
+    "s007_prisoner_bargain": 2
+  },
+  "template_signature_distribution": {
+    "access_control|security|investigating|s|u0|i0": 1,
+    "access_control|security|observing|s|u0|i0": 1,
+    "access_control|security|observing|s|u0|i1": 1,
+    "access_control|security|patrolling|s|u0|i1": 1,
+    "advisory_request|craft|investigating|q|u0|i1": 1,
+    "advisory_request|other|forging|q|u0|i0": 2,
+    "assistance_request|medical|observing|q|u0|i1": 1,
+    "assistance_request|medical|researching|q|u0|i0": 1,
+    "assistance_request|medical|treatingpatient|q|u0|i1": 1,
+    "general_dialogue|detention|assisting|q|u0|i1": 1,
+    "general_dialogue|detention|observing|q|u1|i1": 1
+  },
+  "template_signature_ratio": 0.9166666666666666,
+  "effective_sample_size_by_source": 3.789473684210526,
+  "effective_sample_size_by_template_signature": 10.285714285714286,
+  "source_max_share": 0.3333333333333333,
+  "template_max_share": 0.16666666666666666,
+  "mean_within_source_player_input_jaccard": 0.3429879611476313
+}

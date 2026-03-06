@@ -1,42 +1,27 @@
-# Verification Log
+# Verification Checklist (Current)
 
-## Scope
-Record what has been executed and verified in this environment.
+## Verified On Latest Runs
+- Proposal: `artifacts/proposal/20260302T182844Z`
+- Publication: `artifacts/publication/20260302T191131Z`
+- Gate report: `artifacts/proposal/20260302T182844Z/quality_gate_report.json`
 
-## Verified
-1. Unified full checkout pipeline executes successfully:
-- `scripts/run_kaggle_full_results.py`
+## Pass/Fail Summary
+| Check | Status |
+|---|---|
+| Proposal scenario coverage >= 100 | Pass |
+| Controlled significant gains on key metrics | Pass |
+| External significant wins threshold | Pass |
+| Human-eval row count/agreement/preferences | Pass |
+| Publication metadata completeness | Pass |
+| Retrieval standardized metrics + ablations | Pass |
+| Serving CIs + prompt parity | Pass |
+| Security benchmark thresholds | Pass |
 
-2. Full checkout produced manifest:
-- `artifacts/final_checkout/20260225T052614Z/manifest.json`
+## Notes
+- Overall strict gate status: `overall_pass=true`.
+- Serving-efficiency superiority is not part of gate pass criteria and remains an open improvement item.
 
-3. Proposal run has attached multi-rater evaluation artifacts:
-- `human_eval_llm_multirater_consistent.csv`
-- `human_eval_summary.json`
-- `human_eval_report.md`
-
-4. Additional analysis artifacts regenerate correctly:
-- lexical diversity benchmark
-- preference dataset builder
-- retrieval hard-negative set builder
-
-5. Quality gate passes (human-eval required):
-- `artifacts/proposal/20260224T175344Z/quality_gate_report_final.md`
-
-6. Notebook has full checkout execution cell:
-- `notebooks/NPC_AI_Complete_Pipeline.ipynb` includes `scripts/run_kaggle_full_results.py`
-
-## Not Fully Verified
-1. Security benchmark requirement on Kaggle unless retrieval security executable is available.
-2. Serving superiority claim over lightweight baselines (current evidence still negative on quality frontier).
-3. Full paper-protocol replication against external publications.
-
-## Reproduce
+## Re-run Verification
 ```bash
-python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434
-```
-
-Resume after interruption:
-```bash
-python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434 --proposal-run latest --publication-run latest
+python scripts/proposal_quality_gate.py --proposal-run 20260302T182844Z --publication-run 20260302T191131Z --require-human-eval --require-security-benchmark --strict
 ```

@@ -1,0 +1,245 @@
+{
+  "run_id": "20260304T225202Z",
+  "generated_utc": "2026-03-04T22:52:03.113118+00:00",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "baseline_models": [
+    "phi3:mini"
+  ],
+  "baseline_arm_ids": [
+    "baseline_no_context"
+  ],
+  "temperature": 0.2,
+  "max_tokens": 96,
+  "repeats": 1,
+  "max_scenarios": 20,
+  "scenario_diversity_gate": {
+    "enforce": false,
+    "min_template_signature_ratio": 0.0,
+    "min_effective_source_n": 0.0
+  },
+  "seed": 29,
+  "timeout_s": 180,
+  "min_arm_success_rate": 0.9,
+  "bertscore_lang": "en",
+  "bertscore_model_type": "",
+  "bertscore_batch_size": 16,
+  "bertscore_cache_dir": "",
+  "target_arm": "proposed_contextual_controlled",
+  "slice_keys": [
+    "persona_archetype",
+    "conflict_type",
+    "location_type",
+    "behavior_state"
+  ],
+  "human_eval_file": "",
+  "human_eval_metrics": [
+    "context_relevance",
+    "persona_consistency",
+    "naturalness",
+    "overall_quality"
+  ],
+  "human_eval_scale_max": 5.0,
+  "scenario_path": "data\\proposal_eval_scenarios_112_diverse.jsonl",
+  "scenario_sha256": "2e3f3010f4197a80bf12236313d5d69828cb42d74ce650aa9b2b5494c48cc97a",
+  "arms": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": true,
+      "use_response_control": true
+    },
+    {
+      "arm_id": "proposed_contextual",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": true,
+      "use_response_control": false
+    },
+    {
+      "arm_id": "candidate_no_context",
+      "model": "elara-npc:latest",
+      "include_dynamic_context": false,
+      "use_response_control": false
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "model": "phi3:mini",
+      "include_dynamic_context": false,
+      "use_response_control": false
+    }
+  ],
+  "response_control_config": {
+    "min_context_coverage": 0.33,
+    "min_persona_coverage": 0.18,
+    "min_response_tokens": 8,
+    "rewrite_temperature": 0.2,
+    "rewrite_max_tokens": 96,
+    "rewrite_candidates": 3,
+    "rewrite_temperature_step": 0.15,
+    "early_stop_on_pass": true,
+    "early_stop_score": 0.7,
+    "allow_relaxed_acceptance": true,
+    "relaxed_context_coverage": 0.18,
+    "relaxed_persona_coverage": 0.09,
+    "relaxed_candidate_score": 0.44,
+    "min_rewrite_gain": 0.015,
+    "enable_rewrite": true,
+    "allow_best_effort_rewrite": true,
+    "behavior_adaptation_enabled": true,
+    "adaptive_acceptance_enabled": true,
+    "adaptive_candidate_score": 0.38,
+    "adaptive_context_coverage": 0.14,
+    "adaptive_persona_coverage": 0.1,
+    "adaptive_high_confidence_score": 0.53,
+    "adaptive_mid_confidence_score": 0.4,
+    "adaptive_high_confidence_rewrites": 1,
+    "adaptive_mid_confidence_rewrites": 1,
+    "rewrite_budget_ms": 0.0,
+    "rewrite_budget_multiplier": 0.0
+  },
+  "reproducibility_lock": {
+    "control_profile_id": "178335b292edf531",
+    "code_revision": {
+      "git_available": true,
+      "commit": "bcaabaca58f4c9f88d7cfada4577229e0eb77fb0",
+      "short_commit": "bcaabac",
+      "branch": "main",
+      "dirty": true,
+      "dirty_file_count": 165,
+      "dirty_file_preview": [
+        "M README.md",
+        "M core/response_controller.py",
+        "M cpp/include/NPCInference.h",
+        "M cpp/include/ResponseController.h",
+        "M cpp/src/ResponseController.cpp",
+        "M cpp/tests/test_response_controller.cpp",
+        "M docs/ABLATION_REPORT.md",
+        "D docs/CASE_STUDIES.md",
+        "D docs/COMPARATIVE_ANALYSIS.md",
+        "D docs/DRAFT_PAPER.md",
+        "D docs/DRAFT_PAPER_VN.md",
+        "M docs/FINAL_BENCHMARK_REPORT.md",
+        "M docs/INDUSTRY_PUBLICATION_JUDGMENT.md",
+        "D docs/PAPER_OUTLINE.md",
+        "M docs/PROPOSAL_ALIGNMENT.md",
+        "M docs/PROPOSAL_QUALITY_BAR.md",
+        "M docs/README.md",
+        "M docs/VERIFICATION.md",
+        "M docs/comparison_analysis.md",
+        "M scripts/build_human_eval_pack.py",
+        "M scripts/generate_proposal_scenarios_large.py",
+        "M scripts/inference_adapter.py",
+        "M scripts/run_benchmark.py",
+        "M scripts/run_kaggle_full_results.py",
+        "M scripts/run_laptop_full_results.py"
+      ]
+    },
+    "tracked_files_sha256": {
+      "core/response_controller.py": {
+        "exists": true,
+        "sha256": "e4adf8c78858398e1ed5db13b2bddee14165d69960c5d26d40664bbc7903fa1b",
+        "bytes": 33673
+      },
+      "scripts/inference_adapter.py": {
+        "exists": true,
+        "sha256": "cfd158e9b128251f340db161e80c3a1094895e08968b5d39e4a8fe1ba2dc4ee7",
+        "bytes": 14298
+      },
+      "scripts/run_proposal_alignment_eval.py": {
+        "exists": true,
+        "sha256": "393cb66ddc9e97a410e3fee5b9b77a2fc8a5eee6bbfe4534fca5adba18f6c135",
+        "bytes": 111029
+      },
+      "scripts/run_proposal_alignment_eval_batched.py": {
+        "exists": true,
+        "sha256": "319d1aab850aadd52ccc0bc33e13e3b07cbdfbf7908d19b1460a3e9284c4c4ec",
+        "bytes": 24643
+      },
+      "cpp/include/ResponseController.h": {
+        "exists": true,
+        "sha256": "e130da6fa41e59d5b20742ba33d65c982b28d784bb10d86f8235f505a853c94d",
+        "bytes": 2400
+      },
+      "cpp/src/ResponseController.cpp": {
+        "exists": true,
+        "sha256": "b8a648987c5ae134873321c6ed85843796a2d1540c55ede071bf827ef32f428b",
+        "bytes": 51104
+      },
+      "cpp/include/NPCInference.h": {
+        "exists": true,
+        "sha256": "3af9752cdd79d7cbf8129ea3ac8a91d525eefd1ef10cd63308a9c668a320184e",
+        "bytes": 11551
+      },
+      "cpp/src/NPCInference.cpp": {
+        "exists": true,
+        "sha256": "60d0a92343ff0bdc311bac76baa873ca2ec2962f35126152837c22d48bc44d76",
+        "bytes": 61513
+      }
+    }
+  },
+  "operational_preflight_gate": {
+    "enabled": true,
+    "arm_id": "proposed_contextual_controlled",
+    "max_fallback_rate": 0.45,
+    "max_retry_rate": 0.75,
+    "min_first_pass_accept_rate": 0.25
+  },
+  "scenario_dependence_summary": {
+    "unique_source_count": 8,
+    "unique_template_signature_count": 18,
+    "template_signature_ratio": 0.9,
+    "effective_sample_size_by_source": 6.666666666666667
+  },
+  "arm_request_health": {
+    "proposed_contextual_controlled": {
+      "total_requests": 20,
+      "successful_requests": 20,
+      "success_rate": 1.0
+    },
+    "proposed_contextual": {
+      "total_requests": 20,
+      "successful_requests": 20,
+      "success_rate": 1.0
+    },
+    "candidate_no_context": {
+      "total_requests": 20,
+      "successful_requests": 20,
+      "success_rate": 1.0
+    },
+    "baseline_no_context": {
+      "total_requests": 20,
+      "successful_requests": 20,
+      "success_rate": 1.0
+    }
+  },
+  "operational_preflight_gate_result": {
+    "arm_id": "proposed_contextual_controlled",
+    "pass": true,
+    "thresholds": {
+      "max_fallback_rate": 0.45,
+      "max_retry_rate": 0.75,
+      "min_first_pass_accept_rate": 0.25
+    },
+    "checks": [
+      {
+        "name": "fallback_rate",
+        "observed": 0.3,
+        "rule": "<= 0.4500",
+        "pass": true
+      },
+      {
+        "name": "retry_rate",
+        "observed": 0.7,
+        "rule": "<= 0.7500",
+        "pass": true
+      },
+      {
+        "name": "first_pass_accept_rate",
+        "observed": 0.3,
+        "rule": ">= 0.2500",
+        "pass": true
+      }
+    ]
+  }
+}

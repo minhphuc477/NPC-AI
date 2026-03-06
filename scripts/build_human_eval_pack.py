@@ -6,7 +6,9 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import random
+from statistics import NormalDist
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Sequence, Tuple
 
@@ -69,13 +71,14 @@ def split_scenarios_for_annotators(
     scenario_ids: Sequence[str],
     annotators: Sequence[str],
     shared_ratio: float,
+    ratings_per_scenario: int,
     seed: int,
-) -> Tuple[List[str], Dict[str, List[str]]]:
+) -> Tuple[List[str], Dict[str, List[str]], Dict[str, List[str]]]:
     ids = list(scenario_ids)
     rng = random.Random(seed)
     rng.shuffle(ids)
     if not ids:
-        return [], {a: [] for a in annotators}
+        return [], {a: [] for a in annotators}, {}
 
     ratio = max(0.0, min(1.0, float(shared_ratio)))
     shared_count = int(round(len(ids) * ratio))
@@ -83,12 +86,64 @@ def split_scenarios_for_annotators(
     remaining = ids[shared_count:]
 
     assigned: Dict[str, List[str]] = {a: [] for a in annotators}
+    scenario_to_annotators: Dict[str, List[str]] = {}
     if not annotators:
-        return shared, assigned
-    for idx, sid in enumerate(remaining):
-        ann = annotators[idx % len(annotators)]
-        assigned[ann].append(sid)
-    return shared, assigned
+        return shared, assigned, scenario_to_annotators
+
+    ann_order = list(annotators)
+    rng.shuffle(ann_order)
+    k = max(1, min(len(annotators), int(ratings_per_scenario)))
+
+    # Shared subset: all annotators rate the same scenarios.
+    for sid in shared:
+        scenario_to_annotators[sid] = list(annotators)
+        for ann in annotators:
+            assigned[ann].append(sid)
+
+    # Non-shared subset: each scenario is rated by k annotators using rotating assignments.
+    cursor = 0
+    for sid in remaining:
+        if cursor > 0 and (cursor % len(ann_order) == 0):
+            rng.shuffle(ann_order)
+        start = cursor % len(ann_order)
+        chosen = [ann_order[(start + j) % len(ann_order)] for j in range(k)]
+        scenario_to_annotators[sid] = chosen
+        for ann in chosen:
+            assigned[ann].append(sid)
+        cursor += 1
+
+    return shared, assigned, scenario_to_annotators
+
+
+def recommended_paired_samples(
+    mde: float,
+    std_dev: float,
+    alpha: float,
+    power: float,
+    design_effect: float,
+) -> int:
+    delta = max(1e-6, float(mde))
+    sigma = max(1e-6, float(std_dev))
+    a = min(max(float(alpha), 1e-6), 0.5)
+    p = min(max(float(power), 0.50), 0.999)
+    deff = max(1.0, float(design_effect))
+
+    nd = NormalDist()
+    z_alpha = nd.inv_cdf(1.0 - a / 2.0)
+    z_beta = nd.inv_cdf(p)
+    n = ((z_alpha + z_beta) * sigma / delta) ** 2
+    return int(math.ceil(n * deff))
+
+
+def overlap_matrix(assigned: Dict[str, List[str]], annotators: Sequence[str]) -> Dict[str, Dict[str, int]]:
+    by_annotator = {ann: set(assigned.get(ann, [])) for ann in annotators}
+    out: Dict[str, Dict[str, int]] = {}
+    for a in annotators:
+        row: Dict[str, int] = {}
+        for b in annotators:
+            row[b] = len(by_annotator.get(a, set()).intersection(by_annotator.get(b, set())))
+        out[a] = row
+    return out
 
 
 def iter_rows_for_annotator(
@@ -127,9 +182,49 @@ def main() -> None:
         default="proposed_contextual_controlled,proposed_contextual,candidate_no_context,baseline_no_context,baseline_no_context_phi3_latest",
         help="Comma-separated arm IDs to include if present.",
     )
-    parser.add_argument("--annotators", default="annotator_1,annotator_2", help="Comma-separated annotator IDs")
+    parser.add_argument(
+        "--annotators",
+        default="annotator_1,annotator_2,annotator_3",
+        help="Comma-separated annotator IDs",
+    )
     parser.add_argument("--shared-ratio", type=float, default=0.25, help="Fraction of scenarios shared across all annotators")
+    parser.add_argument(
+        "--ratings-per-scenario",
+        type=int,
+        default=2,
+        help="How many annotators rate each non-shared scenario (capped by annotator count).",
+    )
     parser.add_argument("--max-scenarios", type=int, default=0, help="Optional scenario cap (0 = all)")
+    parser.add_argument(
+        "--target-power",
+        type=float,
+        default=0.80,
+        help="Target statistical power for paired human-preference comparisons (normal approximation).",
+    )
+    parser.add_argument(
+        "--alpha",
+        type=float,
+        default=0.05,
+        help="Two-sided alpha for planning paired human-study sample size.",
+    )
+    parser.add_argument(
+        "--mde",
+        type=float,
+        default=0.08,
+        help="Minimum detectable effect size on normalized [0,1] scale for planning.",
+    )
+    parser.add_argument(
+        "--std-dev",
+        type=float,
+        default=0.25,
+        help="Assumed standard deviation of paired scenario-level differences on [0,1] scale.",
+    )
+    parser.add_argument(
+        "--design-effect",
+        type=float,
+        default=1.2,
+        help="Design effect inflation factor for clustered/multi-rater sampling.",
+    )
     parser.add_argument("--seed", type=int, default=19, help="Random seed")
     parser.add_argument("--output-dir", default="data/human_eval_pack", help="Output directory root")
     args = parser.parse_args()
@@ -168,20 +263,39 @@ def main() -> None:
         for sid in scenarios_by_id.keys()
         if all(sid in responses_by_arm_and_sid[arm] for arm in present_arms)
     )
-    if int(args.max_scenarios) > 0:
-        rng = random.Random(args.seed + 31)
-        rng.shuffle(scenario_ids)
-        scenario_ids = sorted(scenario_ids[: int(args.max_scenarios)])
     if not scenario_ids:
         raise RuntimeError("No scenario IDs have responses for all selected arms.")
 
     annotators = parse_csv_arg(str(args.annotators))
     if not annotators:
         raise RuntimeError("At least one annotator is required.")
-    shared_ids, assigned_ids = split_scenarios_for_annotators(
-        scenario_ids=scenario_ids,
+    ratings_per_scenario = max(1, min(len(annotators), int(args.ratings_per_scenario)))
+
+    planned_pairs = recommended_paired_samples(
+        mde=float(args.mde),
+        std_dev=float(args.std_dev),
+        alpha=float(args.alpha),
+        power=float(args.target_power),
+        design_effect=float(args.design_effect),
+    )
+    recommended_scenarios = int(math.ceil(planned_pairs / float(ratings_per_scenario)))
+
+    scenario_pool = list(scenario_ids)
+    rng_select = random.Random(args.seed + 31)
+    rng_select.shuffle(scenario_pool)
+    if int(args.max_scenarios) == 0:
+        selected_scenario_ids = list(scenario_pool)
+        if recommended_scenarios > len(selected_scenario_ids):
+            selected_scenario_ids = list(scenario_pool[: min(recommended_scenarios, len(scenario_pool))])
+    else:
+        selected_scenario_ids = list(scenario_pool[: int(args.max_scenarios)])
+    selected_scenario_ids = sorted(selected_scenario_ids)
+
+    shared_ids, assigned_ids, scenario_to_annotators = split_scenarios_for_annotators(
+        scenario_ids=selected_scenario_ids,
         annotators=annotators,
         shared_ratio=float(args.shared_ratio),
+        ratings_per_scenario=ratings_per_scenario,
         seed=args.seed,
     )
 
@@ -245,10 +359,24 @@ def main() -> None:
         out_root / "assignment_plan.json",
         {
             "run_dir": str(run_dir),
-            "scenario_count": len(scenario_ids),
+            "scenario_count": len(selected_scenario_ids),
             "shared_scenarios": shared_ids,
             "annotators": annotators,
             "assigned_scenarios": assigned_ids,
+            "scenario_to_annotators": scenario_to_annotators,
+            "ratings_per_scenario": ratings_per_scenario,
+            "overlap_matrix": overlap_matrix(assigned_ids, annotators),
+            "power_plan": {
+                "target_power": float(args.target_power),
+                "alpha": float(args.alpha),
+                "mde": float(args.mde),
+                "std_dev": float(args.std_dev),
+                "design_effect": float(args.design_effect),
+                "planned_paired_samples": planned_pairs,
+                "recommended_scenarios": recommended_scenarios,
+                "selected_scenarios": len(selected_scenario_ids),
+                "scenario_shortfall": max(0, recommended_scenarios - len(selected_scenario_ids)),
+            },
             "rows_per_annotator_expected": {
                 ann: len(set(shared_ids + assigned_ids.get(ann, []))) * len(present_arms)
                 for ann in annotators
@@ -269,6 +397,10 @@ def main() -> None:
                 "- `assignment_plan.json`: scenario split and expected row counts.",
                 "- `ratings_merged_template.csv`: merge target file.",
                 "",
+                "## Study Design Notes",
+                f"- Ratings per non-shared scenario: `{ratings_per_scenario}`.",
+                "- `assignment_plan.json` contains overlap matrix and power-based sample-size planning.",
+                "",
                 "## Workflow",
                 "1. Send each annotator only their own CSV.",
                 "2. Collect completed files and concatenate rows into `ratings_merged_template.csv`.",
@@ -283,10 +415,10 @@ def main() -> None:
 
     print(f"Human-eval pack generated: {out_root}")
     print(f"Arms: {', '.join(present_arms)}")
-    print(f"Scenarios: {len(scenario_ids)} (shared={len(shared_ids)})")
+    print(f"Scenarios: {len(selected_scenario_ids)} (shared={len(shared_ids)})")
     print(f"Total annotator rows: {total_rows}")
+    print(f"Power plan: paired_samples={planned_pairs}, recommended_scenarios={recommended_scenarios}")
 
 
 if __name__ == "__main__":
     main()
-

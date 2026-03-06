@@ -1,0 +1,36 @@
+{
+    "behavior_tree_action": "Idle",
+    "config": {
+        "enable_grammar": true,
+        "enable_graph": true,
+        "enable_planner": true,
+        "enable_rag": true,
+        "enable_reflection": true,
+        "enable_response_control": true,
+        "enable_retrieval_guard": true,
+        "enable_speculative": true,
+        "enable_truth_guard": true,
+        "model_dir": "",
+        "rag_threshold": 0.6000000238418579,
+        "response_control_allow_best_effort_rewrite": true,
+        "response_control_enable_rewrite": true,
+        "response_control_min_context_coverage": 0.25,
+        "response_control_min_persona_coverage": 0.15000000596046448,
+        "response_control_rewrite_candidates": 3,
+        "response_control_rewrite_max_tokens": 96,
+        "response_control_rewrite_temperature": 0.20000000298023224,
+        "response_control_rewrite_temperature_step": 0.15000000596046448,
+        "retrieval_guard_max_risk": 0.949999988079071,
+        "retrieval_guard_min_trust": 0.15000000596046448,
+        "retrieval_guard_risk_penalty": 0.6000000238418579,
+        "retrieval_guard_trust_weight": 0.3499999940395355
+    },
+    "current_action": "Idle",
+    "current_state": {},
+    "last_thought": "",
+    "profiler": {
+        "note": "Profiler stats available via GetProfiler()"
+    },
+    "timestamp": 17726182483580103,
+    "version": "1.0"
+}

@@ -27,6 +27,62 @@ int main() {
     }
 
     {
+        const std::string raw =
+            "Response: At Village Gate, I can assist.\n"
+            "Constraints: keep two lines\n"
+            "Assistant: draft response: placeholder";
+        const std::string cleaned = ResponseController::SanitizeResponse(raw);
+        assert(cleaned == "At Village Gate, I can assist.");
+    }
+
+    {
+        ResponseControlConfig cfg;
+        cfg.min_context_coverage = 0.35f;
+        cfg.min_persona_coverage = 0.15f;
+        cfg.enable_rewrite = false;
+
+        const std::vector<std::string> dense_context = {
+            "village gate", "night watch", "bandit raid", "north road",
+            "checkpoint", "citadel", "messenger", "dispatch",
+            "alarm", "lockdown", "ledger", "witness"
+        };
+        const auto result = ResponseController::ControlResponse(
+            "At the village gate during night watch, I will verify your request before clearance.",
+            "You are the Gatekeeper: strict, fair, and cautious guard.",
+            "location=Village Gate; behavior_state=Night Watch; recent_event=bandit raid",
+            "Let me in now.",
+            dense_context,
+            {"strict", "guard"},
+            cfg
+        );
+
+        assert(!result.repaired);
+        assert(result.source == "raw");
+    }
+
+    {
+        ResponseControlConfig cfg;
+        cfg.min_context_coverage = 0.45f;
+        cfg.min_persona_coverage = 0.15f;
+        cfg.enable_rewrite = false;
+        cfg.allow_relaxed_acceptance = false;
+
+        const auto result = ResponseController::ControlResponse(
+            "I will verify your request and proceed carefully.",
+            "You are the Gatekeeper: strict, fair, and cautious guard.",
+            "location=Village Gate; behavior_state=Night Watch; recent_event=bandit raid",
+            "Let me in now.",
+            {"village gate", "night watch", "bandit raid", "checkpoint"},
+            {"strict", "guard"},
+            cfg
+        );
+
+        assert(result.repaired);
+        assert(result.source == "raw_grounded_repair");
+        assert(result.response.find("Village Gate") != std::string::npos);
+    }
+
+    {
         ResponseControlConfig cfg;
         cfg.min_context_coverage = 0.5f;
         cfg.min_persona_coverage = 0.2f;
@@ -46,6 +102,27 @@ int main() {
         assert(result.source == "fallback");
         assert(result.response.find("at Village Gate") != std::string::npos);
         assert(result.response.find("Follow protocol") != std::string::npos);
+    }
+
+    {
+        ResponseControlConfig cfg;
+        cfg.min_context_coverage = 0.5f;
+        cfg.min_persona_coverage = 0.2f;
+        cfg.enable_rewrite = false;
+
+        const auto result = ResponseController::ControlResponse(
+            "Assistant: draft response: placeholder",
+            "You are the Gatekeeper: strict, fair, and cautious guard.",
+            "location=Village Gate; behavior_state=Night Watch; recent_event=bandit raid",
+            "Let me in now.",
+            {"village gate", "night watch"},
+            {"strict", "guard"},
+            cfg
+        );
+
+        assert(result.repaired);
+        assert(result.source == "structured_repair");
+        assert(result.response.find("Village Gate") != std::string::npos);
     }
 
     {
