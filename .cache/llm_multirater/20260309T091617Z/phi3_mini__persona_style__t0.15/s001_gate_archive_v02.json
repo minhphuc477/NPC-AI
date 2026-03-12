@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "3",
+      "persona_consistency": "4",
+      "naturalness": "2",
+      "overall_quality": "3",
+      "notes": "[proposed_contextual_controlled]   3  4    2     3       \"Contextually relevant but lacks naturalness and persona consistency.\"<TAB>Baseline no context       1  5    4      2       \"Highly consistent with the Smuggler role, yet fails to address player's request appropriately for relevance.\"<TAB>baseline_no_context_phi3_latest   1  5    5      2       \"Perfect consistency in persona but completely "
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "1",
+      "persona_consistency": "2",
+      "naturalness": "3",
+      "overall_quality": "2",
+      "notes": "\"Response lacks context relevance and persona consistency, but is natural.\""
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "1",
+      "persona_consistency": "5",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "\"Response aligns with persona and context, avoiding style drift.\""
+    }
+  ]
+}

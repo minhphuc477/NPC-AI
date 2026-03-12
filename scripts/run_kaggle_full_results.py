@@ -9,7 +9,7 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, List
 
 import requests
 
@@ -28,7 +28,7 @@ def latest_subdir(root: Path) -> Path:
     dirs = [p for p in root.iterdir() if p.is_dir()]
     if not dirs:
         raise FileNotFoundError(f"No run directories found under: {root}")
-    return sorted(dirs, key=lambda p: p.name)[-1]
+    return sorted(dirs, key=lambda p: (p.stat().st_mtime, p.name))[-1]
 
 
 def resolve_run_path(raw: str, root: Path) -> Path:
@@ -74,17 +74,18 @@ def ollama_ready(host: str, model_names: List[str], timeout_s: int = 10) -> None
 
 
 def maybe_generate_inputs(dry_run: bool) -> None:
-    if not Path("data/retrieval_gold_wide.jsonl").exists() or not Path("data/retrieval_corpus_wide.jsonl").exists():
+    if not Path("data/retrieval_gold_wide_v2.jsonl").exists() or not Path("data/retrieval_corpus_wide_v2.jsonl").exists():
         run_command(
             [
                 sys.executable,
                 "scripts/generate_wide_benchmark_sets.py",
-                "--docs-per-domain",
-                "24",
-                "--queries-per-domain",
-                "20",
-                "--prompts-per-domain",
-                "4",
+                "--docs-per-domain", "28",
+                "--queries-per-domain", "24",
+                "--prompts-per-domain", "6",
+                "--retrieval-corpus-out", "data/retrieval_corpus_wide_v2.jsonl",
+                "--retrieval-gold-out", "data/retrieval_gold_wide_v2.jsonl",
+                "--serving-prompts-out", "data/serving_prompts_wide_v2.jsonl",
+                "--serving-references-out", "data/serving_references_wide_v2.jsonl",
             ],
             dry_run=dry_run,
         )
@@ -100,15 +101,19 @@ def maybe_generate_inputs(dry_run: bool) -> None:
             dry_run=dry_run,
         )
 
-    if not Path("data/proposal_eval_scenarios_large.jsonl").exists():
+    if not Path("data/proposal_eval_scenarios_large_v2.jsonl").exists():
         run_command(
             [
                 sys.executable,
                 "scripts/generate_proposal_scenarios_large.py",
                 "--variants-per-base",
-                "14",
+                "18",
+                "--max-player-jaccard", "0.72",
+                "--rephrase-attempts", "16",
+                "--min-template-signature-ratio", "0.35",
+                "--fail-on-low-diversity",
                 "--output",
-                "data/proposal_eval_scenarios_large.jsonl",
+                "data/proposal_eval_scenarios_large_v2.jsonl",
             ],
             dry_run=dry_run,
         )
@@ -120,7 +125,7 @@ def main() -> None:
     parser.add_argument("--candidate-model", default="elara-npc:latest")
     parser.add_argument("--baseline-model", default="phi3:mini")
     parser.add_argument("--baseline-models", default="phi3:latest")
-    parser.add_argument("--scenario-file", default="data/proposal_eval_scenarios_large.jsonl")
+    parser.add_argument("--scenario-file", default="data/proposal_eval_scenarios_large_v2.jsonl")
     parser.add_argument(
         "--proposal-run",
         default="",
@@ -140,7 +145,10 @@ def main() -> None:
         default=0.90,
         help="Minimum required successful-request rate per arm in proposal eval.",
     )
-    parser.add_argument("--multirater-annotators", default="phi3:mini|balanced|0.00,phi3:mini|balanced|0.05,phi3:mini|balanced|0.10")
+    parser.add_argument(
+        "--multirater-annotators",
+        default="phi3:mini|balanced|0.00,phi3:mini|balanced|0.05,phi3:mini|balanced|0.10",
+    )
     parser.add_argument("--multirater-scenarios", type=int, default=36)
     parser.add_argument("--serving-models", default="elara-npc:latest,phi3:mini,phi3:latest")
     parser.add_argument("--serving-max-tokens", type=int, default=64)
@@ -152,6 +160,24 @@ def main() -> None:
     )
     parser.add_argument("--run-security-benchmark", action="store_true")
     parser.add_argument("--require-security-benchmark", action="store_true")
+    parser.add_argument(
+        "--gate-min-external-significant-wins",
+        type=int,
+        default=8,
+        help="Minimum significantly-positive metrics per external baseline for proposal gate.",
+    )
+    parser.add_argument(
+        "--gate-min-human-soft-win-rate",
+        type=float,
+        default=0.50,
+        help="Minimum human soft-win rate vs each baseline for proposal gate.",
+    )
+    parser.add_argument(
+        "--gate-min-human-kappa",
+        type=float,
+        default=0.20,
+        help="Minimum mean pairwise kappa for the human-eval gate.",
+    )
     parser.add_argument("--output-root", default="artifacts/final_checkout")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
@@ -289,12 +315,22 @@ def main() -> None:
             str(args.serving_max_tokens),
             "--temperature",
             str(args.serving_temperature),
+            "--prompts",
+            "data/serving_prompts_wide_v2.jsonl",
+            "--serving-references",
+            "data/serving_references_wide_v2.jsonl",
+            "--retrieval-corpus",
+            "data/retrieval_corpus_wide_v2.jsonl",
+            "--retrieval-gold",
+            "data/retrieval_gold_wide_v2.jsonl",
             "--reranker-pairs",
             "data/retrieval_reranker_pairs_wide.jsonl",
             "--reranker-train-frac",
             "0.85",
             "--reranker-bm25-candidate-k",
             "24",
+            "--security-dataset",
+            "data/retrieval_poison_benchmark_large.jsonl",
         ]
         if args.run_security_benchmark:
             pub_cmd.extend(["--run-security-benchmark", "--run-security-spoofed-benchmark"])
@@ -318,9 +354,9 @@ def main() -> None:
             "--candidate-model",
             str(args.candidate_model),
             "--prompts",
-            "data/serving_prompts_wide.jsonl",
+            "data/serving_prompts_wide_v2.jsonl",
             "--serving-references",
-            "data/serving_references_wide.jsonl",
+            "data/serving_references_wide_v2.jsonl",
             "--max-tokens",
             str(args.serving_max_tokens),
             "--temperature",
@@ -360,6 +396,25 @@ def main() -> None:
     if not args.dry_run:
         profile_suite = latest_subdir(Path("artifacts/publication_profiles"))
 
+    # 6b) Aggregate runtime evidence from proposal-style interactive runs.
+    runtime_json = profile_suite / "live_runtime_summary.json"
+    runtime_md = profile_suite / "live_runtime_summary.md"
+    run_command(
+        [
+            sys.executable,
+            "scripts/analyze_live_runtime_conditions.py",
+            "--root",
+            "artifacts/proposal",
+            "--arm",
+            "proposed_contextual_controlled",
+            "--output-json",
+            str(runtime_json),
+            "--output-md",
+            str(runtime_md),
+        ],
+        dry_run=bool(args.dry_run),
+    )
+
     # 7) Significant-improvement data builders.
     run_command(
         [
@@ -387,9 +442,9 @@ def main() -> None:
             sys.executable,
             "scripts/build_retrieval_hard_negative_set.py",
             "--retrieval-gold",
-            "data/retrieval_gold_wide.jsonl",
+            "data/retrieval_gold_wide_v2.jsonl",
             "--retrieval-corpus",
-            "data/retrieval_corpus_wide.jsonl",
+            "data/retrieval_corpus_wide_v2.jsonl",
             "--hard-negatives-per-query",
             "10",
             "--cross-domain-negatives-per-query",
@@ -407,6 +462,12 @@ def main() -> None:
         "--publication-run",
         str(publication_run),
         "--require-human-eval",
+        "--min-external-significant-wins",
+        str(args.gate_min_external_significant_wins),
+        "--min-human-soft-win-rate",
+        str(args.gate_min_human_soft_win_rate),
+        "--min-human-kappa",
+        str(args.gate_min_human_kappa),
         "--output-json",
         str(proposal_run / "quality_gate_report_final.json"),
         "--output-md",
@@ -425,8 +486,14 @@ def main() -> None:
         "publication_run": str(publication_run),
         "serving_efficiency_run": str(serving_run),
         "publication_profile_suite": str(profile_suite),
+        "live_runtime_summary_json": str(runtime_json),
+        "live_runtime_summary_md": str(runtime_md),
         "skip_ablation_baselines": bool(args.skip_ablation_baselines),
         "human_eval_csv": str(human_csv),
+        "multirater_annotators": str(args.multirater_annotators),
+        "gate_min_external_significant_wins": int(args.gate_min_external_significant_wins),
+        "gate_min_human_soft_win_rate": float(args.gate_min_human_soft_win_rate),
+        "gate_min_human_kappa": float(args.gate_min_human_kappa),
         "quality_gate_json": str(proposal_run / "quality_gate_report_final.json"),
         "quality_gate_md": str(proposal_run / "quality_gate_report_final.md"),
         "preference_dataset": str(proposal_run / "preference_dataset.jsonl"),

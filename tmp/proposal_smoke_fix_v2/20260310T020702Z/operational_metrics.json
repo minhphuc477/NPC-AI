@@ -1,0 +1,218 @@
+{
+  "arms": {
+    "proposed_contextual_controlled": {
+      "total_requests": 5,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.2,
+      "first_pass_accept_rate": 0.6,
+      "rewrite_attempt_rate": 0.4,
+      "retry_rate": 0.4,
+      "multi_retry_rate": 0.4,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {
+        "fallback": 1,
+        "raw_grounded_repair": 3,
+        "structured_recovery": 1
+      },
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.5
+        },
+        "Investigating": {
+          "count": 1,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Observing": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "proposed_contextual": {
+      "total_requests": 5,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.0,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "candidate_no_context": {
+      "total_requests": 5,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.6,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 2,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 1,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "baseline_no_context": {
+      "total_requests": 5,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.0,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "baseline_no_context_phi3_latest": {
+      "total_requests": 5,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.0,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 1,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@
 \usepackage[a4paper,left=3cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{iftex}
 \ifPDFTeX
-\PackageError{IEEE_FULL_PAPER}{This manuscript must be compiled with XeLaTeX}{Run xelatex IEEE_FULL_PAPER.tex from the docs/ directory.}
+\PackageError{IEEE_FULL_PAPER}{This report must be compiled with XeLaTeX}{Run xelatex IEEE_FULL_PAPER.tex from the docs/ directory.}
 \fi
 \usepackage{fontspec}
 \setmainfont{Times New Roman}
@@ -34,6 +34,7 @@
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{placeins}
+\usepackage{etoolbox}
 \usepackage{tocloft}
 \usepackage{titlesec}
 \usepackage{tikz}
@@ -50,6 +51,19 @@
 \renewcommand{\listfigurename}{List of figures}
 \setlength{\cftsecnumwidth}{3.2em}
 \setlength{\emergencystretch}{2em}
+\makeatletter
+\let\origsection\section
+\renewcommand{\section}{%
+  \@ifstar{\origsection*}{%
+    \ifnum\value{section}>0
+      \clearpage
+      \thispagestyle{empty}\null\clearpage
+    \else
+      \clearpage
+    \fi
+    \origsection}%
+}
+\makeatother
 
 \newcommand{\ReportTitle}{Dynamic Game State-Informed Fine-Tuned Language Models for Natural and Context-Aware NPC Dialogue in Narrative Games}
 \newcommand{\ReportTitleVN}{Nâng cao tính tự nhiên và tính ngữ cảnh trong tương tác hội thoại với NPC bằng mô hình ngôn ngữ tinh chỉnh được thông tin bởi trạng thái thế giới game động trong game tường thuật}
@@ -78,6 +92,8 @@
 \begin{center}
 {\large \textbf{BỘ GIÁO DỤC VÀ ĐÀO TẠO}}\\[0.3cm]
 {\large \textbf{TRƯỜNG ĐẠI HỌC MỞ THÀNH PHỐ HỒ CHÍ MINH}}\\[2.5cm]
+{\Large \textbf{BÁO CÁO TỔNG KẾT}}\\[0.4cm]
+{\Large \textbf{ĐỀ TÀI NGHIÊN CỨU KHOA HỌC SINH VIÊN}}\\[1.2cm]
 {\Large \textbf{\ReportTitleVN}}\\[2.4cm]
 \vfill
 {\LARGE \textbf{Mã số đề tài: \ProjectCode}}\\[2.0cm]
@@ -94,6 +110,8 @@
 \begin{center}
 {\large \textbf{BỘ GIÁO DỤC VÀ ĐÀO TẠO}}\\[0.3cm]
 {\large \textbf{TRƯỜNG ĐẠI HỌC MỞ THÀNH PHỐ HỒ CHÍ MINH}}\\[2.0cm]
+{\Large \textbf{BÁO CÁO TỔNG KẾT}}\\[0.4cm]
+{\Large \textbf{ĐỀ TÀI NGHIÊN CỨU KHOA HỌC SINH VIÊN}}\\[1.2cm]
 {\Large \textbf{\ReportTitle}}\\[2.0cm]
 \vfill
 {\LARGE \textbf{Mã số đề tài: \ProjectCode}}\\[2.0cm]
@@ -219,11 +237,7 @@ UE5 & Unreal Engine 5 \\
 \section*{Abstract}
 \phantomsection
 \addcontentsline{toc}{section}{Abstract}
-This paper presents an end-to-end NPC dialogue system for narrative games that couples a locally fine-tuned language model with live game-state conditioning. The objective is to improve contextual relevance, persona consistency, and naturalness while remaining compatible with Unreal Engine 5 runtime constraints. The architecture integrates four coupled components: game-state context extraction, hybrid retrieval with poisoning-aware guard scoring, local response generation, and post-generation response control implemented in both Python and C++ runtime paths.
-
-Evaluation uses fixed scenarios, paired significance testing, confidence intervals, ablations, and blinded multi-rater scoring. On a 112-scenario benchmark, controlled contextual generation outperforms raw contextual generation with mean deltas of +0.1843 (context relevance), +0.1509 (persona consistency), +0.0967 (naturalness), and +0.1440 (overall quality), with one-sided bootstrap \(p(\Delta \le 0)<1/\BootstrapSamples\) across core metrics (\(B=\BootstrapSamples\)). In exploratory cross-condition diagnostics against no-context baselines (phi3:mini and phi3:latest), overall quality also improves in both comparisons; this contrast reflects the combined effect of context and control rather than isolated component causality.
-
-Human evaluation (324 ratings) provides pilot-scale preference evidence for the controlled system and moderate inter-rater agreement (\(\kappa=0.5329\) mean pairwise). Security stress tests report zero observed poisoning-follow cases under the evaluated guard configuration (attack success rate 1.0 to 0.0 in the tested sets; exact 95\% upper bound \(=0.0295\) per 100-case set and \(0.0149\) pooled over both 100-case sets), with scope limited to the tested attack families and sample sizes. The main negative finding is serving efficiency: latency and throughput are not superior to lighter baseline serving configurations, and runtime control still requires non-trivial assistance (fallback 0.0089, retry 0.1071, first-pass acceptance 0.3750), so state-conditioned threshold calibration remains necessary before production deployment. The contribution is a reproducible, evidence-scoped framework that reports quality and robustness gains together with explicit performance trade-offs.
+This report presents an end-to-end NPC dialogue pipeline for narrative games that combines dynamic game-state grounding, guarded hybrid retrieval, local generation, and response control in Unreal Engine 5 across matched Python/C++ runtime paths. In a fixed 112-scenario benchmark, the controlled contextual system improves context relevance (+0.1843), persona consistency (+0.1509), naturalness (+0.0967), and overall quality (+0.1440) over raw contextual generation with paired-bootstrap support (\(p(\Delta \le 0)<1/\BootstrapSamples\), \(B=\BootstrapSamples\)). Human evaluation (324 ratings) provides pilot-scale preference evidence with moderate agreement (\(\kappa=0.5329\)). Guarded retrieval yields zero observed attack-follow cases (ASR 1.0\(\rightarrow\)0.0; exact 95\% upper bounds 0.0295 per set, 0.0149 pooled). The main limitation is serving efficiency and intervention burden (fallback 0.0089, retry 0.1071, first-pass acceptance 0.3750).
 
 \section*{Keywords}
 \phantomsection
@@ -231,7 +245,7 @@ Human evaluation (324 ratings) provides pilot-scale preference evidence for the 
 NPC dialogue, game AI, local LLM, UE5, QLoRA, response control, retrieval robustness, benchmark reproducibility, neuro-symbolic systems.
 
 \section{Research problem, scope, and contributions}
-This chapter defines the research problem and claim boundaries. It first clarifies why scripted pipelines and unconstrained LLM dialogue remain insufficient for deployment-critical narrative games, then specifies the study scope, research questions, and formal objective used in the rest of the manuscript.
+This chapter defines the research problem and claim boundaries. It first clarifies why scripted pipelines and unconstrained LLM dialogue remain insufficient for deployment-critical narrative games, then specifies the study scope, research questions, and formal objective used in the rest of the report.
 \subsection{Limitations of scripted and unconstrained NPC dialogue paradigms}
 Narrative games require NPC dialogue that is simultaneously fluent, role-consistent, and grounded in dynamic world state. Survey evidence shows that classical authored dialogue pipelines remain dependable in production but incur rapidly growing authoring cost as interaction breadth increases \cite{Gallotta2024Survey,Sweetser2024Scoping}. LLM-driven NPC systems improve linguistic flexibility, yet often fail under strict gameplay constraints such as quest-state consistency, inventory grounding, and stable persona control across multi-turn interaction \cite{Park2023GenerativeAgents,Gallotta2024Survey,Sweetser2024Scoping}.
 
@@ -247,7 +261,7 @@ The study is scoped to narrative-game dialogue under UE5 runtime constraints, wi
 To maintain scientific clarity, conclusions are explicitly scoped to measured axes. The study includes fixed-arm benchmarking, paired bootstrap tests, confidence intervals, ablations, human-rater agreement analysis, and adversarial stress evaluation. This design supports reporting both improvements (quality and security robustness) and limitations (serving latency/throughput trade-offs).
 
 \subsection{Contributions and claim boundaries}
-Relative to prior LLM-in-games studies, the main contribution is not local fine-tuning alone but the explicit coupling of architectural choices with inferential evidence. The manuscript therefore states why each component is included, how it is evaluated, and which effects persist under ablation. This structure separates empirically supported engineering claims from hypotheses that require further study.
+Relative to prior LLM-in-games studies, the main contribution is not local fine-tuning alone but the explicit coupling of architectural choices with inferential evidence. The report therefore states why each component is included, how it is evaluated, and which effects persist under ablation. This structure separates empirically supported engineering claims from hypotheses that require further study.
 
 \subsection{Research questions}
 The evaluation is organized around four explicit research questions. RQ1 examines whether controlled context-grounded inference improves context relevance, persona consistency, naturalness, and overall quality over raw contextual generation under matched prompts and decoding settings. RQ2 tests whether the same controlled setting yields a cross-condition quality gap relative to no-context external baselines under identical scenario protocols, without treating that contrast as isolated component attribution. RQ3 asks whether guard-aware retrieval materially reduces adversarial follow-through under poisoned and trust-spoofed evidence conditions. RQ4 characterizes the quality-latency trade-offs that emerge when guard and response-control mechanisms are enabled in an in-engine runtime.
@@ -298,7 +312,7 @@ Benchmarking work on LLM agents and long-context reasoning clarifies why these g
 Retrieval-augmented generation strengthens factual grounding, from the original RAG formulation to later survey syntheses and graph-based extensions \cite{Lewis2020RAG,Fan2024RAGSurvey,Edge2024GraphRAG}. However, retrieval also creates a new control surface where poisoning, trust spoofing, and ranking manipulation can alter downstream generation. Recent high-impact attack studies reinforce this concern: indirect prompt injection can compromise application behavior through retrieved context \cite{Greshake2023PromptInjection}, knowledge-corruption attacks can induce attacker-chosen outputs with a small number of injected passages \cite{Zou2025PoisonedRAG}, and adversarial instructional prompts can subvert retrieval behavior even when user queries are fixed \cite{Chaturvedi2025AIP}. A substantial share of reported evaluations remains centered on benign relevance quality, while adversarial coverage is less consistently reported in game-oriented dialogue settings. This is a key weakness for game NPC settings, where retrieval errors can directly induce in-character policy violations. Evaluation methodology presents a related issue: overlap-only scoring is insufficient for interactive dialogue quality, dialog-metric behavior can vary substantially across datasets and settings \cite{Yeh2021DialogMetrics}, and modern embedding- and judge-based protocols can still carry positional or verbosity biases \cite{Zhang2020BERTScore,Zheng2023MTBench,Wang2024Judge,Dubois2024AlpacaEval}. For this reason, interactive dialogue systems require convergent evidence across automatic metrics, inferential statistics, human preference, and agreement analysis \cite{Cohen1960Kappa}.
 
 \subsection{Hypotheses and analytical model}
-The integrated theoretical position tested in this manuscript is that coupling guarded retrieval and response control with dynamic game-state conditioning produces measurable gains in relevance, persona fidelity, and robustness under fixed evaluation constraints.
+The integrated theoretical position tested in this report is that coupling guarded retrieval and response control with dynamic game-state conditioning produces measurable gains in relevance, persona fidelity, and robustness under fixed evaluation constraints.
 
 Operationally, this position is tested through four linked hypotheses aligned with the research questions: controlled context-grounded inference improves core quality metrics over raw contextual inference; the same controlled setting yields a cross-condition quality gap over no-context external baselines under matched protocols; guarded retrieval reduces adversarial follow-through probability; and the quality and robustness gains are accompanied by measurable serving-time overhead. These hypotheses are evaluated with paired comparisons and uncertainty reporting rather than point estimates alone, with cross-condition comparisons treated as system-level diagnostics rather than isolated component-causality tests.
 
@@ -328,11 +342,11 @@ This study & Yes & Yes & Yes & Yes & Latency and throughput remain weaker than l
 \end{table}
 
 \subsection{Novelty decomposition and evidence-backed differentiation}
-To make novelty claims auditable, Table~\ref{tab:novelty_decomposition} decomposes the proposed contribution into concrete technical elements and maps each element to direct empirical evidence in this manuscript. This avoids a generic ``end-to-end system'' claim and clarifies which parts are demonstrated versus only proposed for future work.
+To make novelty claims auditable, Table~\ref{tab:novelty_decomposition} decomposes the proposed contribution into concrete technical elements and maps each element to direct empirical evidence in this report. This avoids a generic ``end-to-end system'' claim and clarifies which parts are demonstrated versus only proposed for future work.
 
 \begin{table}[t]
 \centering
-\caption{Novelty decomposition mapped to direct evidence in this manuscript.}
+\caption{Novelty decomposition mapped to direct evidence in this report.}
 \label{tab:novelty_decomposition}
 \begingroup
 \footnotesize
@@ -363,7 +377,7 @@ where \(C_{cov}\) is scenario coverage, \(C_{sig}\) is controlled-vs-raw signifi
 
 Under this definition, \(\Gamma=1\) indicates that all required evidence components are present, while \(\Gamma=0\) indicates that at least one component is missing. Core requirements include minimum scenario coverage of 100 (achieved: 112), significant controlled-vs-raw improvements on key quality metrics, completed human-evaluation requirements (including row count, agreement, and preference checks), complete reproducibility artifacts (metadata, retrieval metrics, ablations, and confidence intervals), and security criteria based on ASR reduction and guarded-ASR caps. Cross-condition external-baseline comparisons are reported as non-gating diagnostics.
 
-This protocol is necessary because game-AI manuscripts often conflate demonstration quality with deployment reliability. The conjunction criterion enforces conservative inference by requiring convergent evidence from automatic metrics, statistics, human ratings, and security stress tests.
+This protocol is necessary because game-AI reports often conflate demonstration quality with deployment reliability. The conjunction criterion enforces conservative inference by requiring convergent evidence from automatic metrics, statistics, human ratings, and security stress tests.
 
 Formally, with \(C_j\in\{0,1\}\), \(\Gamma\) is equivalent to a product gate:
 \begin{equation}
@@ -564,7 +578,7 @@ y^{fb}_t, & \text{otherwise},
 \end{equation}
 where \(K\) is the retry budget and \(y^{fb}_t\) is a grounded fallback response. This definition directly explains the reported first-pass, retry, and fallback rates in Chapter 4.
 
-Table~\ref{tab:response_examples} replaces schematic examples with observed outputs from the locked 112-scenario run (\texttt{20260306T120829Z}) so that release behavior is auditable from real traces.
+Table~\ref{tab:response_examples} replaces schematic examples with observed outputs from the locked 112-scenario run so that release behavior is auditable from real traces.
 
 \begin{table}[t]
 \centering
@@ -712,7 +726,7 @@ UE5 operational diagnostics & Timeout, fallback, first-pass acceptance, rewrite/
 \endgroup
 \end{table}
 
-For paired comparisons, mean deltas, bootstrap confidence intervals (95\%), and one-sided \(p(\Delta\le 0)\) are computed. For serving and retrieval metrics, means and confidence intervals are reported per model/method. To avoid impossible point estimates under finite bootstrap sampling, very small one-sided values are reported at the finite-resolution floor as \(p(\Delta\le0)<1/\BootstrapSamples\). All bootstrap estimates in this manuscript use \(B=\BootstrapSamples\) resamples, so the minimum non-zero empirical one-sided tail probability is \(1/\BootstrapSamples=0.0002\) \cite{Efron1979Bootstrap}.
+For paired comparisons, mean deltas, bootstrap confidence intervals (95\%), and one-sided \(p(\Delta\le 0)\) are computed. For serving and retrieval metrics, means and confidence intervals are reported per model/method. To avoid impossible point estimates under finite bootstrap sampling, very small one-sided values are reported at the finite-resolution floor as \(p(\Delta\le0)<1/\BootstrapSamples\). All bootstrap estimates in this report use \(B=\BootstrapSamples\) resamples, so the minimum non-zero empirical one-sided tail probability is \(1/\BootstrapSamples=0.0002\) \cite{Efron1979Bootstrap}.
 
 The experimental design follows two comparison modes. In component-focused within-condition contrasts (e.g., controlled contextual versus raw contextual), scenario text, context slots, prompt templates, and decoding hyperparameters are held constant while the tested control component differs, which supports interpretable ablation deltas. In cross-condition diagnostics against no-context baselines, condition differences are explicit and are therefore interpreted as system-level gaps rather than isolated component effects. Scenario construction is stratified across archetype, conflict condition, and behavior state to avoid single-style prompt overfitting and to preserve variability in grounding stress. The evaluation framing follows recent multi-axis assessment guidance for language systems, where quality, robustness, and efficiency are reported jointly rather than collapsed into a single score family \cite{Liang2023HELM}.
 
@@ -816,7 +830,7 @@ where \(\Delta\log\pi_\theta=\log\pi_\theta(y^+|x)-\log\pi_\theta(y^-|x)\) and s
 \begin{equation}
 \mathcal{L}_{DPO}(\theta)=-\mathbb{E}\log \sigma\!\left(\beta\Delta_\theta\right),
 \end{equation}
-which is the form implemented in the manuscript. The reranker objective follows by the same argument with pairwise ordering probability \(P(d^+\succ d^-|q)=\sigma(f(q,d^+)-f(q,d^-))\), which yields \(\mathcal{L}_{rank}=-\log \sigma(f(q,d^+)-f(q,d^-))\).
+which is the form implemented in the report. The reranker objective follows by the same argument with pairwise ordering probability \(P(d^+\succ d^-|q)=\sigma(f(q,d^+)-f(q,d^-))\), which yields \(\mathcal{L}_{rank}=-\log \sigma(f(q,d^+)-f(q,d^-))\).
 
 The ASR reduction term has simple boundedness properties needed for interpretation. With \(\mathrm{ASR}_{base}>0\) and \(0\le \mathrm{ASR}_{guard}\le \mathrm{ASR}_{base}\),
 \begin{equation}
@@ -842,7 +856,7 @@ All four comparisons have \(p(\Delta\le 0)<1/\BootstrapSamples\).
 
 Two observations matter for interpretation. First, all confidence intervals are strictly positive, so the gains are not borderline effects driven by a narrow subset of scenarios. Second, the largest gains occur in context and persona dimensions, which are the dimensions most closely tied to gameplay coherence.
 
-The largest absolute gains are observed in context and persona dimensions (\(+0.1843\) and \(+0.1509\), respectively), followed by overall quality (\(+0.1440\)) and naturalness (\(+0.0967\)). Because the reported metrics are bounded and normalized, interpretation in this manuscript prioritizes absolute deltas and confidence intervals rather than ratio amplification against low baselines.
+The largest absolute gains are observed in context and persona dimensions (\(+0.1843\) and \(+0.1509\), respectively), followed by overall quality (\(+0.1440\)) and naturalness (\(+0.0967\)). Because the reported metrics are bounded and normalized, interpretation in this report prioritizes absolute deltas and confidence intervals rather than ratio amplification against low baselines.
 
 These outcomes indicate that response control and guarded retrieval are not peripheral add-ons. Under the evaluated protocol, they are high-impact mechanisms for quality and robustness, while still requiring retuning to reduce runtime intervention load.
 
@@ -905,7 +919,7 @@ phi3:latest & +0.1475 & [0.1356, 0.1591] & \(<1/\BootstrapSamples\) & \(<2/\Boot
 \end{tabular}}
 \endgroup
 \end{table}
-Table~\ref{tab:chapter2_positioning} is a scoped qualitative synthesis under the manuscript's stated criteria and search protocol, not a formal exhaustive ranking of the full literature.
+Table~\ref{tab:chapter2_positioning} is a scoped qualitative synthesis under the report's stated criteria and search protocol, not a formal exhaustive ranking of the full literature.
 
 Both paired-bootstrap intervals are strictly positive at the lower bound, confirming that the external-baseline overall-quality deltas are not borderline effects under the fixed-scenario protocol. Holm-adjusted one-sided \(p\)-value bounds remain below the finite-sample reporting floor for this two-comparison \(OQ\) family \cite{Holm1979}. Because these are cross-condition contrasts (contextual controlled vs no-context baselines), they support system-level gap reporting but do not identify isolated causal contribution of any single architectural component.
 
@@ -918,7 +932,7 @@ To separate statistical from practical significance, the observed gains are inte
 \subsection{Human evaluation and inter-rater agreement}
 The human-evaluation report contains 324 ratings. Mean pairwise kappa across core metrics is 0.5329. Descriptive soft preference rates are 0.7315 against phi3:mini and 0.6806 against phi3:latest. Arm-level normalized overall quality means are 0.8037 for the controlled arm, 0.6944 for phi3:mini, and 0.7278 for phi3:latest.
 
-The agreement profile (\(\kappa=0.5329\)) is consistent with moderate-to-substantial inter-rater reliability in subjective text assessment under commonly used interpretation ranges \cite{Landis1977KappaScale}. Preference outcomes are directionally aligned with automatic metrics, but because the campaign includes three raters and 324 ratings, this is treated as corroborative pilot-scale evidence rather than definitive standalone proof. In this manuscript, soft preference rates are reported descriptively only; no confirmatory hypothesis tests, confidence-interval claims, or population-level preference inferences are drawn from these rates. A prospective power-based assignment plan for an expanded campaign is included in the human-evaluation package, but the larger follow-up ratings are not yet completed.
+The agreement profile (\(\kappa=0.5329\)) is consistent with moderate-to-substantial inter-rater reliability in subjective text assessment under commonly used interpretation ranges \cite{Landis1977KappaScale}. Preference outcomes are directionally aligned with automatic metrics, but because the campaign includes three raters and 324 ratings, this is treated as corroborative pilot-scale evidence rather than definitive standalone proof. In this report, soft preference rates are reported descriptively only; no confirmatory hypothesis tests, confidence-interval claims, or population-level preference inferences are drawn from these rates. A prospective power-based assignment plan for an expanded campaign is included in the human-evaluation package, but the larger follow-up ratings are not yet completed.
 
 \subsection{Serving and retrieval performance trade-offs}
 
@@ -1034,7 +1048,7 @@ Fallback-to-first-pass ratio (candidate) & \(0.02\) & \(1/42\), fallback is rare
 \endgroup
 \end{table}
 
-Table~\ref{tab:operating_point_diagnostics} reinforces the bounded interpretation used throughout this manuscript: quality improvements are observable, but they are currently obtained with high control intervention. The principal engineering target for the next cycle is therefore not additional quality-only gain, but reducing intervention burden at fixed safety and quality floors using the state-conditioned calibration policy in Section 3.4.
+Table~\ref{tab:operating_point_diagnostics} reinforces the bounded interpretation used throughout this report: quality improvements are observable, but they are currently obtained with high control intervention. The principal engineering target for the next cycle is therefore not additional quality-only gain, but reducing intervention burden at fixed safety and quality floors using the state-conditioned calibration policy in Section 3.4.
 
 \subsection{Component-level ablation results}
 
@@ -1126,7 +1140,7 @@ Tokens/s & 18.45 & 18.86 & -0.41 & No \\
 
 Under this framework, the reported response-control main contrast is positive on the core quality axes. Table~\ref{tab:ablation_response_control} shows that all core quality metrics have strictly positive confidence intervals and one-sided \(p\)-values at the reporting floor, while Distinct-1 is not significant at conventional levels; this supports a controlled-quality gain with a mild style-diversity trade-off. The outcome is consistent with the design hypothesis that retrieval improves available evidence but does not itself enforce admissibility constraints on generated text. In practice, reducing response control increases context omissions and persona drift even when retrieval quality is unchanged, indicating that evidence quality and output admissibility are separable control problems.
 
-Under the current core retrieval set, BM25 remains strongest. Table~\ref{tab:ablation_retrieval} quantifies this directly, with all tested alternatives showing negative deltas relative to BM25 on Hit@5, MRR, and nDCG@5. This does not invalidate reranker training quality; instead, it indicates that method-level superiority is query-distribution dependent and should be evaluated on wider labeled sets with broader lexical and semantic variation. The architecture uses hybrid retrieval with guard-aware penalties because each component addresses a different failure mode: sparse retrieval preserves exact-key matching for inventory and quest references, dense retrieval improves semantic recall for paraphrased user input, and guard penalties are designed to reduce susceptibility to poisoned or trust-spoofed evidence. This design choice is aligned with the failure modes highlighted by recent adversarial-retrieval literature \cite{Zou2025PoisonedRAG,Chaturvedi2025AIP}. In this manuscript, retrieval-table ablations quantify relevance trade-offs, while guard safety effects are evidenced by the dedicated adversarial stress tests; interpreted jointly, they indicate a safety-oriented operating trade-off that can reduce recall on ambiguous queries.
+Under the current core retrieval set, BM25 remains strongest. Table~\ref{tab:ablation_retrieval} quantifies this directly, with all tested alternatives showing negative deltas relative to BM25 on Hit@5, MRR, and nDCG@5. This does not invalidate reranker training quality; instead, it indicates that method-level superiority is query-distribution dependent and should be evaluated on wider labeled sets with broader lexical and semantic variation. The architecture uses hybrid retrieval with guard-aware penalties because each component addresses a different failure mode: sparse retrieval preserves exact-key matching for inventory and quest references, dense retrieval improves semantic recall for paraphrased user input, and guard penalties are designed to reduce susceptibility to poisoned or trust-spoofed evidence. This design choice is aligned with the failure modes highlighted by recent adversarial-retrieval literature \cite{Zou2025PoisonedRAG,Chaturvedi2025AIP}. In this report, retrieval-table ablations quantify relevance trade-offs, while guard safety effects are evidenced by the dedicated adversarial stress tests; interpreted jointly, they indicate a safety-oriented operating trade-off that can reduce recall on ambiguous queries.
 
 Latency and throughput deltas remain unfavorable for the candidate at the current quality configuration, as shown in Table~\ref{tab:ablation_serving}. This pattern is expected from the architecture: guard scoring and response-control evaluation add deterministic overhead, and retrieval-conditioned prompts increase prefill and decoding work relative to no-context baselines. A useful comparison strategy is equal-quality frontier analysis, where each system is evaluated at the minimum latency required to satisfy a fixed quality target. This avoids misleading conclusions in which a faster model is favored only because it operates at a lower quality point. Taken together, the ablations support bounded conclusions only on observed contrasts: response-control main contrast is positive for quality in this design, evaluated stress-test outcomes improve under guard-enabled settings, and serving efficiency remains the principal unresolved bottleneck.
 
@@ -1141,7 +1155,7 @@ To keep chapter-level interpretation auditable, Table~\ref{tab:claim_evidence_ma
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{p{0.30\textwidth}p{0.43\textwidth}p{0.20\textwidth}}
 \toprule
-Claim & Direct evidence in this manuscript & Support status \\
+Claim & Direct evidence in this report & Support status \\
 \midrule
 Controlled contextual inference improves core dialogue quality over raw contextual inference & Table~\ref{tab:ablation_response_control}, Fig.~\ref{fig:controlled_delta}: positive \(\Delta CR\), \(\Delta PC\), \(\Delta N\), \(\Delta OQ\) with strictly positive 95\% CIs & Supported under fixed-scenario protocol \\
 Controlled contextual setting shows a cross-condition quality advantage over external no-context baselines & Table~\ref{tab:baseline_comparison}: positive \(\Delta OQ\) with strictly positive CI lower bounds in both comparisons and Holm-adjusted one-sided \(p\) bounds for the two-comparison \(OQ\) family & Supported as cross-condition gap (not isolated component causality) \\
@@ -1165,21 +1179,21 @@ Reproducibility validity is affected by runtime drift in model revisions, servin
 \subsection{Comparison with prior work and practical implications}
 The central finding is not that one model is universally superior. Under this protocol, integrating context extraction, guard-aware retrieval, and response control improves context and persona quality relative to the raw contextual arm, while also improving outcomes in the tested adversarial sets. Relative to prior work focused primarily on interaction quality \cite{Park2023GenerativeAgents} or retrieval-aware generation quality \cite{Asai2024SelfRAG,Edge2024GraphRAG}, the contribution here is the explicit integration of these components with runtime admissibility control and adversarial evaluation in one in-engine pipeline.
 
-This distinction matters for scientific reporting. Many studies demonstrate promising prompts but under-specify runtime control logic, which weakens replicability and deployment relevance. In this manuscript, runtime and evaluation paths are intentionally coupled, and claims are bounded by explicit criteria. The observed pattern is consistent across sections: response-control contrasts are positive on core quality metrics, guard-enabled settings improve results in tested adversarial conditions, and systems efficiency remains the main bottleneck. These are protocol-specific findings, not a full causal decomposition, and therefore do not imply automatic latency gains.
-Accordingly, the comparative-positioning statement in this manuscript is scoped to the reviewed literature and measured protocol, and is not presented as a universal ``first-in-field'' claim.
+This distinction matters for scientific reporting. Many studies demonstrate promising prompts but under-specify runtime control logic, which weakens replicability and deployment relevance. In this report, runtime and evaluation paths are intentionally coupled, and claims are bounded by explicit criteria. The observed pattern is consistent across sections: response-control contrasts are positive on core quality metrics, guard-enabled settings improve results in tested adversarial conditions, and systems efficiency remains the main bottleneck. These are protocol-specific findings, not a full causal decomposition, and therefore do not imply automatic latency gains.
+Accordingly, the comparative-positioning statement in this report is scoped to the reviewed literature and measured protocol, and is not presented as a universal ``first-in-field'' claim.
 
 From an engineering perspective, the current configuration should still be treated as a quality-and-robustness prototype rather than a final production operating point: hard interventions are now low, but first-pass acceptance remains limited and serving speed remains slower than lightweight baselines. If throughput is the primary objective, lighter serving configurations still hold an advantage, including settings optimized around speculative decoding and memory-efficient serving stacks \cite{Leviathan2022SpecDec,Kwon2023vLLM}. The practical implication is to choose deployment points on an explicit quality-latency frontier rather than on raw speed alone.
 
 An additional practical implication is workflow design. Teams can adopt the architecture incrementally: first introduce state serialization and evaluation harnesses, then add guarded retrieval, and finally add response control with parity tests. This staged integration reduces adoption risk for existing production pipelines while preserving traceability of where specific gains originate.
 
-The broader significance is interdisciplinary. The system sits at the intersection of game AI, natural language generation, retrieval security, and human-centered evaluation. As a result, progress depends on coordinated advances in all four areas rather than isolated gains in any single subfield. This interdisciplinary framing also motivates the manuscript's evaluation breadth: narrative quality, robustness, and serving behavior are treated as jointly necessary for practical deployment.
+The broader significance is interdisciplinary. The system sits at the intersection of game AI, natural language generation, retrieval security, and human-centered evaluation. As a result, progress depends on coordinated advances in all four areas rather than isolated gains in any single subfield. This interdisciplinary framing also motivates the report's evaluation breadth: narrative quality, robustness, and serving behavior are treated as jointly necessary for practical deployment.
 
 \section{Conclusions, implications, and future directions}
 This chapter synthesizes the findings into bounded scientific conclusions and deployment implications. It distinguishes supported claims from unresolved limitations and then outlines the most consequential next steps for both research and practice.
 \subsection{Ethical and policy implications for NPC deployment}
 The architecture is designed for interactive entertainment, but its risk profile is not limited to content quality. Role-grounded generation can amplify stereotypes or exclusionary language if persona definitions or retrieval corpora are biased, and retrieval pipelines can be exploited through adversarial artifacts that appear authoritative. These concerns are consistent with broader analyses of social and safety risks in large language models \cite{Bender2021Parrots,Weidinger2022Taxonomy}. In response, the study includes explicit adversarial evaluation, response-level admissibility checks, and transparent reporting of both gains and failure trade-offs.
 
-Data governance and user trust present a second ethical axis. Narrative-game interactions can contain sensitive player behavior signals, so context serialization and logging must minimize unnecessary retention and avoid exposing private state attributes. Although this manuscript focuses on algorithmic performance rather than legal compliance design, the reporting protocol is structured to support external audit by making metric procedures, confidence intervals, and stress-test outcomes inspectable. This is particularly important where systems can be manipulated through prompt-level and retrieval-level attacks \cite{Zou2025PoisonedRAG,Chaturvedi2025AIP}.
+Data governance and user trust present a second ethical axis. Narrative-game interactions can contain sensitive player behavior signals, so context serialization and logging must minimize unnecessary retention and avoid exposing private state attributes. Although this report focuses on algorithmic performance rather than legal compliance design, the reporting protocol is structured to support external audit by making metric procedures, confidence intervals, and stress-test outcomes inspectable. This is particularly important where systems can be manipulated through prompt-level and retrieval-level attacks \cite{Zou2025PoisonedRAG,Chaturvedi2025AIP}.
 
 Finally, responsible deployment requires clarity about what the system does not guarantee. The current evidence supports improvements in grounded quality and robustness under the evaluated benchmark, but does not establish universal safety or universal generalization. For this reason, claims are bounded to measured conditions, and negative findings are retained. This policy follows the same principle underlying alignment and constitutional approaches: safety mechanisms should be treated as operational constraints that require continuous measurement, not one-time guarantees \cite{Bai2022Constitutional}.
 
@@ -1197,7 +1211,7 @@ Five limitations are central. First, operational reliability in UE5 is improved 
 Future work should focus on five concrete upgrades: state-conditioned control-threshold calibration to reduce fallback/retry burden under fixed safety caps, quality-preserving acceleration for lower-intervention runtime operation, broader retrieval labels and lower-dependence scenario expansion for stronger external validity, repeated UE5 operational runs with mixed-effects uncertainty modeling for stability claims, and completion of the power-planned larger human-evaluation campaign with broader rater diversity. These steps are necessary to determine whether the observed gains generalize under broader workloads and stricter real-time constraints.
 
 \section*{Artifact and reproducibility statement}
-All quantitative conclusions in this manuscript are grounded in versioned supplementary artifact bundles, including run manifests, metric summaries, confidence-interval reports, raw benchmark traces, and analysis scripts. The package is structured to support independent verification of every reported numerical result.
+All quantitative conclusions in this report are grounded in versioned supplementary artifact bundles, including run manifests, metric summaries, confidence-interval reports, raw benchmark traces, and analysis scripts. The package is structured to support independent verification of every reported numerical result.
 
 \appendix
 \titleformat{\section}{\bfseries\fontsize{15}{20}\selectfont}{Appendix \thesection:}{0.6em}{}
@@ -1223,21 +1237,21 @@ The campaign uses three independent raters and shared overlap to estimate inter-
 
 \subsection{Compute and runtime environment}
 Serving and evaluation are executed with local inference endpoints and recorded host metadata. The pipeline captures model IDs, prompts, and configuration parameters (temperature, max tokens) to support reruns. CMake-based C++ builds and Python orchestration are executed through reproducible command manifests.
-For deterministic manuscript builds, the document is compiled from the \texttt{docs/} directory using XeLaTeX only (\texttt{xelatex IEEE\_FULL\_PAPER.tex} run at least twice, and a third pass after major label or citation edits). Mixed working directories or pdfLaTeX runs can produce stale auxiliary-reference warnings in the presence of Unicode cover pages.
+For deterministic report builds, the document is compiled from the \texttt{docs/} directory using XeLaTeX only (\texttt{xelatex IEEE\_FULL\_PAPER.tex} run at least twice, and a third pass after major label or citation edits). Mixed working directories or pdfLaTeX runs can produce stale auxiliary-reference warnings in the presence of Unicode cover pages.
 
 \subsection{Literature-screening protocol for comparative positioning}
 The comparative-positioning statement in Chapter 2 is based on a targeted narrative search, not on a formal PRISMA-style systematic review \cite{Page2021PRISMA2020}. Search sources were IEEE Xplore, ACM Digital Library, ACL Anthology, and arXiv over January 2020--February 2026. Query families included combinations of: ``NPC dialogue'' OR ``LLM game agents''; ``game-state grounding''; ``retrieval-augmented generation'' AND (``poisoning'' OR ``prompt injection'' OR ``trust spoofing''); and ``runtime evaluation'' OR ``in-engine benchmark''. Reproducible query templates were defined as text fields over title/abstract/keywords, including: \(Q_1\): (``NPC dialogue'' OR ``non-player character dialogue'') AND (``large language model'' OR LLM) AND (game OR ``narrative game''); \(Q_2\): (``game state'' OR ``world state'') AND (grounding OR context) AND (dialogue OR interaction); \(Q_3\): (``retrieval-augmented generation'' OR RAG) AND (poisoning OR ``prompt injection'' OR ``indirect prompt injection'' OR ``trust spoofing''); \(Q_4\): (``runtime'' OR ``in-engine'') AND (evaluation OR benchmark) AND (agent OR dialogue).
 
 Inclusion criteria were: direct relevance to interactive game/NPC dialogue or closely adjacent LLM-agent runtime control, explicit method description, and empirical evaluation details sufficient for comparative positioning. Exclusion criteria were: purely conceptual opinion pieces without empirical methods, non-game domains without transferable runtime-control mechanisms, and non-English records lacking technical detail required for method-level comparison.
 
-Citation formatting prioritizes archival venue metadata and DOI when verifiably available. Preprint-only records are retained when no archival version could be confirmed at manuscript freeze, and these are explicitly presented as preprints rather than evidence-equivalent substitutes for peer-reviewed venues. A final venue audit was run on March 4, 2026 against DBLP and Crossref; entries that remain in arXiv/CoRR form did not have verified archival venue metadata at that date.
+Citation formatting prioritizes archival venue metadata and DOI when verifiably available. Preprint-only records are retained when no archival version could be confirmed at report freeze, and these are explicitly presented as preprints rather than evidence-equivalent substitutes for peer-reviewed venues. A final venue audit was run on March 4, 2026 against DBLP and Crossref; entries that remain in arXiv/CoRR form did not have verified archival venue metadata at that date.
 
 Because the process was targeted and hypothesis-driven, it supports scoped comparative positioning but does not guarantee exhaustive field coverage. In addition, PRISMA-style screening flow counts were not maintained because the review was not executed as a formal systematic-review protocol. For this reason, Chapter 2 does not claim ``first-in-field'' novelty; it reports bounded comparative evidence under explicit scope and protocol constraints.
 
 \section{Extended interpretation and comparative notes}
 This appendix section provides interpretive extensions that would otherwise interrupt the main argument flow. It retains comparative nuance, additional limitations context, and design reflections while preserving claim discipline from the core chapters.
 \subsection{Comparative-scope limitations}
-This work compares against external baselines under identical prompts and datasets, which is appropriate for engineering benchmarking but not equivalent to full protocol replication of each cited paper. Conclusions in this manuscript are therefore constrained to axes directly measured in the recorded benchmark artifacts.
+This work compares against external baselines under identical prompts and datasets, which is appropriate for engineering benchmarking but not equivalent to full protocol replication of each cited paper. Conclusions in this report are therefore constrained to axes directly measured in the recorded benchmark artifacts.
 
 \subsection{Future work plan}
 The immediate roadmap includes decode-path acceleration with quality-parity checks, expansion of the official retrieval label set, larger mixed human-subject and expert-rater studies, explicit equal-quality serving-frontier reporting, and uncertainty-aware calibration of response-control thresholds.
@@ -1245,7 +1259,7 @@ The immediate roadmap includes decode-path acceleration with quality-parity chec
 \subsection{Detailed reproducibility report}
 This section is intentionally detailed to serve two goals: first, to document full implementation logic for independent reproduction; second, to provide the depth typically expected in long-format engineering papers where the contribution combines system design, evaluation protocol, and deployment constraints rather than a single model novelty. The text below is organized as procedural documentation in IEEE narrative style.
 
-Methodological reporting is aligned with reproducibility-first practice: every benchmark run is linked to a manifest containing model identity, decoding configuration, scenario slice, and hash-stamped artifact outputs. The intent is to make each reported number traceable from manuscript table to executable run state, consistent with recommendations from reproducibility initiatives in machine learning \cite{Pineau2021Reproducibility}.
+Methodological reporting is aligned with reproducibility-first practice: every benchmark run is linked to a manifest containing model identity, decoding configuration, scenario slice, and hash-stamped artifact outputs. The intent is to make each reported number traceable from report table to executable run state, consistent with recommendations from reproducibility initiatives in machine learning \cite{Pineau2021Reproducibility}.
 
 Scenario construction follows a templated expansion approach. A base scenario definition contains archetype, locale, conflict objective, state variables, and success conditions. The generator expands each base by varying one or more dimensions while preserving semantic validity constraints. For example, if archetype is ``temple scholar,'' conflict variants can include misinformation injection, urgency override, contradictory memory challenge, and authority spoofing; however, item-trade conflict templates are disabled unless the scenario includes an economic context key.
 
@@ -1280,7 +1294,7 @@ Relative to retrieval-grounded generation literature, modern retrieval-plus-crit
 
 Relative to alignment and preference-learning work \cite{Ouyang2022InstructGPT,Rafailov2023DPO,Bai2022Constitutional}, the design choice in this paper is to complement training-time alignment with runtime control. Response control is treated as a deterministic admissibility layer that can enforce context and persona constraints turn-by-turn, even when upstream generation confidence is unstable.
 
-Finally, relative to evaluation practice based only on overlap-style scoring, this manuscript adopts a broader evidence model combining context and persona metrics, inferential significance testing, preference outcomes, and agreement statistics \cite{Zhang2020BERTScore,Zheng2023MTBench,Wang2024Judge,Dubois2024AlpacaEval,Cohen1960Kappa}. This structure is intended to improve construct validity for narrative-game dialogue where strict state adherence matters as much as fluency.
+Finally, relative to evaluation practice based only on overlap-style scoring, this report adopts a broader evidence model combining context and persona metrics, inferential significance testing, preference outcomes, and agreement statistics \cite{Zhang2020BERTScore,Zheng2023MTBench,Wang2024Judge,Dubois2024AlpacaEval,Cohen1960Kappa}. This structure is intended to improve construct validity for narrative-game dialogue where strict state adherence matters as much as fluency.
 
 \subsection{Failure taxonomy}
 Failure analysis uses five high-level classes: context omission, where the response ignores a critical state variable; persona drift, where response style diverges from the NPC role profile; instruction hijack, where malicious or irrelevant retrieval cues redirect behavior; temporal inconsistency, where the response contradicts recent dialogue memory; and over-constrained language, where control pressure yields rigid but less natural text.
@@ -1606,6 +1620,8 @@ This is the statistical reason confidence intervals can be attached to counterfa
 Across stress families, the dominant difference between systems is not style quality but constraint adherence under pressure. Baseline systems frequently accept high-confidence but inconsistent instructions. Guarded systems reject these instructions, retain role voice, and preserve state alignment at the cost of lower lexical diversity in high-risk cases. This trade-off is acceptable for narrative-game deployments where consistency and safety are primary design objectives.
 
 Attack families are balanced across coercion, spoofing, and memory-conflict perturbations so that ASR outcomes are not driven by a single adversarial template. This design choice is consistent with current retrieval-security practice, which emphasizes attack-family coverage rather than single-pattern stress reporting \cite{Zou2025PoisonedRAG,Chaturvedi2025AIP}.
+
+\clearpage
 
 \section*{Acknowledgment}
 The author thanks research advisors and contributors to open-source ecosystems (UE5, transformers, PEFT, ONNX Runtime, llama.cpp, and benchmark tooling) that enabled rapid iterative experimentation.

@@ -12,6 +12,7 @@
 - [PROPOSAL_QUALITY_BAR.md](PROPOSAL_QUALITY_BAR.md): pass/fail gate definitions.
 - [ACADEMIC_WRITING_STANDARD.md](ACADEMIC_WRITING_STANDARD.md): writing-standard checklist (IEEE/ACM/NeurIPS style).
 - [KAGGLE_GUIDE.md](KAGGLE_GUIDE.md): Kaggle execution and reproducibility flow.
+- [SYSTEMATIC_REVIEW_GAME_CONFERENCE_READINESS.md](SYSTEMATIC_REVIEW_GAME_CONFERENCE_READINESS.md): readiness audit + gap matrix for dual-paper strategy.
 - [proposal.txt](proposal.txt): original project proposal text.
 
 ## Repro Commands
@@ -23,6 +24,17 @@ python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434
 ```bash
 python scripts/proposal_quality_gate.py --proposal-run latest --publication-run latest --require-human-eval --require-security-benchmark --strict
 ```
+- Strict security-required checkout profile:
+```bash
+python scripts/run_kaggle_strict_security_checkout.py --host http://127.0.0.1:11434
+```
+- Multi-seed proposal aggregate (evidence hardening):
+```bash
+python scripts/aggregate_proposal_multiseed.py --run-ids <run1,run2,run3>
+```
+
+## Canonical Run Registry
+- `releases/canonical_runs/20260310_canonical_registry.json`: source-of-truth mapping from claim profile to artifact paths/commands.
 
 ## Archive
 Legacy/outdated docs are kept under:

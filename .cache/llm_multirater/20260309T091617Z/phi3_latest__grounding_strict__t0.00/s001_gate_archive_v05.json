@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "4",
+      "notes": "The response is contextually relevant and aligns with the persona, but could be more natural in tone."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "1",
+      "naturalness": "4",
+      "overall_quality": "2",
+      "notes": "Lacks necessary details to understand why access isn't granted without additional context. Penalized for generic drift from expected dialogue as a Merchant focused on fair exchange and practicality."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "5",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "5",
+      "notes": "This response is highly relevant, consistent with the persona of an experienced merchant who understands protocol but offers alternative solutions that align well with contextual needs and player input for a direct answer."
+    }
+  ]
+}

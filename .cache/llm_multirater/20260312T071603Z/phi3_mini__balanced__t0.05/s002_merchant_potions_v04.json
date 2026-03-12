@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "4",
+      "notes": "proposed_contextual_controlled<TAB>4<TAB>5<TAB>3<TAB>4<TAB>Overall, the response is relevant and consistent with persona but could be more natural in tone.<br>baseline_no_context<TAB>2<TAB>3<TAB>4<TAB>4<TAB>The context relevance needs improvement; it's too generic for this scenario.<br>baseline_no_context_phi3_latest<TAB>5<TAB>5<TAB>5<TAB>5<TAB>Excellent response, highly relevant and natural with "
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "1",
+      "naturalness": "3",
+      "overall_quality": "2",
+      "notes": "baseline_no_context    2   1       3      2      The response lacks specificity to context and persona, but is natural in tone. Short Note: Needs more situational awareness and alignment with Smuggler character traits for higher scores across categories."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "5",
+      "persona_consistency": "4",
+      "naturalness": "4",
+      "overall_quality": "4",
+      "notes": "The response shows urgency and a willingness to negotiate, which aligns with both context relevance and persona consistency but lacks some natural language nuances."
+    }
+  ]
+}

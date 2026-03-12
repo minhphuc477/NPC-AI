@@ -1,0 +1,31 @@
+{
+  "ok": false,
+  "command": [
+    "F:\\NPC AI\\.venv\\Scripts\\python.exe",
+    "scripts/train_retrieval_reranker.py",
+    "--pairs",
+    "data\\retrieval_reranker_pairs_wide.jsonl",
+    "--retrieval-corpus",
+    "data\\retrieval_corpus_wide_v2.jsonl",
+    "--retrieval-gold",
+    "data\\retrieval_gold_wide_v2.jsonl",
+    "--output-dir",
+    "artifacts\\publication\\20260312T104035Z\\retrieval\\reranker",
+    "--predictions-out",
+    "artifacts\\publication\\20260312T104035Z\\retrieval\\predictions_reranker.jsonl",
+    "--train-frac",
+    "0.85",
+    "--bm25-candidate-k",
+    "24",
+    "--hit-k",
+    "5",
+    "--seed",
+    "7"
+  ],
+  "returncode": 1,
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"F:\\NPC AI\\scripts\\train_retrieval_reranker.py\", line 14, in <module>\n    import joblib\nModuleNotFoundError: No module named 'joblib'\n",
+  "pairs_path": "data\\retrieval_reranker_pairs_wide.jsonl",
+  "summary_path": "artifacts\\publication\\20260312T104035Z\\retrieval\\reranker\\summary.json",
+  "predictions_path": "artifacts\\publication\\20260312T104035Z\\retrieval\\predictions_reranker.jsonl"
+}

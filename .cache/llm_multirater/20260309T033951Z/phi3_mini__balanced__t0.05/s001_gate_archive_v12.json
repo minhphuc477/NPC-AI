@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "4",
+      "notes": "proposed_contextual_controlled<TAB>4<TAB>5<TAB>3<TAB>4<TAB>The response is relevant and consistent with the persona but could be more natural in tone.<br>baseline_no_context<TAB>2<TAB>4<TAB>4<TAB>3<TAB>Balanced approach, though slightly less personalized to context relevance.<br>baseline_no_context_phi3_latest<TAB>5<TAB>5<TAB>5<TAB>5<TAB>Highly relevant and consistent with persona; naturalness is "
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "3",
+      "naturalness": "4",
+      "overall_quality": "5",
+      "notes": "baseline_no_context<TAB>2<TAB>3<TAB>4<TAB>5<TAB>The response is neutral, not fully utilizing the persona or context to guide player interaction.<TabShort Note: Needs improvement in relevance and consistency with NPC's role."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "The response is contextually relevant, maintains persona consistency as a strict and fair Gatekeeper would be cautious but not unreasonable in granting access. The language used feels natural for the character's background while being suspicious of strangers yet open to justified explanations."
+    }
+  ]
+}

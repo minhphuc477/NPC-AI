@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "4",
+      "notes": "proposed_contextual_controlled<TAB>4<TAB>5<TAB>3<TAB>4<TAB>The response is relevant but lacks a bit of naturalness in the dialogue, slightly disrupting persona consistency due to less evasive language."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "1",
+      "naturalness": "2",
+      "overall_quality": "3",
+      "notes": "baseline_no_context<TAB>2<TAB>1<TAB>2<TAB>3<TAB>Baseline without context is not relevant and inconsistent with Smuggler's opportunistic nature, also lacking in naturalness due to the formal tone used which doesn’t fit persona."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "\"Response is consistent with persona but lacks some naturalness and context relevance.\""
+    }
+  ]
+}

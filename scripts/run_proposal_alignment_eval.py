@@ -28,7 +28,12 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from core.response_controller import ControlConfig, control_response, sanitize_response
+from core.response_controller import (
+    ControlConfig,
+    control_response,
+    grounded_fallback_response,
+    sanitize_response,
+)
 
 TOKEN_RE = re.compile(r"[a-z0-9']+")
 SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
@@ -38,6 +43,14 @@ BASE_METRICS: Tuple[str, ...] = (
     "context_relevance",
     "persona_consistency",
     "naturalness",
+)
+GAMEPLAY_METRICS: Tuple[str, ...] = (
+    "quest_state_correctness",
+    "lore_consistency",
+    "multi_turn_contradiction_safety",
+    "objective_completion_support",
+    "gameplay_usefulness",
+    "time_pressure_acceptability",
 )
 DIAGNOSTIC_METRICS: Tuple[str, ...] = (
     "context_keyword_coverage",
@@ -360,7 +373,7 @@ def control_config_payload(
 
 
 def metric_names(include_bertscore: bool) -> List[str]:
-    names = list(BASE_METRICS) + list(DIAGNOSTIC_METRICS)
+    names = list(BASE_METRICS) + list(GAMEPLAY_METRICS) + list(DIAGNOSTIC_METRICS)
     if include_bertscore:
         names.append("bertscore_f1")
     names.append("overall_quality")
@@ -932,6 +945,194 @@ def naturalness_score(response: str) -> float:
     return float(naturalness_components(response).get("naturalness", 0.0))
 
 
+def clamp01(value: float) -> float:
+    return max(0.0, min(1.0, float(value)))
+
+
+def _event_keywords(text: str, max_items: int = 12) -> List[str]:
+    tokens = [t for t in tokenize(text) if len(t) >= 4]
+    if not tokens:
+        return []
+    deduped: List[str] = []
+    seen = set()
+    for token in tokens:
+        if token in seen:
+            continue
+        seen.add(token)
+        deduped.append(token)
+        if len(deduped) >= max_items:
+            break
+    return deduped
+
+
+def _urgency_flag(player_input: str, recent_event: str) -> bool:
+    merged = f"{player_input} {recent_event}".lower()
+    urgency_markers = (
+        "urgent",
+        "immediate",
+        "quick",
+        "quickly",
+        "right now",
+        "running out of time",
+        "priority",
+        "critical",
+        "no delays",
+        "asap",
+    )
+    return any(marker in merged for marker in urgency_markers)
+
+
+def _detect_policy_stance(response: str) -> str:
+    lowered = response.lower()
+    allow_markers = (
+        "you may",
+        "go ahead",
+        "entry granted",
+        "i allow",
+        "authorized",
+        "permit granted",
+        "pass through",
+    )
+    deny_markers = (
+        "cannot",
+        "can't",
+        "not allowed",
+        "no entry",
+        "denied",
+        "refuse",
+        "no passage",
+        "i won't allow",
+    )
+    allow = any(marker in lowered for marker in allow_markers)
+    deny = any(marker in lowered for marker in deny_markers)
+    if allow and deny:
+        return "mixed"
+    if allow:
+        return "allow"
+    if deny:
+        return "deny"
+    return "neutral"
+
+
+def quest_state_correctness_score(
+    response: str,
+    scenario: Dict[str, Any],
+    context_relevance: float,
+    context_keyword_cov: float,
+) -> float:
+    tags = get_scenario_tags(scenario)
+    conflict_type = str(tags.get("conflict_type", "")).strip().lower()
+    reference = str(scenario.get("reference_response", ""))
+    ref_overlap = jaccard_overlap(response, reference)
+    ctx_map = parse_dynamic_context_map(str(scenario.get("dynamic_context", "")))
+    state_terms = [
+        str(ctx_map.get("behaviortreestate", "")).strip(),
+        str(ctx_map.get("location", "")).strip(),
+        str(ctx_map.get("recentevent", "")).strip(),
+    ]
+    state_terms.extend(_event_keywords(str(ctx_map.get("recentevent", ""))))
+    state_cov = keyword_coverage(response, [x for x in state_terms if x])
+
+    policy_alignment = 0.5
+    if conflict_type == "access_control":
+        response_stance = _detect_policy_stance(response)
+        reference_stance = _detect_policy_stance(reference)
+        if response_stance == "mixed":
+            policy_alignment = 0.0
+        elif reference_stance == "neutral" and response_stance != "mixed":
+            policy_alignment = 0.6
+        elif response_stance == reference_stance:
+            policy_alignment = 1.0
+        elif response_stance == "neutral":
+            policy_alignment = 0.45
+        else:
+            policy_alignment = 0.1
+
+    return clamp01(
+        0.36 * float(context_relevance)
+        + 0.22 * float(context_keyword_cov)
+        + 0.22 * float(state_cov)
+        + 0.20 * max(float(ref_overlap), float(policy_alignment))
+    )
+
+
+def lore_consistency_score(response: str, scenario: Dict[str, Any], context_keyword_cov: float) -> float:
+    context = str(scenario.get("dynamic_context", ""))
+    reference = str(scenario.get("reference_response", ""))
+    ref_overlap = jaccard_overlap(response, reference)
+
+    context_entities = set(re.findall(r"\b[A-Z][a-z]{2,}\b", context + " " + reference))
+    response_entities = set(re.findall(r"\b[A-Z][a-z]{2,}\b", response))
+    if context_entities:
+        entity_cov = len(response_entities.intersection(context_entities)) / len(context_entities)
+    else:
+        entity_cov = 0.5
+    hallucinated_entities = [x for x in response_entities if x not in context_entities]
+    hallucination_penalty = min(0.25, 0.05 * len(hallucinated_entities))
+
+    return clamp01(0.48 * float(context_keyword_cov) + 0.32 * float(ref_overlap) + 0.20 * float(entity_cov) - hallucination_penalty)
+
+
+def objective_completion_support_score(response: str, scenario: Dict[str, Any]) -> float:
+    tags = get_scenario_tags(scenario)
+    conflict_type = str(tags.get("conflict_type", "")).strip().lower()
+    actionability = keyword_coverage(
+        response,
+        [
+            "first",
+            "then",
+            "next",
+            "go to",
+            "bring",
+            "show",
+            "speak to",
+            "return with",
+            "verify",
+            "confirm",
+        ],
+    )
+    procedural = keyword_coverage(response, ["if", "when", "once", "after", "before", "until"])
+    has_clear_outcome = keyword_coverage(response, ["you can", "you may", "i will", "that will", "this will"])
+
+    if conflict_type == "access_control":
+        stance = _detect_policy_stance(response)
+        stance_bonus = 1.0 if stance in ("allow", "deny") else (0.25 if stance == "neutral" else 0.0)
+        return clamp01(0.45 * actionability + 0.25 * procedural + 0.15 * has_clear_outcome + 0.15 * stance_bonus)
+
+    return clamp01(0.55 * actionability + 0.25 * procedural + 0.20 * has_clear_outcome)
+
+
+def gameplay_usefulness_score(
+    response: str,
+    objective_completion_support: float,
+    context_relevance: float,
+    naturalness: float,
+) -> float:
+    wc = len(tokenize(response))
+    concise_score = clamp01(1.0 - abs(float(wc) - 34.0) / 40.0)
+    return clamp01(
+        0.42 * float(objective_completion_support)
+        + 0.28 * float(context_relevance)
+        + 0.20 * float(naturalness)
+        + 0.10 * float(concise_score)
+    )
+
+
+def time_pressure_acceptability_score(
+    response: str,
+    scenario: Dict[str, Any],
+    objective_completion_support: float,
+) -> float:
+    ctx_map = parse_dynamic_context_map(str(scenario.get("dynamic_context", "")))
+    is_urgent = _urgency_flag(str(scenario.get("player_input", "")), str(ctx_map.get("recentevent", "")))
+    wc = len(tokenize(response))
+    directness = keyword_coverage(response, ["now", "immediately", "first", "then", "go", "show", "do this"])
+    concise = clamp01(1.0 - max(0.0, float(wc) - 45.0) / 55.0)
+    if is_urgent:
+        return clamp01(0.58 * float(objective_completion_support) + 0.27 * float(concise) + 0.15 * float(directness))
+    return clamp01(0.45 * float(objective_completion_support) + 0.25 * float(concise) + 0.30 * float(directness))
+
+
 def compute_optional_bertscore(
     predictions: List[str],
     references: List[str],
@@ -998,6 +1199,9 @@ def evaluate_responses_for_arm(
     scenarios_by_id: Dict[str, Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
     scored: List[Dict[str, Any]] = []
+    source_stances: Dict[str, set[str]] = {}
+    source_id_by_scenario: Dict[str, str] = {}
+    pending_rows: List[Dict[str, Any]] = []
     for row in responses:
         sid = str(row.get("scenario_id", ""))
         scenario = scenarios_by_id.get(sid, {})
@@ -1017,12 +1221,47 @@ def evaluate_responses_for_arm(
         persona_cons = persona_consistency_score(response, persona, persona_keywords)
         natural = float(nat.get("naturalness", 0.0))
 
-        scored.append(
+        quest_state_correctness = quest_state_correctness_score(
+            response=response,
+            scenario=scenario,
+            context_relevance=context_rel,
+            context_keyword_cov=context_kw,
+        )
+        lore_consistency = lore_consistency_score(
+            response=response,
+            scenario=scenario,
+            context_keyword_cov=context_kw,
+        )
+        objective_completion_support = objective_completion_support_score(response=response, scenario=scenario)
+        gameplay_usefulness = gameplay_usefulness_score(
+            response=response,
+            objective_completion_support=objective_completion_support,
+            context_relevance=context_rel,
+            naturalness=natural,
+        )
+        time_pressure_acceptability = time_pressure_acceptability_score(
+            response=response,
+            scenario=scenario,
+            objective_completion_support=objective_completion_support,
+        )
+
+        source_scenario_id = str(scenario.get("source_scenario_id", "")).strip() or sid
+        source_id_by_scenario[sid] = source_scenario_id
+        stance = _detect_policy_stance(response)
+        if stance != "neutral":
+            source_stances.setdefault(source_scenario_id, set()).add(stance)
+
+        pending_rows.append(
             {
                 **row,
                 "context_relevance": context_rel,
                 "persona_consistency": persona_cons,
                 "naturalness": natural,
+                "quest_state_correctness": quest_state_correctness,
+                "lore_consistency": lore_consistency,
+                "objective_completion_support": objective_completion_support,
+                "gameplay_usefulness": gameplay_usefulness,
+                "time_pressure_acceptability": time_pressure_acceptability,
                 "context_keyword_coverage": context_kw,
                 "context_overlap": context_ov,
                 "persona_keyword_coverage": persona_kw,
@@ -1032,6 +1271,18 @@ def evaluate_responses_for_arm(
                 "sentence_score": float(nat.get("sentence_score", 0.0)),
             }
         )
+
+    source_contradiction_rate: Dict[str, float] = {}
+    for source_id, stances in source_stances.items():
+        source_contradiction_rate[source_id] = 1.0 if len(stances) > 1 else 0.0
+
+    for row in pending_rows:
+        sid = str(row.get("scenario_id", ""))
+        source_id = source_id_by_scenario.get(sid, sid)
+        contradiction_rate = float(source_contradiction_rate.get(source_id, 0.0))
+        row["multi_turn_contradiction_rate"] = contradiction_rate
+        row["multi_turn_contradiction_safety"] = 1.0 - contradiction_rate
+        scored.append(row)
     return scored
 
 
@@ -1040,7 +1291,7 @@ def summarize_arm_scores(
     seed: int,
     include_bertscore: bool,
 ) -> Dict[str, Any]:
-    metrics = list(BASE_METRICS) + list(DIAGNOSTIC_METRICS)
+    metrics = list(BASE_METRICS) + list(GAMEPLAY_METRICS) + list(DIAGNOSTIC_METRICS)
     if include_bertscore:
         metrics.append("bertscore_f1")
 
@@ -1399,7 +1650,7 @@ def summarize_scores_by_slice(
     seed: int,
     include_bertscore: bool,
 ) -> Dict[str, Any]:
-    chosen_metrics = [*BASE_METRICS, "overall_quality"]
+    chosen_metrics = [*BASE_METRICS, *GAMEPLAY_METRICS, "overall_quality"]
     chosen_metrics.extend(["context_keyword_coverage", "persona_keyword_coverage"])
     if include_bertscore:
         chosen_metrics.append("bertscore_f1")
@@ -1741,6 +1992,47 @@ def analyze_errors(scored_rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
+def analyze_multi_turn_contradictions(
+    scored_by_arm: Dict[str, List[Dict[str, Any]]],
+    scenarios_by_id: Dict[str, Dict[str, Any]],
+) -> Dict[str, Any]:
+    out: Dict[str, Any] = {"arms": {}}
+    for arm_id, rows in scored_by_arm.items():
+        by_source: Dict[str, List[float]] = {}
+        for row in rows:
+            sid = str(row.get("scenario_id", "")).strip()
+            scenario = scenarios_by_id.get(sid, {})
+            source_id = str(scenario.get("source_scenario_id", "")).strip() or sid
+            rate = float(row.get("multi_turn_contradiction_rate", 0.0) or 0.0)
+            by_source.setdefault(source_id, []).append(rate)
+
+        source_payload: Dict[str, Any] = {}
+        source_rates: List[float] = []
+        contradicted_sources = 0
+        for source_id, vals in sorted(by_source.items()):
+            if not vals:
+                continue
+            source_rate = float(statistics.fmean(vals))
+            source_payload[source_id] = {
+                "n": len(vals),
+                "contradiction_rate": source_rate,
+                "contradiction_safety": 1.0 - source_rate,
+            }
+            source_rates.append(source_rate)
+            if source_rate > 0.0:
+                contradicted_sources += 1
+
+        overall_rate = float(statistics.fmean(source_rates)) if source_rates else float("nan")
+        out["arms"][arm_id] = {
+            "source_count": len(source_payload),
+            "contradicted_source_count": contradicted_sources,
+            "multi_turn_contradiction_rate": overall_rate,
+            "multi_turn_contradiction_safety": (1.0 - overall_rate) if not math.isnan(overall_rate) else float("nan"),
+            "by_source": source_payload,
+        }
+    return out
+
+
 def summarize_operational_metrics(
     responses_by_arm: Dict[str, List[Dict[str, Any]]],
     scenarios_by_id: Dict[str, Dict[str, Any]],
@@ -1907,6 +2199,7 @@ def render_report(
     human_eval: Optional[Dict[str, Any]] = None,
     operational_metrics: Optional[Dict[str, Any]] = None,
     scenario_dependence: Optional[Dict[str, Any]] = None,
+    multi_turn_contradictions: Optional[Dict[str, Any]] = None,
 ) -> None:
     lines: List[str] = []
     lines.append("# Proposal Alignment Evaluation Report")
@@ -1952,6 +2245,32 @@ def render_report(
             + b_text
             + " |"
         )
+    lines.append("")
+
+    lines.append("## Game-facing Outcome Metrics (mean, 95% CI)")
+    lines.append(
+        "| Arm | Quest-state Correctness | Lore Consistency | Contradiction Safety | Objective Completion Support | Gameplay Usefulness | Time-pressure Acceptability |"
+    )
+    lines.append("|---|---:|---:|---:|---:|---:|---:|")
+    for arm in arms:
+        arm_summary = summary.get(arm.arm_id, {})
+        q = arm_summary.get("quest_state_correctness", {})
+        l = arm_summary.get("lore_consistency", {})
+        c = arm_summary.get("multi_turn_contradiction_safety", {})
+        ocs = arm_summary.get("objective_completion_support", {})
+        g = arm_summary.get("gameplay_usefulness", {})
+        t = arm_summary.get("time_pressure_acceptability", {})
+        lines.append(
+            f"| {arm.arm_id} | "
+            f"{q.get('mean', float('nan')):.4f} ({q.get('ci95_low', float('nan')):.4f}, {q.get('ci95_high', float('nan')):.4f}) | "
+            f"{l.get('mean', float('nan')):.4f} ({l.get('ci95_low', float('nan')):.4f}, {l.get('ci95_high', float('nan')):.4f}) | "
+            f"{c.get('mean', float('nan')):.4f} ({c.get('ci95_low', float('nan')):.4f}, {c.get('ci95_high', float('nan')):.4f}) | "
+            f"{ocs.get('mean', float('nan')):.4f} ({ocs.get('ci95_low', float('nan')):.4f}, {ocs.get('ci95_high', float('nan')):.4f}) | "
+            f"{g.get('mean', float('nan')):.4f} ({g.get('ci95_low', float('nan')):.4f}, {g.get('ci95_high', float('nan')):.4f}) | "
+            f"{t.get('mean', float('nan')):.4f} ({t.get('ci95_low', float('nan')):.4f}, {t.get('ci95_high', float('nan')):.4f}) |"
+        )
+    lines.append("")
+    lines.append("- Multi-turn contradiction rate is reported as `1 - contradiction_safety` in row-level outputs.")
     lines.append("")
 
     lines.append("## Deltas vs Baselines")
@@ -2044,6 +2363,20 @@ def render_report(
         lines.append("- Detailed diagnostics are published in `scenario_dependence.json`.")
         lines.append("")
 
+    if multi_turn_contradictions:
+        lines.append("## Multi-turn Contradiction")
+        lines.append("| Arm | Contradiction Rate | Contradiction Safety | Contradicted Sources | Source Count |")
+        lines.append("|---|---:|---:|---:|---:|")
+        for arm in arms:
+            payload = multi_turn_contradictions.get("arms", {}).get(arm.arm_id, {})
+            lines.append(
+                f"| {arm.arm_id} | {payload.get('multi_turn_contradiction_rate', float('nan')):.4f} | "
+                f"{payload.get('multi_turn_contradiction_safety', float('nan')):.4f} | "
+                f"{payload.get('contradicted_source_count', 0)} | {payload.get('source_count', 0)} |"
+            )
+        lines.append("- Detailed source-level values are published in `multi_turn_contradictions.json`.")
+        lines.append("")
+
     if human_eval:
         lines.append("## Human Evaluation")
         lines.append(f"- Normalized rows: `{human_eval.get('row_count', 0)}`")
@@ -2056,7 +2389,9 @@ def render_report(
     else:
         lines.append(f"- BERTScore status: unavailable ({bertscore_meta.get('reason', 'unknown')}).")
     lines.append("")
-    lines.append("This report directly covers proposal RO5 metrics: context relevance, persona consistency, naturalness, and baseline deltas.")
+    lines.append(
+        "This report covers proposal RO5 metrics plus game-facing outcomes: quest-state correctness, lore consistency, contradiction safety, objective completion support, gameplay usefulness, and time-pressure acceptability."
+    )
     output_path.write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -2985,7 +3320,21 @@ def main() -> None:
                         record["response"] = sanitized
                         record["response_sanitized"] = (sanitized != raw_response)
                     else:
-                        record["response"] = "I need a clearer request before I can respond in character."
+                        scenario_persona = str(scenario.get("persona", ""))
+                        scenario_context = str(scenario.get("dynamic_context", "")) if arm.include_dynamic_context else ""
+                        scenario_input = str(scenario.get("player_input", ""))
+                        persona_keywords = [str(x) for x in scenario.get("persona_keywords", [])]
+                        fallback_text = sanitize_npc_response(
+                            grounded_fallback_response(
+                                persona=scenario_persona,
+                                dynamic_context=scenario_context,
+                                player_input=scenario_input,
+                                persona_keywords=persona_keywords,
+                            )
+                        )
+                        if not fallback_text:
+                            fallback_text = "I can help, but I need one concrete detail so I can respond safely and in character."
+                        record["response"] = fallback_text
                         record["response_sanitized"] = True
                         record["response_fallback"] = True
 
@@ -3186,6 +3535,12 @@ def main() -> None:
     write_json(run_dir / "paired_delta_significance.json", paired_deltas)
     write_json(run_dir / "win_rates.json", win_rates)
 
+    multi_turn_contradictions = analyze_multi_turn_contradictions(
+        scored_by_arm=scored_by_arm,
+        scenarios_by_id=scenarios_by_id,
+    )
+    write_json(run_dir / "multi_turn_contradictions.json", multi_turn_contradictions)
+
     slice_keys = parse_list_arg(str(args.slice_keys))
     slice_summary = summarize_scores_by_slice(
         scored_by_arm=scored_by_arm,
@@ -3248,6 +3603,7 @@ def main() -> None:
         human_eval=human_eval_summary,
         operational_metrics=operational_metrics,
         scenario_dependence=scenario_dependence,
+        multi_turn_contradictions=multi_turn_contradictions,
     )
 
     print(f"\nPublished proposal artifact bundle: {run_dir}")
@@ -3261,6 +3617,7 @@ def main() -> None:
     print(f"  - {run_dir / 'operational_metrics.json'}")
     print(f"  - {run_dir / 'preflight_operational_gate.json'}")
     print(f"  - {run_dir / 'scenario_dependence.json'}")
+    print(f"  - {run_dir / 'multi_turn_contradictions.json'}")
     if human_eval_summary is not None:
         print(f"  - {run_dir / 'human_eval_summary.json'}")
         print(f"  - {run_dir / 'human_eval_report.md'}")

@@ -492,18 +492,56 @@ def dcg(relevances: Sequence[int]) -> float:
     return score
 
 
+def normalize_relevance_grades(row: Dict[str, Any]) -> Dict[str, int]:
+    grades_raw = row.get("relevant_doc_grades", {})
+    if isinstance(grades_raw, dict):
+        normalized: Dict[str, int] = {}
+        for doc_id, grade in grades_raw.items():
+            key = str(doc_id).strip()
+            if not key:
+                continue
+            try:
+                val = int(grade)
+            except Exception:
+                continue
+            if val > 0:
+                normalized[key] = val
+        if normalized:
+            return normalized
+
+    fallback = [str(x).strip() for x in row.get("relevant_doc_ids", []) if str(x).strip()]
+    return {doc_id: 1 for doc_id in fallback}
+
+
+def summarize_query_metrics(per_query: List[Dict[str, Any]], hit_k: int, seed: int) -> Dict[str, Any]:
+    key_hit = f"hit@{hit_k}"
+    key_ndcg = f"ndcg@{hit_k}"
+    hit_values = [float(r[key_hit]) for r in per_query]
+    mrr_values = [float(r["mrr"]) for r in per_query]
+    ndcg_values = [float(r[key_ndcg]) for r in per_query]
+    return {
+        "query_count": len(per_query),
+        key_hit: bootstrap_mean_ci(hit_values, seed=seed + 11),
+        "mrr": bootstrap_mean_ci(mrr_values, seed=seed + 23),
+        key_ndcg: bootstrap_mean_ci(ndcg_values, seed=seed + 37),
+    }
+
+
 def evaluate_rankings(
     gold_rows: List[Dict[str, Any]],
     pred_rows: List[Dict[str, Any]],
     hit_k: int,
     seed: int,
 ) -> Dict[str, Any]:
-    gold_map: Dict[str, List[str]] = {}
+    gold_map: Dict[str, Dict[str, Any]] = {}
     for row in gold_rows:
         qid = str(row.get("query_id", "")).strip()
-        rel = [str(x) for x in row.get("relevant_doc_ids", []) if str(x).strip()]
-        if qid and rel:
-            gold_map[qid] = rel
+        rel_grades = normalize_relevance_grades(row)
+        if qid and rel_grades:
+            gold_map[qid] = {
+                "grades": rel_grades,
+                "query_type": str(row.get("query_type", "generic")).strip() or "generic",
+            }
 
     pred_map: Dict[str, List[str]] = {}
     for row in pred_rows:
@@ -513,43 +551,50 @@ def evaluate_rankings(
             pred_map[qid] = ranked
 
     per_query: List[Dict[str, Any]] = []
-    for qid, relevant in gold_map.items():
+    for qid, relevant_payload in gold_map.items():
         ranked = pred_map.get(qid, [])[:hit_k]
-        rel_set = set(relevant)
+        rel_grades = dict(relevant_payload.get("grades", {}))
+        rel_set = set(rel_grades.keys())
+        query_type = str(relevant_payload.get("query_type", "generic"))
 
         hit = 1.0 if any(doc_id in rel_set for doc_id in ranked) else 0.0
         rr = 0.0
         gains: List[int] = []
         for idx, doc_id in enumerate(ranked):
-            is_rel = 1 if doc_id in rel_set else 0
-            gains.append(is_rel)
-            if rr == 0.0 and is_rel == 1:
+            gain = int(rel_grades.get(doc_id, 0))
+            gains.append(gain)
+            if rr == 0.0 and gain > 0:
                 rr = 1.0 / float(idx + 1)
 
-        ideal_ones = min(len(rel_set), len(ranked))
-        idcg = dcg([1] * ideal_ones + [0] * (len(ranked) - ideal_ones))
+        ideal_gains = sorted(rel_grades.values(), reverse=True)[: len(ranked)]
+        if len(ideal_gains) < len(ranked):
+            ideal_gains = ideal_gains + [0] * (len(ranked) - len(ideal_gains))
+        idcg = dcg(ideal_gains)
         ndcg = (dcg(gains) / idcg) if idcg > 0 else 0.0
 
         per_query.append(
             {
                 "query_id": qid,
+                "query_type": query_type,
                 f"hit@{hit_k}": hit,
                 "mrr": rr,
                 f"ndcg@{hit_k}": ndcg,
             }
         )
 
-    hit_values = [float(r[f"hit@{hit_k}"]) for r in per_query]
-    mrr_values = [float(r["mrr"]) for r in per_query]
-    ndcg_values = [float(r[f"ndcg@{hit_k}"]) for r in per_query]
+    by_query_type: Dict[str, List[Dict[str, Any]]] = {}
+    for row in per_query:
+        key = str(row.get("query_type", "generic"))
+        by_query_type.setdefault(key, []).append(row)
 
-    return {
-        "query_count": len(per_query),
-        "per_query": per_query,
-        f"hit@{hit_k}": bootstrap_mean_ci(hit_values, seed=seed + 11),
-        "mrr": bootstrap_mean_ci(mrr_values, seed=seed + 23),
-        f"ndcg@{hit_k}": bootstrap_mean_ci(ndcg_values, seed=seed + 37),
-    }
+    by_query_type_summary: Dict[str, Any] = {}
+    for qtype, rows in sorted(by_query_type.items()):
+        by_query_type_summary[qtype] = summarize_query_metrics(rows, hit_k=hit_k, seed=seed + len(qtype) * 101)
+
+    result = summarize_query_metrics(per_query, hit_k=hit_k, seed=seed)
+    result["per_query"] = per_query
+    result["by_query_type"] = by_query_type_summary
+    return result
 
 
 def retrieval_ablation_deltas(metrics: Dict[str, Dict[str, Any]], baseline: str, hit_k: int) -> Dict[str, Any]:
@@ -784,6 +829,23 @@ def render_report(
             lines.append("")
             lines.append("- Reranker stage failed; see `retrieval/reranker_stage.json` for logs.")
     lines.append("")
+    lines.append("Retrieval by query type (lore / quest / persona / memory):")
+    lines.append("| Method | Query Type | Hit@k | MRR | nDCG@k |")
+    lines.append("|---|---|---:|---:|---:|")
+    typed_rows = 0
+    for method, metric in retrieval_metrics.items():
+        by_type = metric.get("by_query_type", {})
+        if not isinstance(by_type, dict):
+            continue
+        for qtype, qmetric in sorted(by_type.items()):
+            hit = qmetric.get(key_hit, {}).get("mean", float("nan"))
+            mrr = qmetric.get("mrr", {}).get("mean", float("nan"))
+            ndcg = qmetric.get(f"ndcg@{hit_k}", {}).get("mean", float("nan"))
+            lines.append(f"| {method} | {qtype} | {hit:.4f} | {mrr:.4f} | {ndcg:.4f} |")
+            typed_rows += 1
+    if typed_rows == 0:
+        lines.append("| n/a | n/a | n/a | n/a | n/a |")
+    lines.append("")
     lines.append("## 3. Confidence Intervals And Ablation Deltas")
     lines.append("| Metric | Candidate Mean (95% CI) | Baseline Mean (95% CI) | Delta |")
     lines.append("|---|---:|---:|---:|")
@@ -847,6 +909,10 @@ def render_report(
     lines.append(
         "This satisfies a production-serving baseline comparison requirement with a fixed dataset and fixed prompt protocol."
     )
+    lines.append("")
+    lines.append("## Claim Framing For Game Venues")
+    lines.append("Use quality + robustness under runtime constraints as the primary positioning claim.")
+    lines.append("Avoid framing this artifact as an overall best system across all speed/quality dimensions.")
     if security_metrics:
         lines.append("")
         lines.append("## 5. Adversarial Retrieval Robustness")
@@ -1180,6 +1246,7 @@ def main() -> None:
             "mrr": evaluation["mrr"],
             f"ndcg@{args.hit_k}": evaluation[f"ndcg@{args.hit_k}"],
             "query_count": evaluation["query_count"],
+            "by_query_type": evaluation.get("by_query_type", {}),
         }
         write_json(retrieval_dir / f"per_query_{method}.json", evaluation["per_query"])
 

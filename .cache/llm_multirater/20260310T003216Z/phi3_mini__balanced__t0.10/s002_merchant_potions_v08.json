@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "3",
+      "naturalness": "3",
+      "overall_quality": "3",
+      "notes": "proposed_contextual_controlled   4  3  3  3  Balanced response, but could be more concise and firm in tone to match persona consistency with the Watch Captain role.<br>baseline_no_context           2  5  4  3 Fairness upheld; however, lack of contextualization makes it less relevant. Persona as a strict enforcer is consistent yet lacks empathy for urgency.<br>baseline_no_context_phi3_latest   1  4"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "3",
+      "notes": "[baseline_no_context]               2  5  3  3  3   \"Lack of response to current situation affects overall quality negatively despite maintaining fairness in pricing policy.\""
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "\"Response lacks direct relevance to immediate needs but maintains persona integrity and naturalness.\""
+    }
+  ]
+}

@@ -35,6 +35,11 @@ BLOCKED_FRAGMENTS = (
     "draft response:",
     "player says:",
     "assistant:",
+    "current dynamic game state",
+    "runtime context:",
+    "output requirements:",
+    "example {\"npc\"",
+    "gatekeeper's dialogue response",
 )
 
 LEAK_TAIL_MARKERS = (
@@ -46,6 +51,10 @@ LEAK_TAIL_MARKERS = (
     "query:",
     "assistant:",
     "player says:",
+    "current dynamic game state",
+    "runtime context:",
+    "output requirements:",
+    "example {\"npc\"",
     "constraints:",
     "draft response:",
     "return only the rewritten",
@@ -657,6 +666,48 @@ def _persona_style(persona: str) -> str:
     return "neutral"
 
 
+def _fallback_intro(player_input: str, style: str) -> str:
+    text = (player_input or "").strip()
+    seed = sum(ord(ch) for ch in text) if text else 0
+    if style == "strict":
+        options = (
+            "Hold for a moment",
+            "Listen carefully",
+            "Understood",
+        )
+    elif style == "talkative":
+        options = (
+            "Friend",
+            "All right",
+            "Very well",
+        )
+    elif style == "calm":
+        options = (
+            "Take a breath",
+            "Stay with me",
+            "All right",
+        )
+    elif style == "formal":
+        options = (
+            "Noted",
+            "Understood",
+            "Proceeding carefully",
+        )
+    elif style == "mysterious":
+        options = (
+            "Listen well",
+            "Mark this",
+            "Hear me",
+        )
+    else:
+        options = (
+            "All right",
+            "Understood",
+            "Listen",
+        )
+    return options[seed % len(options)]
+
+
 def _intent_fragment(player_input: str) -> str:
     lowered = (player_input or "").lower()
     patterns = (
@@ -744,34 +795,11 @@ def _grounded_style_repair(
         )
     ):
         return ""
-    details = _context_detail_phrases(dynamic_context)
-    detail_clause = ""
-    if details:
-        core = details[:2]
-        if len(core) == 1:
-            detail_clause = core[0]
-        else:
-            detail_clause = f"{core[0]} and {core[1]}"
-
     anchor = _persona_anchor(persona_keywords)
-    anchor_clause = ""
-    if anchor and anchor not in low:
-        anchor_clause = f"in a {anchor} manner"
-
-    prefix_parts: List[str] = []
-    if detail_clause and detail_clause not in low:
-        prefix_parts.append(detail_clause)
-    if anchor_clause:
-        prefix_parts.append(anchor_clause)
-
-    if not prefix_parts:
+    if not anchor or anchor in low:
         return text
 
-    prefix = " ".join(prefix_parts).strip()
-    if not prefix:
-        return text
-    prefix = prefix[0].upper() + prefix[1:]
-    merged = f"{prefix}, {text}"
+    merged = f"{text} I remain {anchor} and focused."
     return sanitize_response(merged)
 
 
@@ -781,51 +809,41 @@ def _structured_repair_response(
     player_input: str,
     persona_keywords: Sequence[str] = (),
 ) -> str:
-    details = _context_detail_phrases(dynamic_context)
     style = _persona_style(persona)
-    intent = _intent_fragment(player_input)
     category = _intent_category(player_input)
     anchor = _persona_anchor(persona_keywords)
 
-    if details:
-        intro = f"At {details[0][3:]}" if details[0].startswith("at ") else f"At {details[0]}"
-        if len(details) > 1:
-            if details[1].startswith("while on "):
-                intro += f" and {details[1]}"
-            else:
-                intro += f", {details[1]}"
-    else:
-        intro = "Given the current situation"
+    intro = _fallback_intro(player_input, style)
 
     if style == "strict":
         if category == "access":
             body = "I cannot authorize entry until verification is complete."
         else:
-            body = f"I cannot approve {intent} until verification is complete."
+            body = "I cannot approve this request until verification is complete."
         close = f"Follow protocol and I will proceed as a {anchor or 'strict'} guardian."
         return sanitize_response(f"{intro}, {body} {close}")
 
     if style == "talkative":
-        body = f"I can help with {intent}, but the terms must stay fair today."
+        body = "I can help, but the terms must stay fair today."
         close = f"Keep it honest and we can settle this quickly in my {anchor or 'merchant'} style."
         return sanitize_response(f"{intro}, {body} {close}")
 
     if style == "calm":
-        body = f"We can handle {intent} safely, one step at a time."
+        body = "We can handle this safely, one step at a time."
         close = f"Stay steady and I will guide the next action in a {anchor or 'calm'} voice."
         return sanitize_response(f"{intro}, {body} {close}")
 
     if style == "formal":
-        body = f"The request concerning {intent} requires verifiable evidence."
+        body = "This request requires verifiable evidence."
         close = f"Provide concrete details and I will continue with {anchor or 'formal'} precision."
         return sanitize_response(f"{intro}, {body} {close}")
 
     if style == "mysterious":
-        body = f"Your path around {intent} has a cost in these conditions."
+        body = "This path has a cost in these conditions."
         close = f"Choose carefully, because timing matters as much as power to one who stays {anchor or 'mysterious'}."
         return sanitize_response(f"{intro}, {body} {close}")
 
-    body = f"I can respond to {intent} within these conditions."
+    body = "I can help if you state one clear, concrete action."
     close = f"Give one clear detail and I will proceed with {anchor or 'practical'} precision."
     return sanitize_response(f"{intro}, {body} {close}")
 
@@ -836,19 +854,11 @@ def grounded_fallback_response(
     player_input: str,
     persona_keywords: Sequence[str] = (),
 ) -> str:
-    detail_phrases = _context_detail_phrases(dynamic_context)
     style = _persona_style(persona)
-    intent = _intent_fragment(player_input)
     intent_category = _intent_category(player_input)
     anchor = _persona_anchor(persona_keywords)
 
-    if detail_phrases:
-        if len(detail_phrases) == 1:
-            context_sentence = f"Here {detail_phrases[0]},"
-        else:
-            context_sentence = f"Here {detail_phrases[0]} and {detail_phrases[1]},"
-    else:
-        context_sentence = "Given the current situation,"
+    context_sentence = f"{_fallback_intro(player_input, style)},"
 
     if style == "strict":
         if intent_category == "access":
@@ -856,7 +866,7 @@ def grounded_fallback_response(
         elif intent_category == "investigation":
             body = "I cannot close this matter until evidence is verified."
         else:
-            body = f"I cannot approve {intent} until verification is complete."
+            body = "I cannot approve this request until verification is complete."
         return (
             f"{context_sentence} {body} "
             f"Follow protocol and I will move this forward as a {anchor or 'strict'} guardian."
@@ -865,28 +875,28 @@ def grounded_fallback_response(
         if intent_category == "trade":
             body = "I can work with this trade request, but terms must remain fair."
         else:
-            body = f"I can work with {intent}, but the terms must stay fair."
+            body = "I can help, but the terms must stay fair."
         return (
             f"{context_sentence} {body} "
             f"Keep it honest and we can close this deal quickly in my {anchor or 'merchant'} style."
         )
     if style == "calm":
         return (
-            f"{context_sentence} we can handle {intent} safely, step by step. "
+            f"{context_sentence} we can handle this safely, step by step. "
             f"Stay steady and I will guide the next action in a {anchor or 'calm'} voice."
         )
     if style == "mysterious":
         return (
-            f"{context_sentence} your path around {intent} has a cost. "
+            f"{context_sentence} this path has a cost. "
             f"Choose carefully, because timing matters as much as power to one who stays {anchor or 'mysterious'}."
         )
     if style == "formal":
         return (
-            f"{context_sentence} the request regarding {intent} requires evidence before any conclusion. "
+            f"{context_sentence} this request requires evidence before any conclusion. "
             f"Provide verifiable details and I will continue with {anchor or 'formal'} precision."
         )
     return (
-        f"{context_sentence} I can respond to {intent} within these conditions. "
+        f"{context_sentence} I can help if you state one clear, concrete action. "
         f"Give one clear detail and I will proceed with {anchor or 'practical'} precision."
     )
 

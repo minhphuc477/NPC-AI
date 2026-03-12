@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "3",
+      "persona_consistency": "4",
+      "naturalness": "2",
+      "overall_quality": "3",
+      "notes": "proposed_contextual_controlled:   3  4    2     3      3  \"Maintains persona but lacks naturalness and context relevance.\""
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "1",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "baseline_no_context:             1  5    4     3      3  \"Good overall quality, consistent with the scholar's persona; however, it misses on providing immediate access to information which is crucial in this scenario.\""
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "0",
+      "persona_consistency": "3",
+      "naturalness": "2",
+      "overall_quality": "3",
+      "notes": "baseline_no0r_phi3_latest:         2  3    4     4      3  \"Balances context relevance and naturalness but lacks a bit of urgency fitting the dynamic situation at hand, slightly affecting persona consistency.\""
+    }
+  ]
+}

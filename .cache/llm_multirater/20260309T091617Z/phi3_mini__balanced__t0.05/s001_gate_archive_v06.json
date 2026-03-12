@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "8",
+      "persona_consistency": "7",
+      "naturalness": "6",
+      "overall_quality": "4",
+      "notes": "Note requires more natural language flow and less formal tone to match the urgency of player input while maintaining persona consistency."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "3",
+      "persona_consistency": "2",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "Lacks context relevance, does not align with the dynamic scenario or NPC's role as a Temple Priest; also lacks naturalness in tone and phrasing for urgency."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "5",
+      "persona_consistency": "6",
+      "naturalness": "8",
+      "overall_quality": "5",
+      "notes": "Balances all aspects well but could improve overall quality by adding more specificity to the NPC's role as a Temple Priest, emphasizing ethical considerations"
+    }
+  ]
+}

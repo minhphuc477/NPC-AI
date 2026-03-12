@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "3",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "proposed_contextual_controlled<TAB>4<TAB>3<TAB>5<TAB>4<TAB>The response is contextually relevant, aligns with the persona of a smuggler who might negotiate access to restricted areas but lacks some consistency in maintaining an evasive character."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "3",
+      "persona_consistency": "2",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "baseline_no_context<TAB>3<TAB>2<TAB>4<TAB>3<TAB>The response is somewhat relevant and natural, though it misses the mark on persona consistency as a smuggler wouldn't typically engage in trade discussions at an archive."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "\"Player's request is inconsistent with Smuggler persona and context.\""
+    }
+  ]
+}

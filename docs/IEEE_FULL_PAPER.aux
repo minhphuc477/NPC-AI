@@ -12,6 +12,7 @@
 \@writefile{toc}{\contentsline {section}{List of abbreviations}{vi}{section*.3}\protected@file@percent }
 \HyPL@Entry{10<</S/D>>}
 \@writefile{toc}{\contentsline {section}{Abstract}{1}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{Keywords}{1}{section*.5}\protected@file@percent }
 \citation{Gallotta2024Survey}
 \citation{Sweetser2024Scoping}
 \citation{Park2023GenerativeAgents}
@@ -19,7 +20,6 @@
 \citation{Sweetser2024Scoping}
 \citation{Gallotta2024Survey}
 \citation{Rao2024Minecraft}
-\@writefile{toc}{\contentsline {section}{Keywords}{2}{section*.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {1}Research problem, scope, and contributions}{2}{section.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Limitations of scripted and unconstrained NPC dialogue paradigms}{2}{subsection.1.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Research focus: dynamic state-grounded local NPC dialogue in UE5}{2}{subsection.1.2}\protected@file@percent }
@@ -38,16 +38,14 @@
 \citation{Wang2023Voyager}
 \citation{DeepMind2024SIMA}
 \citation{Wevelsiep2025Voice}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Theoretical and empirical foundations}{5}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}International research landscape for LLM-driven game interaction}{5}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Theoretical and empirical foundations}{7}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}International research landscape for LLM-driven game interaction}{7}{subsection.2.1}\protected@file@percent }
 \citation{VLSP2025Proceedings}
 \citation{Ha2025VLSPSemanticParsing}
 \citation{VinaLLaMA2023}
 \citation{ViMistralX2024}
 \citation{Duc2024VietnamRAG}
 \citation{LaVy2024}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Domestic research landscape and deployment context in Vietnam}{6}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Core constructs and operational definitions}{6}{subsection.2.3}\protected@file@percent }
 \citation{Liu2021PromptSurvey}
 \citation{Ouyang2022InstructGPT}
 \citation{Rafailov2023DPO}
@@ -56,6 +54,9 @@
 \citation{Hu2021LoRA}
 \citation{Dettmers2023QLoRA}
 \citation{Asai2024SelfRAG}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Domestic research landscape and deployment context in Vietnam}{8}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Core constructs and operational definitions}{8}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Theoretical foundations for adaptation, retrieval, and runtime control}{8}{subsection.2.4}\protected@file@percent }
 \citation{Liu2023AgentBench}
 \citation{Bai2024LongBench}
 \citation{Lewis2020RAG}
@@ -70,98 +71,97 @@
 \citation{Wang2024Judge}
 \citation{Dubois2024AlpacaEval}
 \citation{Cohen1960Kappa}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Theoretical foundations for adaptation, retrieval, and runtime control}{7}{subsection.2.4}\protected@file@percent }
 \citation{Gallotta2024Survey}
 \citation{Sweetser2024Scoping}
 \citation{Rao2024Minecraft}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Hypotheses and analytical model}{8}{subsection.2.5}\protected@file@percent }
 \citation{Park2023GenerativeAgents}
 \citation{Rao2024Minecraft}
 \citation{Wang2023Voyager}
 \citation{Asai2024SelfRAG}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparative positioning snapshot against representative prior systems.}}{9}{table.1}\protected@file@percent }
-\newlabel{tab:chapter2_positioning}{{1}{9}{Comparative positioning snapshot against representative prior systems}{table.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Novelty decomposition mapped to direct evidence in this manuscript.}}{9}{table.2}\protected@file@percent }
-\newlabel{tab:novelty_decomposition}{{2}{9}{Novelty decomposition mapped to direct evidence in this manuscript}{table.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Novelty decomposition and evidence-backed differentiation}{9}{subsection.2.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}System architecture and empirical methodology}{10}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Evidence-gating protocol and study design}{10}{subsection.3.1}\protected@file@percent }
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Evidence-completeness gate evaluation}}{11}{algorithm.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Online runtime architecture and data flow}{11}{subsection.3.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Online runtime architecture and data flow. Solid arrows denote inference flow; dashed arrows denote conditioning and control inputs.}}{12}{figure.1}\protected@file@percent }
-\newlabel{fig:runtime_architecture}{{1}{12}{Online runtime architecture and data flow. Solid arrows denote inference flow; dashed arrows denote conditioning and control inputs}{figure.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparative positioning snapshot against representative prior systems.}}{10}{table.1}\protected@file@percent }
+\newlabel{tab:chapter2_positioning}{{1}{10}{Comparative positioning snapshot against representative prior systems}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Hypotheses and analytical model}{10}{subsection.2.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Novelty decomposition mapped to direct evidence in this report.}}{11}{table.2}\protected@file@percent }
+\newlabel{tab:novelty_decomposition}{{2}{11}{Novelty decomposition mapped to direct evidence in this report}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Novelty decomposition and evidence-backed differentiation}{11}{subsection.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}System architecture and empirical methodology}{13}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Evidence-gating protocol and study design}{13}{subsection.3.1}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Evidence-completeness gate evaluation}}{14}{algorithm.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Online runtime architecture and data flow}{14}{subsection.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Online runtime architecture and data flow. Solid arrows denote inference flow; dashed arrows denote conditioning and control inputs.}}{15}{figure.1}\protected@file@percent }
+\newlabel{fig:runtime_architecture}{{1}{15}{Online runtime architecture and data flow. Solid arrows denote inference flow; dashed arrows denote conditioning and control inputs}{figure.1}{}}
 \citation{Zou2025PoisonedRAG}
 \citation{Chaturvedi2025AIP}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Offline training and evaluation flow with feedback loops. The candidate model and control configuration are exported to the online runtime pipeline in Figure~\ref {fig:runtime_architecture}.}}{13}{figure.2}\protected@file@percent }
-\newlabel{fig:offline_pipeline}{{2}{13}{Offline training and evaluation flow with feedback loops. The candidate model and control configuration are exported to the online runtime pipeline in Figure~\ref {fig:runtime_architecture}}{figure.2}{}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Guard-threshold calibration under risk constraints}}{14}{algorithm.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Offline training and evaluation flow with feedback loops. The candidate model and control configuration are exported to the online runtime pipeline in Figure~\ref {fig:runtime_architecture}.}}{16}{figure.2}\protected@file@percent }
+\newlabel{fig:offline_pipeline}{{2}{16}{Offline training and evaluation flow with feedback loops. The candidate model and control configuration are exported to the online runtime pipeline in Figure~\ref {fig:runtime_architecture}}{figure.2}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Guard-threshold calibration under risk constraints}}{17}{algorithm.2}\protected@file@percent }
 \citation{EpicGames2025TaskGraph}
 \citation{EpicGames2025EAsyncExecution}
 \citation{EpicGames2025UEBehaviorTrees}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Runtime inference with guarded response control}}{15}{algorithm.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}UE5 execution binding: behavior-tree triggers, state serialization, and latency control}{15}{subsection.3.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Observed response outcomes under the runtime release policy (verbatim trace examples).}}{17}{table.3}\protected@file@percent }
-\newlabel{tab:response_examples}{{3}{17}{Observed response outcomes under the runtime release policy (verbatim trace examples)}{table.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Response realization: release policy and exemplar outputs}{17}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Adaptive control-policy extension for intervention-burden reduction}{18}{subsection.3.5}\protected@file@percent }
-\@writefile{loa}{\contentsline {algorithm}{\numberline {4}{\ignorespaces State-conditioned control-threshold calibration}}{18}{algorithm.4}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Runtime inference with guarded response control}}{18}{algorithm.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}UE5 execution binding: behavior-tree triggers, state serialization, and latency control}{18}{subsection.3.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Observed response outcomes under the runtime release policy (verbatim trace examples).}}{20}{table.3}\protected@file@percent }
+\newlabel{tab:response_examples}{{3}{20}{Observed response outcomes under the runtime release policy (verbatim trace examples)}{table.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Response realization: release policy and exemplar outputs}{20}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Adaptive control-policy extension for intervention-burden reduction}{21}{subsection.3.5}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {4}{\ignorespaces State-conditioned control-threshold calibration}}{21}{algorithm.4}\protected@file@percent }
 \citation{Dettmers2023QLoRA}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Model adaptation, retrieval training, and data pipeline}{19}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Model adaptation, retrieval training, and data pipeline}{22}{subsection.3.6}\protected@file@percent }
 \citation{Lin2021TruthfulQA}
 \citation{Min2023FactScore}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {5}{\ignorespaces Training and evaluation pipeline}}{20}{algorithm.5}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {5}{\ignorespaces Training and evaluation pipeline}}{23}{algorithm.5}\protected@file@percent }
 \citation{Efron1979Bootstrap}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Benchmark profile used for all fixed-arm comparisons.}}{21}{table.4}\protected@file@percent }
-\newlabel{tab:benchmark_profile}{{4}{21}{Benchmark profile used for all fixed-arm comparisons}{table.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Evaluation methodology: quantitative and qualitative components}{21}{subsection.3.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Benchmark profile used for all fixed-arm comparisons.}}{24}{table.4}\protected@file@percent }
+\newlabel{tab:benchmark_profile}{{4}{24}{Benchmark profile used for all fixed-arm comparisons}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Evaluation methodology: quantitative and qualitative components}{24}{subsection.3.7}\protected@file@percent }
 \citation{Liang2023HELM}
 \citation{Clopper1934Binomial}
 \citation{Efron1979Bootstrap}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {6}{\ignorespaces Paired bootstrap significance}}{23}{algorithm.6}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {6}{\ignorespaces Paired bootstrap significance}}{26}{algorithm.6}\protected@file@percent }
 \citation{Liu2023GEval}
 \citation{Pineau2021Reproducibility}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {7}{\ignorespaces Human-rating aggregation and agreement computation}}{25}{algorithm.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Analytical derivations of decision and evaluation formulas}{25}{subsection.3.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Empirical findings and integrated analysis}{27}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Primary benchmark results under matched settings}{27}{subsection.4.1}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {7}{\ignorespaces Human-rating aggregation and agreement computation}}{28}{algorithm.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Analytical derivations of decision and evaluation formulas}{28}{subsection.3.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Empirical findings and integrated analysis}{31}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Primary benchmark results under matched settings}{31}{subsection.4.1}\protected@file@percent }
 \citation{Holm1979}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Paired mean-delta gains of controlled contextual generation over raw contextual generation, with 95\% CI whiskers.}}{28}{figure.3}\protected@file@percent }
-\newlabel{fig:controlled_delta}{{3}{28}{Paired mean-delta gains of controlled contextual generation over raw contextual generation, with 95\% CI whiskers}{figure.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Cross-condition \(OQ\) comparison: controlled contextual arm versus external no-context baselines under matched protocols.}}{28}{table.5}\protected@file@percent }
-\newlabel{tab:baseline_comparison}{{5}{28}{Cross-condition \(OQ\) comparison: controlled contextual arm versus external no-context baselines under matched protocols}{table.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Paired mean-delta gains of controlled contextual generation over raw contextual generation, with 95\% CI whiskers.}}{32}{figure.3}\protected@file@percent }
+\newlabel{fig:controlled_delta}{{3}{32}{Paired mean-delta gains of controlled contextual generation over raw contextual generation, with 95\% CI whiskers}{figure.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Cross-condition \(OQ\) comparison: controlled contextual arm versus external no-context baselines under matched protocols.}}{32}{table.5}\protected@file@percent }
+\newlabel{tab:baseline_comparison}{{5}{32}{Cross-condition \(OQ\) comparison: controlled contextual arm versus external no-context baselines under matched protocols}{table.5}{}}
 \citation{Landis1977KappaScale}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Human evaluation and inter-rater agreement}{29}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Serving and retrieval performance trade-offs}{29}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}UE5 operational metrics and behavior-state effects}{30}{subsection.4.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces UE5-relevant operational runtime metrics (controlled arm, \(N=112\)).}}{31}{table.6}\protected@file@percent }
-\newlabel{tab:ue5_operational_metrics}{{6}{31}{UE5-relevant operational runtime metrics (controlled arm, \(N=112\))}{table.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Behavior-state-conditioned operational impact (controlled arm).}}{31}{table.7}\protected@file@percent }
-\newlabel{tab:ue5_state_operational}{{7}{31}{Behavior-state-conditioned operational impact (controlled arm)}{table.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Derived operating-point diagnostics from reported benchmark values.}}{32}{table.8}\protected@file@percent }
-\newlabel{tab:operating_point_diagnostics}{{8}{32}{Derived operating-point diagnostics from reported benchmark values}{table.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Operating-point diagnostics: quality, latency, and intervention coupling}{32}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Human evaluation and inter-rater agreement}{33}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Serving and retrieval performance trade-offs}{33}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}UE5 operational metrics and behavior-state effects}{34}{subsection.4.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces UE5-relevant operational runtime metrics (controlled arm, \(N=112\)).}}{35}{table.6}\protected@file@percent }
+\newlabel{tab:ue5_operational_metrics}{{6}{35}{UE5-relevant operational runtime metrics (controlled arm, \(N=112\))}{table.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Behavior-state-conditioned operational impact (controlled arm).}}{35}{table.7}\protected@file@percent }
+\newlabel{tab:ue5_state_operational}{{7}{35}{Behavior-state-conditioned operational impact (controlled arm)}{table.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Derived operating-point diagnostics from reported benchmark values.}}{36}{table.8}\protected@file@percent }
+\newlabel{tab:operating_point_diagnostics}{{8}{36}{Derived operating-point diagnostics from reported benchmark values}{table.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Operating-point diagnostics: quality, latency, and intervention coupling}{36}{subsection.4.5}\protected@file@percent }
 \citation{Holm1979}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Component-level ablation results}{33}{subsection.4.6}\protected@file@percent }
-\@writefile{loa}{\contentsline {algorithm}{\numberline {8}{\ignorespaces Main-contrast ablation effect estimation}}{33}{algorithm.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Component-level ablation results}{37}{subsection.4.6}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {8}{\ignorespaces Main-contrast ablation effect estimation}}{37}{algorithm.8}\protected@file@percent }
 \citation{Zou2025PoisonedRAG}
 \citation{Chaturvedi2025AIP}
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Response-control ablation (controlled contextual vs. raw contextual).}}{34}{table.9}\protected@file@percent }
-\newlabel{tab:ablation_response_control}{{9}{34}{Response-control ablation (controlled contextual vs. raw contextual)}{table.9}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Retrieval-method ablation deltas relative to BM25 (higher is better).}}{34}{table.10}\protected@file@percent }
-\newlabel{tab:ablation_retrieval}{{10}{34}{Retrieval-method ablation deltas relative to BM25 (higher is better)}{table.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Response-control ablation (controlled contextual vs. raw contextual).}}{38}{table.9}\protected@file@percent }
+\newlabel{tab:ablation_response_control}{{9}{38}{Response-control ablation (controlled contextual vs. raw contextual)}{table.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Retrieval-method ablation deltas relative to BM25 (higher is better).}}{38}{table.10}\protected@file@percent }
+\newlabel{tab:ablation_retrieval}{{10}{38}{Retrieval-method ablation deltas relative to BM25 (higher is better)}{table.10}{}}
 \citation{Zheng2023MTBench}
 \citation{Wang2024Judge}
 \citation{Dubois2024AlpacaEval}
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Serving ablation (candidate vs. baseline phi3:mini).}}{35}{table.11}\protected@file@percent }
-\newlabel{tab:ablation_serving}{{11}{35}{Serving ablation (candidate vs. baseline phi3:mini)}{table.11}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Threats to validity and interpretive boundaries}{35}{subsection.4.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Serving ablation (candidate vs. baseline phi3:mini).}}{39}{table.11}\protected@file@percent }
+\newlabel{tab:ablation_serving}{{11}{39}{Serving ablation (candidate vs. baseline phi3:mini)}{table.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Threats to validity and interpretive boundaries}{39}{subsection.4.7}\protected@file@percent }
 \citation{Gallotta2024Survey}
 \citation{Sweetser2024Scoping}
 \citation{Rao2024Minecraft}
 \citation{Zou2025PoisonedRAG}
 \citation{Chaturvedi2025AIP}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Claim-to-evidence synthesis for principal findings.}}{36}{table.12}\protected@file@percent }
-\newlabel{tab:claim_evidence_map}{{12}{36}{Claim-to-evidence synthesis for principal findings}{table.12}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Claim-to-evidence synthesis for principal findings.}}{40}{table.12}\protected@file@percent }
+\newlabel{tab:claim_evidence_map}{{12}{40}{Claim-to-evidence synthesis for principal findings}{table.12}{}}
 \citation{Liang2023HELM}
 \citation{Wang2024Judge}
 \citation{Dubois2024AlpacaEval}
@@ -170,39 +170,39 @@
 \citation{Edge2024GraphRAG}
 \citation{Leviathan2022SpecDec}
 \citation{Kwon2023vLLM}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Comparison with prior work and practical implications}{37}{subsection.4.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Comparison with prior work and practical implications}{41}{subsection.4.8}\protected@file@percent }
 \citation{Bender2021Parrots}
 \citation{Weidinger2022Taxonomy}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusions, implications, and future directions}{38}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Ethical and policy implications for NPC deployment}{38}{subsection.5.1}\protected@file@percent }
 \citation{Zou2025PoisonedRAG}
 \citation{Chaturvedi2025AIP}
 \citation{Bai2022Constitutional}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Principal findings and bounded claims}{39}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Study limitations}{40}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Future research agenda}{40}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Reproducibility protocols and extended methods}{41}{appendix.A}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Scenario taxonomy}{41}{subsection.A.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Prompt and context serialization specification}{41}{subsection.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusions, implications, and future directions}{44}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Ethical and policy implications for NPC deployment}{44}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Principal findings and bounded claims}{45}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Study limitations}{45}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Future research agenda}{46}{subsection.5.4}\protected@file@percent }
 \citation{Manakul2023SelfCheckGPT}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Response-control specification}{42}{subsection.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Adversarial retrieval protocol}{42}{subsection.A.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.5}Human evaluation protocol}{42}{subsection.A.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.6}Compute and runtime environment}{42}{subsection.A.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Reproducibility protocols and extended methods}{47}{appendix.A}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Scenario taxonomy}{47}{subsection.A.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Prompt and context serialization specification}{47}{subsection.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Response-control specification}{47}{subsection.A.3}\protected@file@percent }
 \citation{Page2021PRISMA2020}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.7}Literature-screening protocol for comparative positioning}{43}{subsection.A.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B}Extended interpretation and comparative notes}{44}{appendix.B}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.1}Comparative-scope limitations}{44}{subsection.B.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.2}Future work plan}{44}{subsection.B.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.3}Detailed reproducibility report}{44}{subsection.B.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Adversarial retrieval protocol}{48}{subsection.A.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.5}Human evaluation protocol}{48}{subsection.A.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.6}Compute and runtime environment}{48}{subsection.A.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.7}Literature-screening protocol for comparative positioning}{48}{subsection.A.7}\protected@file@percent }
 \citation{Pineau2021Reproducibility}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Extended interpretation and comparative notes}{51}{appendix.B}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.1}Comparative-scope limitations}{51}{subsection.B.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2}Future work plan}{51}{subsection.B.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.3}Detailed reproducibility report}{51}{subsection.B.3}\protected@file@percent }
 \citation{Park2023GenerativeAgents}
 \citation{Leviathan2022SpecDec}
 \citation{Kwon2023vLLM}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.4}Supplementary comparative discussion}{46}{subsection.B.4}\protected@file@percent }
 \citation{Asai2024SelfRAG}
 \citation{Edge2024GraphRAG}
 \citation{Fan2024RAGSurvey}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.4}Supplementary comparative discussion}{53}{subsection.B.4}\protected@file@percent }
 \citation{Ouyang2022InstructGPT}
 \citation{Rafailov2023DPO}
 \citation{Bai2022Constitutional}
@@ -211,13 +211,13 @@
 \citation{Wang2024Judge}
 \citation{Dubois2024AlpacaEval}
 \citation{Cohen1960Kappa}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.5}Failure taxonomy}{47}{subsection.B.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.6}Qualitative case analyses}{48}{subsection.B.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {C}Comprehensive tables and scenario catalog}{49}{appendix.C}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.1}Supplementary tables}{49}{subsection.C.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Core metrics from the latest full benchmark evaluation.}}{49}{table.13}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Serving comparison from the latest system benchmark evaluation.}}{49}{table.14}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Retrieval and adversarial security summary from benchmark artifacts.}}{49}{table.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.5}Failure taxonomy}{54}{subsection.B.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.6}Qualitative case analyses}{55}{subsection.B.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {C}Comprehensive tables and scenario catalog}{57}{appendix.C}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {C.1}Supplementary tables}{57}{subsection.C.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Core metrics from the latest full benchmark evaluation.}}{57}{table.13}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Serving comparison from the latest system benchmark evaluation.}}{57}{table.14}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Retrieval and adversarial security summary from benchmark artifacts.}}{57}{table.15}\protected@file@percent }
 \gdef \LT@i {\LT@entry 
     {3}{28.44923pt}\LT@entry 
     {1}{45.31642pt}\LT@entry 
@@ -225,25 +225,25 @@
     {3}{66.8672pt}\LT@entry 
     {1}{59.32033pt}\LT@entry 
     {3}{102.21877pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.2}Full scenario index (112 scenarios)}{50}{subsection.C.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {16}{Scenario-level taxonomy index used in the primary evaluation.}}{50}{table.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {C.2}Full scenario index (112 scenarios)}{58}{subsection.C.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {16}{Scenario-level taxonomy index used in the primary evaluation.}}{58}{table.16}\protected@file@percent }
 \gdef \LT@ii {\LT@entry 
     {1}{62.07712pt}\LT@entry 
     {1}{103.04742pt}\LT@entry 
     {1}{134.91785pt}\LT@entry 
     {1}{134.91785pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.3}Research-question traceability matrix}{52}{subsection.C.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {17}{Traceability from research questions to implementation and evidence artifacts.}}{52}{table.17}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {D}Scenario-level and counterfactual stress diagnostics}{53}{appendix.D}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {D.1}Scenario-level analytical notes}{53}{subsection.D.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {18}{\ignorespaces Representative scenario-level analytical notes.}}{54}{table.18}\protected@file@percent }
-\newlabel{tab:representative_scenarios}{{18}{54}{Representative scenario-level analytical notes}{table.18}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {D.2}Counterfactual stress analysis notes}{55}{subsection.D.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {C.3}Research-question traceability matrix}{60}{subsection.C.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {17}{Traceability from research questions to implementation and evidence artifacts.}}{60}{table.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {D}Scenario-level and counterfactual stress diagnostics}{62}{appendix.D}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {D.1}Scenario-level analytical notes}{62}{subsection.D.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {18}{\ignorespaces Representative scenario-level analytical notes.}}{63}{table.18}\protected@file@percent }
+\newlabel{tab:representative_scenarios}{{18}{63}{Representative scenario-level analytical notes}{table.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {D.2}Counterfactual stress analysis notes}{64}{subsection.D.2}\protected@file@percent }
 \citation{Zou2025PoisonedRAG}
 \citation{Chaturvedi2025AIP}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {9}{\ignorespaces Counterfactual robustness evaluation}}{65}{algorithm.9}\protected@file@percent }
 \bibcite{Park2023GenerativeAgents}{1}
 \bibcite{Gallotta2024Survey}{2}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {9}{\ignorespaces Counterfactual robustness evaluation}}{56}{algorithm.9}\protected@file@percent }
 \bibcite{Sweetser2024Scoping}{3}
 \bibcite{Rao2024Minecraft}{4}
 \bibcite{Christiansen2024Presence}{5}
@@ -297,4 +297,4 @@
 \bibcite{Efron1979Bootstrap}{53}
 \bibcite{Clopper1934Binomial}{54}
 \bibcite{Holm1979}{55}
-\gdef \@abspage@last{73}
+\gdef \@abspage@last{82}

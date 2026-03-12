@@ -44,6 +44,11 @@ python scripts/run_kaggle_full_results.py \
   --require-security-benchmark
 ```
 
+Strict security-required checkout profile (recommended for conference claim hardening):
+```bash
+python scripts/run_kaggle_strict_security_checkout.py --host http://127.0.0.1:11434
+```
+
 Resume from existing runs (recommended after timeout/interruption):
 ```bash
 python scripts/run_kaggle_full_results.py \
@@ -86,3 +91,15 @@ Referenced artifacts include:
 - `human_eval_summary.json`
 - `lexical_diversity_summary.json`
 - `preference_dataset.jsonl`
+
+## Multi-Seed Evidence Hardening
+After producing multiple proposal runs (different seeds or repeated full checkouts), aggregate into one statistical summary:
+```bash
+python scripts/aggregate_proposal_multiseed.py \
+  --run-ids 20260310T003216Z,20260309T213410Z,20260309T115334Z \
+  --target-arm proposed_contextual_controlled
+```
+
+Outputs:
+- `artifacts/proposal_multiseed/multiseed_aggregate.json`
+- `artifacts/proposal_multiseed/multiseed_aggregate.md`

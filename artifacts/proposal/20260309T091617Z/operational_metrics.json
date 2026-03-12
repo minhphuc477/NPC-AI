@@ -1,0 +1,504 @@
+{
+  "arms": {
+    "proposed_contextual_controlled": {
+      "total_requests": 144,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.013888888888888888,
+      "first_pass_accept_rate": 0.4583333333333333,
+      "rewrite_attempt_rate": 0.1527777777777778,
+      "retry_rate": 0.1527777777777778,
+      "multi_retry_rate": 0.14583333333333334,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {
+        "fallback": 2,
+        "raw": 12,
+        "raw_adaptive": 5,
+        "raw_grounded_repair": 48,
+        "raw_relaxed": 1,
+        "rewritten": 5,
+        "rewritten_grounded_repair": 2,
+        "structured_recovery": 13,
+        "structured_repair": 56
+      },
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 28,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.21428571428571427
+        },
+        "Detained": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Forging": {
+          "count": 8,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Guarding": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 18,
+          "fallback_rate": 0.05555555555555555,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.2222222222222222
+        },
+        "Negotiating": {
+          "count": 8,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 35,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.11428571428571428
+        },
+        "Patrolling": {
+          "count": 7,
+          "fallback_rate": 0.14285714285714285,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.14285714285714285
+        },
+        "Researching": {
+          "count": 16,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "RitualPreparation": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.2
+        },
+        "Trading": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 7,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.14285714285714285
+        }
+      }
+    },
+    "proposed_contextual": {
+      "total_requests": 144,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.4444444444444444,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 28,
+          "fallback_rate": 0.5357142857142857,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Detained": {
+          "count": 5,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Forging": {
+          "count": 8,
+          "fallback_rate": 0.125,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Guarding": {
+          "count": 5,
+          "fallback_rate": 0.2,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 18,
+          "fallback_rate": 0.3333333333333333,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Negotiating": {
+          "count": 8,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 35,
+          "fallback_rate": 0.34285714285714286,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Patrolling": {
+          "count": 7,
+          "fallback_rate": 0.5714285714285714,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Researching": {
+          "count": 16,
+          "fallback_rate": 0.4375,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "RitualPreparation": {
+          "count": 5,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Trading": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 7,
+          "fallback_rate": 0.5714285714285714,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "candidate_no_context": {
+      "total_requests": 144,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.4375,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 28,
+          "fallback_rate": 0.6071428571428571,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Detained": {
+          "count": 5,
+          "fallback_rate": 0.8,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Forging": {
+          "count": 8,
+          "fallback_rate": 0.125,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Guarding": {
+          "count": 5,
+          "fallback_rate": 0.4,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 18,
+          "fallback_rate": 0.3333333333333333,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Negotiating": {
+          "count": 8,
+          "fallback_rate": 0.25,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 35,
+          "fallback_rate": 0.3142857142857143,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Patrolling": {
+          "count": 7,
+          "fallback_rate": 0.42857142857142855,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Researching": {
+          "count": 16,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "RitualPreparation": {
+          "count": 5,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Trading": {
+          "count": 2,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 7,
+          "fallback_rate": 0.42857142857142855,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "baseline_no_context": {
+      "total_requests": 144,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.0,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 28,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Detained": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Forging": {
+          "count": 8,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Guarding": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 18,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Negotiating": {
+          "count": 8,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 35,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Patrolling": {
+          "count": 7,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Researching": {
+          "count": 16,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "RitualPreparation": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Trading": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 7,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "baseline_no_context_phi3_latest": {
+      "total_requests": 144,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.0,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 28,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Detained": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Forging": {
+          "count": 8,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Guarding": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 18,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Negotiating": {
+          "count": 8,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 35,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Patrolling": {
+          "count": 7,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Researching": {
+          "count": 16,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "RitualPreparation": {
+          "count": 5,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Trading": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "TreatingPatient": {
+          "count": 7,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    }
+  }
+}

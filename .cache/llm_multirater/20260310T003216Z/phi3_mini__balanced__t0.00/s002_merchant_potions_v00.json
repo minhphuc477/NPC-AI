@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "3",
+      "overall_quality": "4",
+      "notes": "The response is relevant and tries to balance the urgency with fair trade, but loses some naturalness in tone due to formality."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "While consistent with persona as a merchant who values honesty, it lacks contextual relevance given the immediate need and pressure from customers."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "3",
+      "persona_consistency": "3",
+      "naturalness": "2",
+      "overall_quality": "2",
+      "notes": "The response is somewhat relevant but fails to maintain consistency in personality due to its unexpected generosity tone; also, it's not entirely natural as per the persona given."
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "8",
+      "persona_consistency": "7",
+      "naturalness": "6",
+      "overall_quality": "4",
+      "notes": "The response is contextually relevant and maintains persona consistency, but the naturalness could be improved to better reflect a calm demeanor in urgent situations. The overall quality lacks due to tone issues."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "3",
+      "persona_consistency": "5",
+      "naturalness": "8",
+      "overall_quality": "5 A generic approach that fails on relevance as it doesn't address specific concerns or context, but maintains persona consistency and naturalness well within the healer role. Overall quality is average because of its lack of tailored response to urgency and confusion caused by conflicting reports.",
+      "notes": ""
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "5",
+      "persona_consistency": "7",
+      "naturalness": "9",
+      "overall_quality": "6",
+      "notes": ""
+    }
+  ]
+}

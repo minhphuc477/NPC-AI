@@ -1,0 +1,33 @@
+{
+  "registry_version": "1.0",
+  "generated_utc": "2026-03-10T00:00:00+00:00",
+  "intent": "Canonical run mapping for conference-facing claims",
+  "canonical_profiles": {
+    "solution_paper_baseline": {
+      "description": "Latest full checkout with attached human-eval, publication artifacts, and final quality gate.",
+      "final_checkout_manifest": "artifacts/final_checkout/20260310T015055Z/manifest.json",
+      "proposal_run": "artifacts/proposal/20260310T003216Z",
+      "publication_run": "artifacts/publication/20260310T011758Z",
+      "quality_gate_json": "artifacts/proposal/20260310T003216Z/quality_gate_report_final.json",
+      "quality_gate_md": "artifacts/proposal/20260310T003216Z/quality_gate_report_final.md",
+      "live_runtime_summary_md": "artifacts/publication_profiles/20260310T014243Z/live_runtime_summary.md",
+      "security_required": false,
+      "status": "active"
+    },
+    "strict_security_profile": {
+      "description": "Security-required checkout profile command to produce canonical strict run.",
+      "command": "python scripts/run_kaggle_strict_security_checkout.py --host http://127.0.0.1:11434",
+      "security_required": true,
+      "status": "pending_generation"
+    },
+    "multiseed_profile": {
+      "description": "Aggregate multiple proposal seeds/runs into one statistical evidence summary.",
+      "command": "python scripts/aggregate_proposal_multiseed.py --run-ids <run1,run2,run3>",
+      "status": "tooling_ready"
+    }
+  },
+  "notes": [
+    "Use this registry as the single source of truth for manuscript run references.",
+    "When strict-security run is generated, update this file with concrete run IDs and manifests."
+  ]
+}

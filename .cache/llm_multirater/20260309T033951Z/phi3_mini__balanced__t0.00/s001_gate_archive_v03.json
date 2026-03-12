@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled",
+      "context_relevance": "4",
+      "persona_consistency": "3",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "proposed_contextual_controlled<TAB>4<TAB>3<TAB>5<TAB>4<TAB>The response is contextually relevant and aligns with the persona, but could be more natural in tone.<br>baseline_no_context<TAB>2<TAB>4<TAB>4<TAB>4<TAB>Adequate for a systems engineer; however lacks immediate relevance to current context.<br>baseline_no01_phi3_latest<TAB>5<TATAB>5<TAB>5<TAB>5<TAB>Perfectly consistent with persona, natural"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "1",
+      "persona_consistency": "3",
+      "naturalness": "4",
+      "overall_quality": "5",
+      "notes": "baseline_no_context<TAB>1<TAB>3<TAB>4<TAB>5<TAB>Overall quality is good as it maintains professionalism and persona consistency, but context relevance needs improvement.<short note>The response fails to acknowledge the player's current situation."
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "The response is contextually relevant, maintains persona consistency as a methodical and risk-aware Systems Engineer would not rush into unapproved actions, sounds natural within the setting of strict protocol at an archive, but could be slightly more engaging to improve overall quality."
+    }
+  ]
+}

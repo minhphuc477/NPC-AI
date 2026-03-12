@@ -104,6 +104,8 @@ DOMAINS: Sequence[Dict[str, Any]] = (
     },
 )
 
+QUERY_TYPES: Sequence[str] = ("lore", "quest", "persona", "memory")
+
 
 def build_retrieval_sets(
     docs_per_domain: int,
@@ -126,10 +128,12 @@ def build_retrieval_sets(
             entity = entities[idx % len(entities)]
             action = actions[idx % len(actions)]
             fact = facts[idx % len(facts)]
+            doc_type = QUERY_TYPES[idx % len(QUERY_TYPES)]
             doc_id = f"{name}_doc_{idx:03d}"
             doc_ids.append(doc_id)
             text = (
                 f"Domain: {name}. Topic: {topic}. "
+                f"Knowledge type: {doc_type}. "
                 f"Role: {entity}. Primary action: {action}. "
                 f"Operational fact: {fact}. "
                 f"Record index: {idx}."
@@ -140,26 +144,50 @@ def build_retrieval_sets(
                     "title": f"{name.title()} protocol note {idx}",
                     "text": text,
                     "domain": name,
+                    "query_type": doc_type,
                 }
             )
 
         for qidx in range(queries_per_domain):
             rel_idx = qidx % len(doc_ids)
             rel_doc = doc_ids[rel_idx]
+            aux_doc = doc_ids[(rel_idx + 1) % len(doc_ids)]
             entity = entities[rel_idx % len(entities)]
             action = actions[rel_idx % len(actions)]
             fact = facts[rel_idx % len(facts)]
+            query_type = QUERY_TYPES[qidx % len(QUERY_TYPES)]
 
-            query = (
-                f"In {name} operations, what is the protocol for {action} by the {entity}, "
-                f"and which rule states '{fact}'?"
-            )
+            if query_type == "lore":
+                query = (
+                    f"In {name} operations, what canonical rule explains '{fact}', "
+                    f"and how does it fit the local world lore?"
+                )
+            elif query_type == "quest":
+                query = (
+                    f"For an active objective in {name}, what steps should the {entity} follow to {action} "
+                    f"while respecting '{fact}'?"
+                )
+            elif query_type == "persona":
+                query = (
+                    f"How should the {entity} speak and act during {action} in {name}, "
+                    f"given the protocol '{fact}'?"
+                )
+            else:
+                query = (
+                    f"Based on prior records in {name}, what remembered constraint affects {action}, "
+                    f"especially the note '{fact}'?"
+                )
             query_id = f"{name}_q_{qidx:03d}"
             gold.append(
                 {
                     "query_id": query_id,
                     "query": query,
-                    "relevant_doc_ids": [rel_doc],
+                    "query_type": query_type,
+                    "relevant_doc_ids": [rel_doc, aux_doc],
+                    "relevant_doc_grades": {
+                        rel_doc: 3,
+                        aux_doc: 1,
+                    },
                     "domain": name,
                 }
             )

@@ -138,6 +138,25 @@ def _normalize_relevant_ids(record: Dict[str, object]) -> List[str]:
     return []
 
 
+def _normalize_relevance_grades(record: Dict[str, object]) -> Dict[str, int]:
+    grades_raw = record.get("relevant_doc_grades", {})
+    if isinstance(grades_raw, dict):
+        out: Dict[str, int] = {}
+        for doc_id, grade in grades_raw.items():
+            key = str(doc_id).strip()
+            if not key:
+                continue
+            try:
+                val = int(grade)
+            except Exception:
+                continue
+            if val > 0:
+                out[key] = val
+        if out:
+            return out
+    return {doc_id: 1 for doc_id in _normalize_relevant_ids(record)}
+
+
 def _dcg(relevances: List[int], k: int) -> float:
     score = 0.0
     for i, rel in enumerate(relevances[:k]):
@@ -168,9 +187,12 @@ def evaluate_rag_metrics(
         qid = str(row.get("query_id", "")).strip()
         if not qid:
             continue
-        relevant = _normalize_relevant_ids(row)
-        if relevant:
-            gold[qid] = set(relevant)
+        rel_grades = _normalize_relevance_grades(row)
+        if rel_grades:
+            gold[qid] = {
+                "grades": rel_grades,
+                "query_type": str(row.get("query_type", "generic")).strip() or "generic",
+            }
 
     if not gold:
         return {"ok": False, "error": "Gold file has no valid query_id/relevant_doc_ids entries."}
@@ -179,6 +201,7 @@ def evaluate_rag_metrics(
     mrr_sum = 0.0
     ndcg_sum = 0.0
     evaluated = 0
+    by_type: Dict[str, Dict[str, float]] = {}
 
     for row in _load_jsonl(pred_file):
         qid = str(row.get("query_id", "")).strip()
@@ -187,7 +210,10 @@ def evaluate_rag_metrics(
             continue
 
         evaluated += 1
-        relevant = gold[qid]
+        rel_payload = gold[qid]
+        relevant = set(rel_payload.get("grades", {}).keys())
+        rel_grades = dict(rel_payload.get("grades", {}))
+        query_type = str(rel_payload.get("query_type", "generic"))
         top_k = ranked[: max(1, hit_k)]
 
         if any(doc_id in relevant for doc_id in top_k):
@@ -196,20 +222,37 @@ def evaluate_rag_metrics(
         rr = 0.0
         gains = []
         for idx, doc_id in enumerate(top_k):
-            rel = 1 if doc_id in relevant else 0
+            rel = int(rel_grades.get(doc_id, 0))
             gains.append(rel)
-            if rr == 0.0 and rel == 1:
+            if rr == 0.0 and rel > 0:
                 rr = 1.0 / float(idx + 1)
         mrr_sum += rr
 
-        ideal_count = min(len(relevant), len(top_k))
-        ideal_gains = [1] * ideal_count + [0] * (len(top_k) - ideal_count)
+        ideal_gains = sorted(rel_grades.values(), reverse=True)[: len(top_k)]
+        if len(ideal_gains) < len(top_k):
+            ideal_gains = ideal_gains + [0] * (len(top_k) - len(ideal_gains))
         idcg = _dcg(ideal_gains, len(top_k))
         ndcg = (_dcg(gains, len(top_k)) / idcg) if idcg > 0 else 0.0
         ndcg_sum += ndcg
 
+        bucket = by_type.setdefault(query_type, {"count": 0.0, "hit": 0.0, "mrr": 0.0, "ndcg": 0.0})
+        bucket["count"] += 1.0
+        bucket["hit"] += 1.0 if any(doc_id in relevant for doc_id in top_k) else 0.0
+        bucket["mrr"] += rr
+        bucket["ndcg"] += ndcg
+
     if evaluated == 0:
         return {"ok": False, "error": "No overlapping query_id entries between gold and predictions."}
+
+    by_type_summary = {}
+    for key, vals in sorted(by_type.items()):
+        count = vals["count"] or 1.0
+        by_type_summary[key] = {
+            "query_count": int(vals["count"]),
+            f"hit@{hit_k}": vals["hit"] / count,
+            "mrr": vals["mrr"] / count,
+            f"ndcg@{hit_k}": vals["ndcg"] / count,
+        }
 
     return {
         "ok": True,
@@ -217,6 +260,7 @@ def evaluate_rag_metrics(
         f"hit@{hit_k}": hits / evaluated,
         "mrr": mrr_sum / evaluated,
         f"ndcg@{hit_k}": ndcg_sum / evaluated,
+        "by_query_type": by_type_summary,
     }
 
 
