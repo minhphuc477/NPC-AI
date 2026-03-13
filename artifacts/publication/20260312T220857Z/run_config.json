@@ -1,0 +1,31 @@
+{
+  "run_id": "20260312T220857Z",
+  "generated_utc": "2026-03-12T22:08:58.037343+00:00",
+  "host": "http://127.0.0.1:11434",
+  "candidate_model": "elara-npc:latest",
+  "baseline_model": "phi3:mini",
+  "repeats": 1,
+  "temperature": 0.2,
+  "max_tokens": 64,
+  "hit_k": 5,
+  "seed": 7,
+  "skip_ablation_baselines": false,
+  "skip_reranker_stage": false,
+  "reranker_train_frac": 0.85,
+  "reranker_bm25_candidate_k": 24,
+  "run_security_spoofed_benchmark": true,
+  "inputs": {
+    "prompts": "data\\serving_prompts_wide_v2.jsonl",
+    "serving_references": "data\\serving_references_wide_v2.jsonl",
+    "retrieval_corpus": "data\\retrieval_corpus_wide_v2.jsonl",
+    "retrieval_gold": "data\\retrieval_gold_wide_v2.jsonl",
+    "reranker_pairs": "data\\retrieval_reranker_pairs_wide.jsonl",
+    "prompts_sha256": "e05be78f8d210d0b1d0f1efa54ae1de9b72d8e8cb8a51768e8957ee0857bfc62",
+    "serving_references_sha256": "29dd9b32c38e9f668227315215bdf5c4850111b8845ce0da4909c5271f925cf2",
+    "retrieval_corpus_sha256": "9985cca9623af87519987e469acc5e0ed6b173cd80cc46737968048a0d01d126",
+    "retrieval_gold_sha256": "8597f613550d54ccab1a6a262c7c7f513d1631f1c2b5daf24a03828edd9610c0",
+    "reranker_pairs_sha256": "4c9ac385bde00839f956812879f0db5e7d78181cf50bb417e2063888dd7a630e",
+    "security_dataset": "data\\retrieval_poison_benchmark_large.jsonl",
+    "security_dataset_sha256": "2372a0391f7f2d83573e0d9d92f3bf92a067d10ed698d0a5fee3a246e1399c87"
+  }
+}

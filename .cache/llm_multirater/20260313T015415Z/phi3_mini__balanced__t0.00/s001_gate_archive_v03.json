@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled_tuned",
+      "context_relevance": "4",
+      "persona_consistency": "3",
+      "naturalness": "2",
+      "overall_quality": "3",
+      "notes": "[proposed_contextual_controlled_tuned]    4                      3                       2                     3                \"Contextually relevant but lacks naturalness and persona consistency.\"<TAB>Proposed context-aware response, yet tone seems too formal for the given scenario.<TAB>"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "1",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "[baseline_no_context]                   1                        5                       4                    3                \"Lacks immediate relevance to current situation; however, maintains consistent persona and naturalness.\"<TAB>No contextual information provided in this response. <TAB>"
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "The response is contextually relevant, maintains persona consistency as a methodical and risk-aware Systems Engineer would not rush into unapproved actions, sounds natural within the setting of strict protocol at an archive, but could be slightly more engaging to improve overall quality."
+    }
+  ]
+}

@@ -1,0 +1,270 @@
+{
+  "arms": {
+    "proposed_contextual_controlled": {
+      "total_requests": 24,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.16666666666666666,
+      "first_pass_accept_rate": 0.20833333333333334,
+      "rewrite_attempt_rate": 0.7916666666666666,
+      "retry_rate": 0.7916666666666666,
+      "multi_retry_rate": 0.7916666666666666,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {
+        "fallback": 4,
+        "raw": 2,
+        "raw_grounded_repair": 3,
+        "rewritten_grounded_repair": 1,
+        "structured_recovery": 14
+      },
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 4,
+          "fallback_rate": 0.25,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.75
+        },
+        "Guarding": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Investigating": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Observing": {
+          "count": 8,
+          "fallback_rate": 0.25,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.625
+        },
+        "Patrolling": {
+          "count": 3,
+          "fallback_rate": 0.3333333333333333,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Researching": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.5
+        },
+        "RitualPreparation": {
+          "count": 3,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        }
+      }
+    },
+    "proposed_contextual_controlled_tuned": {
+      "total_requests": 24,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.08333333333333333,
+      "first_pass_accept_rate": 0.16666666666666666,
+      "rewrite_attempt_rate": 0.8333333333333334,
+      "retry_rate": 0.8333333333333334,
+      "multi_retry_rate": 0.8333333333333334,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {
+        "fallback": 2,
+        "raw": 1,
+        "raw_grounded_repair": 2,
+        "raw_relaxed": 1,
+        "rewritten": 2,
+        "rewritten_grounded_repair": 3,
+        "structured_recovery": 13
+      },
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 4,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.5
+        },
+        "Guarding": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Investigating": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Observing": {
+          "count": 8,
+          "fallback_rate": 0.25,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.875
+        },
+        "Patrolling": {
+          "count": 3,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        },
+        "Researching": {
+          "count": 2,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.5
+        },
+        "RitualPreparation": {
+          "count": 3,
+          "fallback_rate": 0.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 1.0
+        }
+      }
+    },
+    "proposed_contextual": {
+      "total_requests": 24,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.625,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 4,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Guarding": {
+          "count": 2,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 2,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 8,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Patrolling": {
+          "count": 3,
+          "fallback_rate": 0.6666666666666666,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Researching": {
+          "count": 2,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "RitualPreparation": {
+          "count": 3,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    },
+    "candidate_no_context": {
+      "total_requests": 24,
+      "timeout_rate": 0.0,
+      "error_rate": 0.0,
+      "fallback_rate": 0.7083333333333334,
+      "first_pass_accept_rate": 0.0,
+      "rewrite_attempt_rate": 0.0,
+      "retry_rate": 0.0,
+      "multi_retry_rate": 0.0,
+      "rewrite_failure_rate": 0.0,
+      "control_source_breakdown": {},
+      "by_behavior_state": {
+        "Assisting": {
+          "count": 4,
+          "fallback_rate": 0.75,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Guarding": {
+          "count": 2,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Investigating": {
+          "count": 2,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Observing": {
+          "count": 8,
+          "fallback_rate": 0.625,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Patrolling": {
+          "count": 3,
+          "fallback_rate": 0.6666666666666666,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "Researching": {
+          "count": 2,
+          "fallback_rate": 0.5,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        },
+        "RitualPreparation": {
+          "count": 3,
+          "fallback_rate": 1.0,
+          "timeout_rate": 0.0,
+          "error_rate": 0.0,
+          "rewrite_attempt_rate": 0.0
+        }
+      }
+    }
+  }
+}

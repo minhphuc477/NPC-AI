@@ -1,0 +1,48 @@
+{
+  "arm": "proposed_contextual_controlled_tuned",
+  "root": "artifacts\\proposal",
+  "run_count": 1,
+  "overall": {
+    "avg_response_time_ms": 1760.0548111111111,
+    "p95_response_time_ms": 3618.954385,
+    "timeout_rate": 0.0,
+    "fallback_rate": 0.25,
+    "retry_rate": 0.8402777777777778,
+    "dropped_interaction_rate": 0.25,
+    "first_pass_accept_rate": 0.1597222222222222,
+    "estimated_model_memory_mb": 2040.6766918945314,
+    "host_ram_gb": 15.73
+  },
+  "by_hardware_tier": {
+    "dev_workstation": {
+      "run_count": 1,
+      "avg_response_time_ms": 1760.0548111111111,
+      "p95_response_time_ms": 3618.954385,
+      "timeout_rate": 0.0,
+      "fallback_rate": 0.25,
+      "retry_rate": 0.8402777777777778,
+      "dropped_interaction_rate": 0.25,
+      "first_pass_accept_rate": 0.1597222222222222,
+      "estimated_model_memory_mb": 2040.6766918945314,
+      "host_ram_gb": 15.73
+    }
+  },
+  "per_run": [
+    {
+      "interaction_count": 144,
+      "ok_count": 144,
+      "dropped_interaction_rate": 0.25,
+      "avg_response_time_ms": 1760.0548111111111,
+      "p95_response_time_ms": 3618.954385,
+      "timeout_rate": 0.0,
+      "fallback_rate": 0.25,
+      "retry_rate": 0.8402777777777778,
+      "first_pass_accept_rate": 0.1597222222222222,
+      "run_dir": "artifacts\\proposal\\20260313T015415Z",
+      "hardware_tier": "dev_workstation",
+      "model_name": "elara-npc:latest",
+      "estimated_model_memory_mb": 2040.6766918945314,
+      "host_ram_gb": 15.73
+    }
+  ]
+}

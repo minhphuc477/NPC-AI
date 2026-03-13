@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled_tuned",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "5",
+      "overall_quality": "5",
+      "notes": "proposed_contextual_controlled_tuned   4    5    5    5   Balanced approach, maintains persona and context relevance while offering a fair discount in response to urgency.        baseline_no_context     3    4    4    4   Maintains integrity but could be more personable; the tone is firm yet not overly rigid or impersonal.    baseline_no_context_phi3_latest 3    5    4    4   Good attempt at maint"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "3",
+      "persona_consistency": "4",
+      "naturalness": "4",
+      "overall_quality": "4",
+      "notes": "[baseline_no_context] <TAB>3 <TAB>4 <TAB>4 <TAB>4 <TAB>The response is somewhat relevant, maintains a consistent persona with the Old Merchant's character but lacks contextual depth regarding his current situation and environment. Naturalness and overall"
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "4",
+      "naturalness": "3",
+      "overall_quality": "3",
+      "notes": "A response that is somewhat relevant but lacks urgency and naturalness in tone, slightly inconsistent with a merchant's profit-seeking behavior by offering discount."
+    }
+  ]
+}

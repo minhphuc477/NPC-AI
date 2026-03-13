@@ -1,0 +1,2468 @@
+{
+  "proposed_vs_candidate_no_context": {
+    "context_relevance": {
+      "n": 143,
+      "mean_delta": 0.05559248324418436,
+      "ci95_low": 0.03688846746368317,
+      "ci95_high": 0.07530204411889364,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.05559248324418436,
+        "ci95_low": 0.027330825637961933,
+        "ci95_high": 0.08773063988282011,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 143,
+      "mean_delta": -0.01994642987931849,
+      "ci95_low": -0.03986906509827436,
+      "ci95_high": -0.0014363948205821256,
+      "p_delta_le_0": 0.9836666666666667,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.01994642987931849,
+        "ci95_low": -0.04054037480048747,
+        "ci95_high": -0.0009608961640211621,
+        "p_delta_le_0": 0.98
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 143,
+      "mean_delta": -0.010237379265761057,
+      "ci95_low": -0.01913417756606371,
+      "ci95_high": -0.0008237149888142545,
+      "p_delta_le_0": 0.9843333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.010237379265761057,
+        "ci95_low": -0.01578884549316467,
+        "ci95_high": -0.005332681126072729,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 143,
+      "mean_delta": 0.046891415846028246,
+      "ci95_low": 0.031653459861430894,
+      "ci95_high": 0.06292774917972498,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.046891415846028246,
+        "ci95_low": 0.022842534021675773,
+        "ci95_high": 0.07290380906971557,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 143,
+      "mean_delta": 0.03922631225407597,
+      "ci95_low": 0.02747899807167928,
+      "ci95_high": 0.052327919973470166,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.03922631225407597,
+        "ci95_low": 0.01841559234885729,
+        "ci95_high": 0.061856850292580985,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 143,
+      "mean_delta": 0.1258741258741259,
+      "ci95_low": 0.07692307692307693,
+      "ci95_high": 0.18181818181818182,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.1258741258741259,
+        "ci95_low": 0.0,
+        "ci95_high": 0.3776223776223776,
+        "p_delta_le_0": 0.3416666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 143,
+      "mean_delta": 0.0054778554778554785,
+      "ci95_low": -0.004562937062937063,
+      "ci95_high": 0.015922057109557113,
+      "p_delta_le_0": 0.15833333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.0054778554778554785,
+        "ci95_low": -0.0025001456876456865,
+        "ci95_high": 0.013085484550910085,
+        "p_delta_le_0": 0.087
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 143,
+      "mean_delta": 0.013581356518156475,
+      "ci95_low": 0.006001583194771254,
+      "ci95_high": 0.02146514781616563,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.013581356518156475,
+        "ci95_low": 0.0058010521263721455,
+        "ci95_high": 0.022132546128621595,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 143,
+      "mean_delta": -0.0015576151121605667,
+      "ci95_low": -0.009525900198286563,
+      "ci95_high": 0.007131625760603033,
+      "p_delta_le_0": 0.6333333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.0015576151121605667,
+        "ci95_low": -0.007427012877694695,
+        "ci95_high": 0.005913903115663676,
+        "p_delta_le_0": 0.6953333333333334
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 143,
+      "mean_delta": 0.07285441830896376,
+      "ci95_low": 0.04877013138376774,
+      "ci95_high": 0.09914309175672811,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.07285441830896376,
+        "ci95_low": 0.03686718584445857,
+        "ci95_high": 0.11494332529843895,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 143,
+      "mean_delta": 0.015314634759699103,
+      "ci95_low": 0.00971850283799065,
+      "ci95_high": 0.021217067679203765,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.015314634759699103,
+        "ci95_low": 0.006878464018732541,
+        "ci95_high": 0.023872397625078604,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 143,
+      "mean_delta": -0.026906426906426903,
+      "ci95_low": -0.052348484848484846,
+      "ci95_high": -0.0032600732600732464,
+      "p_delta_le_0": 0.9863333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.026906426906426903,
+        "ci95_low": -0.053679653679653674,
+        "ci95_high": -0.0014184397163120577,
+        "p_delta_le_0": 0.982
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 143,
+      "mean_delta": 0.007893558229115177,
+      "ci95_low": -0.0028641722825355404,
+      "ci95_high": 0.019976721955484264,
+      "p_delta_le_0": 0.08166666666666667,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.007893558229115177,
+        "ci95_low": -0.0013576072720503252,
+        "ci95_high": 0.019412815926598173,
+        "p_delta_le_0": 0.068
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 143,
+      "mean_delta": -0.007774524663660968,
+      "ci95_low": -0.015415441962632555,
+      "ci95_high": -0.0002999278038332213,
+      "p_delta_le_0": 0.979,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.007774524663660968,
+        "ci95_low": -0.015799361849884175,
+        "ci95_high": -0.0015879372646317048,
+        "p_delta_le_0": 0.999
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 143,
+      "mean_delta": -0.034032634032634033,
+      "ci95_low": -0.07553030303030303,
+      "ci95_high": 0.006060606060606061,
+      "p_delta_le_0": 0.953,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.034032634032634033,
+        "ci95_low": -0.06270396270396271,
+        "ci95_high": -0.006013743201243185,
+        "p_delta_le_0": 0.9933333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 143,
+      "mean_delta": -0.0024475524475524473,
+      "ci95_low": -0.029370629370629366,
+      "ci95_high": 0.024475524475524476,
+      "p_delta_le_0": 0.617,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.0024475524475524473,
+        "ci95_low": -0.02916666666666666,
+        "ci95_high": 0.022187031765058447,
+        "p_delta_le_0": 0.6053333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 143,
+      "mean_delta": 0.0161958570012901,
+      "ci95_low": 0.004376853197038448,
+      "ci95_high": 0.02761428391188491,
+      "p_delta_le_0": 0.004,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.0161958570012901,
+        "ci95_low": 0.0020713598544185186,
+        "ci95_high": 0.03181928034545199,
+        "p_delta_le_0": 0.010666666666666666
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  },
+  "proposed_vs_baseline_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "mean_delta": 0.048780607464700546,
+      "ci95_low": 0.031767583186983785,
+      "ci95_high": 0.0674523322587521,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.048780607464700546,
+        "ci95_low": 0.016789497636007157,
+        "ci95_high": 0.08457886416994666,
+        "p_delta_le_0": 0.0003333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 144,
+      "mean_delta": 0.05454998606647324,
+      "ci95_low": 0.03402446084867748,
+      "ci95_high": 0.07422086900394168,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.05454998606647324,
+        "ci95_low": 0.031925151410388576,
+        "ci95_high": 0.07253623098544976,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 144,
+      "mean_delta": -0.033871509768425276,
+      "ci95_low": -0.04519842082106932,
+      "ci95_high": -0.02191553053364474,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.033871509768425276,
+        "ci95_low": -0.04639083943026445,
+        "ci95_high": -0.023370808560463755,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "mean_delta": 0.04066915360792712,
+      "ci95_low": 0.0253767655718361,
+      "ci95_high": 0.05579507029581742,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04066915360792712,
+        "ci95_low": 0.014969322779902244,
+        "ci95_high": 0.06913812300092136,
+        "p_delta_le_0": 0.0006666666666666666
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 144,
+      "mean_delta": 0.03120646179093512,
+      "ci95_low": 0.019601412488223526,
+      "ci95_high": 0.044316023781739745,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.03120646179093512,
+        "ci95_low": 0.01055970791526066,
+        "ci95_high": 0.05459970255481146,
+        "p_delta_le_0": 0.0006666666666666666
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "mean_delta": 0.125,
+      "ci95_low": 0.06944444444444445,
+      "ci95_high": 0.18055555555555555,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.125,
+        "ci95_low": 0.0,
+        "ci95_high": 0.375,
+        "p_delta_le_0": 0.362
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "mean_delta": 0.029114583333333333,
+      "ci95_low": 0.016095920138888893,
+      "ci95_high": 0.042020109953703706,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.029114583333333333,
+        "ci95_low": 0.008222945601851854,
+        "ci95_high": 0.04880830439814816,
+        "p_delta_le_0": 0.0033333333333333335
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "mean_delta": 0.012306837580875541,
+      "ci95_low": 0.0023212682238725594,
+      "ci95_high": 0.0218749054447042,
+      "p_delta_le_0": 0.008666666666666666,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.012306837580875541,
+        "ci95_low": 0.0018589274972599227,
+        "ci95_high": 0.021557756670296316,
+        "p_delta_le_0": 0.008333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "mean_delta": 0.002457082732082737,
+      "ci95_low": -0.007858759093915339,
+      "ci95_high": 0.012203736171236176,
+      "p_delta_le_0": 0.32566666666666666,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.002457082732082737,
+        "ci95_low": -0.011533187492484364,
+        "ci95_high": 0.015931289006132773,
+        "p_delta_le_0": 0.36233333333333334
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.06508838383838383,
+      "ci95_low": 0.04289614898989899,
+      "ci95_high": 0.08959517045454546,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.06508838383838383,
+        "ci95_low": 0.024051452020202018,
+        "ci95_high": 0.11098484848484848,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 144,
+      "mean_delta": 0.010729129259439543,
+      "ci95_low": 0.004347079837691546,
+      "ci95_high": 0.017821405893363902,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.010729129259439543,
+        "ci95_low": -0.0032203522447071175,
+        "ci95_high": 0.0225741508132221,
+        "p_delta_le_0": 0.06633333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.07275132275132275,
+      "ci95_low": 0.04751984126984127,
+      "ci95_high": 0.09801587301587301,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.07275132275132275,
+        "ci95_low": 0.040736607142857144,
+        "ci95_high": 0.09980241402116403,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 144,
+      "mean_delta": -0.018255360672924843,
+      "ci95_low": -0.03500857581022569,
+      "ci95_high": -0.0023429776821395866,
+      "p_delta_le_0": 0.9886666666666667,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.018255360672924843,
+        "ci95_low": -0.06077815865009954,
+        "ci95_high": 0.012736963839335497,
+        "p_delta_le_0": 0.7803333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 144,
+      "mean_delta": -0.04542688048166934,
+      "ci95_low": -0.05455217885964133,
+      "ci95_high": -0.0366387756743198,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.04542688048166934,
+        "ci95_low": -0.06328962570452852,
+        "ci95_high": -0.03278703912920339,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 144,
+      "mean_delta": -0.09861111111111112,
+      "ci95_low": -0.15023148148148147,
+      "ci95_high": -0.049531249999999985,
+      "p_delta_le_0": 0.9996666666666667,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.09861111111111112,
+        "ci95_low": -0.15046296296296297,
+        "ci95_high": -0.052777777777777785,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 144,
+      "mean_delta": 0.040972222222222215,
+      "ci95_low": 0.006944444444444444,
+      "ci95_high": 0.07534722222222222,
+      "p_delta_le_0": 0.012333333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.040972222222222215,
+        "ci95_low": -0.012152777777777778,
+        "ci95_high": 0.09583333333333333,
+        "p_delta_le_0": 0.07366666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 144,
+      "mean_delta": 0.03672386262569919,
+      "ci95_low": 0.025400878922692507,
+      "ci95_high": 0.04886518769747506,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.03672386262569919,
+        "ci95_low": 0.017161835375755594,
+        "ci95_high": 0.05539796268272486,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  },
+  "proposed_vs_baseline_no_context_phi3_latest": {
+    "context_relevance": {
+      "n": 144,
+      "mean_delta": 0.04970776772513923,
+      "ci95_low": 0.03252320776620533,
+      "ci95_high": 0.0696364967064415,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04970776772513923,
+        "ci95_low": 0.016188058221856514,
+        "ci95_high": 0.08477641265124969,
+        "p_delta_le_0": 0.0003333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 144,
+      "mean_delta": 0.05017372131556768,
+      "ci95_low": 0.030164720209114582,
+      "ci95_high": 0.07071276331650253,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.05017372131556768,
+        "ci95_low": 0.023130070521916884,
+        "ci95_high": 0.07557912803739962,
+        "p_delta_le_0": 0.0003333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 144,
+      "mean_delta": -0.02593297228282849,
+      "ci95_low": -0.03717303365568414,
+      "ci95_high": -0.014779715810516751,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.02593297228282849,
+        "ci95_low": -0.04156936119720533,
+        "ci95_high": -0.012865681056143151,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "mean_delta": 0.042544597968351715,
+      "ci95_low": 0.02768668992792782,
+      "ci95_high": 0.05809422067457146,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.042544597968351715,
+        "ci95_low": 0.01563171698927039,
+        "ci95_high": 0.06949312181682984,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 144,
+      "mean_delta": 0.031096877959946027,
+      "ci95_low": 0.017945684226796207,
+      "ci95_high": 0.04459574611326265,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.031096877959946027,
+        "ci95_low": 0.008004564379897596,
+        "ci95_high": 0.05803909743111696,
+        "p_delta_le_0": 0.004
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "mean_delta": 0.125,
+      "ci95_low": 0.0763888888888889,
+      "ci95_high": 0.18055555555555555,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.125,
+        "ci95_low": 0.0,
+        "ci95_high": 0.375,
+        "p_delta_le_0": 0.33366666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "mean_delta": 0.028738425925925928,
+      "ci95_low": 0.01646947337962963,
+      "ci95_high": 0.04128472222222222,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.028738425925925928,
+        "ci95_low": 0.011051793981481485,
+        "ci95_high": 0.04815017361111112,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "mean_delta": 0.015975330506473286,
+      "ci95_low": 0.006554203414971165,
+      "ci95_high": 0.025010464955324233,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.015975330506473286,
+        "ci95_low": 0.005072791993310402,
+        "ci95_high": 0.024711215023343606,
+        "p_delta_le_0": 0.003
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "mean_delta": 0.0035021389490139526,
+      "ci95_low": -0.005571262551106297,
+      "ci95_high": 0.013196593840187596,
+      "p_delta_le_0": 0.22733333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0035021389490139526,
+        "ci95_low": -0.006479071255711882,
+        "ci95_high": 0.013988369784151054,
+        "p_delta_le_0": 0.276
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.06457281144781145,
+      "ci95_low": 0.040944339225589224,
+      "ci95_high": 0.08868923611111111,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.06457281144781145,
+        "ci95_low": 0.02241161616161616,
+        "ci95_high": 0.1125423505892256,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 144,
+      "mean_delta": 0.01502266570557075,
+      "ci95_low": 0.008143853886279515,
+      "ci95_high": 0.022193697986293892,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.01502266570557075,
+        "ci95_low": 0.0022665620965309535,
+        "ci95_high": 0.02670270168980021,
+        "p_delta_le_0": 0.01
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.06696428571428571,
+      "ci95_low": 0.042458664021164015,
+      "ci95_high": 0.0912037037037037,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.06696428571428571,
+        "ci95_low": 0.03363012566137566,
+        "ci95_high": 0.09461061507936507,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 144,
+      "mean_delta": -0.016988536279304474,
+      "ci95_low": -0.03488765711719405,
+      "ci95_high": 0.0004934972106345255,
+      "p_delta_le_0": 0.97,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.016988536279304474,
+        "ci95_low": -0.06559964739041559,
+        "ci95_high": 0.018106260774724388,
+        "p_delta_le_0": 0.76
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 144,
+      "mean_delta": -0.04114766639730698,
+      "ci95_low": -0.05076416413498784,
+      "ci95_high": -0.031710839490142036,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.04114766639730698,
+        "ci95_low": -0.05771295235171735,
+        "ci95_high": -0.027325842248862343,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 144,
+      "mean_delta": -0.06851851851851852,
+      "ci95_low": -0.11620949074074075,
+      "ci95_high": -0.02199074074074074,
+      "p_delta_le_0": 0.997,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.06851851851851852,
+        "ci95_low": -0.12384259259259259,
+        "ci95_high": -0.019675925925925934,
+        "p_delta_le_0": 0.9986666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 144,
+      "mean_delta": 0.04305555555555555,
+      "ci95_low": 0.009027777777777779,
+      "ci95_high": 0.07709201388888894,
+      "p_delta_le_0": 0.007666666666666666,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04305555555555555,
+        "ci95_low": -0.004869791666666664,
+        "ci95_high": 0.09166666666666666,
+        "p_delta_le_0": 0.043666666666666666
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 144,
+      "mean_delta": 0.0369440003778368,
+      "ci95_low": 0.02454056273115599,
+      "ci95_high": 0.04912207100988152,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0369440003778368,
+        "ci95_low": 0.015299248119467508,
+        "ci95_high": 0.056682225129722125,
+        "p_delta_le_0": 0.0003333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  },
+  "controlled_vs_proposed_raw": {
+    "context_relevance": {
+      "n": 144,
+      "mean_delta": 0.041785855741132166,
+      "ci95_low": 0.019647763042844157,
+      "ci95_high": 0.06456475466944185,
+      "p_delta_le_0": 0.0003333333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.041785855741132166,
+        "ci95_low": 0.021640268645008287,
+        "ci95_high": 0.06258929875359306,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 144,
+      "mean_delta": 0.08344295057983205,
+      "ci95_low": 0.06070230926298172,
+      "ci95_high": 0.10760696165813134,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.08344295057983205,
+        "ci95_low": 0.05554770171957672,
+        "ci95_high": 0.11600743659342222,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 144,
+      "mean_delta": -0.007847894929800314,
+      "ci95_low": -0.018657255218179358,
+      "ci95_high": 0.0031081146221257914,
+      "p_delta_le_0": 0.9093333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.007847894929800314,
+        "ci95_low": -0.023141371196536094,
+        "ci95_high": 0.009022107530783077,
+        "p_delta_le_0": 0.8253333333333334
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "mean_delta": 0.036461889548289064,
+      "ci95_low": 0.01806659221274135,
+      "ci95_high": 0.056062333185122236,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.036461889548289064,
+        "ci95_low": 0.01991216591840157,
+        "ci95_high": 0.054305410012302525,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 144,
+      "mean_delta": 0.017090693172042436,
+      "ci95_low": 0.0002383628471263921,
+      "ci95_high": 0.03487999461749953,
+      "p_delta_le_0": 0.023333333333333334,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.017090693172042436,
+        "ci95_low": 0.0023873693962890344,
+        "ci95_high": 0.032753444315431465,
+        "p_delta_le_0": 0.006666666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "mean_delta": -0.125,
+      "ci95_low": -0.18055555555555555,
+      "ci95_high": -0.0763888888888889,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.125,
+        "ci95_low": -0.375,
+        "ci95_high": 0.0,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "mean_delta": 0.018211805555555557,
+      "ci95_low": 0.005554976851851852,
+      "ci95_high": 0.030741030092592592,
+      "p_delta_le_0": 0.0013333333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.018211805555555557,
+        "ci95_low": 0.006805266203703703,
+        "ci95_high": 0.03089756944444445,
+        "p_delta_le_0": 0.0003333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "mean_delta": 0.01448080784377917,
+      "ci95_low": 0.006821886620696984,
+      "ci95_high": 0.02207719189700176,
+      "p_delta_le_0": 0.0003333333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.01448080784377917,
+        "ci95_low": 0.0049933938645826,
+        "ci95_high": 0.023103489268551703,
+        "p_delta_le_0": 0.002
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "mean_delta": 0.0038571684102934093,
+      "ci95_low": -0.00662163247053872,
+      "ci95_high": 0.013784476949555072,
+      "p_delta_le_0": 0.23033333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0038571684102934093,
+        "ci95_low": -0.002266286713864843,
+        "ci95_high": 0.010780478031806156,
+        "p_delta_le_0": 0.12
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.0551557239057239,
+      "ci95_low": 0.02514257154882155,
+      "ci95_high": 0.0857444234006734,
+      "p_delta_le_0": 0.0003333333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0551557239057239,
+        "ci95_low": 0.029019360269360268,
+        "ci95_high": 0.08371685606060607,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 144,
+      "mean_delta": 0.010589496690418134,
+      "ci95_low": 0.0020622644798713014,
+      "ci95_high": 0.018879339996259948,
+      "p_delta_le_0": 0.006666666666666667,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.010589496690418134,
+        "ci95_low": 0.0040229948166695785,
+        "ci95_high": 0.016872598080851228,
+        "p_delta_le_0": 0.0013333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.10185185185185185,
+      "ci95_low": 0.07380621693121693,
+      "ci95_high": 0.1324743716931217,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.10185185185185185,
+        "ci95_low": 0.0667989417989418,
+        "ci95_high": 0.14236524470899473,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 144,
+      "mean_delta": 0.009807345491752804,
+      "ci95_low": -0.0038550860100923204,
+      "ci95_high": 0.024906223058206684,
+      "p_delta_le_0": 0.08866666666666667,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.009807345491752804,
+        "ci95_low": -0.011966381360099048,
+        "ci95_high": 0.03816382697323428,
+        "p_delta_le_0": 0.24666666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 144,
+      "mean_delta": -0.012484679566718402,
+      "ci95_low": -0.021633728645503274,
+      "ci95_high": -0.0032119224140138704,
+      "p_delta_le_0": 0.9973333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.012484679566718402,
+        "ci95_low": -0.02501104534652428,
+        "ci95_high": -0.0007751861556054225,
+        "p_delta_le_0": 0.9826666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 144,
+      "mean_delta": -0.023379629629629625,
+      "ci95_low": -0.06828703703703703,
+      "ci95_high": 0.020370370370370375,
+      "p_delta_le_0": 0.8453333333333334,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.023379629629629625,
+        "ci95_low": -0.09097222222222222,
+        "ci95_high": 0.04560185185185186,
+        "p_delta_le_0": 0.7406666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 144,
+      "mean_delta": 0.027430555555555555,
+      "ci95_low": -0.0034722222222222238,
+      "ci95_high": 0.05661458333333339,
+      "p_delta_le_0": 0.037333333333333336,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.027430555555555555,
+        "ci95_low": -0.008680555555555556,
+        "ci95_high": 0.0611111111111111,
+        "p_delta_le_0": 0.06666666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 144,
+      "mean_delta": 0.049029783278366164,
+      "ci95_low": 0.03477052192716902,
+      "ci95_high": 0.06429157090697629,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.049029783278366164,
+        "ci95_low": 0.036611707732869064,
+        "ci95_high": 0.06120885901424024,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  },
+  "controlled_vs_candidate_no_context": {
+    "context_relevance": {
+      "n": 143,
+      "mean_delta": 0.09901995307839252,
+      "ci95_low": 0.07631791639899035,
+      "ci95_high": 0.12205649638154444,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.09901995307839252,
+        "ci95_low": 0.06594951335779398,
+        "ci95_high": 0.13508590300067613,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 143,
+      "mean_delta": 0.06408003783743546,
+      "ci95_low": 0.0398318729588358,
+      "ci95_high": 0.08795642143486726,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.06408003783743546,
+        "ci95_low": 0.028539506739235,
+        "ci95_high": 0.0903981735834402,
+        "p_delta_le_0": 0.0006666666666666666
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 143,
+      "mean_delta": -0.01832957919016309,
+      "ci95_low": -0.029609994164340608,
+      "ci95_high": -0.007237307050120687,
+      "p_delta_le_0": 0.9993333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.01832957919016309,
+        "ci95_low": -0.033103203970645576,
+        "ci95_high": -0.0028313281824982207,
+        "p_delta_le_0": 0.9893333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 143,
+      "mean_delta": 0.08511971058074878,
+      "ci95_low": 0.0659505299510237,
+      "ci95_high": 0.10461433472983302,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.08511971058074878,
+        "ci95_low": 0.057627066745473216,
+        "ci95_high": 0.11426449856659517,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 143,
+      "mean_delta": 0.056464233790698856,
+      "ci95_low": 0.041947045656062075,
+      "ci95_high": 0.07315174422609552,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.056464233790698856,
+        "ci95_low": 0.03711565027321263,
+        "ci95_high": 0.07509736718504885,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 143,
+      "mean_delta": 0.0,
+      "ci95_low": -0.08391608391608392,
+      "ci95_high": 0.07692307692307693,
+      "p_delta_le_0": 0.5416666666666666,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.0,
+        "ci95_low": -0.375,
+        "ci95_high": 0.375,
+        "p_delta_le_0": 0.6336666666666667
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 143,
+      "mean_delta": 0.022674825174825174,
+      "ci95_low": 0.01055201048951049,
+      "ci95_high": 0.03461436480186482,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.022674825174825174,
+        "ci95_low": 0.012766104555167055,
+        "ci95_high": 0.03283406177156178,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 143,
+      "mean_delta": 0.027778901793148056,
+      "ci95_low": 0.02050279473860866,
+      "ci95_high": 0.035108263769586055,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.027778901793148056,
+        "ci95_low": 0.01957007978243616,
+        "ci95_high": 0.037147126181884746,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 143,
+      "mean_delta": 0.00125210395664941,
+      "ci95_low": -0.007893738912602553,
+      "ci95_high": 0.009606030522507795,
+      "p_delta_le_0": 0.4,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.00125210395664941,
+        "ci95_low": -0.0069190885706802785,
+        "ci95_high": 0.010232234773328528,
+        "p_delta_le_0": 0.404
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 143,
+      "mean_delta": 0.12979444797626616,
+      "ci95_low": 0.10030700360245813,
+      "ci95_high": 0.1608937274846366,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.12979444797626616,
+        "ci95_low": 0.0852025462962963,
+        "ci95_high": 0.17914812460267004,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 143,
+      "mean_delta": 0.027212798316687367,
+      "ci95_low": 0.019822987299841336,
+      "ci95_high": 0.035114715599880775,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.027212798316687367,
+        "ci95_low": 0.020362710515851572,
+        "ci95_high": 0.03443177876678815,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 143,
+      "mean_delta": 0.07565767565767564,
+      "ci95_low": 0.04558524808524808,
+      "ci95_high": 0.10633200133200135,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.07565767565767564,
+        "ci95_low": 0.035930735930735924,
+        "ci95_high": 0.10787478540470564,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 143,
+      "mean_delta": 0.01776948655647464,
+      "ci95_low": 0.003345620808805336,
+      "ci95_high": 0.03455146346492615,
+      "p_delta_le_0": 0.007666666666666666,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.01776948655647464,
+        "ci95_low": 0.0015392216479173002,
+        "ci95_high": 0.03925524717267004,
+        "p_delta_le_0": 0.021
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 143,
+      "mean_delta": -0.02012077050878729,
+      "ci95_low": -0.029408748259115308,
+      "ci95_high": -0.01157513550288115,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.02012077050878729,
+        "ci95_low": -0.03579411780754122,
+        "ci95_high": -0.004924775744545794,
+        "p_delta_le_0": 0.9963333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 143,
+      "mean_delta": -0.05897435897435897,
+      "ci95_low": -0.1076981351981352,
+      "ci95_high": -0.011421911421911424,
+      "p_delta_le_0": 0.9913333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": -0.05897435897435897,
+        "ci95_low": -0.13262923109754093,
+        "ci95_high": 0.008333333333333337,
+        "p_delta_le_0": 0.9533333333333334
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 143,
+      "mean_delta": 0.025174825174825173,
+      "ci95_low": -0.0034965034965034982,
+      "ci95_high": 0.0524825174825176,
+      "p_delta_le_0": 0.03666666666666667,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.025174825174825173,
+        "ci95_low": -0.011111111111111112,
+        "ci95_high": 0.06597222222222222,
+        "p_delta_le_0": 0.09733333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 143,
+      "mean_delta": 0.06612829499898118,
+      "ci95_low": 0.05040543601742976,
+      "ci95_high": 0.08159230488948915,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 143,
+        "mean_delta": 0.06612829499898118,
+        "ci95_low": 0.04351531330769027,
+        "ci95_high": 0.0893643074950134,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  },
+  "controlled_vs_baseline_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "mean_delta": 0.09056646320583271,
+      "ci95_low": 0.06905538750945901,
+      "ci95_high": 0.11359738829617005,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.09056646320583271,
+        "ci95_low": 0.05462131171502901,
+        "ci95_high": 0.1323360904540531,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 144,
+      "mean_delta": 0.13799293664630527,
+      "ci95_low": 0.11540309508648679,
+      "ci95_high": 0.15922605321448674,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.13799293664630527,
+        "ci95_low": 0.09845072751322753,
+        "ci95_high": 0.17014576056578495,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 144,
+      "mean_delta": -0.04171940469822559,
+      "ci95_low": -0.05507223961825093,
+      "ci95_high": -0.02912970983759974,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.04171940469822559,
+        "ci95_low": -0.05568015989215618,
+        "ci95_high": -0.02600123735180526,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "mean_delta": 0.07713104315621618,
+      "ci95_low": 0.05806033750965387,
+      "ci95_high": 0.09635954384776037,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.07713104315621618,
+        "ci95_low": 0.04646175678019277,
+        "ci95_high": 0.11092927847930384,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 144,
+      "mean_delta": 0.048297154962977554,
+      "ci95_low": 0.03193175748771681,
+      "ci95_high": 0.06514185961671279,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.048297154962977554,
+        "ci95_low": 0.029586132618774366,
+        "ci95_high": 0.06887260440523259,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "mean_delta": 0.0,
+      "ci95_low": -0.0763888888888889,
+      "ci95_high": 0.08333333333333333,
+      "p_delta_le_0": 0.5243333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0,
+        "ci95_low": -0.375,
+        "ci95_high": 0.375,
+        "p_delta_le_0": 0.642
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "mean_delta": 0.04732638888888889,
+      "ci95_low": 0.03414105902777778,
+      "ci95_high": 0.060474826388888896,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04732638888888889,
+        "ci95_low": 0.026618923611111112,
+        "ci95_high": 0.06841435185185185,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "mean_delta": 0.026787645424654713,
+      "ci95_low": 0.018053164887975686,
+      "ci95_high": 0.03545347313086255,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.026787645424654713,
+        "ci95_low": 0.019437153886488933,
+        "ci95_high": 0.0349287650979468,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "mean_delta": 0.006314251142376146,
+      "ci95_low": -0.004000489681036552,
+      "ci95_high": 0.01629789487133237,
+      "p_delta_le_0": 0.10766666666666666,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.006314251142376146,
+        "ci95_low": -0.007746003261784506,
+        "ci95_high": 0.02311426613606302,
+        "p_delta_le_0": 0.22666666666666666
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.12024410774410775,
+      "ci95_low": 0.0916874473905724,
+      "ci95_high": 0.15172585227272725,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.12024410774410775,
+        "ci95_low": 0.07251578282828282,
+        "ci95_high": 0.17374473905723908,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 144,
+      "mean_delta": 0.02131862594985768,
+      "ci95_low": 0.01333477287091018,
+      "ci95_high": 0.029692047104104776,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.02131862594985768,
+        "ci95_low": 0.009828161920840305,
+        "ci95_high": 0.03130535188624245,
+        "p_delta_le_0": 0.0003333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.1746031746031746,
+      "ci95_low": 0.1471552579365079,
+      "ci95_high": 0.20214947089947088,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.1746031746031746,
+        "ci95_low": 0.1250628306878307,
+        "ci95_high": 0.21319444444444444,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 144,
+      "mean_delta": -0.00844801518117204,
+      "ci95_low": -0.02336522666499768,
+      "ci95_high": 0.005902947506281586,
+      "p_delta_le_0": 0.876,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.00844801518117204,
+        "ci95_low": -0.02903645833333333,
+        "ci95_high": 0.010036336787414371,
+        "p_delta_le_0": 0.7943333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 144,
+      "mean_delta": -0.05791156004838774,
+      "ci95_low": -0.06729584694778999,
+      "ci95_high": -0.048719913856330004,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.05791156004838774,
+        "ci95_low": -0.0719064762788338,
+        "ci95_high": -0.04656170428687145,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 144,
+      "mean_delta": -0.12199074074074073,
+      "ci95_low": -0.1766261574074074,
+      "ci95_high": -0.06921296296296296,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.12199074074074073,
+        "ci95_low": -0.19283564814814813,
+        "ci95_high": -0.05416666666666666,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 144,
+      "mean_delta": 0.06840277777777777,
+      "ci95_low": 0.03610243055555556,
+      "ci95_high": 0.1017361111111111,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.06840277777777777,
+        "ci95_low": 0.038185763888888884,
+        "ci95_high": 0.10104166666666665,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 144,
+      "mean_delta": 0.08575364590406537,
+      "ci95_low": 0.07096719140210214,
+      "ci95_high": 0.10056798265068383,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.08575364590406537,
+        "ci95_low": 0.05904534076334851,
+        "ci95_high": 0.11298533451924282,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  },
+  "controlled_vs_baseline_no_context_phi3_latest": {
+    "context_relevance": {
+      "n": 144,
+      "mean_delta": 0.0914936234662714,
+      "ci95_low": 0.0686781074655931,
+      "ci95_high": 0.1139658915765172,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0914936234662714,
+        "ci95_low": 0.056506884816042935,
+        "ci95_high": 0.1351391586170089,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 144,
+      "mean_delta": 0.13361667189539972,
+      "ci95_low": 0.11280215459377597,
+      "ci95_high": 0.15487820790310017,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.13361667189539972,
+        "ci95_low": 0.09312153138410285,
+        "ci95_high": 0.16938810948652125,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 144,
+      "mean_delta": -0.0337808672126288,
+      "ci95_low": -0.04447641164719235,
+      "ci95_high": -0.023095880910482758,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.0337808672126288,
+        "ci95_low": -0.04510331291992458,
+        "ci95_high": -0.018909404866136185,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "mean_delta": 0.07900648751664077,
+      "ci95_low": 0.059332014406312146,
+      "ci95_high": 0.09903924220553255,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.07900648751664077,
+        "ci95_low": 0.04807832109748747,
+        "ci95_high": 0.11191287001717759,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 144,
+      "mean_delta": 0.04818757113198846,
+      "ci95_low": 0.033086270380523454,
+      "ci95_high": 0.06493520511016507,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04818757113198846,
+        "ci95_low": 0.027008032628626683,
+        "ci95_high": 0.07048153849048071,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "mean_delta": 0.0,
+      "ci95_low": -0.0763888888888889,
+      "ci95_high": 0.08333333333333333,
+      "p_delta_le_0": 0.5193333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0,
+        "ci95_low": -0.375,
+        "ci95_high": 0.375,
+        "p_delta_le_0": 0.644
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "mean_delta": 0.04695023148148148,
+      "ci95_low": 0.03337890625,
+      "ci95_high": 0.06033608217592593,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04695023148148148,
+        "ci95_low": 0.026722511574074077,
+        "ci95_high": 0.06856539351851852,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "mean_delta": 0.030456138350252453,
+      "ci95_low": 0.022547793995001317,
+      "ci95_high": 0.03879685503997121,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.030456138350252453,
+        "ci95_low": 0.021769309258252375,
+        "ci95_high": 0.04049853973462314,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "mean_delta": 0.0073593073593073615,
+      "ci95_low": -0.0022866085332491556,
+      "ci95_high": 0.017602351040163538,
+      "p_delta_le_0": 0.069,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0073593073593073615,
+        "ci95_low": -0.00410132090999278,
+        "ci95_high": 0.0216665224416787,
+        "p_delta_le_0": 0.135
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.11972853535353536,
+      "ci95_low": 0.09054056186868686,
+      "ci95_high": 0.1512571022727273,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.11972853535353536,
+        "ci95_low": 0.07252998737373738,
+        "ci95_high": 0.1741477272727273,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 144,
+      "mean_delta": 0.025612162395988885,
+      "ci95_low": 0.017221668099629814,
+      "ci95_high": 0.03394306104706934,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.025612162395988885,
+        "ci95_low": 0.01453736694463751,
+        "ci95_high": 0.035573637053775364,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.16881613756613756,
+      "ci95_low": 0.1417650462962963,
+      "ci95_high": 0.1946147486772487,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.16881613756613756,
+        "ci95_low": 0.11728753306878306,
+        "ci95_high": 0.20969246031746033,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 144,
+      "mean_delta": -0.0071811907875516685,
+      "ci95_low": -0.024245465319259474,
+      "ci95_high": 0.009919769779344879,
+      "p_delta_le_0": 0.7973333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.0071811907875516685,
+        "ci95_low": -0.031032986111111112,
+        "ci95_high": 0.014649244242641907,
+        "p_delta_le_0": 0.721
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 144,
+      "mean_delta": -0.05363234596402538,
+      "ci95_low": -0.06272501888219681,
+      "ci95_high": -0.04446009385315814,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.05363234596402538,
+        "ci95_low": -0.06579803631108301,
+        "ci95_high": -0.04306998551713145,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 144,
+      "mean_delta": -0.09189814814814815,
+      "ci95_low": -0.13750578703703706,
+      "ci95_high": -0.04791666666666667,
+      "p_delta_le_0": 0.9996666666666667,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.09189814814814815,
+        "ci95_low": -0.14769097222222222,
+        "ci95_high": -0.031712962962962964,
+        "p_delta_le_0": 0.9983333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 144,
+      "mean_delta": 0.0704861111111111,
+      "ci95_low": 0.03715277777777778,
+      "ci95_high": 0.10416666666666667,
+      "p_delta_le_0": 0.0003333333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0704861111111111,
+        "ci95_low": 0.02986111111111111,
+        "ci95_high": 0.11388888888888887,
+        "p_delta_le_0": 0.0003333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 144,
+      "mean_delta": 0.08597378365620297,
+      "ci95_low": 0.07090696759342514,
+      "ci95_high": 0.10108079148469491,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.08597378365620297,
+        "ci95_low": 0.06009497641320423,
+        "ci95_high": 0.11104472977599633,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  },
+  "proposed_contextual_controlled_vs_baseline_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "mean_delta": 0.09056646320583271,
+      "ci95_low": 0.06916525474242306,
+      "ci95_high": 0.1134676845381378,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.09056646320583271,
+        "ci95_low": 0.05387808007254885,
+        "ci95_high": 0.13047395743630025,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 144,
+      "mean_delta": 0.13799293664630527,
+      "ci95_low": 0.11590155308179695,
+      "ci95_high": 0.1598039911476328,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.13799293664630527,
+        "ci95_low": 0.10092443753772465,
+        "ci95_high": 0.17083297256043695,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 144,
+      "mean_delta": -0.04171940469822559,
+      "ci95_low": -0.05460016094876102,
+      "ci95_high": -0.028783309163914785,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.04171940469822559,
+        "ci95_low": -0.05618201078851599,
+        "ci95_high": -0.026012533759083217,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "mean_delta": 0.07713104315621618,
+      "ci95_low": 0.05775884012326451,
+      "ci95_high": 0.09658904486455952,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.07713104315621618,
+        "ci95_low": 0.04753886551879671,
+        "ci95_high": 0.11139645284900487,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 144,
+      "mean_delta": 0.048297154962977554,
+      "ci95_low": 0.032841388337921835,
+      "ci95_high": 0.0640675474069335,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.048297154962977554,
+        "ci95_low": 0.028127618268318676,
+        "ci95_high": 0.06911101107505162,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "mean_delta": 0.0,
+      "ci95_low": -0.08333333333333333,
+      "ci95_high": 0.08333333333333333,
+      "p_delta_le_0": 0.5416666666666666,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0,
+        "ci95_low": -0.375,
+        "ci95_high": 0.375,
+        "p_delta_le_0": 0.651
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "mean_delta": 0.04732638888888889,
+      "ci95_low": 0.03454832175925926,
+      "ci95_high": 0.060139467592592595,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04732638888888889,
+        "ci95_low": 0.02811342592592593,
+        "ci95_high": 0.06717592592592593,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "mean_delta": 0.026787645424654713,
+      "ci95_low": 0.017777699683075184,
+      "ci95_high": 0.03594909803463533,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.026787645424654713,
+        "ci95_low": 0.019622950550944724,
+        "ci95_high": 0.03541364651658613,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "mean_delta": 0.006314251142376146,
+      "ci95_low": -0.003933610697751317,
+      "ci95_high": 0.016668419875841764,
+      "p_delta_le_0": 0.12233333333333334,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.006314251142376146,
+        "ci95_low": -0.00809984499007936,
+        "ci95_high": 0.023160819241522374,
+        "p_delta_le_0": 0.237
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.12024410774410775,
+      "ci95_low": 0.09167534722222222,
+      "ci95_high": 0.1496322601010101,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.12024410774410775,
+        "ci95_low": 0.07272727272727272,
+        "ci95_high": 0.173532196969697,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 144,
+      "mean_delta": 0.02131862594985768,
+      "ci95_low": 0.013396559843963162,
+      "ci95_high": 0.02962451910301718,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.02131862594985768,
+        "ci95_low": 0.009654194872935463,
+        "ci95_high": 0.031219947335852552,
+        "p_delta_le_0": 0.0006666666666666666
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.1746031746031746,
+      "ci95_low": 0.1478166335978836,
+      "ci95_high": 0.2006299603174603,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.1746031746031746,
+        "ci95_low": 0.12668650793650793,
+        "ci95_high": 0.2140873015873016,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 144,
+      "mean_delta": -0.00844801518117204,
+      "ci95_low": -0.023230661785978858,
+      "ci95_high": 0.0064061425825124125,
+      "p_delta_le_0": 0.8793333333333333,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.00844801518117204,
+        "ci95_low": -0.029299458984601765,
+        "ci95_high": 0.009793532842164776,
+        "p_delta_le_0": 0.7973333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 144,
+      "mean_delta": -0.05791156004838774,
+      "ci95_low": -0.06718800581659377,
+      "ci95_high": -0.04904645554436822,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.05791156004838774,
+        "ci95_low": -0.07126925832674548,
+        "ci95_high": -0.04637545623916037,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 144,
+      "mean_delta": -0.12199074074074073,
+      "ci95_low": -0.1766261574074074,
+      "ci95_high": -0.06803819444444438,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.12199074074074073,
+        "ci95_low": -0.19166666666666668,
+        "ci95_high": -0.053009259259259256,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 144,
+      "mean_delta": 0.06840277777777777,
+      "ci95_low": 0.03679687500000001,
+      "ci95_high": 0.1017361111111111,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.06840277777777777,
+        "ci95_low": 0.03784722222222222,
+        "ci95_high": 0.09930555555555555,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 144,
+      "mean_delta": 0.08575364590406537,
+      "ci95_low": 0.07113487225868156,
+      "ci95_high": 0.10102483199173774,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.08575364590406537,
+        "ci95_low": 0.058114649042283015,
+        "ci95_high": 0.11101513081151314,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  },
+  "proposed_contextual_controlled_vs_baseline_no_context_phi3_latest": {
+    "context_relevance": {
+      "n": 144,
+      "mean_delta": 0.0914936234662714,
+      "ci95_low": 0.06873543153067939,
+      "ci95_high": 0.11543280021050582,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0914936234662714,
+        "ci95_low": 0.05536038508788874,
+        "ci95_high": 0.13158332856872001,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_consistency": {
+      "n": 144,
+      "mean_delta": 0.13361667189539972,
+      "ci95_low": 0.11300485609621276,
+      "ci95_high": 0.15499921711935685,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.13361667189539972,
+        "ci95_low": 0.09421850557855993,
+        "ci95_high": 0.16957234960051193,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "naturalness": {
+      "n": 144,
+      "mean_delta": -0.0337808672126288,
+      "ci95_low": -0.044503664354624495,
+      "ci95_high": -0.022347511956142548,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.0337808672126288,
+        "ci95_low": -0.04548174771512887,
+        "ci95_high": -0.01960603505796526,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "mean_delta": 0.07900648751664077,
+      "ci95_low": 0.059022880822304856,
+      "ci95_high": 0.09831745320889029,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.07900648751664077,
+        "ci95_low": 0.048710826039878634,
+        "ci95_high": 0.11191321190947301,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "lore_consistency": {
+      "n": 144,
+      "mean_delta": 0.04818757113198846,
+      "ci95_low": 0.03237296263215235,
+      "ci95_high": 0.06535829540316468,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04818757113198846,
+        "ci95_low": 0.026863162507089405,
+        "ci95_high": 0.07010952284720698,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "mean_delta": 0.0,
+      "ci95_low": -0.08333333333333333,
+      "ci95_high": 0.08333333333333333,
+      "p_delta_le_0": 0.5416666666666666,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0,
+        "ci95_low": -0.375,
+        "ci95_high": 0.375,
+        "p_delta_le_0": 0.6373333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "mean_delta": 0.04695023148148148,
+      "ci95_low": 0.03409678819444445,
+      "ci95_high": 0.05982725694444445,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.04695023148148148,
+        "ci95_low": 0.027187500000000003,
+        "ci95_high": 0.0679123263888889,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "mean_delta": 0.030456138350252453,
+      "ci95_low": 0.022141915310445865,
+      "ci95_high": 0.03916321680026345,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.030456138350252453,
+        "ci95_low": 0.021954933647420426,
+        "ci95_high": 0.03968131631407143,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "mean_delta": 0.0073593073593073615,
+      "ci95_low": -0.00241365661826599,
+      "ci95_high": 0.01738856560395623,
+      "p_delta_le_0": 0.068,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0073593073593073615,
+        "ci95_low": -0.004239990981240975,
+        "ci95_high": 0.021636267060485808,
+        "p_delta_le_0": 0.14066666666666666
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.11972853535353536,
+      "ci95_low": 0.08968828914141413,
+      "ci95_high": 0.15032670454545452,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.11972853535353536,
+        "ci95_low": 0.07231691919191918,
+        "ci95_high": 0.17626736111111113,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "context_overlap": {
+      "n": 144,
+      "mean_delta": 0.025612162395988885,
+      "ci95_low": 0.017510379588341996,
+      "ci95_high": 0.034194270075060054,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.025612162395988885,
+        "ci95_low": 0.014430858968104235,
+        "ci95_high": 0.03528630640594295,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "mean_delta": 0.16881613756613756,
+      "ci95_low": 0.14136739417989416,
+      "ci95_high": 0.19490823412698413,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.16881613756613756,
+        "ci95_low": 0.11997354497354497,
+        "ci95_high": 0.2078786375661376,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "persona_style": {
+      "n": 144,
+      "mean_delta": -0.0071811907875516685,
+      "ci95_low": -0.023521092495270443,
+      "ci95_high": 0.010201079452766116,
+      "p_delta_le_0": 0.802,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.0071811907875516685,
+        "ci95_low": -0.031037174948835327,
+        "ci95_high": 0.01425428391753823,
+        "p_delta_le_0": 0.7113333333333334
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "distinct1": {
+      "n": 144,
+      "mean_delta": -0.05363234596402538,
+      "ci95_low": -0.06285024512538126,
+      "ci95_high": -0.04399285927998884,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.05363234596402538,
+        "ci95_low": -0.0648123382723455,
+        "ci95_high": -0.043412567780813045,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "length_score": {
+      "n": 144,
+      "mean_delta": -0.09189814814814815,
+      "ci95_low": -0.1351909722222222,
+      "ci95_high": -0.04791666666666667,
+      "p_delta_le_0": 1.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": -0.09189814814814815,
+        "ci95_low": -0.14977430555555557,
+        "ci95_high": -0.03193865740740739,
+        "p_delta_le_0": 1.0
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "sentence_score": {
+      "n": 144,
+      "mean_delta": 0.0704861111111111,
+      "ci95_low": 0.03715277777777778,
+      "ci95_high": 0.10452256944444448,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.0704861111111111,
+        "ci95_low": 0.029513888888888888,
+        "ci95_high": 0.11458333333333333,
+        "p_delta_le_0": 0.0003333333333333333
+      },
+      "cluster_field": "source_scenario_id"
+    },
+    "overall_quality": {
+      "n": 144,
+      "mean_delta": 0.08597378365620297,
+      "ci95_low": 0.07110685202506499,
+      "ci95_high": 0.1011086725182912,
+      "p_delta_le_0": 0.0,
+      "cluster_bootstrap": {
+        "n_clusters": 8,
+        "n_pairs": 144,
+        "mean_delta": 0.08597378365620297,
+        "ci95_low": 0.060093600935058,
+        "ci95_high": 0.11164793906316375,
+        "p_delta_le_0": 0.0
+      },
+      "cluster_field": "source_scenario_id"
+    }
+  }
+}

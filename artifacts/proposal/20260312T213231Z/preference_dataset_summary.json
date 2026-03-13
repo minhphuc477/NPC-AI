@@ -1,0 +1,22 @@
+{
+  "run_dir": "artifacts\\proposal\\20260312T213231Z",
+  "human_eval_file": "artifacts\\proposal\\20260312T213231Z\\human_eval_llm_multirater_consistent.csv",
+  "target_arm": "proposed_contextual_controlled",
+  "baseline_arms": [
+    "baseline_no_context",
+    "baseline_no_context_phi3_latest"
+  ],
+  "metric": "overall_quality",
+  "row_count": 35,
+  "skipped": {
+    "missing": 108,
+    "insufficient_raters": 0,
+    "insufficient_margin": 37
+  },
+  "score_delta_raw": {
+    "mean": 0.9142857142857143,
+    "min": 0.3333333333333335,
+    "max": 2.0000000000000004
+  },
+  "output_jsonl": "artifacts\\proposal\\20260312T213231Z\\preference_dataset.jsonl"
+}

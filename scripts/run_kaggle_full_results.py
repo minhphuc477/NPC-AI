@@ -140,6 +140,36 @@ def main() -> None:
     parser.add_argument("--proposal-max-tokens", type=int, default=80)
     parser.add_argument("--proposal-temperature", type=float, default=0.2)
     parser.add_argument(
+        "--proposal-control-alt-profile",
+        choices=[
+            "none",
+            "runtime_optimized",
+            "quality_optimized",
+            "risk_latency_aware",
+            "hybrid_balanced",
+            "intent_focus_adaptive",
+            "blend_balanced",
+            "custom",
+        ],
+        default="none",
+        help="Optional alternate response-control profile to add as a second controlled arm.",
+    )
+    parser.add_argument(
+        "--proposal-control-alt-arm-id",
+        default="proposed_contextual_controlled_alt",
+        help="Arm ID for alternate proposal control profile.",
+    )
+    parser.add_argument(
+        "--proposal-control-alt-overrides-file",
+        default="",
+        help="Optional JSON overrides file for custom alternate control profile.",
+    )
+    parser.add_argument(
+        "--proposal-target-arm",
+        default="proposed_contextual_controlled",
+        help="Target arm used for external-baseline, human-eval, and quality-gate comparisons.",
+    )
+    parser.add_argument(
         "--proposal-min-arm-success-rate",
         type=float,
         default=0.90,
@@ -208,41 +238,51 @@ def main() -> None:
     maybe_generate_inputs(dry_run=bool(args.dry_run))
 
     proposal_token = str(args.proposal_run).strip()
+    target_arm = str(args.proposal_target_arm).strip() or "proposed_contextual_controlled"
+    multirater_arms = [target_arm, "baseline_no_context", "baseline_no_context_phi3_latest"]
+
     if proposal_token:
         proposal_run = resolve_run_path(proposal_token, Path("artifacts/proposal"))
     else:
         # 1) Proposal batched eval.
-        run_command(
-            [
-                sys.executable,
-                "scripts/run_proposal_alignment_eval_batched.py",
-                "--host",
-                str(args.host),
-                "--candidate-model",
-                str(args.candidate_model),
-                "--baseline-model",
-                str(args.baseline_model),
-                "--baseline-models",
-                str(args.baseline_models),
-                "--scenarios",
-                str(args.scenario_file),
-                "--batch-size",
-                str(args.batch_size),
-                "--repeats",
-                "1",
-                "--max-tokens",
-                str(args.proposal_max_tokens),
-                "--temperature",
-                str(args.proposal_temperature),
-                "--min-arm-success-rate",
-                str(args.proposal_min_arm_success_rate),
-                "--bertscore-model-type",
-                "roberta-large",
-                "--bertscore-batch-size",
-                "16",
-            ],
-            dry_run=bool(args.dry_run),
-        )
+        proposal_cmd = [
+            sys.executable,
+            "scripts/run_proposal_alignment_eval_batched.py",
+            "--host",
+            str(args.host),
+            "--candidate-model",
+            str(args.candidate_model),
+            "--baseline-model",
+            str(args.baseline_model),
+            "--baseline-models",
+            str(args.baseline_models),
+            "--scenarios",
+            str(args.scenario_file),
+            "--batch-size",
+            str(args.batch_size),
+            "--repeats",
+            "1",
+            "--max-tokens",
+            str(args.proposal_max_tokens),
+            "--temperature",
+            str(args.proposal_temperature),
+            "--min-arm-success-rate",
+            str(args.proposal_min_arm_success_rate),
+            "--bertscore-model-type",
+            "roberta-large",
+            "--bertscore-batch-size",
+            "16",
+            "--target-arm",
+            target_arm,
+            "--control-alt-profile",
+            str(args.proposal_control_alt_profile),
+            "--control-alt-arm-id",
+            str(args.proposal_control_alt_arm_id),
+        ]
+        overrides_file = str(args.proposal_control_alt_overrides_file).strip()
+        if overrides_file:
+            proposal_cmd.extend(["--control-alt-overrides-file", overrides_file])
+        run_command(proposal_cmd, dry_run=bool(args.dry_run))
         proposal_run = Path("artifacts/proposal/latest")
         if not args.dry_run:
             proposal_run = latest_subdir(Path("artifacts/proposal"))
@@ -260,7 +300,7 @@ def main() -> None:
             "--annotators",
             str(args.multirater_annotators),
             "--arms",
-            "proposed_contextual_controlled,baseline_no_context,baseline_no_context_phi3_latest",
+            ",".join(multirater_arms),
             "--scenario-limit",
             str(args.multirater_scenarios),
             "--max-tokens",
@@ -406,7 +446,7 @@ def main() -> None:
             "--root",
             "artifacts/proposal",
             "--arm",
-            "proposed_contextual_controlled",
+            target_arm,
             "--output-json",
             str(runtime_json),
             "--output-md",
@@ -425,7 +465,7 @@ def main() -> None:
             "--human-eval-file",
             str(human_csv),
             "--target-arm",
-            "proposed_contextual_controlled",
+            target_arm,
             "--baseline-arms",
             "baseline_no_context,baseline_no_context_phi3_latest",
             "--metric",
@@ -489,6 +529,10 @@ def main() -> None:
         "live_runtime_summary_json": str(runtime_json),
         "live_runtime_summary_md": str(runtime_md),
         "skip_ablation_baselines": bool(args.skip_ablation_baselines),
+        "proposal_target_arm": target_arm,
+        "proposal_control_alt_profile": str(args.proposal_control_alt_profile),
+        "proposal_control_alt_arm_id": str(args.proposal_control_alt_arm_id),
+        "proposal_control_alt_overrides_file": str(args.proposal_control_alt_overrides_file),
         "human_eval_csv": str(human_csv),
         "multirater_annotators": str(args.multirater_annotators),
         "gate_min_external_significant_wins": int(args.gate_min_external_significant_wins),

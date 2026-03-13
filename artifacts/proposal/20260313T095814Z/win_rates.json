@@ -1,0 +1,5266 @@
+{
+  "proposed_vs_candidate_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 71,
+      "losses": 22,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6701388888888888,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6111111111111112,
+        "ci95_high": 0.7256944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.7634408602150538,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6774193548387096,
+        "ci95_high": 0.8494623655913979
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 24,
+      "losses": 27,
+      "ties": 93,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4895833333333333,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4409722222222222,
+        "ci95_high": 0.5381944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 51,
+        "mean": 0.47058823529411764,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3333333333333333,
+        "ci95_high": 0.6078431372549019
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 41,
+      "losses": 49,
+      "ties": 54,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4722222222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4097222222222222,
+        "ci95_high": 0.5381944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 90,
+        "mean": 0.45555555555555555,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.35555555555555557,
+        "ci95_high": 0.5558333333333318
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 71,
+      "losses": 22,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6701388888888888,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6111111111111112,
+        "ci95_high": 0.7291666666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.7634408602150538,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6666666666666666,
+        "ci95_high": 0.8494623655913979
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 60,
+      "losses": 8,
+      "ties": 76,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6805555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6319444444444444,
+        "ci95_high": 0.7256944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 68,
+        "mean": 0.8823529411764706,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7941176470588235,
+        "ci95_high": 0.9558823529411765
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 18,
+      "losses": 0,
+      "ties": 126,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5625,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.5902777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 18,
+        "mean": 1.0,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 1.0,
+        "ci95_high": 1.0
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 36,
+      "losses": 35,
+      "ties": 73,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5034722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4479166666666667,
+        "ci95_high": 0.5590277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 71,
+        "mean": 0.5070422535211268,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.39436619718309857,
+        "ci95_high": 0.6197183098591549
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 55,
+      "losses": 38,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5590277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4930555555555556,
+        "ci95_high": 0.6215277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.5913978494623656,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4838709677419355,
+        "ci95_high": 0.6881720430107527
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 34,
+      "losses": 47,
+      "ties": 63,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4548611111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3958333333333333,
+        "ci95_high": 0.5173611111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 81,
+        "mean": 0.41975308641975306,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.30864197530864196,
+        "ci95_high": 0.5185185185185185
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 54,
+      "losses": 11,
+      "ties": 79,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6493055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6041666666666666,
+        "ci95_high": 0.7013888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 65,
+        "mean": 0.8307692307692308,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7384615384615385,
+        "ci95_high": 0.9076923076923077
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 66,
+      "losses": 27,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6354166666666666,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5729166666666666,
+        "ci95_high": 0.6944444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.7096774193548387,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6129032258064516,
+        "ci95_high": 0.8064516129032258
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 17,
+      "losses": 23,
+      "ties": 104,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4791666666666667,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.43741319444444443,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 40,
+        "mean": 0.425,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.275,
+        "ci95_high": 0.575
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 11,
+      "losses": 10,
+      "ties": 123,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5034722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4722222222222222,
+        "ci95_high": 0.5347222222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 21,
+        "mean": 0.5238095238095238,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.2857142857142857,
+        "ci95_high": 0.7142857142857143
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 44,
+      "losses": 33,
+      "ties": 67,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5381944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4722222222222222,
+        "ci95_high": 0.5972222222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 77,
+        "mean": 0.5714285714285714,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.45454545454545453,
+        "ci95_high": 0.6753246753246753
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 43,
+      "losses": 43,
+      "ties": 58,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4375,
+        "ci95_high": 0.5659722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 86,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3953488372093023,
+        "ci95_high": 0.6046511627906976
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 8,
+      "losses": 24,
+      "ties": 112,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4444444444444444,
+        "median": 0.5,
+        "p95": 0.9249999999999972,
+        "ci95_low": 0.40625,
+        "ci95_high": 0.4791666666666667
+      },
+      "strict_non_tie_win_rate": {
+        "n": 32,
+        "mean": 0.25,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.125,
+        "ci95_high": 0.40625
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 59,
+      "losses": 34,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5868055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5208333333333334,
+        "ci95_high": 0.6493055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.6344086021505376,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5376344086021505,
+        "ci95_high": 0.7311827956989247
+      }
+    }
+  },
+  "proposed_vs_baseline_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 81,
+      "losses": 60,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5729166666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4930555555555556,
+        "ci95_high": 0.6528645833333329
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.574468085106383,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.49645390070921985,
+        "ci95_high": 0.6524822695035462
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 60,
+      "losses": 25,
+      "ties": 59,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6215277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5625,
+        "ci95_high": 0.6805555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 85,
+        "mean": 0.7058823529411765,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.611764705882353,
+        "ci95_high": 0.8
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 54,
+      "losses": 89,
+      "ties": 1,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3784722222222222,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2986111111111111,
+        "ci95_high": 0.4618055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 143,
+        "mean": 0.3776223776223776,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3006993006993007,
+        "ci95_high": 0.45472027972027873
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 84,
+      "losses": 57,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.59375,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5138888888888888,
+        "ci95_high": 0.6736111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.5957446808510638,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5177304964539007,
+        "ci95_high": 0.6808510638297872
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 57,
+      "losses": 41,
+      "ties": 46,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5555555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4861111111111111,
+        "ci95_high": 0.6180555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 98,
+        "mean": 0.5816326530612245,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.47959183673469385,
+        "ci95_high": 0.673469387755102
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 65,
+      "losses": 39,
+      "ties": 40,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5902777777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5208333333333334,
+        "ci95_high": 0.65625
+      },
+      "strict_non_tie_win_rate": {
+        "n": 104,
+        "mean": 0.625,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5288461538461539,
+        "ci95_high": 0.7115384615384616
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 95,
+      "losses": 49,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6597222222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5833333333333334,
+        "ci95_high": 0.7361111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.6597222222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5833333333333334,
+        "ci95_high": 0.7361111111111112
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 67,
+      "losses": 56,
+      "ties": 21,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5381944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4618055555555556,
+        "ci95_high": 0.6145833333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 123,
+        "mean": 0.5447154471544715,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4634146341463415,
+        "ci95_high": 0.6260162601626016
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 60,
+      "losses": 18,
+      "ties": 66,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6458333333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5902777777777778,
+        "ci95_high": 0.7013888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 78,
+        "mean": 0.7692307692307693,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6666666666666666,
+        "ci95_high": 0.8589743589743589
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 81,
+      "losses": 59,
+      "ties": 4,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5763888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5034722222222222,
+        "ci95_high": 0.6527777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 140,
+        "mean": 0.5785714285714286,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4928571428571429,
+        "ci95_high": 0.6573214285714276
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 57,
+      "losses": 18,
+      "ties": 69,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6354166666666666,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5763888888888888,
+        "ci95_high": 0.6875
+      },
+      "strict_non_tie_win_rate": {
+        "n": 75,
+        "mean": 0.76,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6666666666666666,
+        "ci95_high": 0.8533333333333334
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 6,
+      "losses": 18,
+      "ties": 120,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4583333333333333,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.4270833333333333,
+        "ci95_high": 0.4895833333333333
+      },
+      "strict_non_tie_win_rate": {
+        "n": 24,
+        "mean": 0.25,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.08333333333333333,
+        "ci95_high": 0.4166666666666667
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 31,
+      "losses": 94,
+      "ties": 19,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.28125,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.21180555555555555,
+        "ci95_high": 0.3506944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 125,
+        "mean": 0.248,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.176,
+        "ci95_high": 0.328
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 64,
+      "losses": 72,
+      "ties": 8,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4722222222222222,
+        "median": 0.25,
+        "p95": 1.0,
+        "ci95_low": 0.3923611111111111,
+        "ci95_high": 0.5520833333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 136,
+        "mean": 0.47058823529411764,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3897058823529412,
+        "ci95_high": 0.5514705882352942
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 32,
+      "losses": 21,
+      "ties": 91,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5381944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4895833333333333,
+        "ci95_high": 0.5868055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 53,
+        "mean": 0.6037735849056604,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4528301886792453,
+        "ci95_high": 0.7358490566037735
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 105,
+      "losses": 39,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7291666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6597222222222222,
+        "ci95_high": 0.7986111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.7291666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6597222222222222,
+        "ci95_high": 0.7986111111111112
+      }
+    }
+  },
+  "proposed_vs_baseline_no_context_phi3_latest": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 82,
+      "losses": 61,
+      "ties": 1,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5729166666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4895833333333333,
+        "ci95_high": 0.6527777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 143,
+        "mean": 0.5734265734265734,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.48951048951048953,
+        "ci95_high": 0.6573426573426573
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 64,
+      "losses": 23,
+      "ties": 57,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6423611111111112,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5833333333333334,
+        "ci95_high": 0.7013888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 87,
+        "mean": 0.735632183908046,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6436781609195402,
+        "ci95_high": 0.8275862068965517
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 59,
+      "losses": 84,
+      "ties": 1,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4131944444444444,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3333333333333333,
+        "ci95_high": 0.4930555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 143,
+        "mean": 0.4125874125874126,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.32867132867132864,
+        "ci95_high": 0.48951048951048953
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 83,
+      "losses": 61,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5763888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4930555555555556,
+        "ci95_high": 0.6527777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.5763888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5,
+        "ci95_high": 0.6597222222222222
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 55,
+      "losses": 39,
+      "ties": 50,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5555555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4964409722222223,
+        "ci95_high": 0.6215277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 94,
+        "mean": 0.5851063829787234,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.48936170212765956,
+        "ci95_high": 0.6808510638297872
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 67,
+      "losses": 34,
+      "ties": 43,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6145833333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5520833333333334,
+        "ci95_high": 0.6805555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 101,
+        "mean": 0.6633663366336634,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5742574257425742,
+        "ci95_high": 0.7524752475247525
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 95,
+      "losses": 49,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6597222222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5763888888888888,
+        "ci95_high": 0.7361111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.6597222222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5833333333333334,
+        "ci95_high": 0.7361111111111112
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 67,
+      "losses": 53,
+      "ties": 24,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5486111111111112,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4722222222222222,
+        "ci95_high": 0.6180555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 120,
+        "mean": 0.5583333333333333,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4666666666666667,
+        "ci95_high": 0.65
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 61,
+      "losses": 18,
+      "ties": 65,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6493055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.59375,
+        "ci95_high": 0.7048611111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 79,
+        "mean": 0.7721518987341772,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6708860759493671,
+        "ci95_high": 0.8607594936708861
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 81,
+      "losses": 61,
+      "ties": 2,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5694444444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4965277777777778,
+        "ci95_high": 0.6493055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 142,
+        "mean": 0.5704225352112676,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4859154929577465,
+        "ci95_high": 0.647887323943662
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 60,
+      "losses": 14,
+      "ties": 70,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6597222222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6041666666666666,
+        "ci95_high": 0.7118055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 74,
+        "mean": 0.8108108108108109,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7162162162162162,
+        "ci95_high": 0.8918918918918919
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 10,
+      "losses": 21,
+      "ties": 113,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4618055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4236111111111111,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 31,
+        "mean": 0.3225806451612903,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.16129032258064516,
+        "ci95_high": 0.4838709677419355
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 39,
+      "losses": 89,
+      "ties": 16,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3263888888888889,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2569444444444444,
+        "ci95_high": 0.3993055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 128,
+        "mean": 0.3046875,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2265625,
+        "ci95_high": 0.3828125
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 66,
+      "losses": 70,
+      "ties": 8,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4861111111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.40625,
+        "ci95_high": 0.5659722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 136,
+        "mean": 0.4852941176470588,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.40441176470588236,
+        "ci95_high": 0.5735294117647058
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 33,
+      "losses": 17,
+      "ties": 94,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5555555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5104166666666666,
+        "ci95_high": 0.6006944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 50,
+        "mean": 0.66,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.52,
+        "ci95_high": 0.8
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 101,
+      "losses": 43,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7777777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7708333333333334
+      }
+    }
+  },
+  "controlled_vs_proposed_raw": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 68,
+      "losses": 48,
+      "ties": 28,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5694444444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4965277777777778,
+        "ci95_high": 0.6388888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 116,
+        "mean": 0.5862068965517241,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.49137931034482757,
+        "ci95_high": 0.6724137931034483
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 71,
+      "losses": 12,
+      "ties": 61,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7048611111111112,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6493055555555556,
+        "ci95_high": 0.7569444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 83,
+        "mean": 0.8554216867469879,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7831325301204819,
+        "ci95_high": 0.927710843373494
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 60,
+      "losses": 55,
+      "ties": 29,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5173611111111112,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4444444444444444,
+        "ci95_high": 0.5868055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 115,
+        "mean": 0.5217391304347826,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4260869565217391,
+        "ci95_high": 0.6086956521739131
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 67,
+      "losses": 49,
+      "ties": 28,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5625,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4895833333333333,
+        "ci95_high": 0.6284722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 116,
+        "mean": 0.5775862068965517,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.49137931034482757,
+        "ci95_high": 0.6637931034482759
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 40,
+      "losses": 38,
+      "ties": 66,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5069444444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4444444444444444,
+        "ci95_high": 0.5659722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 78,
+        "mean": 0.5128205128205128,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.3974358974358974,
+        "ci95_high": 0.6282051282051282
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 47,
+      "losses": 35,
+      "ties": 62,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5416666666666666,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4826388888888889,
+        "ci95_high": 0.6006944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 82,
+        "mean": 0.573170731707317,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.47560975609756095,
+        "ci95_high": 0.6829268292682927
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 72,
+      "losses": 44,
+      "ties": 28,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5972222222222222,
+        "median": 0.75,
+        "p95": 1.0,
+        "ci95_low": 0.5243055555555556,
+        "ci95_high": 0.6631944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 116,
+        "mean": 0.6206896551724138,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5344827586206896,
+        "ci95_high": 0.7068965517241379
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 48,
+      "losses": 48,
+      "ties": 48,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4340277777777778,
+        "ci95_high": 0.5660590277777773
+      },
+      "strict_non_tie_win_rate": {
+        "n": 96,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3958333333333333,
+        "ci95_high": 0.6041666666666666
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 47,
+      "losses": 27,
+      "ties": 70,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5694444444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5104166666666666,
+        "ci95_high": 0.6284722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 74,
+        "mean": 0.6351351351351351,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.527027027027027,
+        "ci95_high": 0.7432432432432432
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 70,
+      "losses": 46,
+      "ties": 28,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5833333333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5104166666666666,
+        "ci95_high": 0.65625
+      },
+      "strict_non_tie_win_rate": {
+        "n": 116,
+        "mean": 0.603448275862069,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5170258620689655,
+        "ci95_high": 0.6982758620689655
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 69,
+      "losses": 10,
+      "ties": 65,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7048611111111112,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6527777777777778,
+        "ci95_high": 0.7569444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 79,
+        "mean": 0.8734177215189873,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7974683544303798,
+        "ci95_high": 0.9367088607594937
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 14,
+      "losses": 5,
+      "ties": 125,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.53125,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5625
+      },
+      "strict_non_tie_win_rate": {
+        "n": 19,
+        "mean": 0.7368421052631579,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5263157894736842,
+        "ci95_high": 0.9473684210526315
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 52,
+      "losses": 57,
+      "ties": 35,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4826388888888889,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4201388888888889,
+        "ci95_high": 0.5520833333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 109,
+        "mean": 0.47706422018348627,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3853211009174312,
+        "ci95_high": 0.5688073394495413
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 61,
+      "losses": 51,
+      "ties": 32,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5347222222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4618055555555556,
+        "ci95_high": 0.607725694444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 112,
+        "mean": 0.5446428571428571,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.45535714285714285,
+        "ci95_high": 0.6339285714285714
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 29,
+      "losses": 10,
+      "ties": 105,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5659722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5243055555555556,
+        "ci95_high": 0.6076388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 39,
+        "mean": 0.7435897435897436,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5897435897435898,
+        "ci95_high": 0.8717948717948718
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 86,
+      "losses": 30,
+      "ties": 28,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6944444444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6284722222222222,
+        "ci95_high": 0.7604166666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 116,
+        "mean": 0.7413793103448276,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6551724137931034,
+        "ci95_high": 0.8189655172413793
+      }
+    }
+  },
+  "controlled_vs_candidate_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 89,
+      "losses": 29,
+      "ties": 26,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7083333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6423611111111112,
+        "ci95_high": 0.7743055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 118,
+        "mean": 0.7542372881355932,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6779661016949152,
+        "ci95_high": 0.8305084745762712
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 71,
+      "losses": 14,
+      "ties": 59,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6979166666666666,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6458333333333334,
+        "ci95_high": 0.75
+      },
+      "strict_non_tie_win_rate": {
+        "n": 85,
+        "mean": 0.8352941176470589,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7529411764705882,
+        "ci95_high": 0.9061764705882337
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 62,
+      "losses": 56,
+      "ties": 26,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5208333333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4479166666666667,
+        "ci95_high": 0.5972222222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 118,
+        "mean": 0.5254237288135594,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.44046610169491524,
+        "ci95_high": 0.6101694915254238
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 88,
+      "losses": 30,
+      "ties": 26,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6319444444444444,
+        "ci95_high": 0.7638888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 118,
+        "mean": 0.7457627118644068,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6694915254237288,
+        "ci95_high": 0.8220338983050848
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 50,
+      "losses": 17,
+      "ties": 77,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6145833333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5625,
+        "ci95_high": 0.6666666666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 67,
+        "mean": 0.746268656716418,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6417910447761194,
+        "ci95_high": 0.8507462686567164
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 18,
+      "losses": 0,
+      "ties": 126,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5625,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.5902777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 18,
+        "mean": 1.0,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 1.0,
+        "ci95_high": 1.0
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 45,
+      "losses": 40,
+      "ties": 59,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5173611111111112,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4513888888888889,
+        "ci95_high": 0.5799479166666662
+      },
+      "strict_non_tie_win_rate": {
+        "n": 85,
+        "mean": 0.5294117647058824,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4235294117647059,
+        "ci95_high": 0.635588235294116
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 90,
+      "losses": 28,
+      "ties": 26,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7152777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6493055555555556,
+        "ci95_high": 0.78125
+      },
+      "strict_non_tie_win_rate": {
+        "n": 118,
+        "mean": 0.7627118644067796,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6864406779661016,
+        "ci95_high": 0.8389830508474576
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 44,
+      "losses": 55,
+      "ties": 45,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4618055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3993055555555556,
+        "ci95_high": 0.5277777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 99,
+        "mean": 0.4444444444444444,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3434343434343434,
+        "ci95_high": 0.5454545454545454
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 73,
+      "losses": 8,
+      "ties": 63,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7256944444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6770833333333334,
+        "ci95_high": 0.7708333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 81,
+        "mean": 0.9012345679012346,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8271604938271605,
+        "ci95_high": 0.9629629629629629
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 82,
+      "losses": 36,
+      "ties": 26,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6597222222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5902777777777778,
+        "ci95_high": 0.7291666666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 118,
+        "mean": 0.6949152542372882,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6101694915254238,
+        "ci95_high": 0.7796610169491526
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 66,
+      "losses": 14,
+      "ties": 64,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6805555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7326388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 80,
+        "mean": 0.825,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7375,
+        "ci95_high": 0.9
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 13,
+      "losses": 7,
+      "ties": 124,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5208333333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4895833333333333,
+        "ci95_high": 0.5486111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 20,
+        "mean": 0.65,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.45,
+        "ci95_high": 0.85
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 62,
+      "losses": 50,
+      "ties": 32,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5416666666666666,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4756076388888889,
+        "ci95_high": 0.6215277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 112,
+        "mean": 0.5535714285714286,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4642857142857143,
+        "ci95_high": 0.6517857142857143
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 62,
+      "losses": 51,
+      "ties": 31,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5381944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4652777777777778,
+        "ci95_high": 0.6076388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 113,
+        "mean": 0.5486725663716814,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.46017699115044247,
+        "ci95_high": 0.6371681415929203
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 19,
+      "losses": 15,
+      "ties": 110,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5138888888888888,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4722222222222222,
+        "ci95_high": 0.5521701388888884
+      },
+      "strict_non_tie_win_rate": {
+        "n": 34,
+        "mean": 0.5588235294117647,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.38235294117647056,
+        "ci95_high": 0.7352941176470589
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 98,
+      "losses": 20,
+      "ties": 26,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7708333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7083333333333334,
+        "ci95_high": 0.8263888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 118,
+        "mean": 0.8305084745762712,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7627118644067796,
+        "ci95_high": 0.8983050847457628
+      }
+    }
+  },
+  "controlled_vs_baseline_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 96,
+      "losses": 45,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6770833333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6041666666666666,
+        "ci95_high": 0.7535590277777773
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.6808510638297872,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6028368794326241,
+        "ci95_high": 0.7588652482269503
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 112,
+      "losses": 14,
+      "ties": 18,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8402777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7847222222222222,
+        "ci95_high": 0.8888888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 126,
+        "mean": 0.8888888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8333333333333334,
+        "ci95_high": 0.9365079365079365
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 61,
+      "losses": 83,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4236111111111111,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3402777777777778,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.4236111111111111,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3472222222222222,
+        "ci95_high": 0.5069444444444444
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 93,
+      "losses": 48,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.65625,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5833333333333334,
+        "ci95_high": 0.7361111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.6595744680851063,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5815602836879432,
+        "ci95_high": 0.7375886524822695
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 52,
+      "losses": 44,
+      "ties": 48,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5277777777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4618055555555556,
+        "ci95_high": 0.5972222222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 96,
+        "mean": 0.5416666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4479166666666667,
+        "ci95_high": 0.6458333333333334
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 84,
+      "losses": 32,
+      "ties": 28,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6805555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6145833333333334,
+        "ci95_high": 0.7465277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 116,
+        "mean": 0.7241379310344828,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6379310344827587,
+        "ci95_high": 0.8017241379310345
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 106,
+      "losses": 38,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7361111111111112,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6597222222222222,
+        "ci95_high": 0.8055555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.7361111111111112,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6666666666666666,
+        "ci95_high": 0.8055555555555556
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 80,
+      "losses": 52,
+      "ties": 12,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5972222222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5208333333333334,
+        "ci95_high": 0.6701388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 132,
+        "mean": 0.6060606060606061,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5227272727272727,
+        "ci95_high": 0.6893939393939394
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 73,
+      "losses": 17,
+      "ties": 54,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6944444444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6354166666666666,
+        "ci95_high": 0.75
+      },
+      "strict_non_tie_win_rate": {
+        "n": 90,
+        "mean": 0.8111111111111111,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7222222222222222,
+        "ci95_high": 0.8888888888888888
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 90,
+      "losses": 50,
+      "ties": 4,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6388888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5625,
+        "ci95_high": 0.71875
+      },
+      "strict_non_tie_win_rate": {
+        "n": 140,
+        "mean": 0.6428571428571429,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5571428571428572,
+        "ci95_high": 0.7285714285714284
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 112,
+      "losses": 11,
+      "ties": 21,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8506944444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7986111111111112,
+        "ci95_high": 0.8993055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 123,
+        "mean": 0.9105691056910569,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8617886178861789,
+        "ci95_high": 0.959349593495935
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 11,
+      "losses": 11,
+      "ties": 122,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.46875,
+        "ci95_high": 0.53125
+      },
+      "strict_non_tie_win_rate": {
+        "n": 22,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.2727272727272727,
+        "ci95_high": 0.6818181818181818
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 27,
+      "losses": 110,
+      "ties": 7,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.21180555555555555,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.14930555555555555,
+        "ci95_high": 0.28125
+      },
+      "strict_non_tie_win_rate": {
+        "n": 137,
+        "mean": 0.19708029197080293,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.13138686131386862,
+        "ci95_high": 0.26277372262773724
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 64,
+      "losses": 73,
+      "ties": 7,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.46875,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3888020833333333,
+        "ci95_high": 0.5520833333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 137,
+        "mean": 0.46715328467153283,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.38686131386861317,
+        "ci95_high": 0.5474452554744526
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 40,
+      "losses": 11,
+      "ties": 93,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6006944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5555555555555556,
+        "ci95_high": 0.6458333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 51,
+        "mean": 0.7843137254901961,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6666666666666666,
+        "ci95_high": 0.8823529411764706
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 121,
+      "losses": 23,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8402777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7847222222222222,
+        "ci95_high": 0.8958333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.8402777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7847222222222222,
+        "ci95_high": 0.9027777777777778
+      }
+    }
+  },
+  "controlled_vs_baseline_no_context_phi3_latest": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 94,
+      "losses": 50,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6527777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5763888888888888,
+        "ci95_high": 0.7291666666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.6527777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5763888888888888,
+        "ci95_high": 0.7291666666666666
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 116,
+      "losses": 8,
+      "ties": 20,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.875,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8298611111111112,
+        "ci95_high": 0.9166666666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 124,
+        "mean": 0.9354838709677419,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8870967741935484,
+        "ci95_high": 0.9758064516129032
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 56,
+      "losses": 88,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3888888888888889,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3125,
+        "ci95_high": 0.4652777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.3888888888888889,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3055555555555556,
+        "ci95_high": 0.4722222222222222
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 93,
+      "losses": 51,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6458333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5694444444444444,
+        "ci95_high": 0.7222222222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.6458333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5694444444444444,
+        "ci95_high": 0.7222222222222222
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 53,
+      "losses": 36,
+      "ties": 55,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5590277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4930555555555556,
+        "ci95_high": 0.6215277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 89,
+        "mean": 0.5955056179775281,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4943820224719101,
+        "ci95_high": 0.6966292134831461
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 84,
+      "losses": 24,
+      "ties": 36,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7083333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6423611111111112,
+        "ci95_high": 0.7673611111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 108,
+        "mean": 0.7777777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6944444444444444,
+        "ci95_high": 0.8518518518518519
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 105,
+      "losses": 39,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7291666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6527777777777778,
+        "ci95_high": 0.7986111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.7291666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6527777777777778,
+        "ci95_high": 0.7986111111111112
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 78,
+      "losses": 48,
+      "ties": 18,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6041666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.6770833333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 126,
+        "mean": 0.6190476190476191,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5317460317460317,
+        "ci95_high": 0.7063492063492064
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 74,
+      "losses": 19,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6909722222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6319444444444444,
+        "ci95_high": 0.7465277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.7956989247311828,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7096774193548387,
+        "ci95_high": 0.8709677419354839
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 89,
+      "losses": 54,
+      "ties": 1,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6215277777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5486111111111112,
+        "ci95_high": 0.7013888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 143,
+        "mean": 0.6223776223776224,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5454545454545454,
+        "ci95_high": 0.6993006993006993
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 116,
+      "losses": 6,
+      "ties": 22,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8819444444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8368055555555556,
+        "ci95_high": 0.9201388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 122,
+        "mean": 0.9508196721311475,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.9098360655737705,
+        "ci95_high": 0.9836065573770492
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 12,
+      "losses": 13,
+      "ties": 119,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4965277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4618055555555556,
+        "ci95_high": 0.53125
+      },
+      "strict_non_tie_win_rate": {
+        "n": 25,
+        "mean": 0.48,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.28,
+        "ci95_high": 0.68
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 31,
+      "losses": 107,
+      "ties": 6,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.2361111111111111,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.16666666666666666,
+        "ci95_high": 0.3090277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 138,
+        "mean": 0.2246376811594203,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.15942028985507245,
+        "ci95_high": 0.2971014492753623
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 66,
+      "losses": 73,
+      "ties": 5,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4756944444444444,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.39921875,
+        "ci95_high": 0.5555555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 139,
+        "mean": 0.4748201438848921,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.38848920863309355,
+        "ci95_high": 0.5539568345323741
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 44,
+      "losses": 10,
+      "ties": 90,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6180555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5729166666666666,
+        "ci95_high": 0.6631944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 54,
+        "mean": 0.8148148148148148,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7222222222222222,
+        "ci95_high": 0.9074074074074074
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 121,
+      "losses": 23,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8402777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7777777777777778,
+        "ci95_high": 0.8958333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.8402777777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7777777777777778,
+        "ci95_high": 0.8958333333333334
+      }
+    }
+  },
+  "controlled_alt_vs_controlled_default": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 40,
+      "losses": 53,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4548611111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3923611111111111,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.43010752688172044,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3333333333333333,
+        "ci95_high": 0.5376344086021505
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 21,
+      "losses": 33,
+      "ties": 90,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4583333333333333,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.40963541666666664,
+        "ci95_high": 0.5069444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 54,
+        "mean": 0.3888888888888889,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.25925925925925924,
+        "ci95_high": 0.5185185185185185
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 40,
+      "losses": 53,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4548611111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3888888888888889,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.43010752688172044,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3225806451612903,
+        "ci95_high": 0.5376344086021505
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 40,
+      "losses": 53,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4548611111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3923611111111111,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.43010752688172044,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3333333333333333,
+        "ci95_high": 0.5376344086021505
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 35,
+      "losses": 34,
+      "ties": 75,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5034722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4479166666666667,
+        "ci95_high": 0.5625
+      },
+      "strict_non_tie_win_rate": {
+        "n": 69,
+        "mean": 0.5072463768115942,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.37681159420289856,
+        "ci95_high": 0.6231884057971014
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 39,
+      "losses": 37,
+      "ties": 68,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5069444444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4479166666666667,
+        "ci95_high": 0.5659722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 76,
+        "mean": 0.5131578947368421,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.39473684210526316,
+        "ci95_high": 0.631578947368421
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 40,
+      "losses": 53,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4548611111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3923611111111111,
+        "ci95_high": 0.5173611111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.43010752688172044,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3225806451612903,
+        "ci95_high": 0.5268817204301075
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 38,
+      "losses": 45,
+      "ties": 61,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4756944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4131944444444444,
+        "ci95_high": 0.5381944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 83,
+        "mean": 0.4578313253012048,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3614457831325301,
+        "ci95_high": 0.5542168674698795
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 32,
+      "losses": 42,
+      "ties": 70,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4652777777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.40625,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 74,
+        "mean": 0.43243243243243246,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.32432432432432434,
+        "ci95_high": 0.5405405405405406
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 40,
+      "losses": 53,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4548611111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3923611111111111,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.43010752688172044,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3333333333333333,
+        "ci95_high": 0.5376344086021505
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 18,
+      "losses": 29,
+      "ties": 97,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4618055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4166666666666667,
+        "ci95_high": 0.5069444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 47,
+        "mean": 0.3829787234042553,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2553191489361702,
+        "ci95_high": 0.5319148936170213
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 4,
+      "losses": 8,
+      "ties": 132,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4861111111111111,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.4618055555555556,
+        "ci95_high": 0.5104166666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 12,
+        "mean": 0.3333333333333333,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.08333333333333333,
+        "ci95_high": 0.5833333333333334
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 43,
+      "losses": 44,
+      "ties": 57,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4965277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4340277777777778,
+        "ci95_high": 0.5625
+      },
+      "strict_non_tie_win_rate": {
+        "n": 87,
+        "mean": 0.4942528735632184,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.39080459770114945,
+        "ci95_high": 0.6091954022988506
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 38,
+      "losses": 53,
+      "ties": 53,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4479166666666667,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3854166666666667,
+        "ci95_high": 0.5138888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 91,
+        "mean": 0.4175824175824176,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.31868131868131866,
+        "ci95_high": 0.5164835164835165
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 14,
+      "losses": 7,
+      "ties": 123,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5243055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4930555555555556,
+        "ci95_high": 0.5555555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 21,
+        "mean": 0.6666666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.47619047619047616,
+        "ci95_high": 0.8571428571428571
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 44,
+      "losses": 49,
+      "ties": 51,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4826388888888889,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4166666666666667,
+        "ci95_high": 0.5486111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 93,
+        "mean": 0.4731182795698925,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3763440860215054,
+        "ci95_high": 0.5698924731182796
+      }
+    }
+  },
+  "controlled_alt_vs_proposed_raw": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 63,
+      "losses": 54,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.53125,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4548611111111111,
+        "ci95_high": 0.6041666666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.5384615384615384,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.452991452991453,
+        "ci95_high": 0.6241452991452979
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 73,
+      "losses": 12,
+      "ties": 59,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7118055555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6597222222222222,
+        "ci95_high": 0.7638888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 85,
+        "mean": 0.8588235294117647,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.788235294117647,
+        "ci95_high": 0.9294117647058824
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 49,
+      "losses": 68,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4340277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3645833333333333,
+        "ci95_high": 0.5069444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.4188034188034188,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3247863247863248,
+        "ci95_high": 0.5042735042735043
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 64,
+      "losses": 53,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5381944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4652777777777778,
+        "ci95_high": 0.6111111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.5470085470085471,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.452991452991453,
+        "ci95_high": 0.6324786324786325
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 38,
+      "losses": 37,
+      "ties": 69,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5034722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4444444444444444,
+        "ci95_high": 0.5591145833333329
+      },
+      "strict_non_tie_win_rate": {
+        "n": 75,
+        "mean": 0.5066666666666667,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4,
+        "ci95_high": 0.6133333333333333
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 50,
+      "losses": 42,
+      "ties": 52,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5277777777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4583333333333333,
+        "ci95_high": 0.5902777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 92,
+        "mean": 0.5434782608695652,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.43478260869565216,
+        "ci95_high": 0.6413043478260869
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 67,
+      "losses": 50,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5590277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4861111111111111,
+        "ci95_high": 0.6319444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.5726495726495726,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.48717948717948717,
+        "ci95_high": 0.6666666666666666
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 46,
+      "losses": 52,
+      "ties": 46,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4791666666666667,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.40963541666666664,
+        "ci95_high": 0.5451388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 98,
+        "mean": 0.46938775510204084,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3673469387755102,
+        "ci95_high": 0.5714285714285714
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 48,
+      "losses": 35,
+      "ties": 61,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5451388888888888,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4826388888888889,
+        "ci95_high": 0.6111111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 83,
+        "mean": 0.5783132530120482,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.46987951807228917,
+        "ci95_high": 0.6867469879518072
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 62,
+      "losses": 54,
+      "ties": 28,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5277777777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4548611111111111,
+        "ci95_high": 0.6006944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 116,
+        "mean": 0.5344827586206896,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4480603448275862,
+        "ci95_high": 0.6206896551724138
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 67,
+      "losses": 11,
+      "ties": 66,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6944444444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6388888888888888,
+        "ci95_high": 0.7465277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 78,
+        "mean": 0.8589743589743589,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.782051282051282,
+        "ci95_high": 0.9358974358974359
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 13,
+      "losses": 8,
+      "ties": 123,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5173611111111112,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4861111111111111,
+        "ci95_high": 0.5486111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 21,
+        "mean": 0.6190476190476191,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.42857142857142855,
+        "ci95_high": 0.8095238095238095
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 42,
+      "losses": 67,
+      "ties": 35,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4131944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3402777777777778,
+        "ci95_high": 0.4826388888888889
+      },
+      "strict_non_tie_win_rate": {
+        "n": 109,
+        "mean": 0.3853211009174312,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.29357798165137616,
+        "ci95_high": 0.47706422018348627
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 47,
+      "losses": 67,
+      "ties": 30,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4305555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3611111111111111,
+        "ci95_high": 0.5069444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 114,
+        "mean": 0.41228070175438597,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.32456140350877194,
+        "ci95_high": 0.5
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 32,
+      "losses": 6,
+      "ties": 106,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5902777777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5520833333333334,
+        "ci95_high": 0.6284722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 38,
+        "mean": 0.8421052631578947,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7105263157894737,
+        "ci95_high": 0.9473684210526315
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 83,
+      "losses": 34,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6701388888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6040798611111111,
+        "ci95_high": 0.7395833333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.7094017094017094,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6239316239316239,
+        "ci95_high": 0.7948717948717948
+      }
+    }
+  },
+  "controlled_alt_vs_candidate_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 86,
+      "losses": 31,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6909722222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6249131944444445,
+        "ci95_high": 0.7569444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.7350427350427351,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6581196581196581,
+        "ci95_high": 0.811965811965812
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 70,
+      "losses": 13,
+      "ties": 61,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6979166666666666,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6458333333333334,
+        "ci95_high": 0.75
+      },
+      "strict_non_tie_win_rate": {
+        "n": 83,
+        "mean": 0.8433734939759037,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7590361445783133,
+        "ci95_high": 0.9156626506024096
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 50,
+      "losses": 67,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4409722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3680555555555556,
+        "ci95_high": 0.5138888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.42735042735042733,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3418803418803419,
+        "ci95_high": 0.5128205128205128
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 85,
+      "losses": 32,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6840277777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6145833333333334,
+        "ci95_high": 0.75
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.7264957264957265,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6410256410256411,
+        "ci95_high": 0.811965811965812
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 46,
+      "losses": 12,
+      "ties": 86,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6180555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5694444444444444,
+        "ci95_high": 0.6666666666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 58,
+        "mean": 0.7931034482758621,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6896551724137931,
+        "ci95_high": 0.896551724137931
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 18,
+      "losses": 0,
+      "ties": 126,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5625,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5381944444444444,
+        "ci95_high": 0.5902777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 18,
+        "mean": 1.0,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 1.0,
+        "ci95_high": 1.0
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 50,
+      "losses": 35,
+      "ties": 59,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5520833333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4895833333333333,
+        "ci95_high": 0.6111111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 85,
+        "mean": 0.5882352941176471,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4823529411764706,
+        "ci95_high": 0.6941176470588235
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 82,
+      "losses": 35,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6631944444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.59375,
+        "ci95_high": 0.7291666666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.7008547008547008,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6153846153846154,
+        "ci95_high": 0.7863247863247863
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 41,
+      "losses": 58,
+      "ties": 45,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4409722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.375,
+        "ci95_high": 0.5069444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 99,
+        "mean": 0.41414141414141414,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.31313131313131315,
+        "ci95_high": 0.5151515151515151
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 64,
+      "losses": 11,
+      "ties": 69,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6840277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6354166666666666,
+        "ci95_high": 0.7361111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 75,
+        "mean": 0.8533333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7733333333333333,
+        "ci95_high": 0.9333333333333333
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 83,
+      "losses": 34,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6701388888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6041666666666666,
+        "ci95_high": 0.7361979166666662
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.7094017094017094,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6239316239316239,
+        "ci95_high": 0.7948717948717948
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 65,
+      "losses": 13,
+      "ties": 66,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6805555555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7326388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 78,
+        "mean": 0.8333333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7564102564102564,
+        "ci95_high": 0.9102564102564102
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 14,
+      "losses": 8,
+      "ties": 122,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5208333333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4895833333333333,
+        "ci95_high": 0.5520833333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 22,
+        "mean": 0.6363636363636364,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.45454545454545453,
+        "ci95_high": 0.8181818181818182
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 55,
+      "losses": 56,
+      "ties": 33,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4965277777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4236111111111111,
+        "ci95_high": 0.5694444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 111,
+        "mean": 0.4954954954954955,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.4054054054054055,
+        "ci95_high": 0.5855855855855856
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 51,
+      "losses": 63,
+      "ties": 30,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4583333333333333,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.3854166666666667,
+        "ci95_high": 0.53125
+      },
+      "strict_non_tie_win_rate": {
+        "n": 114,
+        "mean": 0.4473684210526316,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.35964912280701755,
+        "ci95_high": 0.543859649122807
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 17,
+      "losses": 6,
+      "ties": 121,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5381944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5069444444444444,
+        "ci95_high": 0.5694444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 23,
+        "mean": 0.7391304347826086,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5652173913043478,
+        "ci95_high": 0.9130434782608695
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 92,
+      "losses": 25,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7326388888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6666666666666666,
+        "ci95_high": 0.7951388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.7863247863247863,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7094017094017095,
+        "ci95_high": 0.8547008547008547
+      }
+    }
+  },
+  "controlled_alt_vs_baseline_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 85,
+      "losses": 56,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6006944444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5208333333333334,
+        "ci95_high": 0.6736111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.6028368794326241,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.524822695035461,
+        "ci95_high": 0.6808510638297872
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 108,
+      "losses": 12,
+      "ties": 24,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8333333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7811631944444445,
+        "ci95_high": 0.8819444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 120,
+        "mean": 0.9,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8416666666666667,
+        "ci95_high": 0.95
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 49,
+      "losses": 95,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3402777777777778,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2638888888888889,
+        "ci95_high": 0.4166666666666667
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.3402777777777778,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2638888888888889,
+        "ci95_high": 0.4166666666666667
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 86,
+      "losses": 55,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6076388888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.53125,
+        "ci95_high": 0.6840277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.6099290780141844,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5319148936170213,
+        "ci95_high": 0.6881205673758856
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 47,
+      "losses": 44,
+      "ties": 53,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5104166666666666,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4479166666666667,
+        "ci95_high": 0.5763888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 91,
+        "mean": 0.5164835164835165,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4175824175824176,
+        "ci95_high": 0.6153846153846154
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 83,
+      "losses": 35,
+      "ties": 26,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6666666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5972222222222222,
+        "ci95_high": 0.7361111111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 118,
+        "mean": 0.7033898305084746,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6186440677966102,
+        "ci95_high": 0.7796610169491526
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 101,
+      "losses": 43,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7777777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7777777777777778
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 75,
+      "losses": 58,
+      "ties": 11,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5590277777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4791666666666667,
+        "ci95_high": 0.6319444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 133,
+        "mean": 0.5639097744360902,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.48120300751879697,
+        "ci95_high": 0.6466165413533834
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 63,
+      "losses": 20,
+      "ties": 61,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6493055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5902777777777778,
+        "ci95_high": 0.7049479166666662
+      },
+      "strict_non_tie_win_rate": {
+        "n": 83,
+        "mean": 0.7590361445783133,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6626506024096386,
+        "ci95_high": 0.8554216867469879
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 84,
+      "losses": 57,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.59375,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5173611111111112,
+        "ci95_high": 0.6701388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.5957446808510638,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5106382978723404,
+        "ci95_high": 0.6737588652482269
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 106,
+      "losses": 11,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8298611111111112,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7777777777777778,
+        "ci95_high": 0.8784722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.905982905982906,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8461538461538461,
+        "ci95_high": 0.9572649572649574
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 9,
+      "losses": 12,
+      "ties": 123,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4895833333333333,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4583333333333333,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 21,
+        "mean": 0.42857142857142855,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.23809523809523808,
+        "ci95_high": 0.6666666666666666
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 24,
+      "losses": 113,
+      "ties": 7,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.1909722222222222,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.1284722222222222,
+        "ci95_high": 0.2534722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 137,
+        "mean": 0.17518248175182483,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.1166058394160584,
+        "ci95_high": 0.24087591240875914
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 51,
+      "losses": 80,
+      "ties": 13,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3993055555555556,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3263888888888889,
+        "ci95_high": 0.4722222222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 131,
+        "mean": 0.3893129770992366,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.31297709923664124,
+        "ci95_high": 0.4732824427480916
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 43,
+      "losses": 6,
+      "ties": 95,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6284722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5833333333333334,
+        "ci95_high": 0.6701388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 49,
+        "mean": 0.8775510204081632,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7755102040816326,
+        "ci95_high": 0.9591836734693877
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 116,
+      "losses": 28,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8055555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7430555555555556,
+        "ci95_high": 0.8680555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.8055555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7361111111111112,
+        "ci95_high": 0.8680555555555556
+      }
+    }
+  },
+  "controlled_alt_vs_baseline_no_context_phi3_latest": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 90,
+      "losses": 54,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.625,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5416666666666666,
+        "ci95_high": 0.7013888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.625,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5416666666666666,
+        "ci95_high": 0.7083333333333334
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 111,
+      "losses": 11,
+      "ties": 22,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8472222222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7986111111111112,
+        "ci95_high": 0.8923611111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 122,
+        "mean": 0.9098360655737705,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8524590163934426,
+        "ci95_high": 0.9590163934426229
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 47,
+      "losses": 96,
+      "ties": 1,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3298611111111111,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.25,
+        "ci95_high": 0.40625
+      },
+      "strict_non_tie_win_rate": {
+        "n": 143,
+        "mean": 0.32867132867132864,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2517482517482518,
+        "ci95_high": 0.4055944055944056
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 89,
+      "losses": 55,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6180555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.6944444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.6180555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.7013888888888888
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 47,
+      "losses": 39,
+      "ties": 58,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5277777777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4618055555555556,
+        "ci95_high": 0.5902777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 86,
+        "mean": 0.5465116279069767,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4418604651162791,
+        "ci95_high": 0.6511627906976745
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 87,
+      "losses": 28,
+      "ties": 29,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7048611111111112,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6388888888888888,
+        "ci95_high": 0.7673611111111112
+      },
+      "strict_non_tie_win_rate": {
+        "n": 115,
+        "mean": 0.7565217391304347,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6782608695652174,
+        "ci95_high": 0.8347826086956521
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 101,
+      "losses": 43,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7708333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7777777777777778
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 80,
+      "losses": 48,
+      "ties": 16,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6111111111111112,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.6840277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 128,
+        "mean": 0.625,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5390625,
+        "ci95_high": 0.703125
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 64,
+      "losses": 17,
+      "ties": 63,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6631944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6041666666666666,
+        "ci95_high": 0.7152777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 81,
+        "mean": 0.7901234567901234,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7037037037037037,
+        "ci95_high": 0.8765432098765432
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 87,
+      "losses": 57,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6041666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5208333333333334,
+        "ci95_high": 0.6805555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.6041666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5208333333333334,
+        "ci95_high": 0.6875
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 110,
+      "losses": 7,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8576388888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8125,
+        "ci95_high": 0.8993055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.9401709401709402,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8974358974358975,
+        "ci95_high": 0.9743589743589743
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 12,
+      "losses": 16,
+      "ties": 116,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4861111111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4479166666666667,
+        "ci95_high": 0.5243055555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 28,
+        "mean": 0.42857142857142855,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.25,
+        "ci95_high": 0.6071428571428571
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 27,
+      "losses": 112,
+      "ties": 5,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.2048611111111111,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.1423611111111111,
+        "ci95_high": 0.2708333333333333
+      },
+      "strict_non_tie_win_rate": {
+        "n": 139,
+        "mean": 0.19424460431654678,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.12949640287769784,
+        "ci95_high": 0.2589928057553957
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 58,
+      "losses": 81,
+      "ties": 5,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4201388888888889,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.34375,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 139,
+        "mean": 0.4172661870503597,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3381294964028777,
+        "ci95_high": 0.5035971223021583
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 48,
+      "losses": 6,
+      "ties": 90,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6458333333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6041666666666666,
+        "ci95_high": 0.6909722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 54,
+        "mean": 0.8888888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7962962962962963,
+        "ci95_high": 0.9629629629629629
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 118,
+      "losses": 26,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8194444444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7569444444444444,
+        "ci95_high": 0.8819444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.8194444444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7569444444444444,
+        "ci95_high": 0.8819444444444444
+      }
+    }
+  },
+  "proposed_contextual_controlled_tuned_vs_baseline_no_context": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 85,
+      "losses": 56,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6006944444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5208333333333334,
+        "ci95_high": 0.6770833333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.6028368794326241,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.524822695035461,
+        "ci95_high": 0.6808510638297872
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 108,
+      "losses": 12,
+      "ties": 24,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8333333333333334,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.78125,
+        "ci95_high": 0.8819444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 120,
+        "mean": 0.9,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.85,
+        "ci95_high": 0.95
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 49,
+      "losses": 95,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3402777777777778,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2638888888888889,
+        "ci95_high": 0.4166666666666667
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.3402777777777778,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.26371527777777776,
+        "ci95_high": 0.4098958333333324
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 86,
+      "losses": 55,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6076388888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5277777777777778,
+        "ci95_high": 0.6909722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.6099290780141844,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5319148936170213,
+        "ci95_high": 0.6879432624113475
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 47,
+      "losses": 44,
+      "ties": 53,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5104166666666666,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4444444444444444,
+        "ci95_high": 0.5729166666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 91,
+        "mean": 0.5164835164835165,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4175824175824176,
+        "ci95_high": 0.6153846153846154
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 83,
+      "losses": 35,
+      "ties": 26,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6666666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5972222222222222,
+        "ci95_high": 0.7326388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 118,
+        "mean": 0.7033898305084746,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6271186440677966,
+        "ci95_high": 0.7798728813559311
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 101,
+      "losses": 43,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7708333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6317708333333333,
+        "ci95_high": 0.7777777777777778
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 75,
+      "losses": 58,
+      "ties": 11,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5590277777777778,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4826388888888889,
+        "ci95_high": 0.6354166666666666
+      },
+      "strict_non_tie_win_rate": {
+        "n": 133,
+        "mean": 0.5639097744360902,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.48120300751879697,
+        "ci95_high": 0.6541353383458647
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 63,
+      "losses": 20,
+      "ties": 61,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6493055555555556,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5902777777777778,
+        "ci95_high": 0.7083333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 83,
+        "mean": 0.7590361445783133,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6626506024096386,
+        "ci95_high": 0.8554216867469879
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 84,
+      "losses": 57,
+      "ties": 3,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.59375,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5173611111111112,
+        "ci95_high": 0.6701388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 141,
+        "mean": 0.5957446808510638,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5177304964539007,
+        "ci95_high": 0.6737588652482269
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 106,
+      "losses": 11,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8298611111111112,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7777777777777778,
+        "ci95_high": 0.8784722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.905982905982906,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8544871794871794,
+        "ci95_high": 0.9572649572649574
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 9,
+      "losses": 12,
+      "ties": 123,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4895833333333333,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4583333333333333,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 21,
+        "mean": 0.42857142857142855,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.23809523809523808,
+        "ci95_high": 0.6666666666666666
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 24,
+      "losses": 113,
+      "ties": 7,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.1909722222222222,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.1284722222222222,
+        "ci95_high": 0.2534722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 137,
+        "mean": 0.17518248175182483,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.11678832116788321,
+        "ci95_high": 0.24817518248175183
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 51,
+      "losses": 80,
+      "ties": 13,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3993055555555556,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3263888888888889,
+        "ci95_high": 0.4756944444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 131,
+        "mean": 0.3893129770992366,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3053435114503817,
+        "ci95_high": 0.48091603053435117
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 43,
+      "losses": 6,
+      "ties": 95,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6284722222222222,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.5833333333333334,
+        "ci95_high": 0.6701388888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 49,
+        "mean": 0.8775510204081632,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7755102040816326,
+        "ci95_high": 0.9591836734693877
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 116,
+      "losses": 28,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8055555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7428819444444446,
+        "ci95_high": 0.8680555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.8055555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7430555555555556,
+        "ci95_high": 0.8680555555555556
+      }
+    }
+  },
+  "proposed_contextual_controlled_tuned_vs_baseline_no_context_phi3_latest": {
+    "context_relevance": {
+      "n": 144,
+      "wins": 90,
+      "losses": 54,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.625,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5486111111111112,
+        "ci95_high": 0.7013888888888888
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.625,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5486111111111112,
+        "ci95_high": 0.7013888888888888
+      }
+    },
+    "persona_consistency": {
+      "n": 144,
+      "wins": 111,
+      "losses": 11,
+      "ties": 22,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8472222222222222,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7986111111111112,
+        "ci95_high": 0.8958333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 122,
+        "mean": 0.9098360655737705,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8524590163934426,
+        "ci95_high": 0.9590163934426229
+      }
+    },
+    "naturalness": {
+      "n": 144,
+      "wins": 47,
+      "losses": 96,
+      "ties": 1,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.3298611111111111,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2534722222222222,
+        "ci95_high": 0.40625
+      },
+      "strict_non_tie_win_rate": {
+        "n": 143,
+        "mean": 0.32867132867132864,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.2517482517482518,
+        "ci95_high": 0.4055944055944056
+      }
+    },
+    "quest_state_correctness": {
+      "n": 144,
+      "wins": 89,
+      "losses": 55,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6180555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.6944444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.6180555555555556,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.7013888888888888
+      }
+    },
+    "lore_consistency": {
+      "n": 144,
+      "wins": 47,
+      "losses": 39,
+      "ties": 58,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5277777777777778,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4652777777777778,
+        "ci95_high": 0.5902777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 86,
+        "mean": 0.5465116279069767,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.4418604651162791,
+        "ci95_high": 0.6514534883720915
+      }
+    },
+    "multi_turn_contradiction_safety": {
+      "n": 144,
+      "wins": 0,
+      "losses": 0,
+      "ties": 144,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.5,
+        "median": 0.5,
+        "p95": 0.5,
+        "ci95_low": 0.5,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 0,
+        "mean": NaN,
+        "median": NaN,
+        "p95": NaN,
+        "ci95_low": NaN,
+        "ci95_high": NaN
+      }
+    },
+    "objective_completion_support": {
+      "n": 144,
+      "wins": 87,
+      "losses": 28,
+      "ties": 29,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7048611111111112,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6388888888888888,
+        "ci95_high": 0.7708333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 115,
+        "mean": 0.7565217391304347,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6782608695652174,
+        "ci95_high": 0.8263043478260859
+      }
+    },
+    "gameplay_usefulness": {
+      "n": 144,
+      "wins": 101,
+      "losses": 43,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.6248263888888889,
+        "ci95_high": 0.7708333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.7013888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.625,
+        "ci95_high": 0.7777777777777778
+      }
+    },
+    "time_pressure_acceptability": {
+      "n": 144,
+      "wins": 80,
+      "losses": 48,
+      "ties": 16,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6111111111111112,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5347222222222222,
+        "ci95_high": 0.6840277777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 128,
+        "mean": 0.625,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5390625,
+        "ci95_high": 0.7109375
+      }
+    },
+    "context_keyword_coverage": {
+      "n": 144,
+      "wins": 64,
+      "losses": 17,
+      "ties": 63,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6631944444444444,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6076388888888888,
+        "ci95_high": 0.71875
+      },
+      "strict_non_tie_win_rate": {
+        "n": 81,
+        "mean": 0.7901234567901234,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7037037037037037,
+        "ci95_high": 0.8765432098765432
+      }
+    },
+    "context_overlap": {
+      "n": 144,
+      "wins": 87,
+      "losses": 57,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6041666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5277777777777778,
+        "ci95_high": 0.6805555555555556
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.6041666666666666,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.5208333333333334,
+        "ci95_high": 0.6805555555555556
+      }
+    },
+    "persona_keyword_coverage": {
+      "n": 144,
+      "wins": 110,
+      "losses": 7,
+      "ties": 27,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8576388888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8090277777777778,
+        "ci95_high": 0.9027777777777778
+      },
+      "strict_non_tie_win_rate": {
+        "n": 117,
+        "mean": 0.9401709401709402,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.8974358974358975,
+        "ci95_high": 0.9743589743589743
+      }
+    },
+    "persona_style": {
+      "n": 144,
+      "wins": 12,
+      "losses": 16,
+      "ties": 116,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4861111111111111,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.4479166666666667,
+        "ci95_high": 0.5208333333333334
+      },
+      "strict_non_tie_win_rate": {
+        "n": 28,
+        "mean": 0.42857142857142855,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.25,
+        "ci95_high": 0.6071428571428571
+      }
+    },
+    "distinct1": {
+      "n": 144,
+      "wins": 27,
+      "losses": 112,
+      "ties": 5,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.2048611111111111,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.1423611111111111,
+        "ci95_high": 0.2708333333333333
+      },
+      "strict_non_tie_win_rate": {
+        "n": 139,
+        "mean": 0.19424460431654678,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.12949640287769784,
+        "ci95_high": 0.26618705035971224
+      }
+    },
+    "length_score": {
+      "n": 144,
+      "wins": 58,
+      "losses": 81,
+      "ties": 5,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.4201388888888889,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.34366319444444443,
+        "ci95_high": 0.5
+      },
+      "strict_non_tie_win_rate": {
+        "n": 139,
+        "mean": 0.4172661870503597,
+        "median": 0.0,
+        "p95": 1.0,
+        "ci95_low": 0.3381294964028777,
+        "ci95_high": 0.5035971223021583
+      }
+    },
+    "sentence_score": {
+      "n": 144,
+      "wins": 48,
+      "losses": 6,
+      "ties": 90,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.6458333333333334,
+        "median": 0.5,
+        "p95": 1.0,
+        "ci95_low": 0.6041666666666666,
+        "ci95_high": 0.6909722222222222
+      },
+      "strict_non_tie_win_rate": {
+        "n": 54,
+        "mean": 0.8888888888888888,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.7962962962962963,
+        "ci95_high": 0.9629629629629629
+      }
+    },
+    "overall_quality": {
+      "n": 144,
+      "wins": 118,
+      "losses": 26,
+      "ties": 0,
+      "soft_win_rate": {
+        "n": 144,
+        "mean": 0.8194444444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.75,
+        "ci95_high": 0.8819444444444444
+      },
+      "strict_non_tie_win_rate": {
+        "n": 144,
+        "mean": 0.8194444444444444,
+        "median": 1.0,
+        "p95": 1.0,
+        "ci95_low": 0.75,
+        "ci95_high": 0.8819444444444444
+      }
+    }
+  }
+}

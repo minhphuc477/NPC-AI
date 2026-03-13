@@ -149,6 +149,28 @@ MEDIUM_RISK_CUES = {
     "investigate",
 }
 
+CANNED_OPENERS = (
+    "listen carefully",
+    "hold for a moment",
+    "understood",
+    "proceeding carefully",
+    "stay with me",
+    "mark this",
+    "hear me",
+)
+
+BOILERPLATE_PHRASES = (
+    "i can help if you state one clear, concrete action",
+    "this request requires evidence before any conclusion",
+    "this request requires verifiable evidence",
+    "i cannot approve this request until verification is complete",
+    "i cannot authorize entry until identity and purpose",
+    "follow protocol and i will",
+    "keep it honest and we can",
+    "stay steady and i will guide",
+    "choose carefully, because timing matters",
+)
+
 
 @dataclass(frozen=True)
 class ControlConfig:
@@ -771,6 +793,17 @@ def _persona_anchor(persona_keywords: Sequence[str]) -> str:
     return ""
 
 
+def _context_anchor(dynamic_context: str) -> str:
+    sentences = _context_detail_sentences(dynamic_context)
+    if not sentences:
+        return ""
+    sentence = sentences[0].strip()
+    words = sentence.split()
+    if len(words) > 14:
+        sentence = " ".join(words[:14]).rstrip(",.;") + "."
+    return sentence
+
+
 def _grounded_style_repair(
     response: str,
     dynamic_context: str,
@@ -799,7 +832,8 @@ def _grounded_style_repair(
     if not anchor or anchor in low:
         return text
 
-    merged = f"{text} I remain {anchor} and focused."
+    context_anchor = _context_anchor(dynamic_context)
+    merged = f"{text} {context_anchor} I remain {anchor} and focused."
     return sanitize_response(merged)
 
 
@@ -812,40 +846,42 @@ def _structured_repair_response(
     style = _persona_style(persona)
     category = _intent_category(player_input)
     anchor = _persona_anchor(persona_keywords)
+    intent = _intent_fragment(player_input)
+    context_anchor = _context_anchor(dynamic_context)
 
     intro = _fallback_intro(player_input, style)
 
     if style == "strict":
         if category == "access":
-            body = "I cannot authorize entry until verification is complete."
+            body = f"I cannot authorize {intent} until verification is complete."
         else:
-            body = "I cannot approve this request until verification is complete."
-        close = f"Follow protocol and I will proceed as a {anchor or 'strict'} guardian."
-        return sanitize_response(f"{intro}, {body} {close}")
+            body = f"I cannot approve {intent} until verification is complete."
+        close = f"Share one verifiable detail and I will proceed as a {anchor or 'strict'} guardian."
+        return sanitize_response(f"{intro}, {body} {context_anchor} {close}")
 
     if style == "talkative":
-        body = "I can help, but the terms must stay fair today."
+        body = f"I can help with {intent}, but the terms must stay fair today."
         close = f"Keep it honest and we can settle this quickly in my {anchor or 'merchant'} style."
-        return sanitize_response(f"{intro}, {body} {close}")
+        return sanitize_response(f"{intro}, {body} {context_anchor} {close}")
 
     if style == "calm":
-        body = "We can handle this safely, one step at a time."
+        body = f"We can handle {intent} safely, one step at a time."
         close = f"Stay steady and I will guide the next action in a {anchor or 'calm'} voice."
-        return sanitize_response(f"{intro}, {body} {close}")
+        return sanitize_response(f"{intro}, {body} {context_anchor} {close}")
 
     if style == "formal":
-        body = "This request requires verifiable evidence."
+        body = f"This request about {intent} requires verifiable evidence."
         close = f"Provide concrete details and I will continue with {anchor or 'formal'} precision."
-        return sanitize_response(f"{intro}, {body} {close}")
+        return sanitize_response(f"{intro}, {body} {context_anchor} {close}")
 
     if style == "mysterious":
-        body = "This path has a cost in these conditions."
+        body = f"This path around {intent} has a cost in these conditions."
         close = f"Choose carefully, because timing matters as much as power to one who stays {anchor or 'mysterious'}."
-        return sanitize_response(f"{intro}, {body} {close}")
+        return sanitize_response(f"{intro}, {body} {context_anchor} {close}")
 
-    body = "I can help if you state one clear, concrete action."
+    body = f"I can help with {intent} if you share one clear, concrete action."
     close = f"Give one clear detail and I will proceed with {anchor or 'practical'} precision."
-    return sanitize_response(f"{intro}, {body} {close}")
+    return sanitize_response(f"{intro}, {body} {context_anchor} {close}")
 
 
 def grounded_fallback_response(
@@ -857,46 +893,52 @@ def grounded_fallback_response(
     style = _persona_style(persona)
     intent_category = _intent_category(player_input)
     anchor = _persona_anchor(persona_keywords)
+    intent = _intent_fragment(player_input)
+    context_anchor = _context_anchor(dynamic_context)
 
     context_sentence = f"{_fallback_intro(player_input, style)},"
 
     if style == "strict":
         if intent_category == "access":
-            body = "I cannot authorize entry until identity and purpose are verified."
+            body = f"I cannot authorize {intent} until identity and purpose are verified."
         elif intent_category == "investigation":
-            body = "I cannot close this matter until evidence is verified."
+            body = f"I cannot close {intent} until evidence is verified."
         else:
-            body = "I cannot approve this request until verification is complete."
+            body = f"I cannot approve {intent} until verification is complete."
         return (
             f"{context_sentence} {body} "
-            f"Follow protocol and I will move this forward as a {anchor or 'strict'} guardian."
+            f"{context_anchor} Follow protocol and I will move this forward as a {anchor or 'strict'} guardian."
         )
     if style == "talkative":
         if intent_category == "trade":
-            body = "I can work with this trade request, but terms must remain fair."
+            body = f"I can work with {intent}, but terms must remain fair."
         else:
-            body = "I can help, but the terms must stay fair."
+            body = f"I can help with {intent}, but the terms must stay fair."
         return (
             f"{context_sentence} {body} "
-            f"Keep it honest and we can close this deal quickly in my {anchor or 'merchant'} style."
+            f"{context_anchor} Keep it honest and we can close this deal quickly in my {anchor or 'merchant'} style."
         )
     if style == "calm":
         return (
-            f"{context_sentence} we can handle this safely, step by step. "
+            f"{context_sentence} we can handle {intent} safely, step by step. "
+            f"{context_anchor} "
             f"Stay steady and I will guide the next action in a {anchor or 'calm'} voice."
         )
     if style == "mysterious":
         return (
-            f"{context_sentence} this path has a cost. "
+            f"{context_sentence} this path around {intent} has a cost. "
+            f"{context_anchor} "
             f"Choose carefully, because timing matters as much as power to one who stays {anchor or 'mysterious'}."
         )
     if style == "formal":
         return (
-            f"{context_sentence} this request requires evidence before any conclusion. "
+            f"{context_sentence} this request about {intent} requires evidence before any conclusion. "
+            f"{context_anchor} "
             f"Provide verifiable details and I will continue with {anchor or 'formal'} precision."
         )
     return (
-        f"{context_sentence} I can help if you state one clear, concrete action. "
+        f"{context_sentence} I can help with {intent} if you state one clear, concrete action. "
+        f"{context_anchor} "
         f"Give one clear detail and I will proceed with {anchor or 'practical'} precision."
     )
 
@@ -921,9 +963,10 @@ def build_rewrite_prompt(
         lines.append(f"Persona cue terms: {', '.join(persona_hint[:5])}")
     lines.append("Output requirements:")
     lines.append("- Output only NPC spoken dialogue.")
-    lines.append("- Exactly 2 or 3 sentences, natural and concise.")
+    lines.append("- Use 2 to 4 short sentences, natural and concise.")
     lines.append("- Keep role-play tone consistent with persona.")
-    lines.append("- Include at least two concrete runtime details.")
+    lines.append("- Include at least one concrete runtime detail when relevant.")
+    lines.append("- Prefer direct wording; avoid formulaic openers and repeated stock phrases.")
     lines.append("- Do not include labels, bullets, metadata, JSON, or analysis.")
     lines.append("- Do not echo this instruction text.")
     if persona_hint:
@@ -1021,6 +1064,32 @@ def _candidate_persona_style_score(persona: str, response: str) -> float:
     return 0.5
 
 
+def _candidate_naturalness_score(response: str) -> float:
+    if not response:
+        return 0.0
+    lowered = response.lower().strip()
+    score = 1.0
+
+    for phrase in BOILERPLATE_PHRASES:
+        if phrase in lowered:
+            score -= 0.12
+
+    if any(lowered.startswith(prefix + " ") or lowered.startswith(prefix + ",") for prefix in CANNED_OPENERS):
+        score -= 0.08
+
+    if " i will " in lowered and " and i will " in lowered:
+        score -= 0.05
+
+    sentences = [s.strip().lower() for s in SENTENCE_SPLIT_RE.split(response) if s.strip()]
+    if len(sentences) >= 2:
+        starts = [" ".join(tokenize(s)[:3]) for s in sentences if tokenize(s)]
+        duplicate_starts = len(starts) - len(set(starts))
+        if duplicate_starts > 0:
+            score -= min(0.12, 0.06 * duplicate_starts)
+
+    return _clamp(score, 0.0, 1.0)
+
+
 def _candidate_score(
     response: str,
     persona: str,
@@ -1038,13 +1107,15 @@ def _candidate_score(
     diversity_score = _candidate_diversity_score(response)
     sentence_score = _candidate_sentence_score(response)
     style_score = _candidate_persona_style_score(persona, response)
+    naturalness_score = _candidate_naturalness_score(response)
     return (
-        0.40 * context_cov
-        + 0.20 * persona_cov
-        + 0.15 * style_score
-        + 0.10 * length_score
-        + 0.10 * diversity_score
-        + 0.05 * sentence_score
+        0.34 * context_cov
+        + 0.18 * persona_cov
+        + 0.14 * style_score
+        + 0.08 * length_score
+        + 0.08 * diversity_score
+        + 0.04 * sentence_score
+        + 0.14 * naturalness_score
     )
 
 

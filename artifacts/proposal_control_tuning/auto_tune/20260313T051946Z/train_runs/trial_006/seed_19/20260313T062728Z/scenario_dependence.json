@@ -1,0 +1,41 @@
+{
+  "scenario_count": 24,
+  "unique_source_count": 5,
+  "unique_template_signature_count": 21,
+  "source_distribution": {
+    "s002_merchant_potions": 6,
+    "s003_healer_poison": 4,
+    "s004_blacksmith_goblins": 4,
+    "s006_captain_theft": 4,
+    "s007_prisoner_bargain": 6
+  },
+  "template_signature_distribution": {
+    "advisory_request|commerce|forging|q|u0|i1": 1,
+    "advisory_request|craft|forging|q|u0|i0": 1,
+    "advisory_request|craft|observing|q|u0|i1": 1,
+    "advisory_request|craft|observing|q|u1|i1": 1,
+    "assistance_request|medical|observing|q|u0|i1": 1,
+    "assistance_request|medical|treatingpatient|q|u0|i0": 2,
+    "assistance_request|medical|treatingpatient|q|u1|i1": 1,
+    "credibility_dispute|other|investigating|q|u0|i0": 1,
+    "credibility_dispute|other|investigating|q|u0|i1": 1,
+    "credibility_dispute|other|negotiating|q|u0|i1": 1,
+    "credibility_dispute|other|patrolling|q|u0|i0": 1,
+    "economic_negotiation|commerce|assisting|s|u0|i0": 1,
+    "economic_negotiation|commerce|assisting|s|u0|i1": 2,
+    "economic_negotiation|commerce|negotiating|s|u1|i0": 1,
+    "economic_negotiation|commerce|trading|s|u0|i0": 1,
+    "economic_negotiation|commerce|trading|s|u0|i1": 1,
+    "general_dialogue|detention|assisting|q|u0|i1": 2,
+    "general_dialogue|detention|detained|q|u0|i1": 1,
+    "general_dialogue|detention|detained|q|u1|i1": 1,
+    "general_dialogue|detention|negotiating|q|u0|i0": 1,
+    "general_dialogue|detention|observing|q|u0|i0": 1
+  },
+  "template_signature_ratio": 0.875,
+  "effective_sample_size_by_source": 4.8,
+  "effective_sample_size_by_template_signature": 19.2,
+  "source_max_share": 0.25,
+  "template_max_share": 0.08333333333333333,
+  "mean_within_source_player_input_jaccard": 0.4134453625935934
+}

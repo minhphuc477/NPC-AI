@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled_tuned",
+      "context_relevance": "3",
+      "persona_consistency": "4",
+      "naturalness": "5",
+      "overall_quality": "The dialogue is contextually relevant, maintains persona consistency as an Old Merchant concerned about the delay and safety due to weather conditions while still offering a discount. It's natural in tone but slightly less consistent with baseline no-context responses.",
+      "notes": "Balanced approach"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "The dialogue is personable, maintaining the persona of an Old Merchant who values trust and integrity. It's natural but lacks direct relevance to the current context as it doesn't address immediate concerns like weather or safety.",
+      "notes": "Balanced"
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "4",
+      "naturalness": "5",
+      "overall_quality": "4",
+      "notes": "The response is relevant to both context and persona but lacks direct connection with the immediate situation described in the scenario, such as lockdown or potion scarcity."
+    }
+  ]
+}

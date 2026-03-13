@@ -1,0 +1,32 @@
+{
+  "run_dir": "artifacts\\proposal\\20260313T095814Z",
+  "output_csv": "artifacts\\proposal\\20260313T095814Z\\human_eval_llm_multirater_consistent.csv",
+  "arms": [
+    "proposed_contextual_controlled_tuned",
+    "baseline_no_context",
+    "baseline_no_context_phi3_latest"
+  ],
+  "scenario_count": 36,
+  "annotators": [
+    {
+      "model": "phi3:mini",
+      "profile": "balanced",
+      "temperature": 0.0
+    },
+    {
+      "model": "phi3:mini",
+      "profile": "balanced",
+      "temperature": 0.05
+    },
+    {
+      "model": "phi3:mini",
+      "profile": "balanced",
+      "temperature": 0.1
+    }
+  ],
+  "total_rows": 324,
+  "api_calls": 108,
+  "cache_hits": 0,
+  "failures": 6,
+  "cache_root": ".cache\\llm_multirater\\20260313T095814Z"
+}

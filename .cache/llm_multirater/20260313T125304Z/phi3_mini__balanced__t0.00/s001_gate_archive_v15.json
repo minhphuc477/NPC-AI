@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled_tuned",
+      "context_relevance": "4",
+      "persona_consistency": "5",
+      "naturalness": "5",
+      "overall_quality": "5",
+      "notes": "The response is highly relevant, consistent with the persona of a Healer who seeks precise information quickly and naturally fits within that role's communication style. Overall quality stands out due to its directness in addressing urgency without unnecessary embellishment or digressions."
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "3",
+      "persona_consistency": "4",
+      "naturalness": "4",
+      "overall_quality": "4 The response, while relevant and natural for a Healer persona seeking clarity on conflicting reports, lacks the specific contextual cues that would make it feel tailored to this urgent situation at the village gate with an injured scout.",
+      "notes": ""
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "1",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "Note: Response lacks immediate relevance and urgency, but maintains persona consistency as a non-confrontational healer; could improve naturalness by using less formal language."
+    }
+  ]
+}

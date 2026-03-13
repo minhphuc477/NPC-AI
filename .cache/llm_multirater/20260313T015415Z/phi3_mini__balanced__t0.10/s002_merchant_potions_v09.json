@@ -1,0 +1,28 @@
+{
+  "ratings": [
+    {
+      "arm_id": "proposed_contextual_controlled_tuned",
+      "context_relevance": "5",
+      "persona_consistency": "4",
+      "naturalness": "3",
+      "overall_quality": "4",
+      "notes": "[proposed_contextual_controlled_tuned] Ah, my dear traveler! The rain has indeed been relentless and our caravans delayed as always when the skies weep too much for comfort. But worry not about traps; this checkpoint is safe under any circumstances—except perhaps during a lockdown caused by an alarm that seems to have no end, which I hear you are in a hurry due to some urgent matters?<TAB>5<TAB>4<"
+    },
+    {
+      "arm_id": "baseline_no_context",
+      "context_relevance": "TAB2",
+      "persona_consistency": "TAB3",
+      "naturalness": "TAB4",
+      "overall_quality": "The response lacks context relevance, as it doesn't address the current situation like rain delays or safety concerns due to alarms. Persona consistency is average since being talkative isn't directly reflected in offering discounts without mentioning his usual behavior.\\n",
+      "notes": ""
+    },
+    {
+      "arm_id": "baseline_no_context_phi3_latest",
+      "context_relevance": "2",
+      "persona_consistency": "5",
+      "naturalness": "4",
+      "overall_quality": "3",
+      "notes": "\"Maintained persona consistency and relevance, but could improve naturalness.\""
+    }
+  ]
+}

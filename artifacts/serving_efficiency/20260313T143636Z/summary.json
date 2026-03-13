@@ -1,0 +1,82 @@
+{
+  "run_id": "20260313T143636Z",
+  "generated_utc": "2026-03-13T15:08:11.262916+00:00",
+  "host": "http://127.0.0.1:11434",
+  "models": [
+    "elara-npc:latest",
+    "phi3:mini",
+    "phi3:latest"
+  ],
+  "candidate_model": "elara-npc:latest",
+  "prompt_count": 72,
+  "inputs": {
+    "prompts": "data\\serving_prompts_wide_v2.jsonl",
+    "serving_references": "data\\serving_references_wide_v2.jsonl"
+  },
+  "model_summary": {
+    "elara-npc:latest": {
+      "ttft_ms_mean": 1644.072505555717,
+      "total_time_ms_mean": 9583.113237499978,
+      "tokens_per_s_mean": 8.26355849164866,
+      "bertscore_f1_mean": NaN,
+      "quality_per_second": NaN,
+      "pareto_optimal": false,
+      "latency_ratio_to_quality_frontier": NaN
+    },
+    "phi3:mini": {
+      "ttft_ms_mean": 428.74561527989704,
+      "total_time_ms_mean": 8364.644856948064,
+      "tokens_per_s_mean": 8.164302189942676,
+      "bertscore_f1_mean": NaN,
+      "quality_per_second": NaN,
+      "pareto_optimal": false,
+      "latency_ratio_to_quality_frontier": NaN
+    },
+    "phi3:latest": {
+      "ttft_ms_mean": 447.0553513957485,
+      "total_time_ms_mean": 8363.239793060833,
+      "tokens_per_s_mean": 8.159871679801673,
+      "bertscore_f1_mean": NaN,
+      "quality_per_second": NaN,
+      "pareto_optimal": false,
+      "latency_ratio_to_quality_frontier": NaN
+    }
+  },
+  "candidate_deltas": [
+    {
+      "baseline_model": "phi3:mini",
+      "delta_total_time_ms": 1218.4683805519144,
+      "delta_bertscore_f1": NaN,
+      "delta_quality_per_second": NaN
+    },
+    {
+      "baseline_model": "phi3:latest",
+      "delta_total_time_ms": 1219.8734444391448,
+      "delta_bertscore_f1": NaN,
+      "delta_quality_per_second": NaN
+    }
+  ],
+  "bertscore_summary": {
+    "lang": "en",
+    "models": {
+      "elara-npc:latest": {
+        "aligned_request_count": 72,
+        "empty_prediction_count": 0,
+        "ok": false,
+        "error": "No module named 'bert_score'"
+      },
+      "phi3:mini": {
+        "aligned_request_count": 72,
+        "empty_prediction_count": 0,
+        "ok": false,
+        "error": "No module named 'bert_score'"
+      },
+      "phi3:latest": {
+        "aligned_request_count": 72,
+        "empty_prediction_count": 0,
+        "ok": false,
+        "error": "No module named 'bert_score'"
+      }
+    }
+  }
+}
