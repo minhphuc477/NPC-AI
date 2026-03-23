@@ -1,0 +1,137 @@
+\relax 
+\citation{Gallotta2024Survey,Sweetser2024Scoping}
+\citation{Park2023GenerativeAgents}
+\citation{Rao2024Minecraft,Christiansen2024Presence,Wevelsiep2025Voice}
+\citation{Gallotta2024Survey}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\citation{Park2023GenerativeAgents}
+\citation{Wang2024Voyager}
+\citation{DeepMind2024SIMA}
+\citation{Wevelsiep2025Voice}
+\citation{Rao2024Minecraft}
+\citation{Lewis2020RAG}
+\citation{Karpukhin2020DPR}
+\citation{Johnson2021FAISS}
+\citation{Asai2024SelfRAG}
+\citation{Edge2024GraphRAG}
+\citation{Greshake2023PromptInjection}
+\citation{Zou2025PoisonedRAG}
+\citation{Chaturvedi2025AIP}
+\citation{Hu2021LoRA,Dettmers2023QLoRA}
+\citation{Wei2022Flan}
+\citation{Ouyang2022InstructGPT}
+\citation{Rafailov2023DPO}
+\citation{Yeh2021DialogMetrics}
+\citation{Liu2023GEval,Zheng2023MTBench}
+\citation{Gu2026LLMJudge}
+\citation{Park2023GenerativeAgents}
+\citation{Wang2024Voyager}
+\citation{Rao2024Minecraft}
+\citation{Asai2024SelfRAG}
+\citation{EpicGames2025UEBehaviorTrees,Colledanchise2018BehaviorTrees}
+\citation{EpicGames2025TaskGraph,EpicGames2025EAsyncExecution}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}LLMs as NPC and Game Agents}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Retrieval-Augmented Generation and Adversarial Risks}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Efficient Model Adaptation}{2}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Positioning of representative systems across key evaluation dimensions. $\bullet $=addressed; $\circ $=partially addressed; ---=not addressed.}}{2}{}\protected@file@percent }
+\newlabel{tab:position}{{I}{2}{}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Evaluation Methodology for Dialogue Systems}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-E}}System Positioning}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {III}System Architecture}{2}{}\protected@file@percent }
+\newlabel{sec:arch}{{III}{2}{}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Runtime Pipeline Overview}{2}{}\protected@file@percent }
+\citation{Zou2025PoisonedRAG,Chaturvedi2025AIP}
+\citation{Abdin2024Phi3}
+\citation{Dettmers2023QLoRA}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Six-stage online runtime pipeline. Solid arrows: inference flow (S1--S6). Dashed arrows: auxiliary signals. Stages S4 and S6 contain the novel guard and response-control mechanisms.}}{3}{}\protected@file@percent }
+\newlabel{fig:arch}{{1}{3}{}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Offline training and evaluation pipeline (D1--D6). The dashed arrow is the calibration feedback loop: audit results update guard parameters and trigger retraining if quality gates fail. The D4 artifacts are transferred to the online pipeline (Fig.~\ref {fig:arch}).}}{3}{}\protected@file@percent }
+\newlabel{fig:offline}{{2}{3}{}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Game-State Serialization (S1--S2)}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Guarded Hybrid Retrieval (S4)}{3}{}\protected@file@percent }
+\newlabel{eq:guard}{{1}{3}{}{equation.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Model Adaptation: QLoRA and DPO (S5)}{3}{}\protected@file@percent }
+\newlabel{eq:dpo}{{3}{3}{}{equation.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Response Control and Fallback (S6)}{3}{}\protected@file@percent }
+\newlabel{eq:ctrl}{{4}{3}{}{equation.4}{}}
+\citation{Zhang2020BERTScore}
+\citation{Holm1979}
+\citation{Clopper1934Binomial}
+\citation{Cohen1960Kappa}
+\newlabel{eq:release}{{5}{4}{}{equation.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-F}}Evidence Gate Design}{4}{}\protected@file@percent }
+\newlabel{eq:gate}{{6}{4}{}{equation.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Evaluation Methodology}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Benchmark Design and Scenario Taxonomy}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Metrics and Statistical Protocol}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Human Evaluation Protocol}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Adversarial Stress-Testing}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Results and Discussion}{4}{}\protected@file@percent }
+\newlabel{sec:results}{{V}{4}{}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}RQ1: Core Quality Gains (Controlled vs.\ Raw Context)}{4}{}\protected@file@percent }
+\citation{Landis1977KappaScale}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces RQ1---Quality gains: controlled vs.\ raw context ($N=112$, pre-registered reference run). All four core metrics and BERTScore F1 pass the evidence gate (lower CI bound $>0$, $p{<}1/B$).}}{5}{}\protected@file@percent }
+\newlabel{tab:core}{{II}{5}{}{table.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Adversarial results (100 scenarios/family). Exact 95\% C-P upper bound on guarded ASR: 0.030 per set, 0.015 pooled.}}{5}{}\protected@file@percent }
+\newlabel{tab:adv}{{III}{5}{}{table.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}RQ2: Cross-Condition Quality Gap}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}RQ3: Adversarial Robustness}{5}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Retrieval method comparison ($N{=}20$ labeled queries). All comparisons are descriptive effect sizes; no formal hypothesis testing is conducted at this label-set scale. BM25's current advantage is expected to narrow on paraphrased inputs where the trained reranker's semantic generalization is the operational target.}}{5}{}\protected@file@percent }
+\newlabel{tab:retr}{{IV}{5}{}{table.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Serving latency: controlled candidate vs.\ Phi-3 Mini baseline ($N=112$). All $\Delta $ values are unfavorable and retained per pre-registered protocol.}}{5}{}\protected@file@percent }
+\newlabel{tab:serving}{{V}{5}{}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Retrieval Ablation}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}RQ4: Quality--Latency Trade-Offs and UE5 Operations}{5}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces UE5 runtime operational rates (controlled arm, $N=112$). All rates use exact 95\% Clopper--Pearson CIs.}}{6}{}\protected@file@percent }
+\newlabel{tab:ops}{{VI}{6}{}{table.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Operational metrics by NPC behavior state (controlled arm). States ordered by retry rate. $n$=scenario count.}}{6}{}\protected@file@percent }
+\newlabel{tab:states}{{VII}{6}{}{table.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}Discussion: Separability of Control Problems}{6}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Representative responses from the three release paths of the response controller ($z_t$=rewrite count, $f_t$=fallback flag).}}{6}{}\protected@file@percent }
+\newlabel{tab:examples}{{VIII}{6}{}{table.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Failure mode taxonomy across stress classes. ``Controlled behavior'' describes the response with S4+S6 active; ``Residual risk'' is the remaining concern.}}{6}{}\protected@file@percent }
+\newlabel{tab:errors}{{IX}{6}{}{table.9}{}}
+\citation{Leviathan2022SpecDec}
+\citation{Kwon2023vLLM}
+\bibcite{Gallotta2024Survey}{1}
+\bibcite{Sweetser2024Scoping}{2}
+\bibcite{Park2023GenerativeAgents}{3}
+\bibcite{Rao2024Minecraft}{4}
+\bibcite{Christiansen2024Presence}{5}
+\bibcite{Wang2024Voyager}{6}
+\bibcite{DeepMind2024SIMA}{7}
+\bibcite{Wevelsiep2025Voice}{8}
+\bibcite{Lewis2020RAG}{9}
+\bibcite{Karpukhin2020DPR}{10}
+\bibcite{Johnson2021FAISS}{11}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Limitations and Scope}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion and Future Work}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{7}{}\protected@file@percent }
+\bibcite{Asai2024SelfRAG}{12}
+\bibcite{Edge2024GraphRAG}{13}
+\bibcite{Greshake2023PromptInjection}{14}
+\bibcite{Zou2025PoisonedRAG}{15}
+\bibcite{Chaturvedi2025AIP}{16}
+\bibcite{Wei2022Flan}{17}
+\bibcite{Ouyang2022InstructGPT}{18}
+\bibcite{Hu2021LoRA}{19}
+\bibcite{Dettmers2023QLoRA}{20}
+\bibcite{Rafailov2023DPO}{21}
+\bibcite{Abdin2024Phi3}{22}
+\bibcite{Yeh2021DialogMetrics}{23}
+\bibcite{Liu2023GEval}{24}
+\bibcite{Zheng2023MTBench}{25}
+\bibcite{Gu2026LLMJudge}{26}
+\bibcite{Zhang2020BERTScore}{27}
+\bibcite{Holm1979}{28}
+\bibcite{Clopper1934Binomial}{29}
+\bibcite{Cohen1960Kappa}{30}
+\bibcite{Landis1977KappaScale}{31}
+\bibcite{EpicGames2025UEBehaviorTrees}{32}
+\bibcite{Colledanchise2018BehaviorTrees}{33}
+\bibcite{EpicGames2025TaskGraph}{34}
+\bibcite{EpicGames2025EAsyncExecution}{35}
+\bibcite{Leviathan2022SpecDec}{36}
+\bibcite{Kwon2023vLLM}{37}
+\gdef \@abspage@last{8}

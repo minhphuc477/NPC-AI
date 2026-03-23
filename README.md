@@ -2,33 +2,47 @@
 
 Behavior-Driven Neuro-Symbolic Cognitive Architecture for context-grounded NPC dialogue.
 
-## Scope
-- `cpp/`: low-latency runtime used by UE5/native serving.
-- `core/` and `scripts/`: model iteration, evaluation, and benchmark pipelines.
-- `docs/`: proposal alignment, benchmark evidence, architecture, and verification.
+This repository is organized to support reproducible research and public release of code, benchmarks, and audit artifacts. The structure aligns with the four main components described in the project report:
 
-## Canonical Docs
-- [Documentation Index](docs/README.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Draft Paper](docs/DRAFT_PAPER.md)
-- [Proposal Alignment](docs/PROPOSAL_ALIGNMENT.md)
-- [Proposal Quality Bar](docs/PROPOSAL_QUALITY_BAR.md)
-- [Industry Judgment](docs/INDUSTRY_PUBLICATION_JUDGMENT.md)
-- [Final Benchmark Report](docs/FINAL_BENCHMARK_REPORT.md)
-- [Kaggle Guide](docs/KAGGLE_GUIDE.md)
+1. **Runtime module** (inference + control): Python + C++ implementation of the full pipeline (UE5 state extraction, prompt compilation, guarded hybrid retrieval, local LLM inference, post-generation control).
+2. **Training scripts & experiment configs**: Training pipelines for SFT/QLoRA and Direct Preference Optimization (DPO) plus environment configuration to reproduce experimental results.
+3. **Benchmark suite**: A fixed set of benchmark scenarios (112+ cases) with run manifests, evaluation configuration, and scripts for computing quality metrics, bootstrap confidence intervals, and statistical tests.
+4. **Audit artifact package**: Metadata and raw results from evaluation runs, plus step-by-step reproduction instructions to independently verify the published numeric results.
 
-## High-Level Architecture
-```mermaid
-flowchart LR
-    U[UE5 / Client] --> C[Context Extractor]
-    P[Player Input] --> B[Prompt Builder]
-    C --> B
-    B --> R[Hybrid Retrieval]
-    R --> G[LLM Runtime]
-    G --> Q[Response Controller]
-    Q --> O[NPC Response]
-    O --> M[Memory + Citations]
-```
+> ✅ **Minimum reproducibility standard:** A full independent verification run must reproduce the same scenario set, decoding configuration, and statistical analysis pipeline on equivalent hardware.
+
+---
+
+## Repository structure (high-level)
+
+- `core/` — Python runtime pipeline, prompt builder, retrieval system, response controller, evaluation helpers.
+- `cpp/` — Low-latency runtime used by UE5/native serving (C++ inference engine, build scripts, tests).
+- `scripts/` — Training, evaluation, benchmarking, and result aggregation scripts (SFT/QLoRA/DPO pipelines, benchmark runners, metric calculators).
+- `data/` — Scenario definitions, prompt templates, and other dataset artifacts used for benchmarks and evaluation.
+- `artifacts/` — Output of benchmark/evaluation runs (audit artifact package).
+- `docs/` — Documentation, architecture diagrams, publications, and reproduction guides.
+
+---
+
+## Getting started (reproducibility)
+
+1. **Read this README first** — it contains the recommended workflow for reproducing results.
+2. **Install dependencies**:
+   - Python: use the `annotation_pipeline/requirements.txt` (or your preferred environment manager) to install required Python packages.
+   - C++: build the runtime from `cpp/` using CMake (see below).
+3. **Run the benchmark pipeline**:
+   - Use `scripts/run_kaggle_full_results.py` (or relevant `run_*` script) to run the unified benchmark suite and generate audit artifacts.
+4. **Verify results**:
+   - Confirm that the output matches the published artifacts in `artifacts/` and the reported statistics in `docs/`.
+
+### Reproducibility checklist
+
+- [ ] Use the same **scenario set** (112 fixed benchmark scenarios) from `data/` and `scripts/benchmark_definitions.py`.
+- [ ] Use the same **decoding config** (temperature, top-k, top-p, max tokens) used in the published runs (see `scripts/` configs and `docs/` descriptions).
+- [ ] Run the **same statistical analysis pipeline** (bootstrap CI and significance tests) via `scripts/evaluate_benchmarks.py` (or the unified `run_kaggle_full_results.py` workflow).
+- [ ] Validate against the published **audit artifacts** in `artifacts/` and the results in `docs/`.
+
+---
 
 ## Build (C++)
 ```powershell
@@ -37,7 +51,9 @@ cmake -B build
 cmake --build build --config Release
 ```
 
-## Full Results Checkout
+---
+
+## Quick run (full results checkout)
 Run the unified pipeline (proposal + publication + quality gate + comparison artifacts):
 ```powershell
 python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434
@@ -47,6 +63,20 @@ Ablation option (skip keyword/random retrieval ablation baselines):
 ```powershell
 python scripts/run_kaggle_full_results.py --host http://127.0.0.1:11434 --skip-ablation-baselines
 ```
+
+---
+
+## Canonical documentation
+- [Documentation Index](docs/README.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Draft Paper](docs/DRAFT_PAPER.md)
+- [Proposal Alignment](docs/PROPOSAL_ALIGNMENT.md)
+- [Proposal Quality Bar](docs/PROPOSAL_QUALITY_BAR.md)
+- [Industry Judgment](docs/INDUSTRY_PUBLICATION_JUDGMENT.md)
+- [Final Benchmark Report](docs/FINAL_BENCHMARK_REPORT.md)
+- [Kaggle Guide](docs/KAGGLE_GUIDE.md)
+
+---
 
 ## Notes
 - Publication/benchmark claims are grounded in `artifacts/` runs referenced from `docs/`.
