@@ -11,7 +11,10 @@ This repository is organized to support reproducible research and public release
 
 > ✅ **Minimum reproducibility standard:** A full independent verification run must reproduce the same scenario set, decoding configuration, and statistical analysis pipeline on equivalent hardware.
 
----
+## Scope
+- `cpp/`: low-latency runtime used by UE5/native serving.
+- `core/` and `scripts/`: model iteration, evaluation, and benchmark pipelines.
+- `docs/`: proposal alignment, benchmark evidence, architecture, and verification.
 
 ## Repository structure (high-level)
 
