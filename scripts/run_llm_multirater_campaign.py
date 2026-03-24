@@ -7,6 +7,7 @@ import argparse
 import csv
 import difflib
 import json
+import logging
 import random
 import re
 import time
@@ -14,6 +15,8 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Sequence, Tuple
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 
 def read_json(path: Path) -> Dict[str, Any]:
@@ -231,8 +234,8 @@ def parse_ratings_text(raw_text: str, required_arms: Sequence[str]) -> Dict[str,
         obj = json.loads(text)
         if isinstance(obj, dict) and isinstance(obj.get("ratings"), list):
             return obj
-    except Exception:
-        pass
+    except json.JSONDecodeError:
+        obj = None
 
     # Fallback: extract first JSON object.
     match = re.search(r"\{[\s\S]*\}", text)
@@ -241,8 +244,8 @@ def parse_ratings_text(raw_text: str, required_arms: Sequence[str]) -> Dict[str,
             obj = json.loads(match.group(0))
             if isinstance(obj, dict) and isinstance(obj.get("ratings"), list):
                 return obj
-        except Exception:
-            pass
+        except json.JSONDecodeError:
+            obj = None
 
     # Final fallback: parse tab-separated lines.
     arm_set = {a.strip() for a in required_arms}
@@ -362,7 +365,7 @@ def to_ratings_map(payload: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run LLM multi-rater campaign and output human-eval CSV.")
-    parser.add_argument("--run-dir", required=True, help="Proposal run dir (artifacts/proposal/<run_id>)")
+    parser.add_argument("--run-dir", required=True, help="Proposal run dir (storage/artifacts/proposal/<run_id>)")
     parser.add_argument("--host", default="http://127.0.0.1:11434")
     parser.add_argument(
         "--annotators",
@@ -511,8 +514,14 @@ def main() -> None:
                             single_map = to_ratings_map(single_payload)
                             if miss_arm in single_map:
                                 ratings_map[miss_arm] = single_map[miss_arm]
-                        except Exception:
-                            pass
+                        except Exception as single_exc:
+                            logger.warning(
+                                "Single-arm fallback failed for scenario=%s arm=%s model=%s: %s",
+                                sid,
+                                miss_arm,
+                                model,
+                                single_exc,
+                            )
 
                     payload = {"ratings": [ratings_map[a] for a in arms if a in ratings_map]}
                     cache_file.parent.mkdir(parents=True, exist_ok=True)

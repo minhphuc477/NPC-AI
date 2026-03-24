@@ -4,9 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import subprocess
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 def _disable_torchao_if_needed() -> None:
@@ -16,8 +19,8 @@ def _disable_torchao_if_needed() -> None:
 
         iu._torchao_available = False
         iu._torchao_version = "0.0.0"
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug("torchao disable patch skipped: %s", exc)
 
 
 def merge_adapter(base_model: str, adapter_dir: Path, merged_dir: Path) -> None:
@@ -109,11 +112,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Register merged DPO candidate model into Ollama.")
     parser.add_argument("--adapter", required=True, help="Path to DPO adapter directory.")
     parser.add_argument("--base-model", default="microsoft/Phi-3-mini-4k-instruct")
-    parser.add_argument("--merged-dir", default="outputs/merged_dpo_candidate")
+    parser.add_argument("--merged-dir", default="storage/outputs/merged_dpo_candidate")
     parser.add_argument("--model-tag", default="elara-npc-dpo:latest")
-    parser.add_argument("--modelfile", default="outputs/merged_dpo_candidate/Modelfile")
+    parser.add_argument("--modelfile", default="storage/outputs/merged_dpo_candidate/Modelfile")
     parser.add_argument("--llama-cpp-dir", default="llama.cpp")
-    parser.add_argument("--gguf-out", default="outputs/merged_dpo_candidate/elara_npc_dpo_f16.gguf")
+    parser.add_argument("--gguf-out", default="storage/outputs/merged_dpo_candidate/elara_npc_dpo_f16.gguf")
     parser.add_argument(
         "--from-gguf",
         dest="from_gguf",

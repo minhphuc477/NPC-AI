@@ -33,16 +33,16 @@ def _disable_torchao_if_needed() -> None:
 
         iu._torchao_available = False
         iu._torchao_version = "0.0.0"
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug("torchao disable patch skipped: %s", exc)
 
 
 @dataclass
 class DPOConfig:
     base_model: str = "microsoft/Phi-3-mini-4k-instruct"
     reference_model: str = ""
-    dataset_path: str = "artifacts/proposal/latest/preference_dataset.jsonl"
-    output_dir: str = "outputs/dpo_adapter"
+    dataset_path: str = "storage/artifacts/proposal/latest/preference_dataset.jsonl"
+    output_dir: str = "storage/outputs/dpo_adapter"
     accelerator: str = "auto"  # auto | cuda | cpu
 
     # QLoRA/LoRA
@@ -71,6 +71,7 @@ class DPOConfig:
     gradient_accumulation_steps: int = 8
     warmup_ratio: float = 0.05
     weight_decay: float = 0.0
+    max_grad_norm: float = 1.0
     max_prompt_length: int = 1024
     max_length: int = 1536
     logging_steps: int = 10
@@ -97,6 +98,7 @@ class DPOConfig:
             "per_device_train_batch_size": self.per_device_train_batch_size,
             "gradient_accumulation_steps": self.gradient_accumulation_steps,
             "warmup_ratio": self.warmup_ratio,
+            "max_grad_norm": self.max_grad_norm,
             "max_prompt_length": self.max_prompt_length,
             "max_length": self.max_length,
             "seed": self.seed,
@@ -114,8 +116,8 @@ def detect_accelerator(requested: str) -> str:
 
         if torch.cuda.is_available():
             return "cuda"
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug("CUDA probe failed, falling back to CPU: %s", exc)
     return "cpu"
 
 
@@ -161,7 +163,7 @@ def main() -> None:
     parser.add_argument("--dataset", required=True, help="Preference dataset path (.json or .jsonl)")
     parser.add_argument("--base-model", default="microsoft/Phi-3-mini-4k-instruct")
     parser.add_argument("--reference-model", default="", help="Optional explicit reference model")
-    parser.add_argument("--output-dir", default="outputs/dpo_adapter")
+    parser.add_argument("--output-dir", default="storage/outputs/dpo_adapter")
     parser.add_argument("--accelerator", default="auto", choices=["auto", "cuda", "cpu"])
     parser.add_argument("--no-4bit", action="store_true", help="Disable 4-bit quantization on CUDA")
     parser.add_argument("--lora-r", type=int, default=16)
@@ -175,6 +177,7 @@ def main() -> None:
     parser.add_argument("--lr", type=float, default=5e-6)
     parser.add_argument("--warmup-ratio", type=float, default=0.05)
     parser.add_argument("--weight-decay", type=float, default=0.0)
+    parser.add_argument("--max-grad-norm", type=float, default=1.0)
     parser.add_argument("--max-prompt-length", type=int, default=1024)
     parser.add_argument("--max-length", type=int, default=1536)
     parser.add_argument("--logging-steps", type=int, default=10)
@@ -201,6 +204,7 @@ def main() -> None:
         gradient_accumulation_steps=int(args.grad_acc),
         warmup_ratio=float(args.warmup_ratio),
         weight_decay=float(args.weight_decay),
+        max_grad_norm=float(args.max_grad_norm),
         max_prompt_length=int(args.max_prompt_length),
         max_length=int(args.max_length),
         logging_steps=int(args.logging_steps),
@@ -282,6 +286,7 @@ def main() -> None:
         learning_rate=cfg.learning_rate,
         warmup_ratio=cfg.warmup_ratio,
         weight_decay=cfg.weight_decay,
+        max_grad_norm=cfg.max_grad_norm,
         logging_steps=cfg.logging_steps,
         save_steps=cfg.save_steps,
         save_total_limit=cfg.save_total_limit,

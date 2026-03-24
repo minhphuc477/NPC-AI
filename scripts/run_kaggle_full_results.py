@@ -12,6 +12,25 @@ from pathlib import Path
 from typing import Any, List
 
 import requests
+try:
+    from local_model_profiles import (
+        baseline_profile_choices,
+        fetch_ollama_models,
+        format_model_csv,
+        resolve_baseline_models,
+        split_available_missing,
+    )
+except ModuleNotFoundError:
+    from scripts.local_model_profiles import (
+        baseline_profile_choices,
+        fetch_ollama_models,
+        format_model_csv,
+        resolve_baseline_models,
+        split_available_missing,
+    )
+
+STORAGE_ARTIFACT_ROOT = Path("storage/artifacts")
+LEGACY_ARTIFACT_ROOT = Path("artifacts")
 
 
 def utc_stamp() -> str:
@@ -25,24 +44,37 @@ def write_json(path: Path, payload: Any) -> None:
 
 
 def latest_subdir(root: Path) -> Path:
-    dirs = [p for p in root.iterdir() if p.is_dir()]
+    dirs = [
+        p
+        for p in root.iterdir()
+        if p.is_dir() and p.name != "latest" and not p.name.endswith("_batch_tmp")
+    ]
     if not dirs:
         raise FileNotFoundError(f"No run directories found under: {root}")
     return sorted(dirs, key=lambda p: (p.stat().st_mtime, p.name))[-1]
 
 
-def resolve_run_path(raw: str, root: Path) -> Path:
+def resolve_run_path(raw: str, root: Path, fallback_root: Path | None = None) -> Path:
     token = str(raw or "").strip()
     if not token:
         raise ValueError("empty run token")
     if token.lower() == "latest":
-        return latest_subdir(root)
+        try:
+            return latest_subdir(root)
+        except FileNotFoundError:
+            if fallback_root is not None:
+                return latest_subdir(fallback_root)
+            raise
     path = Path(token)
     if path.exists():
         return path
     candidate = root / token
     if candidate.exists():
         return candidate
+    if fallback_root is not None:
+        fallback = fallback_root / token
+        if fallback.exists():
+            return fallback
     raise FileNotFoundError(f"Cannot resolve run path '{raw}' under {root}")
 
 
@@ -125,6 +157,12 @@ def main() -> None:
     parser.add_argument("--candidate-model", default="elara-npc:latest")
     parser.add_argument("--baseline-model", default="phi3:mini")
     parser.add_argument("--baseline-models", default="phi3:latest")
+    parser.add_argument(
+        "--baseline-profile",
+        default="none",
+        choices=baseline_profile_choices(),
+        help="Optional baseline profile to expand baseline-models with laptop-safe packs.",
+    )
     parser.add_argument("--scenario-file", default="data/proposal_eval_scenarios_large_v2.jsonl")
     parser.add_argument(
         "--proposal-run",
@@ -208,32 +246,73 @@ def main() -> None:
         default=0.20,
         help="Minimum mean pairwise kappa for the human-eval gate.",
     )
-    parser.add_argument("--output-root", default="artifacts/final_checkout")
+    parser.add_argument("--output-root", default="storage/artifacts/final_checkout")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
         "--allow-missing-ollama",
         action="store_true",
         help="If Ollama host/models are unavailable, continue in dry-run mode instead of failing.",
     )
+    parser.add_argument(
+        "--allow-missing-baselines",
+        action="store_true",
+        help="Prune missing baseline-models; candidate-model and baseline-model remain required.",
+    )
     args = parser.parse_args()
+    resolved_baselines = resolve_baseline_models(str(args.baseline_models), str(args.baseline_profile))
+    if not resolved_baselines:
+        resolved_baselines = [str(args.baseline_model)]
+    args.baseline_models = format_model_csv(resolved_baselines)
+
+    proposal_root = STORAGE_ARTIFACT_ROOT / "proposal"
+    proposal_fallback_root = LEGACY_ARTIFACT_ROOT / "proposal"
+    publication_root = STORAGE_ARTIFACT_ROOT / "publication"
+    publication_fallback_root = LEGACY_ARTIFACT_ROOT / "publication"
+    serving_root = STORAGE_ARTIFACT_ROOT / "serving_efficiency"
+    serving_fallback_root = LEGACY_ARTIFACT_ROOT / "serving_efficiency"
+    profiles_root = STORAGE_ARTIFACT_ROOT / "publication_profiles"
+    profiles_fallback_root = LEGACY_ARTIFACT_ROOT / "publication_profiles"
 
     if bool(args.require_security_benchmark) and not bool(args.run_security_benchmark):
         raise ValueError("--require-security-benchmark requires --run-security-benchmark")
 
     if not args.dry_run:
-        model_checks = [str(args.candidate_model), str(args.baseline_model)]
-        for token in str(args.baseline_models).split(","):
-            t = token.strip()
-            if t:
-                model_checks.append(t)
+        required_models = [str(args.candidate_model), str(args.baseline_model)]
+        baseline_tokens = [t.strip() for t in str(args.baseline_models).split(",") if t.strip()]
+        model_checks = required_models + baseline_tokens
         try:
             ollama_ready(args.host, model_checks)
         except RuntimeError as exc:
-            if not args.allow_missing_ollama:
-                raise
-            print(f"[warn] {exc}")
-            print("[warn] Falling back to dry-run mode (--allow-missing-ollama).")
-            args.dry_run = True
+            if bool(args.allow_missing_baselines):
+                try:
+                    installed = fetch_ollama_models(str(args.host), timeout_s=10)
+                    required_avail, required_missing = split_available_missing(required_models, installed)
+                    if required_missing:
+                        raise RuntimeError(
+                            f"Missing required models (cannot prune): {required_missing}"
+                        ) from exc
+                    baseline_avail, baseline_missing = split_available_missing(baseline_tokens, installed)
+                    if not baseline_avail:
+                        baseline_avail = [str(args.baseline_model)]
+                    args.baseline_models = format_model_csv(baseline_avail)
+                    model_checks = required_avail + baseline_avail
+                    ollama_ready(args.host, model_checks)
+                    print(
+                        f"[info] Pruned missing baselines: {baseline_missing}. "
+                        f"Using baseline-models={args.baseline_models}"
+                    )
+                except RuntimeError as inner_exc:
+                    exc = inner_exc
+                except Exception as fallback_exc:
+                    exc = RuntimeError(f"Unexpected baseline-pruning error: {fallback_exc}")
+                else:
+                    exc = None
+            if exc is not None and not args.allow_missing_ollama:
+                raise exc
+            elif exc is not None:
+                print(f"[warn] {exc}")
+                print("[warn] Falling back to dry-run mode (--allow-missing-ollama).")
+                args.dry_run = True
 
     maybe_generate_inputs(dry_run=bool(args.dry_run))
 
@@ -242,7 +321,7 @@ def main() -> None:
     multirater_arms = [target_arm, "baseline_no_context", "baseline_no_context_phi3_latest"]
 
     if proposal_token:
-        proposal_run = resolve_run_path(proposal_token, Path("artifacts/proposal"))
+        proposal_run = resolve_run_path(proposal_token, proposal_root, proposal_fallback_root)
     else:
         # 1) Proposal batched eval.
         proposal_cmd = [
@@ -283,9 +362,12 @@ def main() -> None:
         if overrides_file:
             proposal_cmd.extend(["--control-alt-overrides-file", overrides_file])
         run_command(proposal_cmd, dry_run=bool(args.dry_run))
-        proposal_run = Path("artifacts/proposal/latest")
+        proposal_run = proposal_root / "latest"
         if not args.dry_run:
-            proposal_run = latest_subdir(Path("artifacts/proposal"))
+            if proposal_root.exists():
+                proposal_run = latest_subdir(proposal_root)
+            else:
+                proposal_run = latest_subdir(proposal_fallback_root)
 
     # 2) Multi-rater campaign + attach.
     human_csv = proposal_run / "human_eval_llm_multirater_consistent.csv"
@@ -337,7 +419,7 @@ def main() -> None:
 
     publication_token = str(args.publication_run).strip()
     if publication_token:
-        publication_run = resolve_run_path(publication_token, Path("artifacts/publication"))
+        publication_run = resolve_run_path(publication_token, publication_root, publication_fallback_root)
     else:
         # 4) Publication suite (single canonical run for quality gate).
         pub_cmd = [
@@ -378,9 +460,12 @@ def main() -> None:
             pub_cmd.append("--skip-ablation-baselines")
         run_command(pub_cmd, dry_run=bool(args.dry_run))
 
-        publication_run = Path("artifacts/publication/latest")
+        publication_run = publication_root / "latest"
         if not args.dry_run:
-            publication_run = latest_subdir(Path("artifacts/publication"))
+            if publication_root.exists():
+                publication_run = latest_subdir(publication_root)
+            else:
+                publication_run = latest_subdir(publication_fallback_root)
 
     # 5) Serving matrix.
     run_command(
@@ -406,9 +491,12 @@ def main() -> None:
         ],
         dry_run=bool(args.dry_run),
     )
-    serving_run = Path("artifacts/serving_efficiency/latest")
+    serving_run = serving_root / "latest"
     if not args.dry_run:
-        serving_run = latest_subdir(Path("artifacts/serving_efficiency"))
+        if serving_root.exists():
+            serving_run = latest_subdir(serving_root)
+        else:
+            serving_run = latest_subdir(serving_fallback_root)
 
     # 6) External profile suite (core + wide).
     run_command(
@@ -432,9 +520,12 @@ def main() -> None:
         ],
         dry_run=bool(args.dry_run),
     )
-    profile_suite = Path("artifacts/publication_profiles/latest")
+    profile_suite = profiles_root / "latest"
     if not args.dry_run:
-        profile_suite = latest_subdir(Path("artifacts/publication_profiles"))
+        if profiles_root.exists():
+            profile_suite = latest_subdir(profiles_root)
+        else:
+            profile_suite = latest_subdir(profiles_fallback_root)
 
     # 6b) Aggregate runtime evidence from proposal-style interactive runs.
     runtime_json = profile_suite / "live_runtime_summary.json"
@@ -444,7 +535,7 @@ def main() -> None:
             sys.executable,
             "scripts/analyze_live_runtime_conditions.py",
             "--root",
-            "artifacts/proposal",
+            str(proposal_root if proposal_root.exists() or not proposal_fallback_root.exists() else proposal_fallback_root),
             "--arm",
             target_arm,
             "--output-json",
