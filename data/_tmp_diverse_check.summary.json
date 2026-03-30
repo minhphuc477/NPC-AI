@@ -1,0 +1,84 @@
+{
+  "scenario_count": 16,
+  "source_distribution": {
+    "s001_gate_archive": 2,
+    "s002_merchant_potions": 2,
+    "s003_healer_poison": 2,
+    "s004_blacksmith_goblins": 2,
+    "s005_scholar_watchtower": 2,
+    "s006_captain_theft": 2,
+    "s007_prisoner_bargain": 2,
+    "s008_witch_curse": 2
+  },
+  "persona_distribution": {
+    "blacksmith": 2,
+    "captain": 2,
+    "gatekeeper": 2,
+    "healer": 2,
+    "merchant": 2,
+    "prisoner": 2,
+    "scholar": 2,
+    "witch": 2
+  },
+  "conflict_distribution": {
+    "access_control": 2,
+    "advisory_request": 2,
+    "assistance_request": 3,
+    "credibility_dispute": 3,
+    "economic_negotiation": 2,
+    "general_dialogue": 4
+  },
+  "location_distribution": {
+    "commerce": 3,
+    "craft": 1,
+    "detention": 2,
+    "knowledge": 2,
+    "medical": 2,
+    "other": 2,
+    "security": 2,
+    "wilderness": 2
+  },
+  "behavior_distribution": {
+    "Assisting": 2,
+    "Detained": 1,
+    "Forging": 2,
+    "Investigating": 1,
+    "Negotiating": 1,
+    "Patrolling": 2,
+    "Researching": 3,
+    "RitualPreparation": 1,
+    "Trading": 2,
+    "TreatingPatient": 1
+  },
+  "primary_stress_axis_distribution": {
+    "context_grounding": 5,
+    "dialogue_naturalness": 4,
+    "persona_consistency": 5,
+    "temporal_consistency": 2
+  },
+  "template_signature_distribution": {
+    "access_control|security|patrolling|s|u0|i0": 2,
+    "advisory_request|commerce|forging|q|u0|i1": 1,
+    "advisory_request|craft|forging|q|u0|i0": 1,
+    "assistance_request|medical|researching|q|u0|i0": 1,
+    "assistance_request|medical|treatingpatient|q|u0|i0": 1,
+    "assistance_request|wilderness|ritualpreparation|q|u0|i0": 1,
+    "credibility_dispute|detention|detained|q|u0|i0": 1,
+    "credibility_dispute|other|investigating|q|u0|i0": 1,
+    "credibility_dispute|other|negotiating|q|u0|i1": 1,
+    "economic_negotiation|commerce|trading|s|u0|i0": 1,
+    "economic_negotiation|commerce|trading|s|u0|i1": 1,
+    "general_dialogue|detention|assisting|q|u0|i1": 1,
+    "general_dialogue|knowledge|assisting|q|u1|i0": 1,
+    "general_dialogue|knowledge|researching|q|u0|i0": 1,
+    "general_dialogue|wilderness|researching|q|u0|i1": 1
+  },
+  "unique_source_count": 8,
+  "unique_template_signature_count": 15,
+  "template_signature_ratio": 0.9375,
+  "effective_sample_size_by_source": 8.0,
+  "effective_sample_size_by_template_signature": 14.222222222222221,
+  "source_max_share": 0.125,
+  "template_max_share": 0.125,
+  "mean_within_source_player_input_jaccard": 0.41071981424148607
+}

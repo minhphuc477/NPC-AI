@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""
+Export QLoRA adapter to GGUF format for Ollama.
+
+Usage:
+    python export_gguf.py --adapter storage/outputs/adapter --output models/npc-phi3.gguf
+    
+Requires: llama.cpp with convert tools installed
+"""
+import argparse
+import importlib
+import logging
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def resolve_kaggle_path(path_value: str) -> str:
+    """Resolve relative path to /kaggle/working when present."""
+    path = Path(path_value)
+    if path.is_absolute():
+        return str(path)
+    if Path("/kaggle").exists():
+        working_candidate = Path("/kaggle/working") / path
+        if working_candidate.exists():
+            return str(working_candidate)
+    return str(path)
+
+
+def validate_adapter_dir(adapter_path: str) -> str:
+    """Validate adapter path before PEFT tries remote Hub fallback."""
+    resolved = Path(resolve_kaggle_path(adapter_path))
+    if not resolved.exists():
+        raise FileNotFoundError(
+            f"Adapter path not found locally: {adapter_path} (resolved: {resolved})"
+        )
+    if not (resolved / "adapter_config.json").exists():
+        raise FileNotFoundError(
+            f"Missing adapter_config.json under {resolved}. "
+            "Expected a PEFT adapter directory."
+        )
+    return str(resolved)
+
+
+def ensure_convert_script() -> Path | None:
+    """Locate or bootstrap llama.cpp conversion script."""
+    candidates = [
+        Path("llama.cpp/convert_hf_to_gguf.py"),
+        Path("/kaggle/working/llama.cpp/convert_hf_to_gguf.py"),
+        Path.home() / "llama.cpp/convert_hf_to_gguf.py",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    # Bootstrap on Kaggle/local when internet is enabled.
+    clone_dir = Path("/kaggle/working/llama.cpp") if Path("/kaggle").exists() else Path("llama.cpp")
+    if not clone_dir.exists():
+        logger.info("llama.cpp converter not found. Cloning llama.cpp into %s", clone_dir)
+        clone_cmd = [
+            "git",
+            "clone",
+            "--depth",
+            "1",
+            "https://github.com/ggerganov/llama.cpp",
+            str(clone_dir),
+        ]
+        proc = subprocess.run(clone_cmd, capture_output=True, text=True)
+        if proc.returncode != 0:
+            logger.warning("Failed to clone llama.cpp: %s", (proc.stderr or proc.stdout).strip())
+            return None
+
+    script = clone_dir / "convert_hf_to_gguf.py"
+    return script if script.exists() else None
+
+
+def merge_adapter(base_model: str, adapter_path: str, output_path: str):
+    """Merge LoRA adapter with base model."""
+    try:
+        peft_mod = importlib.import_module("peft")
+        PeftModel = getattr(peft_mod, "PeftModel")
+        transformers_mod = importlib.import_module("transformers")
+        AutoModelForCausalLM = getattr(transformers_mod, "AutoModelForCausalLM")
+        AutoTokenizer = getattr(transformers_mod, "AutoTokenizer")
+        import torch
+    except Exception:
+        logger.error("Install: pip install peft transformers torch")
+        return False
+    
+    logger.info(f"Loading base model: {base_model}")
+    model = AutoModelForCausalLM.from_pretrained(
+        base_model,
+        torch_dtype=torch.float16,
+        device_map="auto",
+        trust_remote_code=True,
+    )
+    
+    verified_adapter = validate_adapter_dir(adapter_path)
+    logger.info(f"Loading adapter: {verified_adapter}")
+    model = PeftModel.from_pretrained(model, verified_adapter)
+    
+    logger.info("Merging adapter weights...")
+    model = model.merge_and_unload()
+    
+    logger.info(f"Saving merged model to: {output_path}")
+    cast_model: Any = model
+    cast_model.save_pretrained(output_path)
+    
+    tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
+    tokenizer.save_pretrained(output_path)
+    
+    return True
+
+
+def convert_to_gguf(model_path: str, output_gguf: str, quantization: str = "q4_k_m"):
+    """Convert HuggingFace model to GGUF format.
+    
+    Requires llama.cpp convert tools.
+    """
+    convert_script = ensure_convert_script()
+    if not convert_script:
+        logger.error("llama.cpp not found. Clone: git clone https://github.com/ggerganov/llama.cpp")
+        logger.info("Then run: python convert_hf_to_gguf.py <model_path> --outtype f16 --outfile <output.gguf>")
+        return False
+    
+    logger.info(f"Converting to GGUF: {output_gguf}")
+    cmd = [
+        sys.executable, str(convert_script),
+        model_path,
+        "--outtype", "f16",
+        "--outfile", output_gguf
+    ]
+    
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        logger.error(f"Conversion failed: {result.stderr}")
+        return False
+    
+    logger.info(f"GGUF saved to: {output_gguf}")
+    return True
+
+
+def create_ollama_model(gguf_path: str, model_name: str = "npc-phi3"):
+    """Create Ollama model from GGUF."""
+    modelfile = f"""FROM {gguf_path}
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER num_predict 256
+SYSTEM "Ban la mot NPC trong tro choi. Hay tra loi ngan gon va phu hop voi tinh cach."
+"""
+    
+    modelfile_path = Path(gguf_path).parent / "Modelfile"
+    with open(modelfile_path, "w") as f:
+        f.write(modelfile)
+    
+    logger.info(f"Created Modelfile at: {modelfile_path}")
+    logger.info(f"Run: ollama create {model_name} -f {modelfile_path}")
+    return True
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Export QLoRA adapter to GGUF")
+    parser.add_argument("--adapter", required=True, help="Path to adapter directory")
+    parser.add_argument("--base-model", default="microsoft/Phi-3-mini-4k-instruct", help="Base model")
+    parser.add_argument("--output", default="models/npc-phi3.gguf", help="Output GGUF path")
+    parser.add_argument("--merged-dir", default="storage/outputs/merged", help="Merged model directory")
+    parser.add_argument("--skip-merge", action="store_true", help="Skip merge, use existing merged model")
+    args = parser.parse_args()
+    
+    output_path = Path(resolve_kaggle_path(args.output))
+    merged_dir = Path(resolve_kaggle_path(args.merged_dir))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    merged_dir.mkdir(parents=True, exist_ok=True)
+    
+    if not args.skip_merge:
+        logger.info("Merging adapter with base model...")
+        if not merge_adapter(args.base_model, args.adapter, str(merged_dir)):
+            logger.error("❌ Merge failed!")
+            return 1
+        logger.info("✓ Merge completed successfully")
+    
+    logger.info("Converting to GGUF format...")
+    if not convert_to_gguf(str(merged_dir), str(output_path)):
+        logger.error("❌ GGUF conversion failed!")
+        logger.warning("Manual steps:")
+        logger.info("1. Clone llama.cpp: git clone https://github.com/ggerganov/llama.cpp")
+        logger.info("2. Run: python llama.cpp/convert_hf_to_gguf.py storage/outputs/merged --outfile models/npc.gguf")
+        logger.info("3. Quantize: ./llama.cpp/llama-quantize models/npc.gguf models/npc-q4.gguf Q4_K_M")
+        return 1
+    logger.info("✓ GGUF conversion completed successfully")
+    
+    logger.info("Creating Ollama model...")
+    create_ollama_model(str(output_path))
+    logger.info("✓ All steps completed successfully!")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

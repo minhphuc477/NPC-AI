@@ -1,0 +1,135 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.pyc
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ML/AI specific - Model files (too large for GitHub)
+*.bin
+*.safetensors
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.pb
+*.onnx
+*.tflite
+*.keras
+*.gguf
+
+# Training outputs
+outputs/
+checkpoints/
+runs/
+runtime/
+tmp_runs/
+mlruns/
+wandb/
+logs/
+*.log
+artifacts/
+releases/
+storage/artifacts/
+storage/outputs/
+storage/releases/
+storage/runs/
+storage/runtime/
+storage/tmp_runs/
+
+# MLflow
+mlflow.db
+mlartifacts/
+
+# Datasets (too large for GitHub)
+data/MNIST/
+data/cifar-10-batches-py/
+data/*.tar.gz
+data/*.zip
+data/raw/
+data/processed/
+*.ubyte
+*.ubyte.gz
+
+# Model adapters (can be large)
+adapter*/
+*.adapter/
+
+# Plots and visualizations (optional - uncomment if too many)
+# plots/
+# *.png
+# *.jpg
+# *.jpeg
+
+# System files
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.temp
+
+# Environment variables
+.env
+.env.local
+
+# Large text files
+*.txt.gz
+dpo_help.txt
+
+# Compiled files
+*.o
+*.a
+*.lib
+*.dll
+*.exe
+
+# Test results
+test_results*.log
+
+# C++ Build artifacts
+*.obj
+cpp/build/
+cpp/bin/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake

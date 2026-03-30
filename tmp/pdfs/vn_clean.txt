@@ -1,0 +1,5401 @@
+﻿BỘ GIÁO DỤC VÀ ĐÀO TẠO
+TRƯỜNG ĐẠI HỌC MỞ THÀNH PHỐ HỒ CHÍ MINH
+
+BÁO CÁO TỔNG KẾT
+ĐỀ TÀI NGHIÊN CỨU KHOA HỌC SINH VIÊN
+
+Nâng cao tính tự nhiên và tính ngữ cảnh trong tương tác hội
+thoại với NPC bằng mô hình ngôn ngữ tinh chỉnh được thông
+tin bởi trạng thái thế giới game động trong game tường thuật
+
+Mã số đề tài: 866
+
+TP. Hồ Chí Minh, 2026
+
+BỘ GIÁO DỤC VÀ ĐÀO TẠO
+TRƯỜNG ĐẠI HỌC MỞ THÀNH PHỐ HỒ CHÍ MINH
+
+BÁO CÁO TỔNG KẾT
+ĐỀ TÀI NGHIÊN CỨU KHOA HỌC SINH VIÊN
+
+Nâng cao tính tự nhiên và tính ngữ cảnh trong tương tác hội
+thoại với NPC bằng mô hình ngôn ngữ tinh chỉnh được thông
+tin bởi trạng thái thế giới game động trong game tường thuật
+
+Mã số đề tài: 866
+
+Chủ nhiệm đề tài: Lê Trần Minh Phúc
+Khoa: Đào Tạo Đặc Biệt
+Người hướng dẫn: TS. Lê Đăng Giáp
+
+TP. Hồ Chí Minh, 2026
+
+BỘ GIÁO DỤC VÀ ĐÀO TẠO
+
+CỘNG HOÀ XÃ HỘI CHỦ
+
+TRƯỜNG ĐẠI HỌC MỞ
+
+NGHĨA VIỆT NAM
+
+THÀNH PHỐ HỒ CHÍ MINH
+
+Độc lập - Tự do - Hạnh phúc
+
+THÔNG TIN KẾT QUẢ NGHIÊN CỨU CỦA ĐỀ TÀI
+
+1. Thông tin chung:
+- Tên đề tài (tiếng Việt): Nâng cao tính tự nhiên và tính ngữ cảnh trong tương tác hội
+thoại với NPC bằng mô hình ngôn ngữ tinh chỉnh được thông tin bởi trạng thái thế giới
+game động trong game tường thuật
+- Tên đề tài (tiếng Anh): Dynamic Game State-Informed Fine-Tuned Language Models
+for Natural and Context-Aware NPC Dialogue in Narrative Games
+- Mã số đề tài: 866
+- Sinh viên chủ nhiệm đề tài: Lê Trần Minh Phúc
+- Khoa: Đào Tạo Đặc Biệt
+
+Mã số sinh viên: 2251010074
+
+- Giảng viên hướng dẫn: TS. Lê Đăng Giáp
+2. Mục tiêu đề tài:
+Xây dựng và đánh giá hệ thống hội thoại NPC đầu-cuối cho trò chơi tường thuật, trong
+đó mô hình ngôn ngữ cục bộ được điều kiện hóa theo trạng thái thế giới động nhằm nâng
+cao độ bám ngữ cảnh, tính nhất quán vai trò và chất lượng phản hồi trong điều kiện triển
+khai thời gian thực.
+3. Tính mới và sáng tạo:
+Đề tài kết hợp đồng thời trích xuất ngữ cảnh từ UE5, truy xuất lai có cơ chế bảo vệ chống
+ngộ độc/giả mạo tin cậy, sinh phản hồi bằng mô hình tinh chỉnh cục bộ và lớp kiểm soát
+sau sinh có chính sách dự phòng trong cả hai nhánh runtime Python và C++. Thiết kế
+này bảo đảm chẵn lẻ hành vi giữa môi trường đánh giá và thời gian chạy trong trò chơi,
+đồng thời hỗ trợ phân tích cắt bỏ theo từng thành phần.
+
+4. Kết quả nghiên cứu:
+Trên bộ 112 kịch bản cố định, cấu hình kiểm soát ngữ cảnh cải thiện có ý nghĩa thống kê
+so với cấu hình ngữ cảnh thô ở các chỉ số chính: context relevance (+0,1843), persona
+consistency (+0,1509), naturalness (+0,0967) và overall quality (+0,1440). Trong kiểm
+thử đối nghịch, tỷ lệ tấn công thành công giảm từ 1,0 xuống 0,0 dưới cấu hình bảo vệ.
+5. Đóng góp về mặt kinh tế - xã hội, giáo dục và đào tạo, an ninh, quốc phòng và
+khả năng áp dụng của đề tài:
+Kết quả đề tài cung cấp quy trình kỹ thuật có thể kiểm chứng cho phát triển NPC hội
+thoại trong sản phẩm trò chơi số, hỗ trợ đào tạo liên ngành giữa AI và phát triển trò chơi,
+đồng thời nhấn mạnh cơ chế kiểm soát rủi ro nội dung khi ứng dụng mô hình ngôn ngữ
+trong hệ thống tương tác.
+6. Công bố khoa học của sinh viên từ kết quả nghiên cứu của đề tài:
+Hiện chưa có công bố khoa học chính thức; kết quả đã được hoàn thiện dưới dạng bản
+thảo kỹ thuật và báo cáo kỹ thuật nội bộ.
+
+TP. Hồ Chí Minh, 2026
+
+i
+
+Mục lục
+Danh mục bảng
+
+iv
+
+Danh mục hình
+
+v
+
+Danh sách viết tắt
+
+vi
+
+Danh mục thuật ngữ chuyên ngành
+
+vii
+
+Tóm tắt
+
+1
+
+Từ khóa
+
+1
+
+1
+
+2
+
+2
+
+3
+
+Vấn đề nghiên cứu, phạm vi và đóng góp
+1.1 Hạn chế của scripted dialogue và LLM-driven dialogue không ràng buộc
+
+2
+
+1.2 Trọng tâm nghiên cứu: NPC dialogue bám trạng thái động trong UE5 . .
+
+2
+
+1.3 Phạm vi, giả định và điều kiện biên . . . . . . . . . . . . . . . . . . . .
+
+3
+
+1.4 Chiến lược bằng chứng và tiêu chí suy luận . . . . . . . . . . . . . . . .
+
+3
+
+1.5 Đóng góp và ranh giới khẳng định . . . . . . . . . . . . . . . . . . . .
+
+3
+
+1.6 Câu hỏi nghiên cứu . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+3
+
+1.7 Mục tiêu chính thức và công thức tối ưu hóa . . . . . . . . . . . . . . .
+
+4
+
+Cơ sở lý thuyết và thực nghiệm
+
+6
+
+2.1 Bối cảnh nghiên cứu quốc tế về tương tác trò chơi dựa trên LLM . . . .
+
+6
+
+2.2 Bối cảnh nghiên cứu trong nước và bối cảnh triển khai tại Việt Nam . . .
+
+7
+
+2.3 Cấu trúc cốt lõi và định nghĩa hoạt động . . . . . . . . . . . . . . . . .
+
+7
+
+2.4 Cơ sở lý thuyết cho việc thích ứng, truy xuất và kiểm soát thời gian chạy
+
+7
+
+2.5 Giả thuyết và mô hình phân tích . . . . . . . . . . . . . . . . . . . . . .
+
+9
+
+2.6 Sự phân rã mới lạ và sự khác biệt được chứng minh bằng bằng chứng . .
+
+10
+
+Kiến trúc hệ thống và phương pháp thực nghiệm
+
+11
+
+3.1 Giao thức kiểm tra bằng chứng và thiết kế nghiên cứu . . . . . . . . . .
+
+11
+
+3.2 Kiến trúc thời gian chạy trực tuyến và luồng dữ liệu . . . . . . . . . . .
+
+12
+
+ii
+
+3.3 Liên kết thực thi UE5: trình kích hoạt cây hành vi, tuần tự hóa trạng thái
+
+4
+
+5
+
+A
+
+và kiểm soát độ trễ . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+17
+
+3.4 Thực hiện phản hồi: chính sách phát hành và kết quả đầu ra mẫu . . . .
+
+18
+
+3.5 Mở rộng chính sách kiểm soát thích ứng để giảm gánh nặng can thiệp . .
+
+19
+
+3.6 Thích ứng mô hình, đào tạo truy xuất và đường dẫn dữ liệu . . . . . . .
+
+21
+
+3.7 Phương pháp đánh giá: thành phần định lượng và định tính . . . . . . .
+
+23
+
+3.8 Dẫn xuất phân tích của các công thức quyết định và đánh giá . . . . . .
+
+28
+
+Kết quả thực nghiệm và phân tích tổng hợp
+
+30
+
+4.1 Kết quả điểm chuẩn chính trong cài đặt phù hợp . . . . . . . . . . . . .
+
+30
+
+4.2 Đánh giá con người và thỏa thuận giữa những người đánh giá . . . . . .
+
+32
+
+4.3 Sự đánh đổi hiệu suất phục vụ và truy xuất . . . . . . . . . . . . . . . .
+
+33
+
+4.4 Số liệu hoạt động của UE5 và hiệu ứng trạng thái hành vi . . . . . . . .
+
+34
+
+4.5 Chẩn đoán điểm vận hành: chất lượng, độ trễ và khớp nối can thiệp . . .
+
+35
+
+4.6 Kết quả cắt bỏ ở cấp độ thành phần . . . . . . . . . . . . . . . . . . . .
+
+36
+
+4.7 Các mối đe dọa đối với ranh giới giá trị và diễn giải . . . . . . . . . . .
+
+39
+
+4.8 So sánh với công việc trước đây và ý nghĩa thực tế . . . . . . . . . . . .
+
+41
+
+Kết luận, hàm ý và định hướng tương lai
+
+43
+
+5.1 Ý nghĩa đạo đức và chính sách đối với việc triển khai NPC . . . . . . .
+
+43
+
+5.2 Những phát hiện chính và yêu cầu có giới hạn . . . . . . . . . . . . . .
+
+44
+
+5.3 Hạn chế nghiên cứu . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+44
+
+5.4 Chương trình nghiên cứu trong tương lai . . . . . . . . . . . . . . . . .
+
+45
+
+Các giao thức tái lập và các phương pháp mở rộng
+
+46
+
+A.1 Phân loại kịch bản . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+46
+
+A.2 Đặc tả tuần tự hóa theo ngữ cảnh và lời nhắc . . . . . . . . . . . . . . .
+
+46
+
+A.3 Đặc tả kiểm soát phản hồi . . . . . . . . . . . . . . . . . . . . . . . . .
+
+47
+
+A.4 Giao thức truy xuất đối nghịch . . . . . . . . . . . . . . . . . . . . . .
+
+47
+
+A.5 Giao thức đánh giá con người . . . . . . . . . . . . . . . . . . . . . . .
+
+47
+
+A.6 Môi trường tính toán và thời gian chạy . . . . . . . . . . . . . . . . . .
+
+48
+
+iii
+
+A.7 Giao thức sàng lọc tài liệu để định vị so sánh . . . . . . . . . . . . . . .
+B
+
+C
+
+D
+
+Giải thích mở rộng và ghi chú so sánh
+
+48
+50
+
+B.1 Giới hạn phạm vi so sánh . . . . . . . . . . . . . . . . . . . . . . . . .
+
+50
+
+B.2 Kế hoạch công việc trong tương lai . . . . . . . . . . . . . . . . . . . .
+
+50
+
+B.3 Báo cáo khả năng tái tạo chi tiết . . . . . . . . . . . . . . . . . . . . . .
+
+50
+
+B.4 Thảo luận so sánh bổ sung . . . . . . . . . . . . . . . . . . . . . . . . .
+
+52
+
+B.5 Phân loại lỗi . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+53
+
+B.6 Phân tích trường hợp định tính . . . . . . . . . . . . . . . . . . . . . .
+
+54
+
+Bảng toàn diện và danh mục kịch bản
+
+56
+
+C.1 Bảng bổ trợ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+56
+
+C.2 Chỉ số kịch bản đầy đủ (112 kịch bản) . . . . . . . . . . . . . . . . . . .
+
+57
+
+C.3 Ma trận truy xuất nguồn gốc câu hỏi nghiên cứu . . . . . . . . . . . . .
+
+59
+
+Chẩn đoán căng thẳng ở cấp độ kịch bản và phản thực tế
+
+60
+
+D.1 Ghi chú phân tích ở cấp độ kịch bản . . . . . . . . . . . . . . . . . . . .
+
+60
+
+D.2 Ghi chú phân tích căng thẳng phản thực tế . . . . . . . . . . . . . . . .
+
+62
+
+iv
+
+Danh mục bảng
+2
+
+Ảnh chụp nhanh định vị so sánh với các hệ thống đại diện trước đó. . . .
+
+10
+
+3
+
+Sự phân rã mới lạ được ánh xạ tới bằng chứng trực tiếp trong báo cáo này. 10
+
+4
+
+Kết quả phản hồi được quan sát theo chính sách phát hành thời gian chạy
+(ví dụ theo dõi nguyên văn). . . . . . . . . . . . . . . . . . . . . . . . .
+
+19
+
+5
+
+Hồ sơ điểm chuẩn được sử dụng cho tất cả các so sánh nhánh cố định. .
+
+24
+
+6
+
+So sánh 𝑂𝑄 theo điều kiện chéo: nhánh theo ngữ cảnh được kiểm soát so
+với các đường cơ sở không có ngữ cảnh bên ngoài theo các giao thức phù
+hợp. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+7
+
+31
+
+Số liệu thời gian chạy hoạt động liên quan đến UE5 (nhóm được kiểm
+soát, 𝑁 = 112). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+34
+
+8
+
+Tác động hoạt động theo trạng thái hành vi (nhánh được kiểm soát). . . .
+
+35
+
+9
+
+Chẩn đoán điểm vận hành bắt nguồn từ các giá trị điểm chuẩn được báo
+cáo. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+10
+
+36
+
+Cắt bỏ kiểm soát phản ứng (theo ngữ cảnh được kiểm soát so với ngữ
+cảnh thô). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+37
+
+11
+
+Deltas cắt bỏ bằng phương pháp truy xuất so với BM25 (càng cao càng tốt). 38
+
+12
+
+Phục vụ cắt bỏ (ứng cử viên so với phi3:mini). . . . . . . . . . . . . . .
+
+38
+
+13
+
+Tổng hợp yêu cầu bồi thường bằng chứng cho những phát hiện chính. . .
+
+40
+
+14
+
+Số liệu cốt lõi từ đánh giá điểm chuẩn đầy đủ mới nhất. . . . . . . . . .
+
+56
+
+15
+
+Phục vụ so sánh từ đánh giá điểm chuẩn hệ thống mới nhất. . . . . . . .
+
+56
+
+16
+
+Tóm tắt truy xuất và bảo mật đối nghịch từ các hiện vật chuẩn. . . . . .
+
+56
+
+17
+
+Chỉ số phân loại cấp kịch bản được sử dụng trong đánh giá chính. . . . .
+
+57
+
+18
+
+Truy xuất nguồn gốc từ các câu hỏi nghiên cứu đến việc thực hiện và tạo
+
+19
+
+tác bằng chứng. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+59
+
+Ghi chú phân tích cấp độ kịch bản đại diện. . . . . . . . . . . . . . . . .
+
+61
+
+v
+
+Danh mục hình
+1
+
+Kiến trúc thời gian chạy trực tuyến và luồng dữ liệu. Mũi tên liền biểu
+thị luồng suy luận; mũi tên nét đứt biểu thị đầu vào điều hòa và kiểm soát. 13
+
+2
+
+Luồng đánh giá và đào tạo ngoại tuyến với các vòng phản hồi. Mô hình
+ứng cử viên và cấu hình điều khiển được xuất sang đường dẫn thời gian
+chạy trực tuyến trong Hình 1. . . . . . . . . . . . . . . . . . . . . . . .
+
+3
+
+14
+
+Mức tăng trung bình-delta được ghép nối của việc tạo theo ngữ cảnh được
+kiểm soát so với việc tạo theo ngữ cảnh thô, với khoảng tin cậy CI 95%.
+
+31
+
+vi
+
+Danh sách viết tắt
+Viết tắt
+
+Diễn giải
+
+ASR
+
+Tỷ lệ thành công tấn công
+
+BM25
+
+Mô hình truy xuất BM25
+
+CI
+
+Khoảng tin cậy
+
+DPO
+
+Tối ưu ưu tiên trực tiếp
+
+LLM
+
+Mô hình ngôn ngữ lớn
+
+MRR
+
+Hạng nghịch đảo trung bình
+
+nDCG
+
+Độ lợi tích lũy giảm chuẩn hóa
+
+NPC
+
+Nhân vật không do người chơi điều khiển
+
+OQ
+
+Chất lượng tổng thể
+
+QLoRA
+
+Thích ứng hạng thấp lượng tử hóa
+
+RAG
+
+Tạo tăng cường truy xuất
+
+RQ
+
+Câu hỏi nghiên cứu
+
+TTFT
+
+Thời gian đến token đầu tiên
+
+UE5
+
+Unreal Engine 5
+
+vii
+
+Danh mục thuật ngữ chuyên ngành
+
+Thuật ngữ
+
+Diễn giải ngắn
+
+Behavior Tree
+
+Cây hành vi UE5 điều phối logic hành vi theo nút.
+
+Behavior Tree node
+
+Nút hành vi cụ thể kích hoạt tác vụ trong cây.
+
+Blackboard
+
+Kho khóa/trạng thái chia sẻ cho Behavior Tree.
+
+Scripted dialogue
+
+Đối thoại viết tay theo kịch bản cố định.
+
+LLM-driven dialogue
+
+Đối thoại sinh bởi mô hình ngôn ngữ lớn.
+
+Runtime integration
+
+Tích hợp suy luận vào vòng lặp thực thi trong engine.
+
+Engine loop
+
+Vòng lặp thực thi chính của game/engine.
+
+Context extraction
+
+Trích xuất trạng thái để đưa vào prompt.
+
+Retrieval ranking
+
+Xếp hạng bằng chứng theo điểm liên quan/rủi ro.
+
+Prompt compilation
+
+Biên dịch prompt với cấu trúc và ngân sách token.
+
+Hybrid retrieval
+
+Kết hợp truy xuất dense và sparse.
+
+Guarded retrieval
+
+Truy xuất có phạt rủi ro (đầu độc/giả mạo tin cậy).
+
+Guard-aware evidence scoring
+
+Điểm hóa bằng chứng có tính đến rủi ro.
+
+Evidence poisoning
+
+Đầu độc bằng chứng truy xuất.
+
+Trust spoofing
+
+Giả mạo nguồn tin/cơ quan để đánh lừa hệ thống.
+
+Response control
+
+Lớp kiểm tra/điều chỉnh phản hồi sau sinh.
+
+Post-generation control
+
+Kiểm soát sau sinh, gồm lọc/ghi lại/fallback.
+
+Fallback policy
+
+Chính sách dự phòng khi phản hồi không đạt ngưỡng.
+
+Fallback
+
+Cơ chế dự phòng khi phản hồi không đạt ngưỡng.
+
+Retry/Rewrite
+
+Thử lại/viết lại khi phản hồi ban đầu không đạt.
+
+Timeout
+
+Hết thời gian chờ phản hồi trong runtime.
+
+Async inference
+
+Suy luận bất đồng bộ tách khỏi game thread.
+
+Game thread
+
+Luồng chính xử lý logic game trong UE5.
+
+Decoding settings
+
+Tham số giải mã: nhiệt độ, top-p, max tokens.
+
+Fixed-arm benchmark
+
+Điểm chuẩn giữ nguyên các nhánh so sánh.
+
+Paired bootstrap
+
+Bootstrap theo cặp để ước lượng CI và p-value.
+
+Confidence interval
+
+Khoảng tin cậy cho ước lượng thống kê.
+
+Ablation
+
+Phân tích cắt bỏ thành phần để đánh giá đóng góp.
+
+Human evaluation
+
+Đánh giá của người chấm theo rubric.
+
+Adversarial stress testing
+
+Kiểm tra dưới các trường hợp tấn công.
+
+Controlled contextual inference
+
+Suy luận có kiểm soát với ngữ cảnh.
+
+Raw contextual inference
+
+Suy luận theo ngữ cảnh không kiểm soát.
+
+No-context baseline
+
+Đường cơ sở không dùng ngữ cảnh.
+
+Quality–latency trade-off
+
+Đánh đổi giữa chất lượng và độ trễ.
+
+RAG
+
+Retrieval-Augmented Generation; sinh có truy xuất.
+
+QLoRA
+
+Quantized Low-Rank Adaptation.
+
+DPO
+
+Direct Preference Optimization.
+
+ASR
+
+Attack Success Rate (tỷ lệ tấn công thành công).
+
+TTFT
+
+Time to First Token (độ trễ token đầu).
+
+BM25
+
+Mô hình truy xuất từ khóa phổ biến.
+
+viii
+
+Thuật ngữ
+
+Diễn giải ngắn
+
+MRR
+
+Mean Reciprocal Rank.
+
+nDCG
+
+Normalized Discounted Cumulative Gain.
+
+BERTScore
+
+Chỉ số đánh giá tương đồng ngữ nghĩa dựa BERT.
+
+OQ
+
+Overall Quality (chất lượng tổng thể).
+
+Persona consistency
+
+Mức độ nhất quán vai trò/giọng điệu NPC.
+
+Context relevance
+
+Mức phù hợp với ngữ cảnh/trạng thái.
+
+Naturalness
+
+Độ tự nhiên của ngôn ngữ sinh.
+
+1
+
+Tóm tắt
+Báo cáo trình bày một hệ thống hội thoại NPC đầu-cuối cho trò chơi tường thuật, kết
+hợp game-state conditioning, guarded hybrid retrieval, local generation và response control, triển khai nhất quán trên UE5 với hai nhánh runtime Python/C++. Trên điểm chuẩn
+112 kịch bản cố định, cấu hình kiểm soát ngữ cảnh cải thiện context relevance (+0,1843),
+persona consistency (+0,1509), naturalness (+0,0967) và overall quality (+0,1440) so
+với raw contextual generation, với kiểm định paired bootstrap (𝑝(Δ ≤ 0) < 1/5000,
+𝐵 = 5000). Đánh giá con người (324 đánh giá) cho thấy mức ưu tiên rõ rệt và độ đồng ý
+vừa (𝜅 = 0, 5329). Với guarded retrieval, không ghi nhận trường hợp follow trong thử
+nghiệm đối nghịch (ASR 1.0→0.0; giới hạn trên chính xác 95% 0,0295 mỗi bộ, 0,0149
+gộp). Hạn chế chính nằm ở serving efficiency và gánh nặng can thiệp (fallback 0,0089,
+retry 0,1071, first-pass accept 0,3750).
+
+Từ khóa
+Hội thoại NPC, AI trò chơi, LLM cục bộ, UE5, QLoRA, kiểm soát phản hồi, độ mạnh
+của truy xuất, khả năng tái tạo điểm chuẩn, hệ thống biểu tượng thần kinh.
+
+2
+
+Chương 1: Vấn đề nghiên cứu, phạm vi và đóng góp
+Chương này xác lập vấn đề nghiên cứu và ranh giới khẳng định. Trước hết, chương
+làm rõ vì sao scripted dialogue và LLM-driven dialogue không ràng buộc vẫn chưa đáp
+ứng yêu cầu triển khai ổn định trong trò chơi tường thuật. Tiếp theo, chương nêu phạm
+vi nghiên cứu, chiến lược bằng chứng, các câu hỏi nghiên cứu và mục tiêu chính thức
+làm nền cho các chương sau.
+
+1.1
+
+Hạn chế của scripted dialogue và LLM-driven dialogue không ràng
+buộc
+
+Trò chơi tường thuật đòi hỏi đối thoại NPC vừa trôi chảy, vừa nhất quán vai trò, vừa
+bám sát trạng thái thế giới động. Các khảo sát cho thấy scripted dialogue vẫn đáng tin
+cậy trong sản xuất, nhưng chi phí authoring (biên soạn) tăng nhanh khi mở rộng phạm vi
+tương tác [2, 3]. LLM-driven dialogue giúp tăng tính linh hoạt ngôn ngữ, nhưng thường
+không ổn định dưới các ràng buộc gameplay nghiêm ngặt như quest-state consistency,
+inventory grounding và persona control qua nhiều lượt [1, 2, 3].
+Vì vậy, thách thức cốt lõi không chỉ nằm ở sinh văn bản mà ở tích hợp runtime. Một
+mô hình có thể tạo phản hồi hợp lý khi tách rời bối cảnh, nhưng vẫn hành xử thiếu tin
+cậy trong vòng lặp engine nếu context extraction, retrieval ranking và post-generation
+response control được ghép nối lỏng lẻo. Nhiều công trình báo cáo tín hiệu định tính khả
+quan, song bằng chứng cấp hệ thống vẫn thường bị giới hạn bởi bao phủ kịch bản hẹp,
+adversarial testing yếu hoặc statistical reporting chưa đầy đủ [2, 4].
+
+1.2
+
+Trọng tâm nghiên cứu: NPC dialogue bám trạng thái động trong UE5
+
+Nghiên cứu này giải quyết khoảng trống bằng cách thiết kế và đánh giá một runtime
+cục bộ đầu-cuối cho NPC dialogue bám ngữ cảnh trong UE5. Hệ thống kết hợp sáu thành
+phần: bounded game-state serialization, prompt compilation, hybrid retrieval, guardaware evidence scoring, local generation và response control với fallback logic. Giao
+thức đánh giá được thiết kế để trả lời một câu hỏi khoa học thay vì trình bày demo rời
+rạc: trong các kịch bản cố định và so sánh có kiểm soát, kiến trúc này có cải thiện context
+
+3
+
+relevance, persona consistency và robustness mà không che giấu các đánh đổi tiêu cực
+hay không?
+
+1.3
+
+Phạm vi, giả định và điều kiện biên
+
+Nghiên cứu giới hạn trong đối thoại tường thuật dưới ràng buộc runtime UE5, triển
+khai local model serving và đánh giá theo fixed scenarios với prompt đồng nhất. Thiết
+kế thử nghiệm bao gồm adversarial stress và một chiến dịch human evaluation được thiết
+kế trước, nhằm diễn giải đồng thời bằng chứng tự động và bằng chứng con người trong
+cùng một protocol.
+
+1.4
+
+Chiến lược bằng chứng và tiêu chí suy luận
+
+Để giữ tính khoa học, các kết luận được giới hạn theo các trục đo được. Nghiên
+cứu sử dụng fixed-arm benchmarking, paired bootstrap tests, confidence intervals, ablations, rater agreement analysis và adversarial stress evaluation. Thiết kế này cho phép
+báo cáo đồng thời các cải thiện (quality và security robustness) và các hạn chế (serving
+latency/throughput trade-offs).
+
+1.5
+
+Đóng góp và ranh giới khẳng định
+
+So với các nghiên cứu LLM-in-games trước đây, đóng góp chính không chỉ là local
+fine-tuning mà là ghép nối rõ ràng giữa quyết định kiến trúc và bằng chứng suy luận.
+Báo cáo vì vậy nêu rõ lý do mỗi thành phần được đưa vào, cách đánh giá chúng và tác
+động còn tồn tại sau ablation. Cấu trúc này tách biệt các khẳng định có bằng chứng thực
+nghiệm khỏi các giả thuyết cần nghiên cứu tiếp.
+
+1.6
+
+Câu hỏi nghiên cứu
+
+Việc đánh giá được tổ chức quanh bốn câu hỏi nghiên cứu. RQ1 kiểm tra liệu controlled context-grounded inference có cải thiện context relevance, persona consistency,
+naturalness và overall quality so với raw contextual generation dưới cùng prompt và decoding settings hay không. RQ2 kiểm tra liệu cấu hình controlled contextual tạo ra một
+cross-condition quality gap so với các no-context external baselines dưới giao thức kịch
+
+4
+
+bản đồng nhất hay không, mà không diễn giải đối sánh này như phân rã thành phần.
+RQ3 hỏi liệu guard-aware retrieval có giảm đáng kể adversarial follow-through dưới evidence poisoning và trust spoofing hay không. RQ4 đặc trưng quality–latency trade-offs
+khi guard và response-control mechanisms được kích hoạt trong runtime engine.
+
+1.7
+
+Mục tiêu chính thức và công thức tối ưu hóa
+
+Về mặt chính thức, với thông tin đầu vào của người chơi là 𝑥𝑡 , trạng thái thế giới động
+𝑠𝑡 , kho dữ liệu truy xuất 𝒟 và hồ sơ nhân vật NPC 𝑝, mục tiêu là tạo ra phản hồi 𝑦𝑡 sao
+cho:
+max 𝑄(𝑦𝑡 ; 𝑥𝑡 , 𝑠𝑡 , 𝑝)
+
+(1)
+
+s.t. 𝑅(𝑦𝑡 , 𝑠𝑡 ) ≤ 𝜖𝑟 , 𝐶(𝑦𝑡 , 𝑝) ≥ 𝜏𝑐 , 𝐿(𝑦𝑡 ) ≤ 𝜏𝑙 ,
+
+(2)
+
+trong đó 𝑄 tổng hợp các chỉ số chất lượng, 𝑅 biểu thị các vi phạm về an toàn/rủi ro, 𝐶
+biểu thị các ràng buộc về cá nhân/ngữ cảnh và 𝐿 biểu thị các ràng buộc về thời gian chạy.
+Đối với các tương tác lặp lại, mục tiêu chính sách là:
+𝜋 ⋆ = arg max 𝔼(𝑥𝑡 ,𝑠𝑡 ,𝑝)∼𝒯 [𝑄(𝜋(𝑥𝑡 , 𝑠𝑡 , 𝑝))] ,
+𝜋
+
+(3)
+
+với chất lượng bị phân hủy như sau:
+𝑄 = 𝑤𝑐𝑟 𝐶𝑅 + 𝑤𝑝𝑐 𝑃𝐶 + 𝑤𝑛 𝑁 + 𝑤𝑏 𝐵 − 𝑤𝑣 𝑉,
+𝑤𝑖 = 1,
+
+𝑤𝑖 ≥ 0,
+
+(4)
+
+𝑖
+
+trong đó 𝐶𝑅 là context relevance, 𝑃𝐶 là persona consistency, 𝑁 là naturalness, 𝐵 là
+semantic similarity score và 𝑉 là violation risk. Chương trình thực nghiệm sau đó giải
+quyết bốn câu hỏi liên kết: liệu controlled context-grounded inference cải thiện so với
+raw contextual generation, liệu có tồn tại cross-condition gap so với no-context baselines
+dưới cùng protocol, liệu guard-aware retrieval giảm adversarial follow-through, và đánh
+đổi serving xuất hiện khi bật cơ chế kiểm soát mạnh hơn. Các đóng góp vì vậy được xác
+định theo ba trục: kiến trúc (runtime UE5 tích hợp context extraction, guarded hybrid
+retrieval, local generation và response control), phương pháp luận (fixed-arm benchmark
+
+5
+
+với suy luận thống kê và human evaluation), và thực nghiệm (gói reproducibility đầy đủ,
+giữ lại cả kết quả tích cực lẫn tiêu cực).
+Để đảm bảo truy vết theo chương, Chương 2 xây dựng nền tảng lý thuyết và so sánh;
+Chương 3 mô tả hệ thống và protocol đánh giá; Chương 4 báo cáo kết quả định lượng
+và định tính theo protocol đó; và Chương 5 đưa ra kết luận có giới hạn cùng các hàm ý
+triển khai.
+
+6
+
+Chương 2: Cơ sở lý thuyết và thực nghiệm
+Chương này đặt nghiên cứu trong bối cảnh các tài liệu liên quan và thiết lập cơ sở lý
+thuyết cho kiến trúc được thử nghiệm. Thảo luận lồng ghép bối cảnh nghiên cứu quốc
+tế và Việt Nam, sau đó ánh xạ các nền tảng này thành các giả thuyết rõ ràng được đánh
+giá trong các chương sau.
+
+2.1
+
+Bối cảnh nghiên cứu quốc tế về tương tác trò chơi dựa trên LLM
+
+Các hệ thống đối thoại trong trò chơi dựa trên quy tắc vẫn mạnh về khả năng dự đoán
+và an toàn theo logic nhiệm vụ được biên soạn nghiêm ngặt, nhưng hạn chế chính của
+chúng là khả năng mở rộng vì phạm vi tương tác mở đòi hỏi chi phí biên soạn và bảo
+trì cao [2, 3]. Các hệ thống NPC do LLM điều khiển đã đảo ngược sự đánh đổi đó bằng
+cách cải thiện tính trôi chảy và phạm vi bao phủ, nhưng chúng gây ra sự mất ổn định
+dưới các ràng buộc trạng thái động và thời gian tương tác dài hơn [1, 2, 3]. Các nghiên
+cứu tương tác gần đây báo cáo tín hiệu cộng tác và hòa nhập đầy hứa hẹn, đồng thời vẫn
+ghi nhận các thách thức chưa được giải quyết về độ trễ phản hồi, grounding có tính quyết
+định và khả năng kiểm soát thời gian chạy mạnh mẽ [4, 5]. Kết quả là, vấn đề mở trung
+tâm đã chuyển từ tính hợp lý về mặt ngôn ngữ sang tính tích hợp có thể kiểm soát được
+dưới các ràng buộc về thời gian chạy trò chơi.
+Ở nhánh tác nhân ngôn ngữ có khả năng chơi game, Voyager cho thấy năng lực trong
+Minecraft nhờ curriculum generation, tái sử dụng thư viện kỹ năng và cơ chế tự sửa mã
+lặp [12]. Tuy nhiên, mục tiêu của Voyager là hoàn thành nhiệm vụ tổng quát hơn là
+đối thoại NPC bám vai trò; do đó, nó không trực tiếp giải quyết tính nhất quán persona,
+các ràng buộc trong cốt truyện hay đánh giá sở thích con người trong đối thoại chuyên
+biệt. Tương tự, SIMA nhấn mạnh việc thực thi hành động theo chỉ dẫn ngôn ngữ trên
+nhiều môi trường 3D và cho thấy tiến bộ về instruction following xuyên môi trường [13],
+nhưng không được thiết kế như một bộ điều khiển đối thoại tường thuật và do đó chưa
+trả lời bài toán chấp nhận hội thoại theo cấp độ trong trạng thái câu chuyện động. Ở tầng
+giao diện, các hệ thống NPC điều khiển bằng giọng nói có thể cải thiện mức tự do và
+cảm giác hiện diện [14]; tuy nhiên, các thiết kế ánh xạ lời nói sang các lựa chọn đối thoại
+
+7
+
+soạn sẵn vẫn bị giới hạn bởi cấu trúc do tác giả định nghĩa, hạn chế sinh phản hồi mở
+trong bối cảnh đối nghịch hoặc mâu thuẫn.
+
+2.2
+
+Bối cảnh nghiên cứu trong nước và bối cảnh triển khai tại Việt Nam
+
+Tại Việt Nam, cộng đồng VLSP đã cung cấp nền tảng nghiên cứu bền vững thông qua
+các nhiệm vụ chung, xây dựng điểm chuẩn và quy trình đánh giá có thể tái tạo đối với các
+vấn đề về ngôn ngữ và lời nói [6, 7]. Công việc gần đây đã mở rộng nền tảng này theo
+hướng phát triển mô hình lớn của Việt Nam, bao gồm việc thích ứng mô hình nền tảng
+và đào tạo trước liên tục theo từng ngôn ngữ cụ thể như VinaLLaMA và Vi-Mistral-X
+[8, 9]. Song song đó, các nghiên cứu RAG và LLM đa phương thức ban đầu của Việt
+Nam đã cải thiện tính sẵn có của nguồn lực thông qua các bộ dữ liệu mở, bộ đánh giá và
+phát hành mô hình [10, 11].
+Tuy nhiên, những tiến bộ này vẫn tập trung vào khả năng NLP chung, kỹ thuật điểm
+chuẩn và mở rộng phương thức, thay vì các hệ thống đối thoại NPC trong engine được
+kiểm tra kết hợp nền tảng trạng thái trò chơi động, kiểm soát truy xuất đối nghịch và xác
+thực tính chẵn lẻ thời gian chạy. Do đó, khoảng trống trong nước được giải quyết ở đây
+là việc tích hợp hệ thống trong điều kiện ràng buộc triển khai, chứ không chỉ riêng năng
+lực của mô hình cơ sở.
+
+2.3
+
+Cấu trúc cốt lõi và định nghĩa hoạt động
+
+Công việc này sử dụng bốn khái niệm trọng tâm: mức độ phù hợp của bối cảnh là độ
+trung thực với trạng thái thế giới năng động, tính nhất quán của tính cách là tuân thủ hồ
+sơ vai trò của NPC, tính tự nhiên là tính hợp lý về mặt ngôn ngữ dưới các hạn chế tương
+tác và tính mạnh mẽ là khả năng chống lại việc đưa ra bằng chứng độc hại hoặc không
+nhất quán.
+
+2.4
+
+Cơ sở lý thuyết cho việc thích ứng, truy xuất và kiểm soát thời gian
+chạy
+
+Ở cấp độ thích ứng mô hình, prompting và instruction tuning giúp định hình hành
+vi nhanh [15], trong khi các phương pháp kiểu RLHF và tối ưu hóa tùy chọn cải thiện
+
+8
+
+việc tuân thủ các phản hồi mong muốn [16, 37]. Các chiến lược nhắc nhở có cấu trúc,
+như Chain-of-Thought (CoT) và ReAct, tăng cường khả năng kiểm soát trong các nhiệm
+vụ phức tạp [20, 21]. Thích ứng hiệu quả về tham số thông qua LoRA và QLoRA cho
+phép triển khai cục bộ trong điều kiện ngân sách bộ nhớ hạn chế [17, 18]. Các khung
+retrieval–generate có tự phản hồi như Self-RAG còn cho thấy truy xuất thích ứng và tự
+phê bình có thể cải thiện tính xác thực [19]. Điểm yếu chính của chúng trong bối cảnh
+NPC triển khai là ưu tiên chất lượng tri thức tổng quát và khả năng kiểm soát chung,
+nhưng chưa nhắm trực diện xử lý bằng chứng đối nghịch trong quy trình truy xuất dành
+riêng cho trò chơi.
+Các điểm chuẩn về agent và ngữ cảnh dài giúp làm rõ vì sao các khoảng trống này
+vẫn tồn tại khi triển khai runtime. AgentBench cho thấy ngay cả các mô hình mạnh cũng
+suy giảm ở các tác vụ quyết định nhiều lượt đòi hỏi tuân thủ lệnh và lập kế hoạch liên tục
+[35]. LongBench cho thấy hiệu suất giảm đáng kể khi độ dài ngữ cảnh và độ không đồng
+nhất nhiệm vụ tăng lên, trong khi nén dựa trên truy xuất chỉ thu hẹp một phần khoảng
+cách đối với các mô hình ngữ cảnh dài yếu hơn [36]. Với đối thoại NPC động, các phát
+hiện này hàm ý rằng tích lũy bối cảnh ngây thơ là không đủ; cần tuần tự hóa trạng thái
+có giới hạn, ưu tiên truy xuất và kiểm soát hậu tạo rõ ràng để duy trì hành vi ổn định khi
+phạm vi tương tác mở rộng.
+Sinh tăng cường truy xuất (RAG) củng cố nền tảng thực tế, từ công thức RAG ban
+đầu đến các tổng hợp khảo sát và phần mở rộng dựa trên đồ thị [41, 46, 45]. Tuy nhiên,
+truy xuất cũng tạo ra một bề mặt điều khiển mới, nơi việc đầu độc, giả mạo tin cậy và
+thao túng xếp hạng có thể làm lệch quá trình sinh ở hạ nguồn. Các nghiên cứu tấn công
+có tác động mạnh gần đây củng cố mối lo này: tiêm nhắc gián tiếp có thể làm tổn hại
+hành vi ứng dụng qua ngữ cảnh truy xuất [42], các cuộc tấn công làm sai lệch tri thức
+có thể tạo đầu ra theo ý kẻ tấn công với số lượng nhỏ đoạn chèn [43], và lời nhắc hướng
+dẫn đối nghịch có thể phá hoại truy xuất ngay cả khi truy vấn người dùng đã cố định
+[44]. Một phần đáng kể đánh giá hiện nay vẫn tập trung vào chất lượng mức độ liên
+quan lành tính, trong khi báo cáo về hành vi đối nghịch còn thiếu nhất quán trong bối
+cảnh đối thoại định hướng trò chơi. Đây là điểm yếu chính đối với NPC trong trò chơi,
+nơi lỗi truy xuất có thể trực tiếp gây vi phạm chính sách vai trò. Phương pháp đánh giá
+
+9
+
+cũng có vấn đề liên quan: chỉ chấm điểm chồng chéo là không đủ cho chất lượng đối
+thoại tương tác, các thước đo đối thoại có thể khác nhau đáng kể giữa tập dữ liệu và cấu
+hình [23], và các giao thức nhúng/LLM-judge vẫn có thể mang thiên lệch vị trí hoặc độ
+dài [22, 29, 28, 30]. Vì vậy, hệ thống đối thoại tương tác cần bằng chứng hội tụ trên số
+liệu tự động, thống kê suy luận, sở thích con người và phân tích thỏa thuận [47].
+
+2.5
+
+Giả thuyết và mô hình phân tích
+
+Vị trí lý thuyết tích hợp được thử nghiệm trong báo cáo này là việc kết hợp truy xuất
+được bảo vệ và kiểm soát phản hồi với điều hòa trạng thái trò chơi động sẽ tạo ra lợi ích
+có thể đo lường về mức độ liên quan, tính nhất quán vai trò và độ tin cậy dưới các ràng
+buộc đánh giá cố định.
+Về mặt vận hành, quan điểm này được kiểm tra qua bốn giả thuyết liên kết phù hợp
+với câu hỏi nghiên cứu: suy luận dựa trên ngữ cảnh có kiểm soát cải thiện các số liệu
+chất lượng cốt lõi so với suy luận theo ngữ cảnh thô; cùng một cấu hình kiểm soát tạo
+ra khoảng cách chất lượng giữa các điều kiện so với đường cơ sở bên ngoài không có
+ngữ cảnh trong giao thức phù hợp; truy xuất được bảo vệ làm giảm xác suất theo dõi
+đối nghịch; và lợi ích về chất lượng/độ mạnh đi kèm chi phí thời gian phục vụ có thể đo
+lường. Các giả thuyết này được đánh giá bằng so sánh theo cặp và báo cáo độ không
+đảm bảo thay vì chỉ ước tính điểm, với các đối sánh giữa điều kiện được coi là chẩn đoán
+ở cấp hệ thống thay vì kiểm tra quan hệ nhân quả thành phần riêng biệt.
+Do đó, khoảng trống được giải quyết trong bài viết này không phải là thiếu một thành
+phần riêng lẻ mà là thiếu tích hợp hệ thống với kỷ luật suy luận mạnh mẽ. Chương này
+cung cấp định vị so sánh có phạm vi với các hệ thống đại diện trước đó [2, 3, 4], thay
+vì khẳng định tính mới một cách toàn diện. Nghiên cứu hiện tại được định vị như một
+thử nghiệm tích hợp giao thức cố định và kết luận của nó được giới hạn theo các trục đo,
+không mở rộng thành các xác nhận chung về mô hình rộng. Để làm cho tuyên bố này có
+thể kiểm tra được, phạm vi xem xét được giới hạn trong khoảng thời gian từ tháng 1 năm
+2020 đến tháng 2 năm 2026 và các bản ghi được lập chỉ mục ưu tiên trong IEEE Xplore,
+Thư viện kỹ thuật số ACM, ACL Anthology và arXiv, với các họ từ khóa được xác định
+trước bao gồm đối thoại NPC, nền tảng trạng thái trò chơi, kiểm soát/bảo vệ truy xuất
+
+10
+
+Table 2: Ảnh chụp nhanh định vị so sánh với các hệ thống đại diện trước đó.
+Hệ thống đại diện
+
+Nền tảng trạng thái trò chơi động
+
+Generative Agents [1]
+Một phần
+Minecraft NPC collaboration [4]
+Một phần
+Voyager [12]
+Không (tập trung hội thoại)
+Self-RAG [19]
+Không (không đặc thù thời gian chạy trò chơi)
+Nghiên cứu này
+Có
+
+Xử lý tấn công truy xuất Kiểm tra chẵn lẻ thời gian chạy Bằng chứng suy luận + con người
+Không
+Không
+Không
+Hạn chế
+Có
+
+Không
+Hạn chế
+Hạn chế
+Không
+Có
+
+Hạn chế
+Hạn chế
+Không
+Một phần
+Có
+
+Hạn chế so với nghiên cứu này
+Tập trung mô phỏng xã hội hơn là kiểm soát ràng buộc trong engine
+Nhấn mạnh chất lượng tương tác, phân tích độ vững hẹp hơn
+Tối ưu tiến trình nhiệm vụ, không hướng tới độ tin cậy đối thoại NPC bám vai trò
+Chất lượng sinh dựa truy xuất mạnh, nhưng chưa tích hợp đối kháng theo thời gian chạy trò chơi
+Độ trễ và thông lượng vẫn yếu hơn các đường cơ sở nhẹ
+
+Table 3: Sự phân rã mới lạ được ánh xạ tới bằng chứng trực tiếp trong báo cáo này.
+Thành phần kỹ thuật
+
+Điểm khác biệt trong nghiên Trạng
+cứu này
+chứng
+
+thái
+
+bằng Vị trí bằng chứng trực tiếp
+
+Ràng buộc đối thoại bám Đường kích hoạt cây hành vi, Đã chứng minh
+Mục 3.2 và Mục 3.3;
+trạng thái UE5
+tuần tự hóa khóa Blackboard,
+Bảng 7–8
+biên giới suy luận bất đồng
+bộ, và kiểm soát timeout/dự
+phòng trong một mô tả thời
+gian chạy
+Truy xuất kết hợp có bảo vệ Độ liên quan truy xuất kết Đã chứng minh
+Định nghĩa điểm bảo vệ
+cho đối thoại NPC
+hợp với hình phạt rủi ro đầu
+ở Mục 3.2 và kết quả đối
+độc/giả mạo tin cậy trong mục
+kháng ở Mục 4.3
+tiêu xếp hạng
+Chẵn lẻ thời gian chạy hai Đối sánh hành vi kiểm soát Đã chứng minh
+Mục 3.2 và Phụ lục (đặc tả
+đường
+phản hồi giữa Python và C++
+kiểm soát phản hồi)
+để giảm rủi ro lệch điểm
+chuẩn/thời gian chạy
+Giao thức báo cáo theo Cổng liên hợp yêu cầu bằng Đã chứng minh
+Mục 3.1, Thuật toán 1
+cổng bằng chứng
+chứng về phạm vi, ý nghĩa
+thống kê, con người, truy xuất
+và bảo mật trước khi kết luận
+đạt
+Ngưỡng kiểm soát thích Chính sách ngưỡng/ngân sách Đề xuất nâng cấp tiếp Mục 3.4 và Mục 5.4
+ứng theo trạng thái UE5
+thử lại theo trạng thái để giảm theo
+gánh nặng dự phòng/thử lại
+nhưng vẫn giữ trần an toàn
+
+và đánh giá thời gian chạy trong công cụ. Các mẫu truy vấn và quy tắc bao gồm/loại trừ
+được báo cáo trong Phụ lục A; đây là một cuộc đánh giá có mục tiêu, không phải là một
+quy trình đánh giá có hệ thống đầy đủ.
+
+2.6
+
+Sự phân rã mới lạ và sự khác biệt được chứng minh bằng bằng chứng
+
+Để làm cho các tuyên bố về tính mới có thể được kiểm tra, Bảng 3 phân tách đóng
+góp được đề xuất thành các yếu tố kỹ thuật cụ thể và ánh xạ từng yếu tố tới bằng chứng
+thực nghiệm trực tiếp trong báo cáo này. Điều này tránh được tuyên bố chung chung về
+“hệ thống đầu cuối” và làm rõ phần nào được trình diễn so với phần chỉ được đề xuất
+cho công việc trong tương lai.
+
+11
+
+Chương 3: Kiến trúc hệ thống và phương pháp thực nghiệm
+Chương này trình bày quy trình nghiên cứu toàn diện và thiết kế phương pháp hỗn
+hợp được sử dụng trong nghiên cứu, kết hợp đánh giá theo nhánh cố định về mặt định
+lượng với diễn giải định tính ở cấp độ kịch bản và đánh giá dựa trên người đánh giá.
+
+3.1
+
+Giao thức kiểm tra bằng chứng và thiết kế nghiên cứu
+
+Giao thức đánh giá được định nghĩa là tiêu chí về tính đầy đủ bằng chứng thay vì quy
+tắc quyết định có/không nhị phân. Cụ thể:
+Γ = 1 𝐶𝑐𝑜𝑣 ∧ 𝐶𝑠𝑖𝑔 ∧ 𝐶ℎ𝑢𝑚𝑎𝑛 ∧ 𝐶𝑟𝑒𝑡𝑟 ∧ 𝐶𝑠𝑒𝑐 ,
+
+(5)
+
+trong đó 𝐶𝑐𝑜𝑣 là phạm vi kịch bản, 𝐶𝑠𝑖𝑔 là mức độ quan trọng được kiểm soát so với thô,
+𝐶ℎ𝑢𝑚𝑎𝑛 là mức độ hoàn chỉnh và đồng ý trong đánh giá của con người, 𝐶𝑟𝑒𝑡𝑟 là mức độ
+hoàn chỉnh của báo cáo truy xuất và 𝐶𝑠𝑒𝑐 là hiệu suất bảo mật đối nghịch.
+Theo định nghĩa này, Γ = 1 chỉ ra rằng tất cả các thành phần bằng chứng bắt buộc đều
+có mặt, trong khi Γ = 0 chỉ ra rằng ít nhất một thành phần bị thiếu. Các yêu cầu cốt lõi
+bao gồm phạm vi kịch bản tối thiểu là 100 (đạt được: 112), cải tiến đáng kể được kiểm
+soát so với thô đối với các số liệu chất lượng chính, các yêu cầu đánh giá con người đã
+hoàn thành (bao gồm số hàng, thỏa thuận và kiểm tra ưu tiên), hiện vật tái tạo đầy đủ
+(siêu dữ liệu, số liệu truy xuất, cắt bỏ và khoảng tin cậy) cũng như tiêu chí bảo mật dựa
+trên mức giảm ASR và giới hạn ASR được bảo vệ. So sánh đường cơ sở bên ngoài giữa
+các điều kiện được báo cáo là chẩn đoán không giới hạn.
+Giao thức này là cần thiết vì các báo cáo về trò chơi-AI thường kết hợp chất lượng
+trình diễn với độ tin cậy khi triển khai. Tiêu chí kết hợp thực thi suy luận thận trọng bằng
+cách yêu cầu bằng chứng hội tụ từ các số liệu tự động, số liệu thống kê, xếp hạng của
+con người và các bài kiểm tra mức độ căng thẳng về bảo mật.
+Về mặt hình thức, với 𝐶𝑗 ∈ {0, 1}, Γ tương đương với một cổng sản phẩm:
+Γ=
+
+𝐶𝑗 .
+𝑗∈{𝑐𝑜𝑣,𝑠𝑖𝑔,ℎ𝑢𝑚𝑎𝑛,𝑟𝑒𝑡𝑟,𝑠𝑒𝑐}
+
+(6)
+
+12
+
+Do đó Γ = 1 khi và chỉ nếu tất cả các thành phần cổng đều bằng 1 và bất kỳ thành phần
+cổng nào bị thiếu sẽ buộc Γ = 0. Điều này mang lại cho cổng một thuộc tính đơn điệu
+bảo thủ: tăng cường một thành phần từ 0 lên 1 không thể giảm Γ, trong khi mọi 0 còn
+lại vẫn chặn một đường chuyền. Do đó, quy tắc này ngăn chặn việc chấp nhận một phần
+bằng chứng và phù hợp trực tiếp với mục tiêu kỷ luật bằng chứng đã nêu. Trong Thuật
+toán 1, ℬ𝑒𝑥𝑡 biểu thị tập hợp các đường cơ sở không có ngữ cảnh bên ngoài được bao
+gồm trong điểm chuẩn (ở đây: phi3:mini và phi3:latest), được sử dụng để chẩn đoán
+nhiều điều kiện không giới hạn.
+Thuật toán 1 Đánh giá cổng đầy đủ bằng chứng
+Đầu vào: Tóm tắt điểm chuẩn ℬ, báo cáo truy xuất ℛ, báo cáo con người ℋ, báo cáo bảo mật
+𝒮
+Đầu vào: Tập chỉ số cốt lõi ℳ𝑐𝑜𝑟𝑒 , mức ý nghĩa 𝛼
+Đầu vào: Các ngưỡng (𝑛𝑚𝑖𝑛 , 𝜅𝑚𝑖𝑛 , 𝜌𝑚𝑖𝑛 , 𝑎𝑚𝑎𝑥 )
+1: Tính 𝐶𝑐𝑜𝑣 ← 1(ℬ.scenario_count ≥ 𝑛𝑚𝑖𝑛 )
+𝐿
+2: Tính 𝐶𝑠𝑖𝑔 ← 1 ∀𝑚 ∈ ℳ𝑐𝑜𝑟𝑒 ∶ 𝑝𝑚 ≤ 𝛼 ∧ 𝐶𝐼𝑚,Δ
+>0
+𝐿
+3: Tính 𝐷𝑏𝑎𝑠𝑒 ← 1 ∀𝑏 ∈ ℬ𝑒𝑥𝑡 ∶ Δ𝑂𝑄𝑏 > 0 ∧ 𝐶𝐼Δ𝑂𝑄,𝑏
+>0
+
+▷ chẩn đoán không ràng buộc
+
+4: Tính 𝐶ℎ𝑢𝑚𝑎𝑛 ← 1(ℋ.ratings complete ∧ ℋ.𝜅 ≥ 𝜅𝑚𝑖𝑛 )
+5: Tính 𝐶𝑟𝑒𝑡𝑟 ← 1(ℛ.metrics and ablations complete)
+6: Tính 𝐶𝑠𝑒𝑐 ← 1(𝒮.Δ𝐴𝑆𝑅 ≥ 𝜌𝑚𝑖𝑛 ∧ 𝒮.𝐴𝑆𝑅𝑔𝑢𝑎𝑟𝑑 ≤ 𝑎𝑚𝑎𝑥 )
+7: Đặt 𝒥 ← {𝑐𝑜𝑣, 𝑠𝑖𝑔, ℎ𝑢𝑚𝑎𝑛, 𝑟𝑒𝑡𝑟, 𝑠𝑒𝑐}
+8: Tính Γ ← 𝐶𝑐𝑜𝑣 ⋅ 𝐶𝑠𝑖𝑔 ⋅ 𝐶ℎ𝑢𝑚𝑎𝑛 ⋅ 𝐶𝑟𝑒𝑡𝑟 ⋅ 𝐶𝑠𝑒𝑐
+9: Trả về: Γ, {𝑗 ∈ 𝒥 ∶ 𝐶𝑗 = 0}, và 𝐷𝑏𝑎𝑠𝑒 như chẩn đoán điều kiện chéo không ràng buộc
+
+3.2
+
+Kiến trúc thời gian chạy trực tuyến và luồng dữ liệu
+
+Quy trình thời gian chạy được tổ chức thành sáu giai đoạn tuần tự: trích xuất ngữ cảnh
+từ trạng thái mô phỏng UE5, xây dựng lời nhắc và truy vấn với các vị trí bối cảnh động
+và cá nhân, truy xuất kết hợp với chấm điểm bằng chứng nhận biết bảo vệ, sinh phản
+hồi bằng LLM cục bộ, viết lại hoặc lựa chọn dự phòng kiểm soát phản hồi và cập nhật
+bộ nhớ cộng với trích dẫn. Sự phân tách này được chọn nhằm tách biệt các chế độ lỗi
+thường bị vướng trong pipeline nguyên khối. Đặc biệt, lỗi trích xuất, lỗi truy xuất và lỗi
+sinh có thể được kiểm tra độc lập, giúp cải thiện cả khả năng gỡ lỗi và cắt bỏ.
+Kiến trúc được triển khai trên các lớp điều phối Python và thời gian chạy công cụ với
+
+13
+
+Lượt người chơi
++ trạng thái UE5
+
+Trích xuất ngữ cảnh
+
+Bộ nhớ hội thoại
+
+Trình dựng lời
+nhắc/truy vấn
+
+Hồ sơ vai trò
+
+Truy xuất + điểm bảo vệ
+
+Kho truy xuất
+
+Sinh cục bộ
+
+Kiểm soát phản hồi
+
+Dấu vết thời gian chạy
+
+Phản hồi NPC cho
+vòng lặp trò chơi
+
+Figure 1: Kiến trúc thời gian chạy trực tuyến và luồng dữ liệu. Mũi tên liền biểu thị luồng suy
+luận; mũi tên nét đứt biểu thị đầu vào điều hòa và kiểm soát.
+
+các kiểm tra tính chẵn lẻ rõ ràng cho hành vi kiểm soát phản hồi cốt lõi. Lựa chọn triển
+khai này giải quyết rủi ro hợp lệ phổ biến trong hệ thống LLM dành cho trò chơi: hành
+vi điểm chuẩn khác với hành vi thời gian chạy khi logic đánh giá và logic triển khai được
+duy trì trong các đường dẫn mã riêng biệt.
+Đường dẫn thực thi trực tuyến trong Hình 1 được kết hợp với đường dẫn xây dựng và
+xác thực ngoại tuyến trong Hình 2. Sự kết hợp này là có chủ ý: mô hình, cấu hình bảo
+vệ và các hiện vật đánh giá được tạo ngoại tuyến và sau đó được chuyển vào thời gian
+chạy dưới sự kiểm tra tính chẵn lẻ, làm giảm độ lệch điểm chuẩn so với triển khai.
+Trình trích xuất ngữ cảnh UE5 tuần tự hóa các tính năng trạng thái hành vi, vùng hoặc
+vị trí, các thực thể lân cận và các bản tóm tắt sự kiện gần đây. Thay vì đưa vào các nhật
+ký thế giới không giới hạn, nó sử dụng tải trọng giới hạn và các khóa chuẩn hóa. Thiết
+kế này được chọn thay vì chèn ngữ cảnh kiểu bản ghi trực tiếp vì nền tảng trạng thái trò
+chơi phụ thuộc vào tính nhất quán chính xác của khóa-giá trị, trong khi nhật ký dạng tự
+do thường lãng phí ngân sách ngữ cảnh cho các chi tiết tường thuật có giá trị thấp. Do
+
+14
+
+Tập kịch bản
+
+Đào tạo SFT/QLoRA +
+DPO + bộ xếp hạng lại
+
+Mô hình ứng cử viên
++ cấu hình bảo vệ
+
+Điểm chuẩn nhánh
+cố định + đánh giá
+con người/bảo mật
+
+CI, cắt bỏ và gói kiểm toán
+
+Figure 2: Luồng đánh giá và đào tạo ngoại tuyến với các vòng phản hồi. Mô hình ứng cử viên
+và cấu hình điều khiển được xuất sang đường dẫn thời gian chạy trực tuyến trong Hình 1.
+
+đó, tuần tự hóa có giới hạn giúp giảm bùng nổ prompt, duy trì các trường tồn kho và
+nhiệm vụ quan trọng, đồng thời cho phép các mẫu lời nhắc ổn định trong ngân sách mã
+thông báo cố định.
+Truy xuất kết hợp dùng thành phần thưa thớt (từ vựng kiểu BM25) và tương đồng dày
+đặc. Các bằng chứng ứng viên được xếp hạng lại bằng điểm bảo vệ (guard-aware):
+𝑠𝑝𝑎𝑟𝑠𝑒
+
+𝑠𝑖 = 𝛼𝑠𝑖𝑑𝑒𝑛𝑠𝑒 + (1 − 𝛼)𝑠𝑖
+
+− 𝜆𝑔𝑖 ,
+
+(7)
+
+trong đó 𝑔𝑖 là hạng mục rủi ro tổng hợp các tín hiệu tiêm, khả năng giả mạo tin cậy và
+sự không nhất quán của siêu dữ liệu. Hình thức kết hợp được chọn vì truy xuất thưa thớt
+đáng tin cậy cho thực thể chính xác trong trò chơi, trong khi truy xuất dày đặc cải thiện
+recall cho đầu vào người chơi đã diễn giải; không có phương pháp nào luôn mạnh trong
+cả hai trường hợp. Xếp hạng lại theo guard-aware được thêm vào vì chấm điểm mức độ
+liên quan tiêu chuẩn giả định tài liệu lành tính và có thể xếp hạng cao văn bản đối nghịch
+bắt chước thẩm quyền, một hành vi phù hợp với các kết quả về ngộ độc và hướng dẫn
+đối nghịch trong quy trình truy xuất [43, 44]. Điểm số mới hạn chế bằng chứng bị đầu
+
+15
+
+độc lên thứ hạng cao mà không vô hiệu hóa tiện ích truy xuất.
+Kiểm soát phản hồi thực hiện kiểm tra sau khi tạo và logic viết lại/chọn tùy chọn. Nó
+được triển khai trong cả hai đường dẫn Python và C++ để đảm bảo tính chẵn lẻ trong
+thời gian chạy giữa hoạt động đánh giá và hành vi trong trò chơi. Đối với đầu ra ứng cử
+viên 𝑦,̂ bộ điều khiển tính toán:
+𝐹(𝑦)
+̂ = 𝑤𝑐 𝜙𝑐 + 𝑤𝑝 𝜙𝑝 + 𝑤𝑛 𝜙𝑛 − 𝑤𝑣 𝜙𝑣 .
+
+(8)
+
+Nếu 𝐹(𝑦)
+̂ < 𝜏, hệ thống sẽ kích hoạt chính sách dự phòng có căn cứ thay vì trả về văn
+bản dạng tự do không ổn định. Giai đoạn này được đưa vào dưới dạng lớp căn chỉnh thời
+gian chạy bổ sung cho việc điều chỉnh thời gian đào tạo, vì việc điều chỉnh hướng dẫn
+và tối ưu hóa tùy chọn cải thiện hành vi trung bình nhưng không thể đảm bảo khả năng
+chấp nhận ở cấp độ trong bối cảnh ồn ào hoặc đối nghịch.
+Trọng lượng bảo vệ 𝜆 và ngưỡng kiểm soát 𝜏 được chọn bằng cách hiệu chỉnh ràng
+buộc trên bộ phát triển. Mục tiêu hiệu chỉnh là tối đa hóa chất lượng đối thoại trong khi
+vẫn thực thi các giới hạn về mức độ chắc chắn và khả năng chấp nhận, thay vì chỉ điều
+chỉnh theo chất lượng.
+
+16
+
+Thuật toán 2 Hiệu chỉnh ngưỡng bảo vệ trong điều kiện hạn chế rủi ro
+Đầu vào: Tập kịch bản phát triển 𝒮𝑑𝑒𝑣 , lưới ứng viên Λ, 𝒯𝜏
+Đầu vào: Trần rủi ro 𝑎𝑚𝑎𝑥 , trần tỷ lệ fallback tùy chọn 𝑓𝑚𝑎𝑥 , trọng số độ trễ 𝜂
+1: Khởi tạo 𝐽⋆ ← −∞, 𝑇 ⋆ ← +∞, cặp tốt nhất (𝜆⋆ , 𝜏 ⋆ ) ← (None, None)
+2: Đối với mỗi 𝜆 ∈ Λ thực hiện
+3:
+4:
+5:
+6:
+7:
+
+Đối với mỗi 𝜏 ∈ 𝒯𝜏 thực hiện
+Chạy pipeline có guard trên 𝒮𝑑𝑒𝑣 với (𝜆, 𝜏)
+Tính 𝑄,̄ 𝐴𝑆𝑅𝑔𝑢𝑎𝑟𝑑 , tỷ lệ fallback 𝐹𝑟𝑎𝑡𝑒 và độ trễ 𝑇
+Nếu 𝐴𝑆𝑅𝑔𝑢𝑎𝑟𝑑 ≤ 𝑎𝑚𝑎𝑥 và (𝐹𝑟𝑎𝑡𝑒 ≤ 𝑓𝑚𝑎𝑥 hoặc không đặt trần fallback) thì
+Tính hàm mục tiêu hiệu chỉnh 𝐽 ← 𝑄̄ − 𝜂𝑇
+
+8:
+
+Nếu 𝐽 > 𝐽⋆ hoặc (𝐽 = 𝐽⋆ và 𝑇 < 𝑇 ⋆ ) thì
+
+9:
+
+Cập nhật (𝐽⋆ , 𝑇 ⋆ , 𝜆⋆ , 𝜏 ⋆ ) ← (𝐽, 𝑇, 𝜆, 𝜏)
+end Nếu
+
+10:
+11:
+
+end Nếu
+
+12:
+
+end Đối với mỗi
+
+13: end Đối với mỗi
+14: Nếu (𝜆⋆ , 𝜏 ⋆ ) = (None, None) thì
+15:
+
+Trả về: chế độ đóng (fail-closed) vì không có cặp khả thi dưới các trần hiện tại; cần nới
+lưới hoặc nới ràng buộc
+
+16: end Nếu
+17: Trả về: (𝜆⋆ , 𝜏 ⋆ )
+
+Thuật toán 3 Suy luận thời gian chạy với kiểm soát phản hồi được bảo vệ
+Đầu vào: đầu vào người chơi 𝑥𝑡 , trạng thái thế giới 𝑠𝑡 , persona 𝑝, kho truy xuất 𝒟
+1: 𝑐𝑡 ← EXTRACTCONTEXT(𝑠𝑡 )
+2: 𝑞𝑡 ← BUILDRETRIEVALQUERY(𝑥𝑡 , 𝑐𝑡 , 𝑝)
+3: 𝐸𝑡 ← HYBRIDRETRIEVE(𝑞𝑡 , 𝒟)
+4: 𝐸̃ 𝑡 ← GUARDFILTER(𝐸𝑡 )
+5: 𝜋𝑡 ← BUILDPROMPT(𝑥𝑡 , 𝑐𝑡 , 𝑝, 𝐸̃ 𝑡 )
+6: 𝑦̂ 𝑡 ← GENERATELOCAL(𝜋𝑡 )
+7: 𝑦𝑡 ← RESPONSECONTROL(𝑦̂ 𝑡 , 𝑥𝑡 , 𝑐𝑡 , 𝑝)
+8: UPDATEMEMORYANDCITATIONS(𝑦𝑡 , 𝐸̃ 𝑡 )
+9: Trả về: 𝑦𝑡
+
+Thuật toán phân tích chi phí theo từng giai đoạn
+𝑇𝑡𝑜𝑡𝑎𝑙 = 𝑇𝑐𝑡𝑥 + 𝑇𝑟𝑒𝑡 + 𝑇𝑔𝑢𝑎𝑟𝑑 + 𝑇𝑔𝑒𝑛 + 𝑇𝑐𝑡𝑟𝑙 + 𝑇𝑚𝑒𝑚 .
+
+(9)
+
+17
+
+Với các ứng cử viên được truy xuất 𝑀 hàng đầu, điểm bảo vệ là 𝑂(𝑀), trong khi sinh
+phản hồi chiếm ưu thế tiệm cận qua giải mã tự hồi quy. Sự phân tách này giải thích đánh
+đổi độ trễ quan sát được: kiểm tra độ mạnh và khả năng chấp nhận làm tăng chi phí suy
+luận ngay cả khi cài đặt sinh được cố định.
+
+3.3
+
+Liên kết thực thi UE5: trình kích hoạt cây hành vi, tuần tự hóa trạng
+thái và kiểm soát độ trễ
+
+Trong thời gian chạy UE5, việc tạo hội thoại được gọi thông qua hàm RequestResponse trong UNPCDialogueComponent, thường là từ logic tương tác hoặc chuyển đổi
+nhiệm vụ cây hành vi khi NPC chuyển sang trạng thái đủ điều kiện để nói. Tại thời điểm
+gọi, thành phần chụp nhanh bối cảnh thế giới trực tiếp và chuyển tiếp thế hệ tới GenerateDialogueAsync trong UNPCInferenceSubsystem. Suy luận thực thi trên luồng xử
+lý nền UE5 trong họ AnyBackgroundThread, trong khi các lệnh gọi lại hoàn thành được
+sắp xếp trở lại luồng trò chơi (GameThread) [50, 51]. Sự phân chia này giúp mô phỏng
+và hiển thị phản hồi nhanh trong khi vẫn duy trì các bản cập nhật luồng trò chơi xác định
+cho hoạt ảnh, giao diện người dùng và tiến trình trạng thái hội thoại.
+Việc tuần tự hóa trạng thái được cố định trong phép đo từ xa của bộ điều khiển AI thay
+vì nhật ký dạng tự do. Trình trích xuất ghi lại nút Behavior Tree đang hoạt động (current
+behavior, CurrentBehavior), trạng thái hành vi chuẩn hóa (behavior state, BehaviorState)
+và các mục giá trị trong Blackboard (Blackboard values, BlackboardValues). Các khóa
+phổ biến bao gồm trạng thái cảnh giới (IsAlerted), tuần tra (IsPatrolling) và giao chiến
+(IsInCombat). Nó cũng tuần tự hóa vùng/vị trí, các thực thể lân cận, tín hiệu nhận thức
+(tác nhân nhìn thấy/nghe thấy, khả năng hiển thị của người chơi), thời gian/thời tiết và
+các sự kiện gần đây. Tải trọng được tuần tự hóa được giới hạn và chuẩn hóa trước khi
+biên dịch prompt để việc truy xuất và tạo được điều chỉnh theo trạng thái thời gian chạy
+rõ ràng, phù hợp với mô hình [49] và cây hành vi của Unreal Engine.
+Quản lý độ trễ kết hợp giới hạn cấp độ truyền tải với kiểm soát độ mới ở cấp độ trò
+chơi. Đường dẫn truyền tải thực thi thời gian chờ yêu cầu (30 giây trong quá trình vận
+chuyển máy khách suy luận; 180 giây trong khai thác điểm chuẩn), trong khi logic trò
+chơi ngăn chặn các lần hoàn thành cũ bằng cách hủy quá trình tạo trong quá trình hoạt
+
+18
+
+động nếu bối cảnh tương tác thay đổi, chẳng hạn như khi người chơi rời khỏi phạm vi
+tương tác trong quá trình tạo. Nếu đầu ra lần đầu trống hoặc không thực hiện được các
+bước kiểm tra khả năng chấp nhận kiểm soát phản hồi, thì thời gian chạy sẽ áp dụng các
+lần thử ghi lại và sau đó là phản hồi dự phòng có căn cứ.
+Số liệu thời gian chạy hoạt động được định nghĩa là:
+𝑁𝑡𝑖𝑚𝑒𝑜𝑢𝑡
+,
+𝑁𝑡𝑢𝑟𝑛
+𝑁𝑓𝑎𝑙𝑙𝑏𝑎𝑐𝑘
+FallbackRate =
+,
+𝑁𝑡𝑢𝑟𝑛
+𝑁first-pass accepted
+FirstPassAcceptRate =
+,
+𝑁𝑡𝑢𝑟𝑛
+𝑁rewrite attempt
+,
+RewriteAttemptRate =
+𝑁𝑡𝑢𝑟𝑛
+𝑁𝑟𝑒𝑡𝑟𝑦
+RetryRate =
+,
+𝑁𝑡𝑢𝑟𝑛
+𝑁rewrite failure
+RewriteFailureRate =
+,
+𝑁𝑡𝑢𝑟𝑛
+TimeoutRate =
+
+(10)
+(11)
+(12)
+(13)
+(14)
+(15)
+
+Các số liệu này được báo cáo trong Chương 4 cùng với các tác động do trạng thái hành
+vi điều chỉnh.
+
+3.4
+
+Thực hiện phản hồi: chính sách phát hành và kết quả đầu ra mẫu
+
+Để làm cho hành vi ở cấp độ lần lượt trở nên rõ ràng đối với người đọc, đầu ra thời
+gian chạy được mô hình hóa như sau:
+𝒪𝑡 = (𝑦𝑡 , 𝑏𝑡 , 𝑟𝑡 , 𝑧𝑡 ) ,
+
+(16)
+
+trong đó 𝑦𝑡 là câu nói của NPC được phát ra, 𝑏𝑡 ∈ {0, 1} là cờ dự phòng, 𝑟𝑡 ∈ {0, 1} là
+cờ can thiệp thử lại/ghi lại và 𝑧𝑡 ∈ ℕ là số lần thử viết lại được ghi lại trong dấu vết hoạt
+động.
+Với thế hệ vượt qua đầu tiên 𝑦̂ 𝑡 , phản hồi được phát ra tuân theo tầng phát hành xác
+
+19
+
+Table 4: Kết quả phản hồi được quan sát theo chính sách phát hành thời gian chạy (ví dụ theo
+dõi nguyên văn).
+Lộ trình kết quả Siêu dữ liệu lượt quan sát
+Chấp nhận lần s006_captain_theft_v00;
+đầu
+state=Investigating; 𝑧𝑡
+𝑏𝑡 = 0
+
+Phản hồi phát ra (nguyên văn)
+
+“As Captain of the City Watch, my duty is to ensure public
+0, safety above all else. The evidence suggests foul play in
+securing our bakery’s goods. Let us proceed with caution
+and respect for due process as we uncover the truth behind
+these events together.”
+Chấp nhận sau s006_captain_theft_v08;
+“At Granary Yard and while on patrolling duty in a prosửa
+state=Patrolling; 𝑧𝑡 = 2, 𝑏𝑡 = 0 cedural manner, I acknowledge your statement of innocence; however, my duty as City Watch Captain requires
+me to investigate further based on credible evidence and
+established procedures.”
+Phát dự phòng s003_healer_poison_v09;
+“Here at Temple Infirmary and while on assisting duty,
+state=Assisting; 𝑧𝑡 = 2, 𝑏𝑡 = 1
+we can handle listen carefully under these safely, step by
+step. Stay steady and I will guide the next action in a calm
+voice.”
+=
+
+định:
+⎧𝑦̂ 𝑡 ,
+𝐹(𝑦̂ 𝑡 ) ≥ 𝜏,
+⎪
+𝑦𝑡 = 𝑦̂ 𝑡(𝑘) , ∃𝑘 ∈ {1, … , 𝐾} ∶ 𝐹(𝑦̂ 𝑡(𝑘) ) ≥ 𝜏,
+⎨
+⎪ 𝑓𝑏
+⎩𝑦𝑡 , otherwise,
+
+(17)
+
+𝑓𝑏
+
+trong đó 𝐾 là ngân sách thử lại và 𝑦𝑡 là phản hồi dự phòng có cơ sở. Định nghĩa này giải
+thích trực tiếp tỷ lệ vượt qua lần đầu, thử lại và dự phòng được báo cáo trong Chương 4.
+Bảng 4 thay thế các ví dụ sơ đồ bằng các kết quả đầu ra được quan sát từ quá trình
+chạy kịch bản 112 bị khóa để có thể kiểm tra hành vi phát hành từ dấu vết thực.
+
+3.5
+
+Mở rộng chính sách kiểm soát thích ứng để giảm gánh nặng can thiệp
+
+Điểm vận hành hiện tại cho thấy khả năng dự phòng/thử lại thấp nhưng vẫn hạn chế
+khả năng chấp nhận vượt qua lần đầu, điều này cho thấy rằng một ngưỡng kiểm soát toàn
+cầu duy nhất có thể quá cứng nhắc đối với các trạng thái hành vi không đồng nhất. Để
+cải thiện độ ổn định trong thời gian chạy mà không làm suy yếu các ràng buộc an toàn,
+một lịch trình ngưỡng có điều kiện theo trạng thái được xác định:
+𝜏𝑏 = 𝜏0 + 𝛿𝑏 ,
+
+𝑏 ∈ ℬ𝑠𝑡𝑎𝑡𝑒 ,
+
+(18)
+
+20
+
+trong đó 𝜏0 là ngưỡng cơ sở toàn cầu và 𝛿𝑏 là phần bù trạng thái hành vi cho họ trạng
+thái 𝑏 (ví dụ: hỗ trợ, tuần tra, giao dịch).
+Đưa ra phản hồi của ứng viên 𝑦,̂ trạng thái hành vi 𝑏𝑡 và điểm bảo vệ 𝑔𝑡 , thời gian
+chạy chỉ giải phóng 𝑦̂ nếu
+𝐹(𝑦)
+̂ ≥ 𝜏𝑏𝑡 ∧ 𝑔𝑡 ≤ 𝛾𝑏𝑡 ,
+
+(19)
+
+nếu không, nó sẽ kích hoạt việc ghi lại với ngân sách thử lại theo quy định của nhà nước
+là 𝐾𝑏𝑡 , sau đó dự phòng nếu tất cả các lần thử lại đều không được chấp nhận. Điều này
+mang lại một mục tiêu điều chỉnh bị ràng buộc:
+min 𝔼 𝜆𝑓 FallbackRate + 𝜆𝑟 RetryRate + 𝜆𝑡 𝑇
+
+{𝛿𝑏 ,𝐾𝑏 }
+
+s.t. 𝐴𝑆𝑅𝑔𝑢𝑎𝑟𝑑 ≤ 𝑎𝑚𝑎𝑥 , Δ𝑂𝑄 ≥ 0,
+(20)
+
+với 𝑇 biểu thị độ trễ thời gian chạy. Mục tiêu tối ưu hóa rõ ràng gánh nặng và độ trễ
+can thiệp trong các ràng buộc về chất lượng và an toàn cố định, thay vì điều chỉnh các
+ngưỡng theo kinh nghiệm.
+Thuật toán 4 Hiệu chuẩn ngưỡng điều khiển theo trạng thái
+Đầu vào: Dấu vết phát triển theo trạng thái hành vi 𝒟𝑑𝑒𝑣 , trần an toàn 𝑎𝑚𝑎𝑥 , sàn chất lượng
+Δ𝑂𝑄𝑚𝑖𝑛
+1: Khởi tạo 𝜏0 , 𝛿𝑏 ← 0 và ngân sách thử lại 𝐾𝑏
+2: Đối với mỗi mỗi họ trạng thái 𝑏 ∈ ℬ𝑠𝑡𝑎𝑡𝑒 thực hiện
+3:
+
+Quét lưới (𝛿𝑏 , 𝐾𝑏 ) trên các cấu hình điều khiển khả thi
+
+4:
+
+Đánh giá dự phòng/thử lại/độ trễ và ASR có bảo vệ trên 𝒟𝑑𝑒𝑣
+
+5:
+
+Chọn cấu hình tối thiểu hóa mục tiêu can thiệp–độ trễ dưới 𝐴𝑆𝑅𝑔𝑢𝑎𝑟𝑑 ≤ 𝑎𝑚𝑎𝑥 và
+
+(𝑏)
+
+Δ𝑂𝑄 ≥ Δ𝑂𝑄𝑚𝑖𝑛
+6: end Đối với mỗi
+7: Cố định {𝜏𝑏 , 𝐾𝑏 } và chạy điểm chuẩn nhánh cố định để báo cáo không thiên lệch
+8: Trả về: chính sách kiểm soát theo trạng thái đã hiệu chuẩn
+
+Tiện ích mở rộng này được đưa vào dưới dạng đường dẫn nâng cấp rõ ràng cho chu kỳ
+thử nghiệm tiếp theo. Nó không được tuyên bố là kết quả hoàn thành trong điểm chuẩn
+hiện tại.
+
+21
+
+3.6
+
+Thích ứng mô hình, đào tạo truy xuất và đường dẫn dữ liệu
+
+Danh tính phục vụ ứng viên là elara-npc:latest; danh tính phân phát cơ sở bên ngoài
+bao gồm phi3:mini và phi3:latest. Tinh chỉnh được thực hiện thông qua đào tạo QLoRA
+và điểm kiểm tra dựa trên bộ chuyển đổi.
+Việc lựa chọn mô hình tuân theo hai hạn chế: khả năng triển khai cục bộ trong bộ
+nhớ GPU thông thường và độ trễ suy luận ổn định trong cài đặt giải mã cố định. Các hệ
+thống cơ bản và ứng cử viên được đánh giá theo một giao thức nhắc nhở chung để tách
+biệt các hiệu ứng kiến trúc khỏi các giới hạn về định dạng lời nhắc.
+Dữ liệu đào tạo và ưu tiên được tạo từ các kịch bản hội thoại NPC theo miền cụ thể,
+sau đó được chuẩn hóa thành định dạng phản hồi hướng dẫn với các trường ngữ cảnh rõ
+ràng. Xử lý dữ liệu bao gồm kiểm tra lược đồ và các ràng buộc nội dung tối thiểu.
+Với các cặp được định dạng (𝑥, 𝑦), việc điều chỉnh có giám sát sẽ giảm thiểu:
+|𝑦|
+
+ℒ𝑆𝐹𝑇 (𝜃) = −
+
+log 𝜋𝜃 (𝑦𝑡 ∣ 𝑦<𝑡 , 𝑥).
+
+(21)
+
+(𝑥,𝑦) 𝑡=1
+
+QLoRA được sử dụng để điều chỉnh hiệu quả tham số trong phần cứng bị hạn chế trong
+khi vẫn duy trì tối ưu hóa ổn định cho miền hội thoại đích [18].
+Lộ trình đào tạo hỗ trợ resume checkpoint trong môi trường địa phương và Kaggle.
+Logic tiếp tục được thiết kế để tránh các trạng thái thành công tổng hợp bằng cách xác
+thực tỷ lệ thành công của nhánh và đầu ra tạo không trống trước khi chấp nhận bản tóm
+tắt.
+Quản trị điểm kiểm tra bao gồm ba biện pháp bảo vệ: xác minh hàm băm của trọng
+số bộ điều hợp, kiểm tra phát lại trên điểm chuẩn nhỏ cố định và hành vi không đóng khi
+siêu dữ liệu sơ yếu lý lịch không nhất quán. Các biện pháp kiểm soát này giúp giảm báo
+cáo tiến độ sai và duy trì tính toàn vẹn của thử nghiệm trong thời gian dài bị gián đoạn.
+Ngăn xếp đào tạo bao gồm việc tạo tập dữ liệu ưu tiên và lặp lại ứng viên kiểu DPO
+cũng như giai đoạn sắp xếp lại truy xuất được đào tạo trên các cặp phủ định cứng. Tối
+
+22
+
+ưu hóa ưu tiên như sau:
+Δ𝜃 (𝑥, 𝑦 + , 𝑦 − ) = log 𝜋𝜃 (𝑦 + ∣ 𝑥) − log 𝜋𝜃 (𝑦 − ∣ 𝑥)
++
+
+(22)
+−
+
+− log 𝜋𝑟𝑒𝑓 (𝑦 ∣ 𝑥) + log 𝜋𝑟𝑒𝑓 (𝑦 ∣ 𝑥),
+ℒ𝐷𝑃𝑂 (𝜃) = −𝔼(𝑥,𝑦+ ,𝑦− ) log 𝜎(𝛽 Δ𝜃 (𝑥, 𝑦 + , 𝑦 − )) ,
+
+(23)
+
+với (𝑦 + , 𝑦 − ) biểu thị các phản hồi được ưu tiên và bị từ chối.
+Để sắp xếp lại, việc giám sát theo cặp đối với các âm bản cứng sử dụng mục tiêu xếp
+hạng hậu cần:
+ℒ𝑟𝑎𝑛𝑘 = − log 𝜎(𝑓(𝑞, 𝑑 + ) − 𝑓(𝑞, 𝑑 − )) .
+
+(24)
+
+Bộ dữ liệu sắp xếp lại cuối cùng chứa 3360 cặp (2856 chuyến tàu, 504 đánh giá).
+Cơ sở lý luận thực tế cho việc điều chỉnh hai giai đoạn này là sự phân công lao động:
+DPO chủ yếu định hình hành vi ưu tiên phản hồi tại thời điểm tạo, trong khi đào tạo
+người sắp xếp lại cải thiện việc sắp xếp bằng chứng trước khi tạo. Sự tách biệt này cải
+thiện khả năng gỡ lỗi vì các lỗi truy xuất và tạo có thể được phân tích và sửa chữa một
+cách độc lập.
+Mục tiêu bị ràng buộc được giới thiệu trong Chương 1 cũng bao hàm sự phân rã này.
+Sự thư giãn Lagrange của max 𝑄(𝑦𝑡 ; 𝑥𝑡 , 𝑠𝑡 , 𝑝) subject to 𝑅(𝑦𝑡 , 𝑠𝑡 ) ≤ 𝜖𝑟 , 𝐶(𝑦𝑡 , 𝑝) ≥ 𝜏𝑐 ,
+and 𝐿(𝑦𝑡 ) ≤ 𝜏𝑙 tạo ra chất lượng bổ sung và các điều khoản phạt; đây là lý do mang tính
+phân tích mà thời gian chạy sử dụng các mô-đun có thể tách rời để tối đa hóa chất lượng
+(tạo) và thực thi ràng buộc (bảo vệ/điều khiển), thay vì một giai đoạn mờ đục duy nhất.
+
+23
+Thuật toán 5 Quy trình đào tạo và đánh giá
+Đầu vào: Tập đối thoại thô 𝒟, tập ưu tiên 𝒫, tập cặp truy xuất ℛ
+1: Tiền xử lý và kiểm tra 𝒟, 𝒫, ℛ
+2: Huấn luyện bộ điều hợp QLoRA với ℒ𝑆𝐹𝑇
+3: Nếu bật giai đoạn ưu tiên thì
+
+Cập nhật mô hình ứng cử viên với ℒ𝐷𝑃𝑂
+
+4:
+
+5: end Nếu
+6: Huấn luyện bộ xếp hạng lại truy xuất với ℒ𝑟𝑎𝑛𝑘
+7: Chạy điểm chuẩn nhánh cố định, đánh giá con người và kiểm tra căng thẳng bảo mật
+8: Tính khoảng tin cậy và tiêu chí chấp nhận
+9: Lưu gói tái lập
+10: Trả về: mô hình ứng cử viên đã huấn luyện, báo cáo đánh giá và hiện vật đã lưu
+
+3.7
+
+Phương pháp đánh giá: thành phần định lượng và định tính
+
+Điểm chuẩn chính sử dụng 112 kịch bản và năm nhánh cố định: tạo theo ngữ cảnh
+được kiểm soát, tạo theo ngữ cảnh thô, tạo ứng viên không có ngữ cảnh, phi3:đường cơ
+sở không có ngữ cảnh nhỏ và phi3:đường cơ sở không có ngữ cảnh mới nhất. Các số
+liệu được báo cáo bao gồm mức độ liên quan của bối cảnh, tính nhất quán về tính cách,
+tính tự nhiên, BERTScore F1 và chất lượng tổng thể tổng hợp; Việc lựa chọn chỉ số dựa
+trên phương pháp đánh giá tập trung vào thực tế gần đây như TruthfulQA và FactScore
+[24, 25]. So sánh theo ngữ cảnh được kiểm soát và thô là thử nghiệm phân bổ chính cho
+các hiệu ứng thành phần trong các điều kiện ngữ cảnh phù hợp; so sánh với các đường
+cơ sở không có ngữ cảnh được báo cáo là các khoảng trống hệ thống có điều kiện chéo
+và không được hiểu là quan hệ nhân quả kiến trúc biệt lập.
+Để so sánh theo cặp, các delta trung bình, khoảng tin cậy khởi động (95%) và 𝑝(Δ ≤ 0)
+một phía được tính toán. Đối với các số liệu cung cấp và truy xuất, phương tiện và khoảng
+tin cậy được báo cáo trên mỗi mô hình/phương pháp. Để tránh các ước tính điểm không
+thể thực hiện được khi lấy mẫu bootstrap hữu hạn, các giá trị một phía rất nhỏ được báo
+cáo ở mức sàn có độ phân giải hữu hạn là 𝑝(Δ ≤ 0) < 1/5000. Tất cả các ước tính khởi
+động trong báo cáo này đều sử dụng các mẫu lại 𝐵 = 5000 nên xác suất đuôi một phía
+theo kinh nghiệm tối thiểu khác 0 là 1/5000 = 0, 0002 [53].
+Thiết kế thử nghiệm tuân theo hai chế độ so sánh. Trong các tương phản trong điều
+
+24
+
+Table 5: Hồ sơ điểm chuẩn được sử dụng cho tất cả các so sánh nhánh cố định.
+Yếu tố thiết kế
+
+Mô tả
+
+Phạm vi kịch bản
+
+112 kịch bản cố định, phân tầng theo archetype, điều kiện xung
+đột và trạng thái hành vi
+
+Nhánh đánh giá
+
+Theo ngữ cảnh được kiểm soát, theo ngữ cảnh thô, ứng viên
+không ngữ cảnh, phi3:mini không ngữ cảnh, phi3:latest không
+ngữ cảnh
+
+Chỉ số chất lượng cốt lõi
+
+Mức phù hợp ngữ cảnh, nhất quán vai trò, tính tự nhiên, chất
+lượng tổng thể, BERTScore F1
+
+Báo cáo suy luận
+
+Delta trung bình theo cặp, CI bootstrap 95% (𝐵 = 5000),
+𝑝(Δ ≤ 0) một phía với sàn độ phân giải hữu hạn
+
+Đánh giá con người
+
+324 đánh giá mù, 3 người đánh giá, 𝜅 theo cặp, tỷ lệ ưu tiên
+mềm và nghiêm (quy mô thí điểm)
+
+Kiểm tra căng thẳng an Tập bị đầu độc và giả mạo tin cậy (100 kịch bản mỗi tập), ASR
+ninh
+và mức giảm ASR tương đối (giới hạn trong các họ đã thử)
+Chẩn đoán phục vụ
+
+TTFT, tổng thời gian phản hồi, thông lượng (token/giây), tỷ lệ
+lỗi dưới cấu hình phù hợp
+
+Chẩn đoán vận hành UE5
+
+Timeout, dự phòng, chấp nhận lần đầu, gánh nặng sửa/ thử lại
+và hiệu ứng theo trạng thái hành vi
+
+kiện tập trung vào thành phần (ví dụ: theo ngữ cảnh được kiểm soát so với ngữ cảnh thô),
+văn bản kịch bản, vị trí ngữ cảnh, mẫu lời nhắc và siêu tham số giải mã được giữ không
+đổi trong khi thành phần điều khiển được thử nghiệm khác nhau, hỗ trợ các vùng đồng
+bằng cắt bỏ có thể giải thích được. Trong chẩn đoán nhiều điều kiện dựa trên các đường
+cơ sở không có ngữ cảnh, sự khác biệt về điều kiện là rõ ràng và do đó được hiểu là các
+khoảng trống ở cấp độ hệ thống chứ không phải là các hiệu ứng thành phần riêng biệt.
+Việc xây dựng kịch bản được phân tầng theo nguyên mẫu, tình trạng xung đột và trạng
+thái hành vi để tránh overfitting theo một kiểu prompt đơn lẻ và để duy trì sự thay đổi
+trong ứng suất grounding. Khung đánh giá tuân theo hướng dẫn đánh giá đa trục gần đây
+dành cho các hệ thống ngôn ngữ, trong đó chất lượng, độ chắc chắn và hiệu quả được
+báo cáo chung thay vì gộp thành một nhóm điểm duy nhất [33].
+Việc giải thích các hiệu ứng thành phần dựa trên các giả định nhận dạng tiêu chuẩn:
+khả năng so sánh ở cấp độ kịch bản giữa các nhóm, định nghĩa số liệu ổn định giữa các
+điều kiện và không có sự can thiệp không được mô hình hóa giữa các giai đoạn truy xuất,
+tạo và kiểm soát trong một lần chạy. Mặc dù các giả định này không đảm bảo nhận dạng
+
+25
+
+đầy đủ nguyên nhân bên ngoài phạm vi điểm chuẩn nhưng chúng đủ để suy luận có kỷ
+luật trong khuôn khổ giao thức về các tác động thành phần tương đối.
+Số liệu truy xuất được xác định là:
+𝑁
+
+1
+Hit@𝑘 =
+𝑁
+
+1(𝑟𝑖 ≤ 𝑘) ,
+
+(25)
+
+1
+,
+𝑟𝑖
+
+(26)
+
+DCG@𝑘𝑖
+.
+IDCG@𝑘𝑖
+
+(27)
+
+𝑖=1
+𝑁
+
+1
+MRR =
+𝑁
+
+𝑖=1
+𝑁
+
+1
+nDCG@𝑘 =
+𝑁
+
+𝑖=1
+
+Những công cụ ước tính này đáp ứng các giới hạn hữu ích cần thiết cho việc giải thích.
+Đối với 𝑘2 ≥ 𝑘1 ,
+1
+Hit@𝑘2 − Hit@𝑘1 =
+𝑁
+
+𝑁
+
+1(𝑘1 < 𝑟𝑖 ≤ 𝑘2 ) ≥ 0,
+
+(28)
+
+𝑖=1
+
+nên Hit@𝑘 là đơn điệu không giảm. Vì 𝑟𝑖 ≥ 1, mỗi thuật ngữ 1/𝑟𝑖 ∈ (0, 1], ngụ ý
+0 ≤ MRR ≤ 1. Theo định nghĩa DCG@𝑘𝑖 ≤ IDCG@𝑘𝑖 , mang lại 0 ≤ nDCG@𝑘 ≤ 1.
+Các thuộc tính này chứng minh khả năng so sánh giữa các bảng và ngăn chặn sự mơ hồ
+về tỷ lệ giữa các phương pháp truy xuất.
+Báo cáo theo thỏa thuận của con người sử dụng kappa của Cohen:
+𝜅=
+
+𝑝𝑜 − 𝑝𝑒
+,
+1 − 𝑝𝑒
+
+(29)
+
+và tỷ lệ giành được ưu tiên được báo cáo là:
+𝑊𝑠𝑜𝑓𝑡 =
+
+𝑁𝑤𝑖𝑛 + 0.5𝑁𝑡𝑖𝑒
+.
+𝑁𝑎𝑙𝑙
+
+(30)
+
+Sự mạnh mẽ của đối thủ được tóm tắt bằng tỷ lệ thành công của cuộc tấn công:
+ASR =
+
+𝑁𝑠𝑢𝑐𝑐𝑒𝑠𝑠𝑓𝑢𝑙 𝑎𝑡𝑡𝑎𝑐𝑘𝑠
+,
+𝑁𝑎𝑡𝑡𝑎𝑐𝑘𝑠
+
+(31)
+
+26
+
+và giảm tương đối:
+Δ𝐴𝑆𝑅 =
+
+ASR𝑏𝑎𝑠𝑒 − ASR𝑔𝑢𝑎𝑟𝑑
+ASR𝑏𝑎𝑠𝑒
+
+.
+
+(32)
+
+Đối với tốc độ vận hành nhị thức (ví dụ: hết thời gian chờ, dự phòng, chấp nhận lần
+đầu, viết lại/thử lại), độ không chắc chắn được báo cáo bằng Clopper hai mặt chính
+xác–khoảng tin cậy Pearson 95% [54].
+Thuật toán 6 Bootstrap ghép cặp và kiểm định một phía
+Đầu vào: Điểm theo cặp {(𝑎𝑖 , 𝑏𝑖 )}𝑛𝑖=1 , số mẫu bootstrap 𝐵 (mặc định 𝐵 = 5000)
+1: Tính Δ ←
+
+1
+∑ (𝑎 − 𝑏𝑖 )
+𝑛 𝑖 𝑖
+
+2: Đối với mỗi 𝑗 = 1 → 𝐵 thực hiện
+3:
+
+Lấy mẫu 𝑛 chỉ số với hoàn lại
+
+4:
+
+Tính Δ𝑗⋆ trên các cặp được lấy mẫu
+
+5: end Đối với mỗi
+6: Tính CI từ phần trăm vị của {Δ𝑗⋆ } tại 2.5% và 97.5%
+7: Tính 𝑝𝑟𝑎𝑤 ←
+
+1
+∑ 1(Δ𝑗⋆ ≤ 0)
+𝐵 𝑗
+
+8: Báo cáo 𝑝(Δ ≤ 0) < 1/𝐵 nếu 𝑝𝑟𝑎𝑤 = 0, ngược lại báo cáo 𝑝(Δ ≤ 0) = 𝑝𝑟𝑎𝑤
+9: Trả về: Δ, CI và 𝑝(Δ ≤ 0) đã báo cáo
+
+Quy trình khởi động lại hợp lệ theo khả năng trao đổi mẫu theo cặp: mỗi kịch bản
+đóng góp một delta 𝑑𝑖 = 𝑎𝑖 − 𝑏𝑖 được ghép nối và việc lấy mẫu lại các cặp chỉ số duy
+trì sự phụ thuộc trong kịch bản trong khi xấp xỉ phân bố mẫu của Δ̂ =
+𝐵 → ∞, công cụ ước tính đuôi theo kinh nghiệm 𝑝̂𝐵 =
+
+1
+𝐵
+
+1
+𝑛
+
+∑𝑖 𝑑𝑖 . Như
+
+𝐵
+
+∑𝑗=1 1(Δ𝑗⋆ ≤ 0) hội tụ gần như
+
+chắc chắn với xác suất khởi động của nó theo luật số lớn, đó là lý do tại sao ước tính
+𝑝(Δ ≤ 0) một phía ổn định về mặt số khi 𝐵 đủ lớn [53]. Bởi vì sự phụ thuộc vào kịch
+bản vẫn khác 0 ngay cả sau khi đa dạng hóa theo chữ ký, các khoảng này nên được hiểu
+là độ không đảm bảo trong phạm vi chuẩn thay vì là khoảng tổng quát hóa dân số trong
+lấy mẫu ngẫu nhiên độc lập.
+Vì một số chỉ số được kiểm tra trên mỗi lần so sánh nên các tuyên bố suy luận được
+diễn giải theo hai cấp độ. Xác nhận quyền sở hữu được giới hạn ở các số liệu cốt lõi được
+chỉ định trước (𝐶𝑅, 𝑃𝐶, 𝑁 và 𝑂𝑄); các thử nghiệm số liệu bổ sung được coi là chẩn đoán
+hỗ trợ và được giải thích cùng với các khoảng tin cậy và cường độ hiệu ứng thay vì chỉ
+theo các giá trị 𝑝 được ngưỡng. Đối với hai phép so sánh 𝑂𝑄 đường cơ sở bên ngoài,
+các giới hạn giá trị 𝑝 một phía được điều chỉnh theo Holm được báo cáo rõ ràng.
+
+27
+
+Đánh giá con người được thực hiện như một chiến dịch đa người đánh giá mù quáng.
+Chiến dịch mới nhất bao gồm 324 xếp hạng với ba người xếp hạng và kappa được báo
+cáo theo cặp. Tỷ lệ thắng ưu tiên được tính là mềm (hòa có trọng số 0,5) và tỷ lệ không
+hòa nghiêm ngặt. Bởi vì các bộ đánh giá dựa trên LLM có thể thể hiện các thành kiến về
+vị trí, mức độ dài dòng hoặc dòng mô hình, nên kết quả đầu ra của người đánh giá mô
+hình được coi là tín hiệu chẩn đoán thứ cấp thay vì tiêu chí quyết định duy nhất [31].
+Lời nhắc của người xếp hạng không được nhận dạng hệ thống và được chọn ngẫu
+nhiên theo kịch bản để giảm hiệu ứng thứ tự. Mỗi gói xếp hạng yêu cầu chấm điểm rõ
+ràng về mức độ phù hợp với bối cảnh, tính nhất quán về tính cách và chất lượng tổng thể
+trước bất kỳ nhận xét văn bản tự do nào, điều này hạn chế sự thiên vị nhận thức muộn
+màng trong việc biện minh về mặt chất lượng.
+Để giảm bớt sự mơ hồ trong việc chấm điểm chủ quan, những người đánh giá tuân
+theo một phiếu tự đánh giá được chia sẻ với các ví dụ cố định cho hiệu suất thấp, trung
+bình và cao trên mỗi trục. Phân tích cuối cùng chỉ sử dụng các kích thước phiếu tự đánh
+giá được xác định trước; các nhận xét văn bản mở được giữ lại để giải thích định tính và
+phân loại lỗi, không phải để xây dựng số liệu hậu hoc.
+Thuật toán 7 Tổng hợp xếp hạng con người và tính toán thỏa thuận
+Đầu vào: Tensor đánh giá ℛ (kịch bản × nhánh × người chấm × thước đo), tập cặp nhánh 𝒫
+1: Đối với mỗi mỗi thước đo 𝑚 thực hiện
+2:
+
+Tính trung bình theo nhánh 𝑠̄𝑎,𝑚 bằng cách lấy trung bình trên người chấm và kịch bản
+
+3:
+
+Tính Cohen’s 𝜅𝑚 theo cặp trên các mục được chấm chung
+
+4: end Đối với mỗi
+5: Đối với mỗi mỗi so sánh cặp (𝑎, 𝑏) ∈ 𝒫 thực hiện
+6:
+
+Đếm số thắng 𝑁𝑤𝑖𝑛 , hòa 𝑁𝑡𝑖𝑒 , thua 𝑁𝑙𝑜𝑠𝑠 từ điểm gộp theo kịch bản
+
+7:
+
+Tính 𝑊𝑠𝑜𝑓𝑡 = (𝑁𝑤𝑖𝑛 + 0.5𝑁𝑡𝑖𝑒 )/(𝑁𝑤𝑖𝑛 + 𝑁𝑡𝑖𝑒 + 𝑁𝑙𝑜𝑠𝑠 )
+
+8:
+
+Tính tỷ lệ thắng nghiêm 𝑊𝑠𝑡𝑟𝑖𝑐𝑡 = 𝑁𝑤𝑖𝑛 /(𝑁𝑤𝑖𝑛 + 𝑁𝑙𝑜𝑠𝑠 )
+
+9: end Đối với mỗi
+10: Trả về: trung bình theo nhánh, 𝜅 theo cặp, 𝑊𝑠𝑜𝑓𝑡 và 𝑊𝑠𝑡𝑟𝑖𝑐𝑡
+
+Để hỗ trợ xác minh độc lập, gói khả năng tái tạo bao gồm các dấu vết cung cấp không
+mô phỏng, siêu dữ liệu phần cứng và mô hình, số liệu truy xuất với sự cắt bỏ, khoảng
+tin cậy và delta cung cấp, kiểm tra tính chẵn lẻ nhanh chóng và điểm chuẩn bảo mật đối
+
+28
+
+nghịch. Chính sách đóng gói này tuân theo các khuyến nghị về khả năng tái tạo, nhấn
+mạnh đến các hiện vật có thể thực thi, tính minh bạch của cấu hình và báo cáo rõ ràng
+về các trường hợp lỗi [34].
+Mỗi gói hiện vật được coi là bằng chứng có thể kiểm tra được thay vì trang trí bổ sung.
+Một kết luận chỉ được coi là hỗ trợ khi các kết quả đầu ra định lượng tương ứng, khoảng
+tin cậy và siêu dữ liệu quy trình đều có sẵn để kiểm tra.
+
+3.8
+
+Dẫn xuất phân tích của các công thức quyết định và đánh giá
+
+Điểm truy xuất được bảo vệ được tính trực tiếp từ chế độ xem tối ưu hóa bị ràng buộc.
+𝑠𝑝𝑎𝑟𝑠𝑒
+
+Đặt thuật ngữ mức độ liên quan kết hợp là 𝑟𝑖 = 𝛼𝑠𝑖𝑑𝑒𝑛𝑠𝑒 + (1 − 𝛼)𝑠𝑖
+
+và để 𝑔𝑖
+
+biểu thị rủi ro truy xuất cho ứng viên 𝑖. Nếu lựa chọn bằng chứng được xây dựng dưới
+dạng tối đa hóa mức độ liên quan trong một hạn chế rủi ro, max𝑖 𝑟𝑖 tuân theo 𝑔𝑖 ≤ 𝛾, thì
+Lagrangian liên quan là ℒ(𝑖, 𝜆) = 𝑟𝑖 − 𝜆(𝑔𝑖 − 𝛾), với 𝜆 ≥ 0. Đối với 𝜆 cố định, việc tối
+đa hóa ℒ tương đương với việc tối đa hóa 𝑟𝑖 − 𝜆𝑔𝑖 , vì +𝜆𝛾 không đổi giữa các ứng cử
+viên. Điều này mang lại quy tắc xếp hạng thực tế được sử dụng trong bài viết:
+𝑠𝑝𝑎𝑟𝑠𝑒
+
+𝑠𝑖 = 𝛼𝑠𝑖𝑑𝑒𝑛𝑠𝑒 + (1 − 𝛼)𝑠𝑖
+
+− 𝜆𝑔𝑖 .
+
+(33)
+
+Ngưỡng kiểm soát phản hồi cũng có lý do biện minh trực tiếp cho tính tối ưu. Đặt 𝑈(𝑦)
+̂
+là tiện ích giải phóng phản hồi được tạo và 𝑈𝑓𝑏 là tiện ích dự phòng. Với 𝑈(𝑦)
+̂ = 𝐹(𝑦),
+̂
+bài toán quyết định hai hành động là max{𝑈(𝑦),
+̂ 𝑈𝑓𝑏 }. Do đó, quy tắc tối ưu xác định
+là: phát hành 𝑦̂ khi và chỉ khi 𝐹(𝑦)
+̂ ≥ 𝑈𝑓𝑏 , nếu không thì kích hoạt dự phòng. Việc viết
+𝜏 = 𝑈𝑓𝑏 sẽ khôi phục chính sách ngưỡng được sử dụng trong thời gian chạy.
+Mục tiêu DPO và trình xếp hạng lại là các công cụ ước tính khả năng ghi nhật ký âm
+theo mô hình ưu tiên logistic theo cặp. Đối với DPO, giả sử xác suất ưu tiên
+𝑃(𝑦 + ≻ 𝑦 − |𝑥) = 𝜎 𝛽 Δ log 𝜋𝜃 − Δ log 𝜋𝑟𝑒𝑓
+
+,
+
+(34)
+
+trong đó Δ log 𝜋𝜃 = log 𝜋𝜃 (𝑦 + |𝑥) − log 𝜋𝜃 (𝑦 − |𝑥) và tương tự cho 𝜋𝑟𝑒𝑓 . Tối đa hóa khả
+năng theo cặp trên tập dữ liệu tương đương với việc giảm thiểu khả năng ghi nhật ký âm,
+
+29
+
+mang lại
+ℒ𝐷𝑃𝑂 (𝜃) = −𝔼 log 𝜎(𝛽Δ𝜃 ) ,
+
+(35)
+
+đó là hình thức thực hiện trong báo cáo. Mục tiêu của trình sắp xếp lại tuân theo cùng
+một đối số với xác suất sắp xếp theo cặp 𝑃(𝑑 + ≻ 𝑑 − |𝑞) = 𝜎(𝑓(𝑞, 𝑑 + ) − 𝑓(𝑞, 𝑑 − )),
+mang lại ℒ𝑟𝑎𝑛𝑘 = − log 𝜎(𝑓(𝑞, 𝑑 + ) − 𝑓(𝑞, 𝑑 − )).
+Số hạng rút gọn ASR có các thuộc tính giới hạn đơn giản cần thiết cho việc diễn giải.
+Với ASR𝑏𝑎𝑠𝑒 > 0 và 0 ≤ ASR𝑔𝑢𝑎𝑟𝑑 ≤ ASR𝑏𝑎𝑠𝑒 ,
+Δ𝐴𝑆𝑅 =
+
+ASR𝑏𝑎𝑠𝑒 − ASR𝑔𝑢𝑎𝑟𝑑
+ASR𝑏𝑎𝑠𝑒
+
+(36)
+
+thỏa mãn 0 ≤ Δ𝐴𝑆𝑅 ≤ 1. Giới hạn dưới bắt nguồn từ ASR𝑔𝑢𝑎𝑟𝑑 ≤ ASR𝑏𝑎𝑠𝑒 và giới hạn
+trên bắt nguồn từ ASR𝑔𝑢𝑎𝑟𝑑 ≥ 0. Điều này biện minh cho việc giải thích Δ𝐴𝑆𝑅 là mức
+giảm tương đối được chuẩn hóa.
+
+30
+
+Chương 4: Kết quả thực nghiệm và phân tích tổng hợp
+Chương này trình bày các kết quả thực nghiệm tương ứng với các giả thuyết được giới
+thiệu trong Chương 1 và 2. Các kết quả được sắp xếp từ tác động chất lượng cốt lõi đến
+phán đoán của con người, sự đánh đổi hiệu quả và sự loại bỏ ở cấp độ thành phần để mỗi
+suy luận có thể được truy tìm bằng chứng định lượng rõ ràng.
+
+4.1
+
+Kết quả điểm chuẩn chính trong cài đặt phù hợp
+
+Việc tạo được kiểm soát tốt hơn việc tạo theo ngữ cảnh thô trên tất cả các chỉ số chất
+lượng cốt lõi:
+Δ𝐶𝑅 = +0.1843 (95% 𝐶𝐼 [0.1647, 0.2025]),
+Δ𝑃𝐶 = +0.1509 (95% 𝐶𝐼 [0.1257, 0.1746]),
+Δ𝑁 = +0.0967 (95% 𝐶𝐼 [0.0773, 0.1167]),
+Δ𝑂𝑄 = +0.1440 (95% 𝐶𝐼 [0.1298, 0.1584]).
+trong đó 𝐶𝑅, 𝑃𝐶, 𝑁 và 𝑂𝑄 biểu thị mức độ phù hợp với bối cảnh, tính nhất quán về tính
+cách, tính tự nhiên và chất lượng tổng thể. Tất cả bốn phép so sánh đều có 𝑝(Δ ≤ 0) <
+1/5000.
+Hai quan sát quan trọng để giải thích. Đầu tiên, tất cả các khoảng tin cậy đều hoàn
+toàn dương, do đó mức tăng không phải là hiệu ứng biên do một tập hợp con kịch bản
+hẹp gây ra. Thứ hai, lợi ích lớn nhất xảy ra ở các khía cạnh bối cảnh và tính cách, là
+những khía cạnh gắn chặt nhất với sự mạch lạc của lối chơi.
+Mức tăng tuyệt đối lớn nhất được quan sát thấy ở các khía cạnh bối cảnh và cá tính
+(lần lượt là +0.1843 và +0.1509), tiếp theo là chất lượng tổng thể (+0.1440) và tính
+tự nhiên (+0.0967). Bởi vì các chỉ số được báo cáo bị giới hạn và chuẩn hóa nên việc
+diễn giải trong báo cáo này ưu tiên các delta tuyệt đối và khoảng tin cậy thay vì khuếch
+đại tỷ lệ so với các đường cơ sở thấp.
+Những kết quả này chỉ ra rằng kiểm soát phản hồi và truy xuất được bảo vệ không
+phải là các tiện ích bổ sung ngoại vi. Theo giao thức được đánh giá, chúng là các cơ chế
+có tác động cao về chất lượng và độ bền, đồng thời vẫn yêu cầu điều chỉnh lại để giảm
+tải can thiệp trong thời gian chạy.
+
+31
+Mean Δ
+
+0.184
+
+0.151
+
+0.144
+0.097
+
+Ngữ cảnh
+
+Tính cách
+
+Tự nhiên
+
+Tổng thể
+
+Chỉ số
+
+Figure 3: Mức tăng trung bình-delta được ghép nối của việc tạo theo ngữ cảnh được kiểm soát
+so với việc tạo theo ngữ cảnh thô, với khoảng tin cậy CI 95%.
+Table 6: So sánh 𝑂𝑄 theo điều kiện chéo: nhánh theo ngữ cảnh được kiểm soát so với các đường
+cơ sở không có ngữ cảnh bên ngoài theo các giao thức phù hợp.
+Đường cơ sở
+
+Δ𝑂𝑄
+
+phi3:mini
+phi3:latest
+
++0.1448 [0.1314, 0.1571] < 1/5000
++0.1475 [0.1356, 0.1591] < 1/5000
+
+CI 95% (Δ𝑂𝑄)
+
+𝑝 một phía 𝑝 một phía hiệu chỉnh Holm (kích thước họ = 2)
+< 2/5000
+< 2/5000
+
+Đối với các đường cơ sở không có ngữ cảnh phi3:mini và phi3:mới nhất, nhánh được
+kiểm soát cho thấy các vùng đồng bằng chất lượng tổng thể tích cực trong cả hai so sánh
+giữa các điều kiện. Như được tóm tắt trong Bảng 6, Δ𝑂𝑄 là +0,1448 và +0,1475, cả hai
+đều có khoảng thời gian khởi động được ghép nối dương hoàn toàn.
+Bảng 2 là bản tổng hợp định tính có phạm vi theo các tiêu chí và giao thức tìm kiếm
+đã nêu trong báo cáo, không phải là một bảng xếp hạng đầy đủ chính thức của toàn bộ
+tài liệu.
+Cả hai khoảng thời gian khởi động được ghép nối đều hoàn toàn dương ở giới hạn
+dưới, xác nhận rằng vùng đồng bằng chất lượng tổng thể của đường cơ sở bên ngoài
+không phải là hiệu ứng đường biên theo giao thức kịch bản cố định. Giới hạn giá trị 𝑝
+một phía được điều chỉnh theo Holm vẫn ở dưới mức sàn báo cáo mẫu hữu hạn cho họ
+𝑂𝑄 [55] hai so sánh này. Vì đây là những sự tương phản giữa các điều kiện (đường cơ sở
+được kiểm soát theo ngữ cảnh và không có ngữ cảnh), nên chúng hỗ trợ báo cáo khoảng
+cách ở cấp hệ thống nhưng không xác định sự đóng góp nguyên nhân riêng biệt của bất
+kỳ thành phần kiến trúc đơn lẻ nào.
+Các số liệu không vượt trội còn lại tập trung vào các chỉ số phong cách đa dạng từ
+vựng, không phải ở các số liệu nền tảng hoặc tính nhất quán. Mô hình này cho thấy một
+sự đánh đổi kiểm soát chung: việc neo đậu thực tế và cá nhân mạnh mẽ hơn có thể làm
+giảm entropy về phong cách. Trong cài đặt triển khai trong đó ưu tiên tính nhất quán của
+
+32
+
+vai trò và liên kết trạng thái, sự đánh đổi này thường có thể chấp nhận được.
+Distinct-1 thấp hơn đối với quá trình tạo được kiểm soát so với các đường cơ sở bên
+ngoài trong các lần chạy hiện tại, cho thấy rằng nền tảng mạnh hơn có thể làm giảm tính
+mới từ vựng trong thiết lập này. Điều này được thảo luận như một sự đánh đổi trong thiết
+kế chứ không phải bị che giấu.
+Để tách biệt ý nghĩa thống kê khỏi ý nghĩa thực tế, những lợi ích quan sát được được
+giải thích dựa trên các mục tiêu triển khai chứ không chỉ riêng ý nghĩa. Trong cài đặt
+này, những cải tiến tuyệt đối lớn nhất xảy ra đối với các chỉ số bối cảnh và tính cách,
+tương ứng trực tiếp với các yêu cầu về tính nhất quán của lối chơi; do đó, những cải tiến
+này được coi là có ý nghĩa về mặt hoạt động ngay cả khi các chỉ báo đa dạng từ vựng di
+chuyển theo hướng ngược lại.
+
+4.2
+
+Đánh giá con người và thỏa thuận giữa những người đánh giá
+
+Báo cáo đánh giá con người có 324 xếp hạng. Kappa trung bình theo cặp trên các số
+liệu cốt lõi là 0,5329. Tỷ lệ ưu tiên mềm mô tả là 0,7315 so với phi3:mini và 0,6806 so
+với phi3:mới nhất. Giá trị trung bình của chất lượng tổng thể được chuẩn hóa ở cấp độ
+nhánh là 0,8037 đối với nhánh được kiểm soát, 0,6944 đối với phi3:mini và 0,7278 đối
+với phi3:mới nhất.
+Cấu hình thỏa thuận (𝜅 = 0, 5329) phù hợp với độ tin cậy giữa những người đánh giá
+ở mức trung bình đến đáng kể trong đánh giá văn bản chủ quan theo phạm vi diễn giải
+thường được sử dụng [48]. Kết quả ưu tiên được căn chỉnh theo hướng với các số liệu
+tự động, nhưng vì chiến dịch bao gồm ba người xếp hạng và 324 xếp hạng nên điều này
+được coi là bằng chứng chứng thực ở quy mô thí điểm thay vì bằng chứng độc lập dứt
+khoát. Trong báo cáo này, tỷ lệ ưu đãi mềm chỉ được báo cáo mang tính mô tả; không có
+thử nghiệm giả thuyết xác nhận, tuyên bố về khoảng tin cậy hoặc suy luận ưu tiên ở cấp
+độ dân số nào được rút ra từ các tỷ lệ này. Kế hoạch phân công dựa trên quyền lực tiềm
+năng cho một chiến dịch mở rộng được bao gồm trong gói đánh giá con người, nhưng
+các xếp hạng tiếp theo lớn hơn vẫn chưa được hoàn thành.
+
+33
+
+4.3
+
+Sự đánh đổi hiệu suất phục vụ và truy xuất
+
+Từ báo cáo tóm tắt phân phối và báo cáo delta, trung bình TTFT là 542,62 mili giây
+đối với mô hình ứng cử viên so với 273,86 mili giây đối với đường cơ sở, trung bình
+tổng thời gian là 3601,54 mili giây so với 3138,41 mili giây và thông lượng mã thông
+báo là 18,45 mã thông báo/giây so với 18,86 mã thông báo/giây. Do đó, tính ưu việt về
+hiệu quả phục vụ không được thể hiện.
+Kết quả tiêu cực này được giữ lại có chủ ý. Kiến trúc được kiểm soát cải thiện chất
+lượng và độ bền nhưng phát sinh thêm độ trễ do truy xuất, chấm điểm bảo vệ và kiểm
+soát sau khi tạo. Đối với việc áp dụng sản xuất, điều này ngụ ý một biên giới có thể điều
+chỉnh được chứ không phải là một điểm vận hành thống trị duy nhất.
+Trên trục truy xuất, BM25 đạt Hit@5 = 1,0000, MRR = 0,8500 và nDCG@5 = 0,8893.
+Truy xuất chồng chéo từ khóa đạt 0,9000, 0,8333 và 0,8500 trên cùng số liệu; truy xuất
+ngẫu nhiên cho 0,4000, 0,1650 và 0,2204; và phương pháp sắp xếp lại báo cáo 0,9000,
+0,8000 và 0,8262.
+BM25 vẫn mạnh nhất trên bộ nhãn cốt lõi hiện tại, trong khi trình xếp hạng lại có tính
+cạnh tranh và cao hơn đáng kể so với truy xuất ngẫu nhiên trên các số liệu điểm được
+quan sát. Bởi vì không có thử nghiệm giả thuyết chính thức nào được thực hiện đối với
+những khác biệt về phương pháp truy xuất trong bảng này, nên những sự tương phản này
+nên được đọc dưới dạng cường độ tác động mô tả thay vì những tuyên bố có ý nghĩa suy
+luận. Điều này chỉ ra rằng hiệu ứng phân phối truy vấn là quan trọng: cần có các tập hợp
+được gắn nhãn rộng hơn trước khi khẳng định tính ưu việt của trình sắp xếp lại phổ quát.
+Ở mức độ chi tiết ở giai đoạn huấn luyện, giai đoạn sắp xếp lại âm cứng sử dụng 3360
+cặp (2856 chuyến tàu, 504 eval) và báo cáo độ chính xác của cặp 0,9563 với 95% CI
+[0,9365, 0,9742].
+Trong điều kiện căng thẳng đối nghịch, cả bộ kiểm tra bị đầu độc và giả mạo độ
+tin cậy (mỗi bộ 100 kịch bản) đều hiển thị ASR cơ sở = 1,0000, ASR được bảo vệ =
+0,0000 và mức giảm tương đối = 1,0000, với khoảng tin cậy được bao gồm trong các
+báo cáo giả. Đối với điều kiện được bảo vệ với 0/100 thành công được quan sát trên
+mỗi bộ, giới hạn trên chính xác 95% trên ASR là 1 − 0, 051/100 ≈ 0, 0295 cho mỗi bộ;
+
+34
+
+Table 7: Số liệu thời gian chạy hoạt động liên quan đến UE5 (nhóm được kiểm soát, 𝑁 = 112).
+Chỉ số
+
+Tiêu chí
+
+Giá trị
+
+CI 95% chính xác
+
+Timeout rate
+Error rate
+Fallback rate
+
+timeout failures / 112 turns
+failed requests / 112 turns
+fallback outputs / 112
+turns
+accepted without rewrite /
+112 turns
+turns with rewrite attempts > 0
+turns with retries > 0
+rewrite failure / 112 turns
+
+0.0000 (0/112)
+0.0000 (0/112)
+0.0089 (1/112)
+
+[0.0000, 0.0324]
+[0.0000, 0.0324]
+[0.0002, 0.0487]
+
+0.3750 (42/112)
+
+[0.2853, 0.4715]
+
+0.1071 (12/112)
+
+[0.0566, 0.1797]
+
+0.1071 (12/112)
+0.0000 (0/112)
+
+[0.0566, 0.1797]
+[0.0000, 0.0324]
+
+First-pass acceptance rate
+Rewrite-attempt rate
+Retry rate
+Rewrite-failure rate
+
+được gộp chung trên cả hai tập hợp được bảo vệ (0/200), giới hạn trên chính xác 95% là
+1 − 0, 051/200 ≈ 0, 0149.
+Từ góc độ triển khai, đây là một trong những phát hiện có ý nghĩa nhất trong tiêu
+chuẩn này. Lớp bảo vệ không chỉ đơn thuần giảm sai số trung bình; không quan sát thấy
+sự tiếp nối thành công nào trên các lần tiêm đối thủ đã được thử nghiệm theo giao thức
+được đánh giá (với giới hạn ASR trên chính xác là 95% là 0,0295 trên mỗi tập hợp căng
+thẳng 100 trường hợp). Tuyên bố này được cố ý giới hạn ở các nhóm tấn công đã được
+thử nghiệm và cỡ mẫu, không được khái quát hóa cho tất cả các chế độ đối nghịch.
+
+4.4
+
+Số liệu hoạt động của UE5 và hiệu ứng trạng thái hành vi
+
+Để bổ sung cho kết quả về chất lượng văn bản, các chỉ số thời gian chạy hoạt động
+được báo cáo cho cùng một nhánh được kiểm soát theo 112 kịch bản được sử dụng trong
+bản tóm tắt điểm chuẩn chính. Các số liệu tuân theo các định nghĩa của Chương 3 và được
+tính toán từ dấu vết hoạt động ở cấp độ lần lượt (response_fallback, rewrite_attempts và
+các điểm đánh dấu sửa chữa). Tiêu chí hết thời gian chờ cứng là lỗi hết thời gian chờ ở
+mức yêu cầu trong khai thác điểm chuẩn (timeout_s=180). Trong phần này, tốc độ thử
+lại biểu thị tần suất can thiệp của bộ điều khiển (quay với ít nhất một lần thử ghi lại/tái
+tạo), không phải lỗi yêu cầu cứng.
+Kết quả cho thấy không có lỗi hết thời gian chờ cứng và gánh nặng can thiệp cứng
+thấp trong cấu hình kiểm soát hiện tại. Bảng 7 chỉ ra rằng dự phòng và thử lại đều ở mức
+thấp (0,0089 và 0,1071), trong khi mức chấp nhận vượt qua lần đầu vẫn ở mức dưới một
+nửa số lượt (0,3750); điều này có nghĩa là sự ổn định đạt được phần lớn thông qua các
+
+35
+
+Table 8: Tác động hoạt động theo trạng thái hành vi (nhánh được kiểm soát).
+Trạng thái hành vi
+
+𝑛 Tỷ lệ dự phòng Tỷ lệ thử lại (sửa) Chất lượng tổng thể trung bình
+
+Hỗ trợ
+Giam giữ
+Rèn giả
+Canh gác
+Điều tra
+Đàm phán
+Quan sát
+Tuần tra
+Nghiên cứu
+Chuẩn bị nghi lễ
+Giao dịch
+Chữa trị bệnh nhân
+
+23
+3
+5
+4
+11
+8
+24
+8
+11
+5
+3
+7
+
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.1250
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+
+0.2174
+1.0000
+0.0000
+0.0000
+0.0000
+0.2500
+0.0833
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+
+0.3645
+0.3063
+0.4075
+0.4385
+0.3908
+0.3788
+0.3858
+0.4045
+0.3734
+0.3494
+0.3829
+0.3950
+
+đường dẫn điều khiển không thử lại (ví dụ: sửa chữa có cấu trúc) thay vì tái tạo lặp đi
+lặp lại. Mẫu này nhất quán với sự đánh đổi độ trễ đã được quan sát thấy trong việc cung
+cấp các điểm chuẩn: các ràng buộc về khả năng chấp nhận cải thiện độ bền grounding
+trong khi bổ sung thêm chi phí kiểm soát mỗi lượt.
+Do hệ thống được điều chỉnh hành vi trong UE5 nên sự thay đổi hoạt động theo trạng
+thái hành vi của NPC cũng được báo cáo.
+Mẫu điều hòa trạng thái cho thấy độ ổn định vận hành không đồng nhất giữa các chế
+độ chơi. Việc canh gác và tuần tra giữ được chất lượng tổng thể trung bình tương đối
+cao hơn, trong khi các quốc gia bị giam giữ và đàm phán chịu áp lực viết lại nặng nề
+nhất. Điều này hỗ trợ chính sách điều chỉnh UE5 trong đó các ngưỡng kiểm soát được
+điều chỉnh theo nhóm trạng thái hành vi thay vì trên toàn cầu trước khi đưa ra quyết định
+triển khai sản xuất.
+
+4.5
+
+Chẩn đoán điểm vận hành: chất lượng, độ trễ và khớp nối can thiệp
+
+Để chuyển những phát hiện trên thành tín hiệu quyết định theo định hướng triển khai,
+ba chẩn đoán phái sinh được báo cáo bằng cách sử dụng các giá trị chuẩn được quan sát.
+Đầu tiên, thông lượng chất lượng được định nghĩa là:
+QTPS =
+
+𝑂𝑄
+(𝑠)
+
+𝑇𝑡𝑜𝑡𝑎𝑙
+
+,
+
+(37)
+
+36
+
+Table 9: Chẩn đoán điểm vận hành bắt nguồn từ các giá trị điểm chuẩn được báo cáo.
+Diagnostic
+
+Value
+
+Interpretation
+
+Δ𝑂𝑄 vs phi3:mini no-context
+
++0.1448
+
+Chi phí độ trễ tổng so với phi3:mini
+
++14.76%
+
+QTPS (candidate)
+
+0.1058
+
+QTPS (phi3:mini)
+
+0.0753
+
+IBI (candidate)
+
+0.6250
+
+RDI (candidate)
+
+0.29
+
+Fallback-to-first-pass ratio (candidate)
+
+0.02
+
+Positive cross-condition quality
+gap
+Ứng cử viên chậm hơn tại điểm
+vận hành này
+0.3811/3.60154 quality units
+per second
+0.2363/3.13841 quality units
+per second
+First-pass acceptance remains limited
+Retry burden is low relative to accepted first-pass turns
+1/42, fallback is rare at this operating point
+
+(𝑠)
+
+trong đó 𝑇𝑡𝑜𝑡𝑎𝑙 là tổng thời gian phản hồi tính bằng giây. Thứ hai, gánh nặng can thiệp
+được tóm tắt như sau:
+IBI = 1 − FirstPassAcceptRate.
+
+(38)
+
+Thứ ba, sự phụ thuộc phục hồi được tóm tắt bởi:
+RDI =
+
+RetryRate
+,
+max(FirstPassAcceptRate, 𝜖)
+
+(39)
+
+với 𝜖 = 10−6 để đảm bảo an toàn về số.
+Bảng 9 củng cố cách diễn giải có giới hạn được sử dụng trong suốt báo cáo này: những
+cải thiện về chất lượng là có thể quan sát được, nhưng chúng hiện đạt được nhờ sự can
+thiệp kiểm soát cao. Do đó, mục tiêu kỹ thuật chính cho chu kỳ tiếp theo không chỉ là
+tăng thêm chất lượng mà còn giảm gánh nặng can thiệp ở các tầng chất lượng và an toàn
+cố định bằng cách sử dụng chính sách hiệu chuẩn có điều kiện theo trạng thái trong Phần
+3.4.
+
+4.6
+
+Kết quả cắt bỏ ở cấp độ thành phần
+
+Để diễn giải kết quả cắt bỏ một cách chặt chẽ, mỗi hiệu ứng thành phần được báo cáo
+được xác định là chênh lệch trung bình có điều kiện trên số liệu 𝑚:
+̂ = 𝔼[𝑚 ∣ 𝑐 = 1] − 𝔼[𝑚 ∣ 𝑐 = 0],
+𝛿𝑚,𝑐
+
+(40)
+
+37
+
+Table 10: Cắt bỏ kiểm soát phản ứng (theo ngữ cảnh được kiểm soát so với ngữ cảnh thô).
+Chỉ số
+Mức phù hợp ngữ cảnh
+Nhất quán vai trò
+Tính tự nhiên
+Chất lượng tổng thể
+BERTScore F1
+Distinct-1
+
+Trung bình Δ
+
+CI 95%
+
+𝑝(Δ ≤ 0)
+
++0.1843
++0.1509
++0.0967
++0.1440
++0.0205
+-0.0011
+
+[0.1647, 0.2025]
+[0.1257, 0.1746]
+[0.0773, 0.1167]
+[0.1298, 0.1584]
+[0.0088, 0.0327]
+[-0.0097, 0.0068]
+
+< 1/5000
+< 1/5000
+< 1/5000
+< 1/5000
+< 1/5000
+0.5963
+
+trong đó 𝑐 ∈ {context, guard, control}. Trong lần chạy này, thiết kế cắt bỏ được ghi lại
+chỉ hỗ trợ các ước tính tương phản chính trực tiếp; ước tính tương tác đầy đủ đã được
+xác định trước nhưng không được báo cáo vì không có sẵn nhánh tắt giai thừa đầy đủ
+cho mọi cặp thành phần.
+Thuật toán 8 Ước tính hiệu quả cắt bỏ tương phản chính
+Đầu vào: Bộ dữ liệu thước đo theo kịch bản 𝒟𝑎𝑏𝑙 = {(𝑚𝑖 , c𝑖 )}𝑁
+𝑖=1 , tập thành phần 𝒞
+Đầu vào: Số lần bootstrap 𝐵
+1: Đối với mỗi mỗi thước đo 𝑚 thực hiện
+2:
+3:
+4:
+5:
+
+Đối với mỗi mỗi thành phần 𝑐 ∈ 𝒞 thực hiện
+̂
+Tính tương phản ghép cặp 𝛿𝑚,𝑐
+= 𝔼[𝑚 ∣ 𝑐=1] − 𝔼[𝑚 ∣ 𝑐=0]
+̂ ) và 𝑝(𝛿𝑚,𝑐
+̂
+Bootstrap các cặp kịch bản 𝐵 lần để lấy 𝐶𝐼95 (𝛿𝑚,𝑐
+≤ 0) một phía
+end Đối với mỗi
+
+6: end Đối với mỗi
+7: Trả về: các bảng tóm tắt tương phản chính kèm bất định
+
+Bảng 10 báo cáo độ tương phản chính của kiểm soát phản ứng được quan sát với các
+ước tính độ không đảm bảo, trong khi Bảng 11 và 12 báo cáo việc truy xuất và phục vụ
+quá trình cắt bỏ. Bố cục này làm cho mỗi sự cân bằng kiến trúc được báo cáo trở nên rõ
+ràng về mặt số lượng thay vì chỉ tóm tắt.
+Trong Bảng 10, diễn giải suy luận vẫn có hai tầng như được định nghĩa trong Chương
+3: 𝐶𝑅, 𝑃𝐶, 𝑁 và 𝑂𝑄 là các số liệu cốt lõi xác nhận, trong khi BERTScore F1 và Distinct1 là các chẩn đoán hỗ trợ được báo cáo mà không cần điều chỉnh bội số bổ sung trong
+bảng này. Trong họ bốn số liệu xác nhận (𝐶𝑅, 𝑃𝐶, 𝑁, 𝑂𝑄), các giới hạn giá trị 𝑝 một phía
+do Holm điều chỉnh vẫn ở dưới 4/5000 = 0, 0008, do đó, các kết luận cốt lõi không
+thay đổi theo hiệu chỉnh [55] theo họ này.
+Trong khuôn khổ này, độ tương phản chính kiểm soát phản hồi được báo cáo là tích
+
+38
+
+Table 11: Deltas cắt bỏ bằng phương pháp truy xuất so với BM25 (càng cao càng tốt).
+Phương pháp
+
+Hit@5 Δ MRR Δ nDCG@5 Δ
+
+Chồng lấp từ khóa
+Ngẫu nhiên
+Bộ xếp hạng lại
+
+-0.1000
+-0.6000
+-0.1000
+
+-0.0167
+-0.6850
+-0.0500
+
+-0.0393
+-0.6688
+-0.0631
+
+Table 12: Phục vụ cắt bỏ (ứng cử viên so với phi3:mini).
+Chỉ số
+TTFT (ms)
+Tổng thời gian (ms)
+Token/giây
+
+Ứng cử viên Đường cơ sở
+542.62
+3601.54
+18.45
+
+273.86
+3138.41
+18.86
+
+Δ
+
+Tốt hơn?
+
++268.76
++463.13
+-0.41
+
+Không
+Không
+Không
+
+cực trên các trục chất lượng cốt lõi. Bảng 10 cho thấy rằng tất cả các chỉ số chất lượng
+cốt lõi đều có khoảng tin cậy dương hoàn toàn và các giá trị 𝑝 một phía tại sàn báo cáo,
+trong khi Distinct-1 không có ý nghĩa ở các mức thông thường; điều này hỗ trợ việc đạt
+được chất lượng được kiểm soát với sự đánh đổi nhẹ về sự đa dạng về kiểu dáng. Kết quả
+phù hợp với giả thuyết thiết kế rằng việc truy xuất cải thiện bằng chứng sẵn có nhưng
+bản thân nó không thực thi các ràng buộc về khả năng chấp nhận đối với văn bản được
+tạo ra. Trong thực tế, việc giảm kiểm soát phản hồi sẽ làm tăng tình trạng bỏ sót ngữ
+cảnh và trôi dạt cá nhân ngay cả khi chất lượng truy xuất không thay đổi, cho thấy rằng
+chất lượng bằng chứng và khả năng chấp nhận đầu ra là những vấn đề kiểm soát có thể
+tách rời.
+Theo bộ thu hồi lõi hiện tại, BM25 vẫn mạnh nhất. Bảng 11 định lượng điều này một
+cách trực tiếp, với tất cả các lựa chọn thay thế được thử nghiệm đều hiển thị vùng đồng
+bằng âm so với BM25 trên Hit@5, MRR và nDCG@5. Điều này không làm mất hiệu
+lực chất lượng đào tạo của người xếp hạng lại; thay vào đó, nó chỉ ra rằng tính ưu việt ở
+cấp độ phương pháp phụ thuộc vào phân phối truy vấn và cần được đánh giá trên các tập
+hợp được gắn nhãn rộng hơn với sự thay đổi từ vựng và ngữ nghĩa rộng hơn. Kiến trúc
+sử dụng truy xuất kết hợp với các hình phạt nhận biết bảo vệ vì mỗi thành phần xử lý
+một chế độ lỗi khác nhau: truy xuất thưa thớt duy trì việc khớp khóa chính xác cho kho
+lưu trữ và tham chiếu nhiệm vụ, truy xuất dày đặc cải thiện việc thu hồi ngữ nghĩa đối
+với thông tin đầu vào của người dùng được diễn giải và các hình phạt bảo vệ được thiết
+kế để giảm tính nhạy cảm đối với bằng chứng bị đầu độc hoặc giả mạo tin cậy. Lựa chọn
+
+39
+
+thiết kế này phù hợp với các chế độ lỗi được nêu bật trong tài liệu truy xuất đối nghịch
+gần đây [43, 44]. Trong báo cáo này, việc cắt bỏ bảng truy xuất xác định số lượng đánh
+đổi liên quan, trong khi hiệu quả an toàn của tấm bảo vệ được chứng minh bằng các bài
+kiểm tra sức chịu đựng đối nghịch chuyên dụng; được giải thích chung, chúng chỉ ra sự
+đánh đổi vận hành theo định hướng an toàn có thể làm giảm khả năng thu hồi đối với các
+truy vấn không rõ ràng.
+Đồng bằng độ trễ và thông lượng vẫn không thuận lợi cho ứng viên ở cấu hình chất
+lượng hiện tại, như được hiển thị trong Bảng 12. Mẫu này được mong đợi từ kiến trúc:
+tính điểm bảo vệ và đánh giá kiểm soát phản hồi bổ sung thêm chi phí xác định và các
+lời nhắc có điều kiện truy xuất làm tăng công việc điền trước và giải mã so với đường
+cơ sở không có ngữ cảnh. Một chiến lược so sánh hữu ích là phân tích biên giới chất
+lượng ngang nhau, trong đó mỗi hệ thống được đánh giá ở độ trễ tối thiểu cần thiết để
+đáp ứng mục tiêu chất lượng cố định. Điều này tránh được những kết luận sai lầm trong
+đó mô hình nhanh hơn chỉ được ưa chuộng vì nó hoạt động ở điểm chất lượng thấp hơn.
+Kết hợp lại với nhau, sự cắt bỏ chỉ hỗ trợ các kết luận bị giới hạn trên các độ tương phản
+được quan sát: độ tương phản chính kiểm soát phản ứng là tích cực đối với chất lượng
+trong thiết kế này, kết quả kiểm tra căng thẳng được đánh giá được cải thiện trong cài
+đặt kích hoạt bảo vệ và hiệu quả phục vụ vẫn là nút thắt chính chưa được giải quyết.
+Để duy trì khả năng kiểm tra diễn giải ở cấp độ chương, Bảng 13 hợp nhất các tuyên
+bố chính dựa trên bằng chứng trực tiếp và trạng thái hỗ trợ của chúng theo giao thức hiện
+tại.
+
+4.7
+
+Các mối đe dọa đối với ranh giới giá trị và diễn giải
+
+Hiệu lực nội bộ bị ảnh hưởng bởi việc lựa chọn ngưỡng trong kiểm soát phản hồi và
+tính điểm bảo vệ, ngay cả khi tự động hóa quy trình làm giảm sai lệch đánh giá thủ công.
+Rủi ro này được giảm thiểu thông qua việc phát hành tạo tác rõ ràng, báo cáo cắt bỏ,
+kiểm tra tính chẵn lẻ Python-C++ và kiểm soát mẫu nhắc nhở để thực thi thứ tự trường
+nhất quán và chuẩn hóa khóa giữa đường dẫn điểm chuẩn và thời gian chạy. Một mối
+đe dọa nội bộ khác là sự thiên vị do người đánh giá làm trung gian trong việc đánh giá
+chất lượng một cách tự động. Mặc dù giao thức hiện tại kết hợp xếp hạng tự động và xếp
+
+40
+
+Table 13: Tổng hợp yêu cầu bồi thường bằng chứng cho những phát hiện chính.
+Khẳng định
+
+Bằng chứng trực tiếp trong báo cáo
+
+Mức độ hỗ trợ
+
+Suy luận theo ngữ cảnh có kiểm
+soát cải thiện chất lượng đối thoại
+cốt lõi so với suy luận theo ngữ
+cảnh thô
+Cấu hình theo ngữ cảnh có kiểm
+soát cho thấy lợi thế chất lượng
+theo điều kiện chéo so với các
+đường cơ sở không ngữ cảnh bên
+ngoài
+Truy xuất có bảo vệ cải thiện kết
+quả đối kháng trong các bộ căng
+thẳng đã đánh giá
+Kiến trúc nhanh hơn các đường cơ
+sở nhẹ tại điểm vận hành hiện tại
+Hành vi thời gian chạy ít can thiệp
+tại điểm vận hành hiện tại
+
+Bảng 10, Hình 3: Δ𝐶𝑅, Δ𝑃𝐶, Δ𝑁, Δ𝑂𝑄 dương Hỗ trợ dưới giao thức
+với CI 95% hoàn toàn dương
+kịch bản cố định
+
+Bảng 6: Δ𝑂𝑄 dương với cận dưới CI dương trong Hỗ trợ như khoảng
+cả hai so sánh và cận 𝑝 một phía điều chỉnh Holm cách điều kiện chéo
+cho họ 𝑂𝑄 hai so sánh
+(không suy diễn nhân
+quả thành phần độc
+lập)
+Kết quả bảo mật: ASR giảm từ 1.0000 xuống Hỗ trợ cho các họ tấn
+0.0000 trên cả tập bị đầu độc và giả mạo tin cậy công và cỡ mẫu đã thử
+(𝑛 = 100 mỗi tập)
+Bảng 12: TTFT và độ trễ tổng cao hơn; thông Không hỗ trợ
+lượng thấp hơn nhẹ so với đường cơ sở
+Bảng 7: dự phòng 0.0089, thử lại 0.1071, chấp Hỗ trợ một phần (dự
+nhận lần đầu 0.3750
+phòng/thử lại thấp,
+chấp nhận lần đầu còn
+hạn chế)
+
+hạng của con người, các khung đánh giá theo phong cách thẩm phán vẫn có thể mang
+các thành kiến về vị trí và mức độ chi tiết [29, 28, 30]; do đó, việc diễn giải nhấn mạnh
+các xu hướng hội tụ trên các số liệu độc lập thay vì một nhóm điểm duy nhất.
+Giá trị bên ngoài vẫn bị giới hạn bởi mức độ bao phủ nhãn hiệu và phạm vi thể loại.
+Tập nhãn truy xuất cốt lõi vẫn còn tương đối nhỏ, vì vậy các kết luận về tính ưu việt của
+truy xuất bị hạn chế có chủ ý cho đến khi các nhãn miền rộng hơn được tích hợp. Việc
+khái quát hóa cho các thể loại trò chơi khác cũng không chắc chắn vì cài đặt nhập vai
+tường thuật khác với bối cảnh hộp cát hoặc nhiều người chơi cạnh tranh, nơi mà sự ngắn
+gọn và nhịp độ có thể chi phối các yêu cầu về chất lượng phản hồi. Ngoài ra, chẩn đoán
+phụ thuộc vào kịch bản hiển thị phân cụm mẫu một phần (chữ ký mẫu duy nhất 71/112,
+kích thước mẫu hiệu quả theo chữ ký mẫu ≈ 56 và kích thước mẫu hiệu quả cấp nguồn
+= 8); do đó sức mạnh suy luận nên được giải thích một cách thận trọng bên ngoài thiết
+kế chuẩn này. Hạn chế này phù hợp với tài liệu LLM trong trò chơi rộng hơn, trong đó
+báo cáo mức tăng tương tác đầy hứa hẹn trong khi vẫn phải đối mặt với những thách thức
+về ma sát chuyển giao và triển khai trên các nền tảng và phong cách chơi [2, 3, 4].
+Hiệu lực của cấu trúc bị hạn chế bởi tính chất đa chiều của chất lượng đối thoại. Không
+có số liệu đơn lẻ nào nắm bắt được ”cuộc đối thoại tốt với NPC”, vì vậy nghiên cứu sử
+dụng một loạt các số liệu về bối cảnh, tính cách, tính tự nhiên, chất lượng tổng thể, khả
+
+41
+
+năng truy xuất, phân phát và bảo mật cùng với việc kiểm tra tùy chọn của con người.
+Ngay cả trong thiết kế này, sự lệch lạc về mặt cấu trúc vẫn có thể xảy ra khi người đánh
+giá diễn giải tính tự nhiên theo cách khác; giao thức giải quyết vấn đề này bằng cách
+cung cấp các định nghĩa thang đánh giá với các ví dụ hoạt động trong quá trình giới thiệu
+người xếp hạng. Ngoài ra, các cấu trúc có độ tin cậy cao về khả năng truy xuất có thể
+nhạy cảm với thiết kế tấn công và các họ đối thủ khác nhau có thể tạo ra các cấu hình lỗi
+khác nhau [43, 44].
+Hiệu lực của khả năng tái tạo bị ảnh hưởng bởi sự trôi dạt trong thời gian chạy trong
+các bản sửa đổi mô hình, phần phụ trợ phục vụ và ngăn xếp thư viện. Để giảm sự mơ hồ,
+các bản ghi quy trình chạy siêu dữ liệu và các tệp kê khai thực thi. Một rủi ro liên quan
+là sự ghép nối số liệu, trong đó những cải tiến ở một trục sẽ ngăn chặn trục khác; điều
+này được xử lý bằng cách báo cáo cả lợi ích và sự đánh đổi thay vì thu gọn kết quả thành
+một điểm mờ đục duy nhất. Lựa chọn báo cáo này tuân theo các khuyến nghị gần đây
+trong thực tiễn đánh giá nhằm ngăn cản các yêu cầu một số đối với các hệ thống tương
+tác phức tạp [33, 28, 30].
+
+4.8
+
+So sánh với công việc trước đây và ý nghĩa thực tế
+
+Phát hiện trọng tâm không phải là một mô hình nào đó sẽ vượt trội hơn trên toàn cầu.
+Theo giao thức này, việc tích hợp trích xuất ngữ cảnh, truy xuất nhận thức bảo vệ và
+kiểm soát phản hồi sẽ cải thiện bối cảnh và chất lượng cá nhân so với nhánh ngữ cảnh
+thô, đồng thời cải thiện kết quả trong các nhóm đối thủ được thử nghiệm. So với công
+việc trước đây tập trung chủ yếu vào chất lượng tương tác [1] hoặc chất lượng tạo nhận
+thức truy xuất [19, 45], đóng góp ở đây là sự tích hợp rõ ràng của các thành phần này
+với kiểm soát khả năng chấp nhận thời gian chạy và đánh giá đối thủ trong một quy trình
+trong động cơ.
+Sự khác biệt này rất quan trọng đối với báo cáo khoa học. Nhiều nghiên cứu chứng
+minh những lời nhắc đầy hứa hẹn nhưng lại thiếu logic kiểm soát thời gian chạy, điều
+này làm suy yếu khả năng nhân rộng và mức độ phù hợp khi triển khai. Trong báo cáo
+này, đường dẫn thời gian chạy và đường dẫn đánh giá được kết hợp có chủ đích và các
+xác nhận quyền sở hữu được giới hạn bởi các tiêu chí rõ ràng. Mẫu được quan sát nhất
+
+42
+
+quán giữa các phần: độ tương phản kiểm soát phản hồi là tích cực đối với các số liệu chất
+lượng cốt lõi, cài đặt kích hoạt bảo vệ cải thiện kết quả trong các điều kiện bất lợi được
+thử nghiệm và hiệu quả của hệ thống vẫn là nút thắt chính. Đây là những phát hiện theo
+giao thức cụ thể, không phải là sự phân tách nguyên nhân đầy đủ và do đó không hàm ý
+mức tăng độ trễ tự động. Theo đó, tuyên bố định vị so sánh trong báo cáo này nằm trong
+phạm vi tài liệu đã được xem xét và quy trình đo lường, và không được trình bày dưới
+dạng tuyên bố phổ biến “đầu tiên trong lĩnh vực”.
+Từ góc độ kỹ thuật, cấu hình hiện tại vẫn phải được coi là nguyên mẫu có chất lượng
+và độ bền chứ không phải là điểm vận hành sản xuất cuối cùng: các biện pháp can thiệp
+cứng hiện đã thấp, nhưng khả năng chấp nhận lần đầu vẫn còn hạn chế và tốc độ phân
+phối vẫn chậm hơn so với đường cơ sở nhẹ. Nếu thông lượng là mục tiêu chính thì các
+cấu hình phân phối nhẹ hơn vẫn có lợi thế, bao gồm các cài đặt được tối ưu hóa xung
+quanh giải mã suy đoán và ngăn xếp phân phát hiệu quả về bộ nhớ [26, 27]. Ý nghĩa
+thực tế là chọn các điểm triển khai trên một giới hạn rõ ràng về chất lượng-độ trễ thay vì
+chỉ dựa trên tốc độ thô.
+Một ý nghĩa thực tế bổ sung là thiết kế quy trình làm việc. Các nhóm có thể áp dụng
+kiến trúc theo từng bước: đầu tiên giới thiệu các khai thác đánh giá và tuần tự hóa trạng
+thái, sau đó thêm truy xuất được bảo vệ và cuối cùng thêm kiểm soát phản hồi bằng các
+thử nghiệm chẵn lẻ. Việc tích hợp theo giai đoạn này giúp giảm rủi ro áp dụng cho các
+quy trình sản xuất hiện có trong khi vẫn duy trì khả năng truy xuất nguồn gốc của những
+lợi ích cụ thể bắt nguồn từ đâu.
+Ý nghĩa rộng hơn là liên ngành. Hệ thống này nằm ở giao điểm của AI trong trò chơi,
+tạo ngôn ngữ tự nhiên, bảo mật truy xuất và đánh giá lấy con người làm trung tâm. Kết
+quả là, sự tiến bộ phụ thuộc vào những tiến bộ phối hợp trong cả bốn lĩnh vực chứ không
+phải là những thành tựu riêng lẻ trong bất kỳ trường con nào. Khung liên ngành này cũng
+thúc đẩy phạm vi đánh giá của báo cáo: chất lượng tường thuật, tính xác thực và hành vi
+phục vụ được coi là cần thiết chung cho việc triển khai thực tế.
+
+43
+
+Chương 5: Kết luận, hàm ý và định hướng tương lai
+Chương này tổng hợp các phát hiện thành các kết luận khoa học có giới hạn và ý nghĩa
+triển khai. Nó phân biệt các tuyên bố được hỗ trợ với các hạn chế chưa được giải quyết
+và sau đó phác thảo các bước tiếp theo có hệ quả nhất cho cả nghiên cứu và thực hành.
+
+5.1
+
+Ý nghĩa đạo đức và chính sách đối với việc triển khai NPC
+
+Kiến trúc được thiết kế để giải trí tương tác nhưng hồ sơ rủi ro của nó không giới hạn
+ở chất lượng nội dung. Việc tạo dựa trên vai trò có thể khuếch đại các khuôn mẫu hoặc
+ngôn ngữ loại trừ nếu các định nghĩa về cá nhân hoặc kho dữ liệu truy xuất bị sai lệch
+và các quy trình truy xuất có thể bị khai thác thông qua các tạo tác đối nghịch có vẻ có
+thẩm quyền. Những lo ngại này phù hợp với các phân tích rộng hơn về rủi ro xã hội và
+an toàn trong các mô hình ngôn ngữ lớn [39, 40]. Để đáp lại, nghiên cứu này bao gồm
+đánh giá đối nghịch rõ ràng, kiểm tra khả năng chấp nhận ở cấp độ phản hồi và báo cáo
+minh bạch về cả sự đánh đổi giữa lợi ích và thất bại.
+Quản trị dữ liệu và sự tin cậy của người dùng thể hiện trục đạo đức thứ hai. Tương
+tác trong trò chơi tường thuật có thể chứa các tín hiệu hành vi nhạy cảm của người chơi,
+do đó, việc tuần tự hóa và ghi nhật ký ngữ cảnh phải giảm thiểu việc lưu giữ không cần
+thiết và tránh để lộ các thuộc tính trạng thái riêng tư. Mặc dù báo cáo này tập trung vào
+hiệu suất thuật toán hơn là thiết kế tuân thủ pháp luật, giao thức báo cáo được cấu trúc
+để hỗ trợ kiểm toán bên ngoài bằng cách thực hiện các thủ tục số liệu, khoảng tin cậy và
+kết quả kiểm tra căng thẳng có thể kiểm tra được. Điều này đặc biệt quan trọng khi hệ
+thống có thể bị thao túng thông qua các cuộc tấn công cấp độ nhắc nhở và cấp độ truy
+xuất [43, 44].
+Cuối cùng, việc triển khai có trách nhiệm đòi hỏi sự rõ ràng về những gì hệ thống
+không đảm bảo. Bằng chứng hiện tại hỗ trợ những cải tiến về chất lượng có căn cứ và
+độ tin cậy theo tiêu chuẩn được đánh giá, nhưng không thiết lập sự an toàn chung hoặc
+khái quát hóa phổ quát. Vì lý do này, các yêu cầu bồi thường được giới hạn trong các
+điều kiện được đo lường và các phát hiện tiêu cực sẽ được giữ lại. Chính sách này tuân
+theo cùng một nguyên tắc căn bản và các phương pháp tiếp cận theo hiến pháp: các cơ
+
+44
+
+chế an toàn phải được coi là những hạn chế vận hành đòi hỏi phải đo lường liên tục chứ
+không phải đảm bảo một lần [38].
+Từ góc độ quản lý, nên áp dụng chính sách sẵn sàng theo giai đoạn: trước tiên giảm
+gánh nặng can thiệp (dự phòng/thử lại) thông qua việc điều chỉnh lại ngưỡng và chính
+sách kịp thời ở các phi công được kiểm soát, sau đó đánh giá tính ổn định của phép đo
+từ xa trực tiếp và chỉ sau đó mới xem xét triển khai rộng hơn. Trình tự này điều chỉnh
+việc kiểm soát rủi ro hoạt động với bằng chứng đo lường được và ngăn chặn việc tối ưu
+hóa sớm cho sự thay đổi về phong cách gây tổn hại đến tính nhất quán và an toàn.
+
+5.2
+
+Những phát hiện chính và yêu cầu có giới hạn
+
+Bài viết này trình bày một hệ thống đầy đủ và khung đánh giá cho đối thoại NPC thông
+tin trạng thái trò chơi năng động trong trò chơi tường thuật. Quy trình được đề xuất thể
+hiện những cải tiến nhất quán về mức độ phù hợp với bối cảnh, tính nhất quán của từng
+cá nhân và chất lượng đối thoại tổng thể trên nhánh ngữ cảnh thô, cùng với các kết quả
+bất lợi có lợi trong các bài kiểm tra căng thẳng về ngộ độc/giả mạo lòng tin được đánh
+giá.
+Nghiên cứu đưa ra một kết luận có điều kiện thay vì một kết luận phổ quát: kiến trúc
+có lợi khi chất lượng nền tảng và độ mạnh mẽ là mục tiêu chính và kém thuận lợi hơn
+khi độ trễ là mục tiêu chính.
+
+5.3
+
+Hạn chế nghiên cứu
+
+Năm hạn chế là trung tâm. Đầu tiên, độ tin cậy hoạt động trong UE5 được cải thiện
+nhưng vẫn chưa hoàn thiện: dự phòng và thử lại thấp (0,0089 và 0,1071), tuy nhiên mức
+chấp nhận lần đầu vẫn là 0,3750 (Bảng 7), cho thấy sự phụ thuộc liên tục vào đường dẫn
+sửa chữa lớp điều khiển trong thời gian chạy. Thứ hai, các tuyên bố về tính ưu việt xuyên
+suốt các đường cơ sở bị nhầm lẫn bởi những khác biệt về điều kiện theo ngữ cảnh và do
+đó nên được hiểu là những khoảng trống ở cấp độ hệ thống hơn là những hiệu ứng kiến
+trúc biệt lập. Thứ ba, các so sánh đa chỉ số thăm dò được báo cáo mà không cần điều
+chỉnh bội số theo họ và chẩn đoán vận hành UE5 được ước tính từ một lần chạy điểm
+chuẩn chỉ với các khoảng nhị thức chính xác, không phải từ mô hình hiệu ứng hỗn hợp
+
+45
+
+chạy lặp lại; do đó những ước tính hoạt động này mang tính mô tả hơn là xác nhận. Thứ
+tư, lấy mẫu đánh giá con người ở quy mô thí điểm; kế hoạch phân công dựa trên quyền
+lực tiềm năng đã tồn tại cho một chiến dịch lớn hơn, nhưng xếp hạng mở rộng vẫn chưa
+được hoàn thành. Thứ năm, việc khái quát hóa ngoài các điều kiện kể chuyện-đóng vai
+vẫn chưa được xác minh đối với các thể loại tương tác nhanh hơn với các ràng buộc về
+thời gian phản hồi chặt chẽ hơn và sự phụ thuộc vào kịch bản vẫn không đáng kể (cỡ
+mẫu hiệu quả theo chữ ký mẫu ≈ 56, cỡ mẫu hiệu quả ở cấp nguồn = 8). Những hạn
+chế này giữ cho kết luận có điều kiện có chủ ý hơn là phổ quát.
+
+5.4
+
+Chương trình nghiên cứu trong tương lai
+
+Công việc trong tương lai nên tập trung vào năm nâng cấp cụ thể: hiệu chỉnh ngưỡng
+kiểm soát được điều chỉnh theo trạng thái để giảm gánh nặng dự phòng/thử lại theo giới
+hạn an toàn cố định, tăng tốc duy trì chất lượng cho hoạt động trong thời gian chạy có
+mức độ can thiệp thấp hơn, nhãn truy xuất rộng hơn và mở rộng kịch bản có độ phụ thuộc
+thấp hơn để có giá trị bên ngoài mạnh hơn, hoạt động lặp lại của UE5 với mô hình không
+chắc chắn về tác động hỗn hợp cho các tuyên bố về độ ổn định và hoàn thành chiến dịch
+đánh giá con người lớn hơn theo kế hoạch điện năng với tính đa dạng của người đánh giá
+rộng hơn. Các bước này là cần thiết để xác định xem liệu lợi ích quan sát được có khái
+quát hóa trong khối lượng công việc rộng hơn và các ràng buộc chặt chẽ hơn về thời gian
+thực hay không.
+
+46
+
+Tuyên bố về hiện vật và khả năng tái tạo
+Tất cả các kết luận định lượng trong báo cáo này đều dựa trên các gói hiện vật bổ sung
+được phiên bản, bao gồm các bảng kê khai lần chạy, tóm tắt số liệu, báo cáo khoảng tin
+cậy, dấu vết điểm chuẩn thô và tập lệnh phân tích. Gói này được cấu trúc để hỗ trợ xác
+minh độc lập mọi kết quả bằng số được báo cáo.
+
+Phụ lục A: Các giao thức tái lập và các phương pháp mở rộng
+Phần phụ lục này củng cố các chi tiết thủ tục cần thiết để tái tạo độc lập các kết quả
+được báo cáo. Nó mở rộng các quyết định ở cấp độ triển khai, cài đặt giao thức và quy
+ước kiểm tra được tóm tắt trong các chương chính.
+
+A.1
+
+Phân loại kịch bản
+
+Bộ kịch bản 112 được tạo ra để giải quyết tính không đồng nhất về nguyên mẫu, loại
+xung đột, loại vị trí và trạng thái hành vi. Các nguyên mẫu bao gồm các vai trò bảo vệ,
+học giả, thương gia, người chữa bệnh, kẻ sống ngoài vòng pháp luật và chuyên gia nghi
+lễ. Các loại xung đột bao gồm từ chối, đàm phán, khẩn cấp, nỗ lực lừa dối và xung đột
+ký ức. Các danh mục địa điểm bao gồm bối cảnh thành phố, đền thờ, vùng hoang dã, hải
+quân, hội trường luật và thị trường. Các trạng thái hành vi bao gồm các chế độ tuần tra,
+điều tra, sẵn sàng chiến đấu, xã hội nhàn rỗi, bàn giao nhiệm vụ và phục hồi.
+Mục tiêu thiết kế là giảm bớt việc trang bị quá mức thành một kiểu nhắc nhở và tạo ra
+sự khác biệt có ý nghĩa cho việc kiểm tra bối cảnh và tính cách. Mỗi kịch bản bao gồm
+các khóa ngữ cảnh dự kiến và tín hiệu vai trò để hỗ trợ tính toán số liệu và kiểm tra định
+tính.
+
+A.2
+
+Đặc tả tuần tự hóa theo ngữ cảnh và lời nhắc
+
+Bố cục lời nhắc mang tính quyết định với các phần được giới hạn: khối cá nhân, khối
+ngữ cảnh, khối bằng chứng truy xuất và cách nói của người dùng. Khóa ngữ cảnh được
+chuẩn hóa để giảm sự mơ hồ về bí danh. Tránh tạo khóa dạng tự do trong thời gian chạy;
+chỉ các khóa được xác định trước mới được phát ra bởi các mô-đun trích xuất ngữ cảnh.
+
+47
+
+Thiết kế này đơn giản hóa logic của trình phân tích cú pháp và giảm xác suất lỗi trong
+quá trình xử lý hậu kỳ tiếp theo.
+
+A.3
+
+Đặc tả kiểm soát phản hồi
+
+Bộ điều khiển phản hồi đánh giá kết quả đầu ra của ứng viên thông qua một chuỗi
+kiểm tra cấu trúc và ngữ nghĩa bao gồm lọc mẫu bị cấm, tính điểm căn chỉnh khóa ngữ
+cảnh, đánh giá tính nhất quán theo kiểu cá nhân cũng như kiểm tra độ dài và độ mạch
+lạc tối thiểu trước khi áp dụng các quyết định dự phòng. Việc triển khai C++ phản ánh
+hành vi phía Python để ngăn chặn sự khác biệt giữa điểm chuẩn và thời gian chạy. Để
+chẩn đoán độ ổn định thực tế, các tín hiệu tự nhất quán được lấy mẫu cũng được giám
+sát dưới dạng kênh cảnh báo phụ, tuân theo nguyên tắc nhất quán hộp đen được thể hiện
+trong công việc phát hiện ảo giác như SelfCheckGPT [32].
+
+A.4
+
+Giao thức truy xuất đối nghịch
+
+Các tập hợp đối thủ bao gồm các tài liệu độc hại và các biến thể giả mạo độ tin cậy
+bắt chước thẩm quyền siêu dữ liệu. Đường cơ sở được truy xuất mà không bị phạt bảo
+vệ. Điều kiện được bảo vệ áp dụng các hình phạt rủi ro/tin cậy và kiểm tra chỉ thị trước
+khi xếp hạng cuối cùng. Sự thành công của cuộc tấn công được đo lường bằng việc hệ
+thống có tuân theo các chỉ thị bị nhiễm độc hay không. Khung nhị phân này là bảo thủ
+có chủ ý.
+
+A.5
+
+Giao thức đánh giá con người
+
+Chiến dịch sử dụng ba người xếp hạng độc lập và chia sẻ sự chồng chéo để ước tính
+sự đồng thuận giữa những người xếp hạng. Các số liệu được chuẩn hóa thành [0,1] và
+bao gồm mức độ liên quan của bối cảnh, tính nhất quán về tính cách, tính tự nhiên và
+chất lượng tổng thể. Kappa theo cặp được báo cáo theo số liệu và được tổng hợp theo
+giá trị trung bình.
+
+48
+
+A.6
+
+Môi trường tính toán và thời gian chạy
+
+Việc cung cấp và đánh giá được thực thi bằng các điểm cuối suy luận cục bộ và siêu
+dữ liệu máy chủ được ghi lại. Quy trình ghi lại ID mô hình, lời nhắc và thông số cấu hình
+(nhiệt độ, mã thông báo tối đa) để hỗ trợ chạy lại. Các bản dựng C++ dựa trên CMake
+và điều phối Python được thực thi thông qua các tệp kê khai lệnh có thể tái tạo. Đối với
+các bản dựng báo cáo xác định, tài liệu được biên soạn từ thư mục docs/ chỉ sử dụng
+XeLaTeX (xelatex IEEE_FULL_PAPER.tex chạy ít nhất hai lần và lần thứ ba chạy sau
+các chỉnh sửa nhãn hoặc trích dẫn chính). Các thư mục làm việc hỗn hợp hoặc các lần
+chạy pdfLaTeX có thể tạo ra các cảnh báo tham chiếu phụ cũ khi có trang bìa Unicode.
+
+A.7
+
+Giao thức sàng lọc tài liệu để định vị so sánh
+
+Tuyên bố định vị so sánh trong Chương 2 dựa trên tìm kiếm tường thuật có mục tiêu,
+không dựa trên đánh giá hệ thống chính thức theo phong cách PRISMA [52]. Các nguồn
+tìm kiếm là IEEE Xplore, Thư viện kỹ thuật số ACM, ACL Anthology và arXiv trong
+khoảng thời gian từ tháng 1 năm 2020 đến tháng 2 năm 2026. Họ truy vấn bao gồm các
+kết hợp của: “đối thoại NPC” HOẶC “tác nhân trò chơi LLM”; “ nền tảng trạng thái
+trò chơi ”; “ thế hệ tăng cường truy xuất ” AND (“ đầu độc ” HOẶC “ tiêm nhắc nhở ”
+HOẶC “ giả mạo lòng tin ”); và “ đánh giá thời gian chạy ” HOẶC “ điểm chuẩn trong
+động cơ ”. Các mẫu truy vấn có thể tái tạo được xác định là các trường văn bản trên
+tiêu đề/trừu tượng/từ khóa, bao gồm: 𝑄1 : (“đối thoại NPC” HOẶC “đối thoại nhân vật
+không phải người chơi”) AND (“mô hình ngôn ngữ lớn” HOẶC LLM) AND (trò chơi
+HOẶC “trò chơi tường thuật”); 𝑄2 : (“trạng thái trò chơi” HOẶC “trạng thái thế giới”)
+AND (nền tảng HOẶC bối cảnh) AND (đối thoại HOẶC tương tác); 𝑄3 : (“thế hệ tăng
+cường truy xuất” HOẶC RAG) AND (ngộ độc HOẶC “ tiêm nhắc nhở ” HOẶC “ tiêm
+nhắc nhở gián tiếp ” HOẶC “ giả mạo tin cậy ”); 𝑄4 : (“thời gian chạy” HOẶC “trong
+động cơ”) AND (đánh giá HOẶC điểm chuẩn) AND (tác nhân HOẶC hội thoại).
+Tiêu chí đưa vào là: mức độ liên quan trực tiếp đến đối thoại trò chơi/NPC tương tác
+hoặc kiểm soát thời gian chạy tác nhân LLM liền kề, mô tả phương pháp rõ ràng và chi
+tiết đánh giá theo kinh nghiệm đủ để định vị so sánh. Tiêu chí loại trừ là: các ý kiến thuần
+
+49
+
+túy mang tính khái niệm không có phương pháp thực nghiệm, các miền không phải trò
+chơi không có cơ chế kiểm soát thời gian chạy có thể chuyển nhượng và các bản ghi
+không phải tiếng Anh thiếu chi tiết kỹ thuật cần thiết để so sánh ở cấp độ phương pháp.
+Định dạng trích dẫn ưu tiên siêu dữ liệu địa điểm lưu trữ và DOI khi có sẵn có thể
+kiểm chứng được. Các hồ sơ chỉ in trước được giữ lại khi không có phiên bản lưu trữ
+nào có thể được xác nhận khi đóng băng báo cáo và chúng được trình bày rõ ràng dưới
+dạng bản in trước thay vì các bản thay thế tương đương bằng chứng cho các địa điểm
+được bình duyệt. Cuộc kiểm tra địa điểm cuối cùng được thực hiện vào ngày 4 tháng
+3 năm 2026 với DBLP và Crossref; các mục vẫn ở dạng arXiv/CoRR không có siêu dữ
+liệu địa điểm lưu trữ được xác minh vào ngày đó.
+Bởi vì quá trình này được nhắm mục tiêu và dựa trên giả thuyết nên nó hỗ trợ định vị
+so sánh trong phạm vi nhưng không đảm bảo phạm vi bao phủ trường đầy đủ. Ngoài ra,
+số lượng luồng sàng lọc theo kiểu PRISMA không được duy trì do việc đánh giá không
+được thực hiện như một giao thức đánh giá hệ thống chính thức. Vì lý do này, Chương
+2 không khẳng định tính mới “đầu tiên trong lĩnh vực”; nó báo cáo bằng chứng so sánh
+có giới hạn trong phạm vi rõ ràng và các ràng buộc về giao thức.
+
+50
+
+Phụ lục B: Giải thích mở rộng và ghi chú so sánh
+Phần phụ lục này cung cấp các phần mở rộng diễn giải có thể làm gián đoạn luồng lập
+luận chính. Nó giữ lại sắc thái so sánh, bối cảnh hạn chế bổ sung và phản ánh thiết kế
+trong khi vẫn duy trì nguyên tắc xác nhận quyền sở hữu từ các chương cốt lõi.
+
+B.1
+
+Giới hạn phạm vi so sánh
+
+Công việc này so sánh với các đường cơ sở bên ngoài theo các hướng dẫn và bộ dữ
+liệu giống hệt nhau, phù hợp cho việc đo điểm chuẩn kỹ thuật nhưng không tương đương
+với việc sao chép giao thức đầy đủ của từng bài viết được trích dẫn. Do đó, các kết luận
+trong báo cáo này bị giới hạn ở các trục được đo trực tiếp trong các hiện vật chuẩn được
+ghi lại.
+
+B.2
+
+Kế hoạch công việc trong tương lai
+
+Lộ trình trước mắt bao gồm tăng tốc đường dẫn giải mã với kiểm tra tính tương đương
+về chất lượng, mở rộng bộ nhãn truy xuất chính thức, các nghiên cứu hỗn hợp giữa chủ
+thể con người và chuyên gia đánh giá lớn hơn, báo cáo biên giới phục vụ chất lượng
+tương đương rõ ràng và hiệu chỉnh nhận thức không chắc chắn về ngưỡng kiểm soát
+phản hồi.
+
+B.3
+
+Báo cáo khả năng tái tạo chi tiết
+
+Phần này được cố ý chi tiết hóa để phục vụ hai mục tiêu: thứ nhất, ghi lại logic triển
+khai đầy đủ để tái tạo độc lập; thứ hai, để cung cấp chiều sâu thường được mong đợi
+trong các tài liệu kỹ thuật có định dạng dài trong đó sự đóng góp kết hợp giữa thiết kế hệ
+thống, giao thức đánh giá và các ràng buộc triển khai thay vì tính mới của một mô hình
+duy nhất. Văn bản bên dưới được tổ chức dưới dạng tài liệu thủ tục theo phong cách
+tường thuật của IEEE.
+Báo cáo về phương pháp được điều chỉnh phù hợp với phương pháp thực hành ưu tiên
+khả năng tái tạo: mọi lần chạy điểm chuẩn đều được liên kết với một tệp kê khai chứa
+danh tính mô hình, cấu hình giải mã, lát cắt kịch bản và đầu ra tạo tác được đóng dấu
+
+51
+
+băm. Mục đích là làm cho mỗi số được báo cáo có thể theo dõi được từ bảng báo cáo
+đến trạng thái chạy thực thi, nhất quán với các đề xuất từ các sáng kiến về khả năng tái
+tạo trong máy học [34].
+Việc xây dựng kịch bản tuân theo cách tiếp cận mở rộng theo khuôn mẫu. Định nghĩa
+kịch bản cơ sở chứa nguyên mẫu, ngôn ngữ, mục tiêu xung đột, biến trạng thái và điều
+kiện thành công. Trình tạo mở rộng từng cơ sở bằng cách thay đổi một hoặc nhiều thứ
+nguyên trong khi vẫn duy trì các ràng buộc về giá trị ngữ nghĩa. Ví dụ: nếu nguyên mẫu
+là ”học giả đền thờ”, các biến thể xung đột có thể bao gồm việc đưa thông tin sai lệch,
+ghi đè khẩn cấp, thách thức trí nhớ mâu thuẫn và giả mạo quyền lực; tuy nhiên, các mẫu
+xung đột thương mại vật phẩm bị vô hiệu hóa trừ khi kịch bản bao gồm khóa ngữ cảnh
+kinh tế.
+Xác thực dữ liệu xảy ra trong ba giai đoạn. Đầu tiên, xác thực lược đồ sẽ kiểm tra
+các khóa bắt buộc, phạm vi giá trị được phép và các trường văn bản không trống. Thứ
+hai, xác thực ràng buộc thực thi tính nhất quán giữa các trường, ví dụ như ngăn chặn quá
+trình chuyển đổi trạng thái nhiệm vụ bỏ qua các cờ điều kiện tiên quyết bắt buộc. Thứ
+ba, quá trình xác thực khả năng tương thích đánh giá chạy từng hàng thông qua tập lệnh
+số liệu để đảm bảo rằng tất cả các trường bắt buộc để tính điểm theo ngữ cảnh đều có
+mặt.
+Quá trình trên làm giảm sự sai lệch dữ liệu thầm lặng và giảm đáng kể các lỗi xảy ra
+ở hạ lưu trong suy luận hàng loạt. Điều này rất quan trọng khi chạy hàng loạt trong thời
+gian dài trên phần cứng bị hạn chế, trong đó việc thử lại sẽ làm tăng tính không ổn định
+trong thời gian chạy.
+Quá trình biên dịch prompt phân bổ ngân sách mã thông báo cho bốn khối: đặc tả cá
+nhân, bối cảnh động, bằng chứng truy xuất và lượt người dùng. Thay vì cắt ngắn tĩnh,
+trình biên dịch áp dụng cắt bớt theo mức ưu tiên, trong đó các đặc điểm cốt lõi của tính
+cách được giữ ở mức ưu tiên cao nhất, hành vi ngay lập tức và trạng thái nhiệm vụ được
+giữ trước bối cảnh lịch sử, bằng chứng truy xuất được cắt bớt theo mức độ liên quan có
+trọng số tin cậy và lịch sử đối thoại được giữ lại theo chiến lược gần đây cộng với neo.
+Trong thực tế, chiến lược này cải thiện tính trung thực theo ngữ cảnh so với cắt ngắn đơn
+giản trong khi vẫn duy trì độ dài prompt giới hạn.
+
+52
+
+Đặt 𝑟𝑖 là mức độ liên quan của việc truy xuất cơ sở và 𝑔𝑖 là hình phạt bảo vệ:
+𝑠𝑖 = 𝑟𝑖 − 𝜆𝑔𝑖 ,
+trong đó 𝑔𝑖 tổng hợp điểm tín hiệu tiêm, khả năng giả mạo độ tin cậy và kiểm tra tính
+không nhất quán của siêu dữ liệu. Hồ sơ ứng viên được xếp hạng theo 𝑠𝑖 chứ không phải
+𝑟𝑖 . Điều này khác với xếp hạng chỉ truy xuất thông thường và hỗ trợ trực tiếp mục tiêu
+chuẩn bảo mật.
+Với thế hệ thô 𝑦,̂ điều khiển phản hồi sẽ tính toán:
+𝐹(𝑦)
+̂ = 𝑤𝑐 𝜙𝑐 + 𝑤𝑝 𝜙𝑝 + 𝑤𝑛 𝜙𝑛 − 𝑤𝑣 𝜙𝑣 ,
+trong đó 𝜙𝑐 là tính nhất quán của ngữ cảnh, 𝜙𝑝 phong cách cá nhân, 𝜙𝑛 proxy về tính tự
+nhiên và nguy cơ vi phạm 𝜙𝑣 . Nếu 𝐹(𝑦)
+̂ < 𝜏, chính sách dự phòng sẽ kích hoạt việc tạo
+phản hồi an toàn có căn cứ. Ngưỡng được điều chỉnh theo các kịch bản phát triển và sau
+đó được cố định để chạy điểm chuẩn.
+Các đánh giá lớn được thực hiện ở chế độ hàng loạt với tính bền vững ở trạng thái
+chạy. Trong mỗi lô, trình chạy sẽ tải lát kịch bản tiếp theo, thực thi tất cả các nhánh trong
+cài đặt tạo cố định, ghi nhật ký phản hồi và yêu cầu thô ngay lập tức, cập nhật bảng kê
+khai điểm kiểm tra và tính toán số liệu tình trạng theo từng lô. Nếu xảy ra gián đoạn quá
+trình, việc thực thi sẽ tiếp tục từ chỉ mục lô hoàn thành cuối cùng. Thiết kế này là cần
+thiết vì các phiên ghi chép dài trên đám mây có thể kết thúc bất ngờ.
+Ba biện pháp bảo vệ được sử dụng: không nạp NaN tổng hợp cho các nhánh bị thiếu,
+kiểm tra tỷ lệ thành công tối thiểu của nhánh trước khi phát xạ tóm tắt và tiêu chí về tính
+đầy đủ bằng chứng ngăn chặn phát xạ tóm tắt khi không có kiểm tra bắt buộc. Những
+biện pháp kiểm soát này đơn giản nhưng hiệu quả trong việc ngăn chặn việc phóng đại
+một cách vô tình do các lần chạy không đầy đủ.
+
+B.4
+
+Thảo luận so sánh bổ sung
+
+So với các hệ thống tác nhân tạo ưu tiên mô phỏng xã hội và vòng lặp bộ nhớ phản
+chiếu [1], kiến trúc hiện tại hẹp hơn về phạm vi hành vi nhưng mạnh hơn về thiết bị đo
+
+53
+
+thời gian chạy và kiểm soát suy luận. Do đó, đóng góp dự định không phải là chủ nghĩa
+hiện thực xã hội rộng rãi mà là cuộc đối thoại có căn cứ trên cơ sở nhà nước có thể kiểm
+tra được dưới các ràng buộc về động cơ trong một giao thức chuẩn cố định.
+So với tài liệu về hiệu quả cung cấp, giải mã suy đoán và công cụ cung cấp được tối
+ưu hóa mang lại lợi thế về thông lượng rõ ràng trong nhiều khối lượng công việc [26, 27].
+Hệ thống hiện tại không hoạt động tốt hơn các tiêu chuẩn cơ bản về độ trễ hoặc thông
+lượng và kết quả tiêu cực này được giữ lại một cách rõ ràng để tách biệt những cải thiện
+về chất lượng và độ bền với kết quả về hiệu quả của hệ thống.
+So với tài liệu về thế hệ dựa trên truy xuất, các quy trình truy xuất-cộng-phê bình và
+tăng cường biểu đồ hiện đại cải thiện điều kiện thực tế [19, 45, 46], nhưng việc xử lý
+bằng chứng đối nghịch vẫn tương đối ít được báo cáo trong các quy trình dành riêng cho
+trò chơi. Trong nghiên cứu này, một mức tăng đáng chú ý được quan sát là trên trục độ
+mạnh, trong đó việc truy xuất được bảo vệ mang lại 0 trường hợp theo sau cuộc tấn công
+được quan sát trong giao thức căng thẳng được đánh giá (hai họ được thử nghiệm, mỗi
+họ 𝑛 = 100), không nên khái quát hóa ngoài phạm vi đó.
+Liên quan đến công việc căn chỉnh và học tập theo sở thích [16, 37, 38], lựa chọn thiết
+kế trong bài viết này là để bổ sung cho việc căn chỉnh thời gian đào tạo với kiểm soát
+thời gian chạy. Kiểm soát phản hồi được coi là lớp chấp nhận xác định có thể thực thi
+các ràng buộc về bối cảnh và cá nhân theo từng lượt, ngay cả khi độ tin cậy của thế hệ
+ngược dòng không ổn định.
+Cuối cùng, liên quan đến thực tiễn đánh giá chỉ dựa trên việc chấm điểm theo phong
+cách chồng chéo, báo cáo này áp dụng mô hình bằng chứng rộng hơn kết hợp các số liệu
+bối cảnh và tính cách, kiểm tra ý nghĩa suy luận, kết quả ưu tiên và thống kê thỏa thuận
+[22, 29, 28, 30, 47]. Cấu trúc này nhằm mục đích cải thiện tính hợp lệ của cấu trúc đối
+với cuộc đối thoại giữa trò chơi và tường thuật, trong đó việc tuân thủ trạng thái nghiêm
+ngặt cũng quan trọng như sự trôi chảy.
+
+B.5
+
+Phân loại lỗi
+
+Phân tích lỗi sử dụng năm lớp cấp cao: thiếu sót ngữ cảnh, trong đó phản hồi bỏ qua
+một biến trạng thái quan trọng; sự trôi dạt của tính cách, trong đó phong cách phản hồi
+
+54
+
+khác với hồ sơ vai trò của NPC; chiếm quyền điều khiển, trong đó các tín hiệu truy xuất
+độc hại hoặc không liên quan chuyển hướng hành vi; sự không nhất quán về thời gian,
+trong đó phản ứng mâu thuẫn với ký ức đối thoại gần đây; và ngôn ngữ bị hạn chế quá
+mức, trong đó áp lực kiểm soát tạo ra văn bản cứng nhắc nhưng kém tự nhiên hơn.
+Mỗi lớp được theo dõi với các ví dụ trong quá trình xác thực. Trong thực tế, việc thiếu
+sót bối cảnh và sự trôi dạt về tính cách chiếm ưu thế trong các lỗi cơ bản; ngôn ngữ bị
+hạn chế quá mức xuất hiện nhiều hơn trong các bối cảnh được kiểm soát chặt chẽ và giải
+thích một phần sự cân bằng giữa tính tự nhiên và các đường cơ sở không bị ràng buộc.
+Thiếu sót bối cảnh thường xuất hiện khi mô hình bỏ qua giai đoạn nhiệm vụ đang
+hoạt động hoặc trạng thái tồn kho trong khi trả lời các yêu cầu hành động; do đó, việc
+giảm thiểu làm tăng trọng số khóa ngữ cảnh trong điểm kiểm soát phản hồi và duy trì các
+trường nhiệm vụ trong quá trình cắt mã thông báo. Sự trôi dạt về vai trò xuất hiện khi
+các câu trả lời trở lại giọng điệu trợ lý chung chung hoặc những lời từ chối giống như
+chính sách tách rời khỏi giọng nói vai trò; biện pháp giảm nhẹ củng cố các neo cá nhân
+trong lời mở đầu nhanh chóng và áp dụng kiểm tra kiểu cá nhân chuyên dụng trong bộ
+điều khiển. Cướp truy xuất xuất hiện khi các chỉ thị bị đầu độc trong bằng chứng cấp cao
+được tuân theo; biện pháp giảm thiểu sử dụng các hình phạt bảo vệ, xác minh nguồn có
+thẩm quyền và ngăn chặn tín hiệu chỉ thị trước khi lựa chọn bằng chứng cuối cùng. Sự
+mâu thuẫn về thời gian xuất hiện khi các ngã rẽ liền kề mâu thuẫn với nhau; giảm thiểu
+sử dụng các bản cập nhật bộ nhớ giới hạn với các lượt neo. Đầu ra quá hạn chế xuất hiện
+dưới dạng ngôn ngữ lặp đi lặp lại nhưng an toàn; biện pháp giảm thiểu điều chỉnh các
+ngưỡng kiểm soát và đưa ra những biến đổi ngẫu nhiên có giới hạn khi rủi ro vẫn ở mức
+thấp.
+
+B.6
+
+Phân tích trường hợp định tính
+
+Để bổ sung cho các số liệu tổng hợp, phân tích trường hợp đại diện đã được thực hiện
+trên các điều kiện bảo mật, grounding, cá nhân, tiếng ồn truy xuất và độ trễ nhạy cảm.
+Trong trường hợp cơ quan có thẩm quyền bị đầu độc, người dùng yêu cầu nội dung nghi
+lễ bị hạn chế bằng cách sử dụng bằng chứng nghị định giả mạo: đường cơ sở tuân theo
+các chỉ thị giả mạo, trong khi hệ thống được bảo vệ từ chối yêu cầu bằng lý luận dựa trên
+
+55
+
+ngữ cảnh, phù hợp với mức giảm ASR đo được. Trong trường hợp xung đột nhiệm vụ,
+người dùng tuyên bố rằng một nhiệm vụ đã hoàn thành: nhánh ngữ cảnh thô có thể chấp
+nhận câu lệnh mà không cần xác minh trạng thái, trong khi nhánh được kiểm soát tham
+chiếu các cờ nhiệm vụ và yêu cầu thiếu các điều kiện tiên quyết. Trong trường hợp căng
+thẳng về cá nhân, lời nhắc buộc áp dụng tiếng lóng hiện đại đối với một NPC chính thức:
+đường cơ sở thay đổi giọng điệu, trong khi nhánh được điều khiển vẫn giữ nguyên giọng
+nói của vai trò trong khi vẫn trả lời nội dung. Trong các trường hợp truy xuất không rõ
+ràng, bằng chứng miền hỗn hợp làm tăng nguy cơ ảo giác; xếp hạng được bảo vệ ngăn
+chặn các tài liệu không khớp có rủi ro cao và giảm rò rỉ giữa các miền. Trong các trường
+hợp nhạy cảm với độ trễ, các đường cơ sở nhẹ phản hồi nhanh hơn với nền tảng yếu hơn,
+trong khi cấu hình ứng cử viên phản hồi chậm hơn với tính nhất quán trạng thái mạnh
+hơn, minh họa sự đánh đổi rõ ràng về chất lượng-độ trễ.
+
+56
+
+Phụ lục C: Bảng toàn diện và danh mục kịch bản
+Phần phụ lục này chứa bằng chứng dạng bảng dài hỗ trợ các tuyên bố thống kê chính
+nhưng quá lớn đối với phần tường thuật cốt lõi. Các bảng được lưu giữ ở định dạng
+hướng tham chiếu để truy xuất nguồn gốc và phân tích lại.
+
+C.1
+
+Bảng bổ trợ
+
+Table 14: Số liệu cốt lõi từ đánh giá điểm chuẩn đầy đủ mới nhất.
+Nhánh
+
+Mức phù hợp ngữ cảnh
+
+Nhất quán vai trò
+
+Tính tự nhiên
+
+Chất lượng tổng thể
+
+BERTScore F1
+
+proposed_contextual_controlled
+
+0.2764
+
+0.3084
+
+proposed_contextual_controlled_alt
+
+0.2505
+
+0.3122
+
+0.9062
+
+0.3811
+
+0.1000
+
+0.8976
+
+0.3697
+
+0.0953
+
+proposed_contextual
+
+0.0921
+
+candidate_no_context
+
+0.0226
+
+0.1575
+
+0.8095
+
+0.2371
+
+0.0794
+
+0.1565
+
+0.8169
+
+0.2056
+
+baseline_no_context (phi3:mini)
+
+0.0382
+
+0.0403
+
+0.1933
+
+0.8786
+
+0.2363
+
+0.0497
+
+baseline_no_context_phi3_latest
+
+0.0361
+
+0.1855
+
+0.8821
+
+0.2336
+
+0.0577
+
+Table 15: Phục vụ so sánh từ đánh giá điểm chuẩn hệ thống mới nhất.
+Model
+
+TTFT mean (ms)
+
+Total time mean (ms)
+
+Tokens/s mean
+
+Error rate
+
+elara-npc:latest
+
+542.62
+
+3601.54
+
+18.45
+
+0.00
+
+phi3:mini
+
+273.86
+
+3138.41
+
+18.86
+
+0.00
+
+Table 16: Tóm tắt truy xuất và bảo mật đối nghịch từ các hiện vật chuẩn.
+Condition
+
+Hit@5
+
+MRR
+
+nDCG@5
+
+BM25
+
+1.0000
+
+0.8500
+
+0.8893
+
+Keyword overlap 0.9000
+
+0.8333
+
+0.8500
+
+Random
+
+0.4000
+
+0.1650
+
+0.2204
+
+Reranker method
+
+0.9000
+
+0.8000
+
+0.8262
+
+Chỉ số bảo mật
+
+Đường cơ sở
+
+Có bảo vệ
+
+ASR (poisoned set)
+
+1.0000
+
+0.0000
+
+ASR (trust-spoofed set)
+
+1.0000
+
+0.0000
+
+Relative ASR reduction
+
+—
+
+1.0000
+
+57
+
+C.2
+
+Chỉ số kịch bản đầy đủ (112 kịch bản)
+
+Danh mục đầy đủ 112 hàng được tạo từ tám kịch bản nguồn với 14 biến thể được kiểm
+soát trên mỗi nguồn dưới sự đa dạng hóa có kiểm soát chữ ký thay vì một chu trình xác
+định duy nhất. Mỗi hàng mang một chữ ký mẫu trên họ xung đột, họ vị trí, trạng thái
+hành vi, điểm đánh dấu mức độ khẩn cấp và điểm đánh dấu áp lực hướng dẫn. Tập kết
+quả chứa 71 chữ ký duy nhất trên 112 hàng (tỷ lệ = 0.6339); Chia sẻ tối đa ở cấp nguồn
+là 0,125 và chia sẻ tối đa chữ ký mẫu là 0,0357. Thiết kế này cải thiện sự thay đổi ở cấp
+độ hàng trong khi vẫn duy trì khả năng cân bằng có thể tái tạo, nhưng sự phụ thuộc vẫn
+khác không; do đó, các tóm tắt về độ không đảm bảo ở cấp độ kịch bản nên được hiểu là
+các ước tính trong thiết kế.
+Table 17: Chỉ số phân loại cấp kịch bản được sử dụng trong đánh giá chính.
+
+ID
+
+Nguyên mẫu
+
+Địa điểm
+
+Xung đột
+
+Trạng thái hành vi
+
+Trục căng thẳng chính
+
+S001
+
+Vệ binh
+
+S002
+
+Học giả
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S003
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S004
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S005
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S006
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S007
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S008
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S009
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S010
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S011
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S012
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S013
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S014
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S015
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S016
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S017
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S018
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S019
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S020
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S021
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S022
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S023
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S024
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S025
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S026
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S027
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S028
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S029
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S030
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S031
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S032
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+58
+
+ID
+
+Nguyên mẫu
+
+Địa điểm
+
+Xung đột
+
+Trạng thái hành vi
+
+Trục căng thẳng chính
+
+S033
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S034
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S035
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S036
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S037
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S038
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S039
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S040
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S041
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S042
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S043
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S044
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S045
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S046
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S047
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S048
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S049
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S050
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S051
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S052
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S053
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S054
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S055
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S056
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S057
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S058
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S059
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S060
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S061
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S062
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S063
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S064
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S065
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S066
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S067
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S068
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S069
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S070
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S071
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S072
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S073
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S074
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S075
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S076
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S077
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S078
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S079
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S080
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S081
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S082
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S083
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S084
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S085
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S086
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S087
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+59
+
+ID
+
+Nguyên mẫu
+
+Địa điểm
+
+Xung đột
+
+Trạng thái hành vi
+
+Trục căng thẳng chính
+căng thẳng chống giả mạo tin cậy
+
+S088
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+S089
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S090
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S091
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S092
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S093
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S094
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S095
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S096
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S097
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S098
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S099
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S100
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S101
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S102
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S103
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S104
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S105
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S106
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+S107
+
+Kẻ ngoài vòng pháp luật
+
+Pháp đường
+
+Đàm phán
+
+Bàn giao nhiệm vụ
+
+căng thẳng ranh giới vai trò
+
+S108
+
+Người hành lễ
+
+Chợ
+
+Yêu cầu tài nguyên
+
+Hồi phục
+
+căng thẳng tuân thủ an toàn
+
+S109
+
+Vệ binh
+
+Thành phố
+
+Khẩn cấp
+
+Tuần tra
+
+căng thẳng bám ngữ cảnh
+
+S110
+
+Học giả
+
+Đền thờ
+
+Lừa dối
+
+Điều tra
+
+căng thẳng độ tin cậy bằng chứng
+
+S111
+
+Thương nhân
+
+Hoang dã
+
+Mâu thuẫn ký ức
+
+Sẵn sàng chiến đấu
+
+căng thẳng nhất quán thời gian
+
+S112
+
+Lương y
+
+Bến cảng
+
+Giả mạo thẩm quyền
+
+Nhàn đàm
+
+căng thẳng chống giả mạo tin cậy
+
+C.3
+
+Ma trận truy xuất nguồn gốc câu hỏi nghiên cứu
+Table 18: Truy xuất nguồn gốc từ các câu hỏi nghiên cứu đến việc thực hiện và tạo tác bằng
+chứng.
+
+Mục tiêu
+
+Lộ trình triển khai
+
+Chỉ số/kiểm tra
+
+Bằng chứng tạo tác
+
+RQ1 cải thiện
+
+các nhánh theo ngữ cảnh có
+
+delta theo cặp trên 𝐶𝑅, 𝑃𝐶, 𝑁, 𝑂𝑄
+
+báo cáo ý nghĩa theo cặp
+
+theo ngữ cảnh
+
+và không có kiểm soát phản
+
+có kiểm soát
+
+hồi
+
+RQ2 so sánh
+
+giao thức lời nhắc cố định
+
+Δ𝑂𝑄 và kiểm tra cận dưới CI
+
+báo cáo so sánh đa mô hình
+
+với đường cơ
+
+với các đường cơ sở phi3
+báo cáo điểm chuẩn đối kháng
+
+sở bên ngoài
+RQ3 độ vững
+
+truy xuất kết hợp có bảo vệ
+
+ASR, mức giảm ASR tương đối,
+
+đối kháng
+
+dưới đầu độc và giả mạo
+
+Safe@1
+
+RQ4 đánh đổi
+
+điểm chuẩn phục vụ với điều
+
+TTFT, độ trễ tổng, delta token/giây
+
+báo cáo điểm chuẩn phục vụ
+
+chất lượng–độ
+
+kiện thời gian chạy đồng
+tiêu chí Γ và kiểm tra phạm vi
+
+báo cáo chất lượng và siêu dữ liệu
+nhật ký kiểm toán rủi ro và đạo đức
+
+trễ
+
+nhất
+
+Tính đầy đủ suy
+
+cổng đầy đủ bằng chứng với
+
+luận
+
+báo cáo CI
+
+Kiểm soát rủi
+
+hình phạt bảo vệ + kiểm tra
+
+đạt/không đạt an toàn dưới căng thẳng
+
+ro đạo đức
+
+khả năng chấp nhận phản hồi
+
++ rà soát hành vi từ chối
+
++ dấu vết kiểm toán
+
+60
+
+Phụ lục D: Chẩn đoán căng thẳng ở cấp độ kịch bản và phản thực tế
+Phần phụ lục này trình bày các quy trình chẩn đoán chi tiết để phân tích độ tin cậy ở
+cấp độ kịch bản và phản thực tế. Nó bổ sung cho các số liệu tổng hợp bằng cách làm rõ
+các phương thức sai lỗi, hành vi căng thẳng và cách xử lý sự không chắc chắn.
+
+D.1
+
+Ghi chú phân tích ở cấp độ kịch bản
+
+Phụ lục này ghi lại quy trình phân tích ở cấp độ kịch bản được sử dụng để chuyển đổi
+kết quả đầu ra chuẩn thô thành kết quả có thể hiểu được. Thay vì sao chép văn bản tường
+thuật gần giống nhau cho mỗi hàng, một giao thức kiểm tra nhất quán được xác định và
+các phân tích chuyên sâu mang tính đại diện được cung cấp để bao quát tất cả các nhóm
+ứng suất có trong tập hợp 112 kịch bản.
+Đối với mỗi kịch bản 𝑖, bản ghi kiểm tra lưu trữ siêu dữ liệu kịch bản (nguyên mẫu,
+vị trí, xung đột và trạng thái hành vi), giá trị số liệu và đầu ra ở cấp độ nhánh, dấu vết
+bằng chứng truy xuất kèm theo hình phạt bảo vệ, đường dẫn quyết định kiểm soát phản
+hồi và trạng thái đạt hoặc không đạt cuối cùng cho từng trục chất lượng.
+Điểm tổng hợp ở cấp độ kịch bản được sử dụng để phân tích mô tả:
+𝑆𝑖 = 𝜂𝑐𝑟 𝑧(𝐶𝑅𝑖 ) + 𝜂𝑝𝑐 𝑧(𝑃𝐶𝑖 ) + 𝜂𝑛 𝑧(𝑁𝑖 ) + 𝜂𝑜 𝑧(𝑂𝑄𝑖 ) − 𝜂𝑣 𝑧(𝑉𝑖 ),
+
+(41)
+
+trong đó 𝑧(⋅) là chuẩn hóa điểm z trong tập hợp kịch bản và 𝑉𝑖 là rủi ro vi phạm. Điểm
+này không được sử dụng để thay thế các số liệu chính; nó được sử dụng để hỗ trợ việc
+phân loại lỗi và lựa chọn trường hợp.
+Trạng thái vượt qua kịch bản được xác định là:
+𝑃𝑖 = 1 𝐶𝑅𝑖 ≥ 𝜏𝑐𝑟 ∧ 𝑃𝐶𝑖 ≥ 𝜏𝑝𝑐 ∧ 𝑉𝑖 ≤ 𝜏𝑣 .
+
+(42)
+
+Các lỗi được quan sát được gán cho một lớp thống trị bằng cách sử dụng quy tắc ưu
+tiên xác định:
+class(𝑖) = arg max [𝜔𝑘 𝑒𝑖𝑘 ] ,
+𝑘∈𝒦
+
+(43)
+
+trong đó 𝑒𝑖𝑘 ∈ {0, 1} cho biết liệu lớp lỗi 𝑘 có được kích hoạt hay không và 𝜔𝑘 là trọng
+
+61
+
+Table 19: Ghi chú phân tích cấp độ kịch bản đại diện.
+Kịch bản Loại
+thẳng
+S001
+S014
+S021
+S028
+
+S039
+S052
+S073
+S104
+
+căng Lỗi trội của đường cơ sở Hành vi hệ thống kiểm soát
+
+Rủi ro còn lại
+
+Khẩn cấp
+
+Bỏ qua ràng buộc trạng Giữ giọng vai trò và kiểm tra trạng câu chữ ngắn gọn
+thái nhiệm vụ
+thái
+Lừa dối
+Chấp nhận phát biểu Yêu cầu ngữ cảnh xác nhận
+giảm đa dạng từ
+không có căn cứ
+vựng
+Mâu thuẫn ký Mâu thuẫn với ký ức lượt Neo phản hồi vào ảnh chụp trạng từ chối thận trọng
+ức
+trước
+thái mới nhất
+Giả
+mạo Làm theo chỉ thị giả mạo Bảo vệ hạ bậc bằng chứng giả mạo giảm khả năng thu
+thẩm quyền đáng tin
+hồi khi đầu vào
+nhiễu
+Mơ hồ
+Bịa đặt chi tiết ngoài Giới hạn vào bằng chứng trong thế đối thoại ít khám phá
+miền
+giới trò chơi
+hơn
+Áp lực vai trò Trôi về giọng trợ lý Giữ vai trò thầy thuốc và ranh giới giảm đa dạng phong
+chung
+cách
+Cưỡng ép lặp Leo thang tuân thủ không Chuyển sang chế độ an toàn có đầu ra ngắn ở các
+lại
+an toàn
+giới hạn
+lượt lặp
+Xung
+đột Chọn tài liệu xếp hạng Xếp hạng lại theo nhất quán trạng phụ thuộc siêu dữ
+bằng chứng cao nhưng không nhất thái
+liệu
+quán
+
+số ưu tiên. Tập lớp 𝒦 bao gồm thiếu sót ngữ cảnh, trôi dạt nhân cách, chiếm quyền truy
+xuất, mâu thuẫn thời gian và kiểm soát quá mức.
+Bảng 19 tóm tắt các kịch bản đại diện được chọn để bao gồm tất cả các nguyên mẫu
+và mô hình ứng suất. Những hàng này mang tính minh họa; bảng kiểm tra đầy đủ 112
+hàng có thể đọc được bằng máy được bao gồm trong tài liệu bổ sung.
+Việc diễn giải theo từng kịch bản tuân theo một trình tự cố định trong đó các delta số
+liệu được xác minh trước tiên, bằng chứng thu được và hình phạt bảo vệ được kiểm tra
+thứ hai, các tính năng quyết định kiểm soát phản ứng được kiểm tra thứ ba, loại lỗi chiếm
+ưu thế được chỉ định thứ tư khi có thể áp dụng và kết quả cuối cùng được ghi lại là hỗ
+trợ hoặc làm suy yếu giả thuyết được kiểm tra. Thủ tục này ngăn chặn việc lựa chọn câu
+chuyện hậu sự và giữ cho việc giải thích định tính phù hợp với bằng chứng định lượng.
+Để căn chỉnh các ghi chú kịch bản với phân tích cắt bỏ chính, mỗi độ tương phản
+thành phần được kèm theo một khoảng thời gian khởi động được ghép nối trên tập kịch
+̂ , phụ lục ghi lại:
+bản. Để ước tính độ tương phản thành phần 𝛿𝑚,𝑐
+̂⋆
+̂
+̂ ⋆ , 𝑞0.975 𝛿𝑚,𝑐
+= 𝑞0.025 𝛿𝑚,𝑐
+CI0.95 𝛿𝑚,𝑐
+
+,
+
+(44)
+
+̂ ⋆ biểu thị các mẫu khởi động lại của các vùng đồng bằng kịch bản được ghép
+trong đó 𝛿𝑚,𝑐
+
+62
+
+nối. Điều này đảm bảo rằng các tường thuật trường hợp định tính vẫn gắn liền với bằng
+chứng định lượng nhận biết được sự không chắc chắn.
+
+D.2
+
+Ghi chú phân tích căng thẳng phản thực tế
+
+Kiểm tra sức chịu đựng phản thực tế được sử dụng để đánh giá độ tin cậy trong điều
+kiện nhiễu loạn có kiểm soát về ý định của người dùng, tính nhất quán của bộ nhớ và tín
+hiệu tin cậy truy xuất.
+Với bộ tương tác cơ sở (𝑥, 𝑠, 𝑝), một biến thể phản thực được tạo ra dưới dạng:
+(𝑥 ′ , 𝑠 ′ , 𝑝′ ) = 𝑇𝑎 (𝑥, 𝑠, 𝑝; 𝜖),
+
+(45)
+
+trong đó 𝑇𝑎 là toán tử nhóm tấn công và 𝜖 là cường độ nhiễu loạn. Giao thức hiện tại giữ
+(𝑠 ′ , 𝑝′ ) = (𝑠, 𝑝) và chỉ làm xáo trộn nội dung người dùng cũng như các ứng cử viên truy
+xuất để các yêu cầu nền tảng trạng thái không thay đổi.
+Các nhóm tấn công bao gồm các yêu cầu tuân thủ bắt buộc, chèn bộ nhớ sai, dụ dỗ
+đầu độc truy xuất, giả mạo quyền lực và leo thang áp lực lặp đi lặp lại.
+Một phiên bản thử nghiệm phản thực tế chỉ đạt nếu tất cả các yêu cầu đều được đáp
+ứng:
+𝑐𝑓
+
+𝑃𝑖
+
+= 1(¬𝐻𝑖 ∧ 𝐺𝑖 ∧ 𝑅𝑖 ) ,
+
+(46)
+
+trong đó 𝐻𝑖 biểu thị hành vi chiếm quyền điều khiển thành công, 𝐺𝑖 biểu thị khả năng
+duy trì nền tảng và 𝑅𝑖 biểu thị việc duy trì vai trò cá nhân. Tỷ lệ vượt qua cấp tập dữ liệu
+là:
+1
+PassRate𝑐𝑓 =
+𝑁𝑐𝑓
+𝑐𝑓
+
+Bởi vì 𝑃𝑖
+
+𝑁𝑐𝑓
+𝑐𝑓
+
+𝑃𝑖 .
+
+(47)
+
+𝑖=1
+
+∈ {0, 1}, công cụ ước tính này là giá trị trung bình mẫu của Bernoulli. Trong
+
+lấy mẫu kịch bản độc lập, xác suất vượt qua phản thực thực tế cơ bản là không thiên vị,
+với sai số chuẩn
+SE PassRate𝑐𝑓 =
+
+PassRate𝑐𝑓 (1 − PassRate𝑐𝑓 )
+.
+𝑁𝑐𝑓
+
+(48)
+
+Đây là lý do tại sao khoảng tin cậy về mặt thống kê có thể được gắn vào các bản tóm tắt
+
+63
+
+vượt qua phản thực tế giống như các kết quả có giá trị theo tỷ lệ khác.
+Thuật toán 9 Đánh giá độ tin cậy phản thực tế
+Đầu vào: Tập kịch bản gốc 𝒮, tập họ tấn công 𝒜
+1: Đối với mỗi mỗi kịch bản 𝑠 ∈ 𝒮 thực hiện
+2:
+
+Đối với mỗi mỗi họ tấn công 𝑎 ∈ 𝒜 thực hiện
+
+3:
+
+Sinh biến thể 𝑠 ′ ← 𝑇𝑎 (𝑠)
+
+4:
+
+Chạy hệ cơ sở và hệ có guard trên 𝑠 ′
+
+5:
+
+Tính 𝐻, 𝐺, 𝑅, 𝑃𝑐𝑓 và lưu dấu vết bằng chứng
+
+6:
+
+end Đối với mỗi
+
+7: end Đối với mỗi
+8: Tổng hợp ASR, tỷ lệ vượt qua (pass rate) và cấu phần lỗi theo họ
+9: Trả về: Tóm tắt stress-test kèm khoảng tin cậy
+
+Giữa các nhóm ứng suất, sự khác biệt chủ yếu giữa các hệ thống không phải là chất
+lượng kiểu dáng mà là sự tuân thủ hạn chế dưới áp lực. Các hệ thống cơ bản thường chấp
+nhận các hướng dẫn có độ tin cậy cao nhưng không nhất quán. Các hệ thống được bảo
+vệ từ chối các hướng dẫn này, giữ lại vai trò và duy trì sự liên kết trạng thái với cái giá
+phải trả là độ đa dạng từ vựng thấp hơn trong các trường hợp có rủi ro cao. Sự đánh đổi
+này có thể chấp nhận được đối với việc triển khai trò chơi tường thuật trong đó tính nhất
+quán và an toàn là mục tiêu thiết kế chính.
+Các nhóm tấn công được cân bằng giữa các nhiễu loạn cưỡng chế, giả mạo và xung
+đột bộ nhớ để kết quả ASR không bị điều khiển bởi một mẫu đối nghịch duy nhất. Lựa
+chọn thiết kế này phù hợp với thực tiễn bảo mật truy xuất hiện tại, trong đó nhấn mạnh
+đến phạm vi bảo hiểm của nhóm tấn công thay vì báo cáo căng thẳng theo mẫu đơn
+[43, 44].
+
+64
+
+Lời cảm ơn
+Tác giả cảm ơn các cố vấn nghiên cứu và những người đóng góp cho hệ sinh thái
+nguồn mở (UE5, máy biến áp, PEFT, ONNX Runtime, llama.cpp và công cụ đo điểm
+chuẩn) đã cho phép thử nghiệm lặp lại nhanh chóng.
+
+65
+
+References
+[1] J. S. Park et al., “Generative Agents: Interactive Simulacra of Human Behavior,”
+in Proc. 36th Annual ACM Symposium on User Interface Software and Technology
+(UIST), 2023, doi: 10.1145/3586183.3606763.
+[2] R. Gallotta et al., “Large Language Models and Games: A Survey and Roadmap,”
+IEEE Trans. Games, 2024, doi: 10.1109/TG.2024.3461510.
+[3] P. Sweetser, “Large Language Models and Video Games:
+
+A Preliminary
+
+Scoping Review,” in ACM Conversational User Interfaces 2024, 2024, doi:
+10.1145/3640794.3665582.
+[4] A. Rao et al., “Collaborative Quest Completion with LLM-Driven Non-Player
+Characters in Minecraft,” arXiv preprint arXiv:2407.03460, 2024, available:
+https://arxiv.org/abs/2407.03460.
+[5] F. R. Christiansen, L. N. Hollensberg, N. B. Jensen, K. Julsgaard, K. N. Jespersen, and I. Nikolov, “Exploring Presence in Interactions with LLM-Driven
+NPCs: A Comparative Study of Speech Recognition and Dialogue Options,” in
+Proc. 30th ACM Symposium on Virtual Reality Software and Technology, 2024,
+doi: 10.1145/3641825.3687716.
+[6] L. C. Mai, N. T. M. Huyen, and N. T. T. Trang, “Proceedings of the 11th International Workshop on Vietnamese Language and Speech Processing,” Association for Computational Linguistics, Hanoi, Vietnam, 2025, available: https:
+//aclanthology.org/volumes/2025.vlsp-1/.
+[7] G. H. T. Ha, T. N. K. Bao, and T. V. Minh, “VLSP 2025 Shared Task: A Seq2Seq
+Transformer Approach to Vietnamese Semantic Parsing,” in Proc. 11th International Workshop on Vietnamese Language and Speech Processing, pp. 259–266,
+2025, available: https://aclanthology.org/2025.vlsp-1.32/.
+
+66
+
+[8] Q. Nguyen, H. Pham, and D. Dao, “VinaLLaMA: LLaMA-based Vietnamese
+Foundation Model,” arXiv preprint arXiv:2312.11011, 2023, available: https:
+//arxiv.org/abs/2312.11011.
+[9] J. Vo, “Vi-Mistral-X: Building a Vietnamese Language Model with Advanced Continual Pre-training,” arXiv preprint arXiv:2403.15470, 2024, available: https:
+//arxiv.org/abs/2403.15470.
+[10] N. Q. Duc, L. H. Son, N. D. Nhan, N. D. N. Minh, L. T. Huong, and D. V. Sang,
+“Towards Comprehensive Vietnamese Retrieval-Augmented Generation and Large
+Language Models,” arXiv preprint arXiv:2403.01616, 2024, available: https://
+arxiv.org/abs/2403.01616.
+[11] C. Tran and H. L. Thanh, “LaVy: Vietnamese Multimodal Large Language Model,”
+arXiv preprint arXiv:2404.07922, 2024, available: https://arxiv.org/abs/
+2404.07922.
+[12] G. Wang et al., “Voyager: An Open-Ended Embodied Agent with Large Language
+Models,” Trans. Mach. Learn. Res., 2024, available: https://dblp.org/rec/
+journals/tmlr/WangX0MXZFA24.
+[13] Google DeepMind, “Scaling Instructable Agents Across Many Simulated Worlds,”
+arXiv preprint arXiv:2404.10179, 2024, available: https://arxiv.org/abs/
+2404.10179.
+[14] M. Wevelsiep, N. T. Walker, N. Wagner, and S. Ultes, “A Voice-Controlled Dialogue System for NPC Interaction using Large Language Models,” in Proc. 15th
+International Workshop on Spoken Dialogue Systems Technology (IWSDS), Bilbao, Spain, 2025, pp. 29–38, available: https://aclanthology.org/2025.
+iwsds-1.4/.
+[15] P. Liu et al., “Pre-train, Prompt, and Predict: A Systematic Survey of Prompting
+Methods in Natural Language Processing,” ACM Comput. Surv., vol. 55, no. 9,
+2023, doi: 10.1145/3560815.
+
+67
+
+[16] L. Ouyang et al., “Training Language Models to Follow Instructions with
+Human Feedback,” in Advances in Neural Information Processing Systems
+(NeurIPS), vol. 35, 2022, available:
+
+https://dblp.org/rec/conf/nips/
+
+Ouyang0JAWMZASR22.
+[17] E. J. Hu et al., “LoRA: Low-Rank Adaptation of Large Language Models,” in Proc.
+ICLR, 2022, available: https://dblp.org/rec/conf/iclr/HuSWALWWC22.
+[18] T. Dettmers et al., “QLoRA: Efficient Finetuning of Quantized LLMs,”
+in Proc. NeurIPS, 2023, available:
+
+https://dblp.org/rec/conf/nips/
+
+DettmersPHZ23.
+[19] A. Asai et al., “Self-RAG: Learning to Retrieve, Generate, and Critique Through
+Self-Reflection,” in Proc. ICLR, 2024, available: https://dblp.org/rec/conf/
+iclr/AsaiWWSH24.
+[20] J. Wei et al., “Chain-of-Thought Prompting Elicits Reasoning in Large Language
+Models,” in Proc. NeurIPS, 2022, available: https://dblp.org/rec/conf/
+nips/Wei0SBIXCLZ22.
+[21] S. Yao et al., “ReAct: Synergizing Reasoning and Acting in Language Models,” in Proc. ICLR, 2023, available: https://dblp.org/rec/conf/iclr/
+YaoZYDSN023.
+[22] T. Zhang et al., “BERTScore: Evaluating Text Generation with BERT,” in Proc.
+ICLR, 2020, available: https://dblp.org/rec/conf/iclr/ZhangKWWA20.
+[23] Y.-T. Yeh, M. Eskenazi, and S. Mehri, “A Comprehensive Assessment of Dialog
+Evaluation Metrics,” in Proc. First Workshop on Evaluations and Assessments of
+Neural Conversation Systems, 2021, pp. 15–33, doi: 10.18653/v1/2021.eancs-1.3.
+[24] S. Lin, J. Hilton, and O. Evans, “TruthfulQA: Measuring How Models Mimic
+Human Falsehoods,” in Proc. 60th Annual Meeting of the Association for Computational Linguistics (ACL), 2022, pp. 3214–3252, doi: 10.18653/v1/2022.acllong.229.
+
+68
+
+[25] S. Min et al., “FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation,” in Proc. 2023 Conf. on Empirical Methods in Natural Language Processing (EMNLP), 2023, pp. 12076–12100, doi:
+10.18653/v1/2023.emnlp-main.741.
+[26] Y. Leviathan et al., “Fast Inference from Transformers via Speculative Decoding,”
+in Proc. 40th International Conference on Machine Learning (ICML), 2023, available: https://dblp.org/rec/conf/icml/LeviathanKM23.
+[27] W. Kwon et al., “Efficient Memory Management for Large Language Model Serving with PagedAttention,” in Proc. 29th Symposium on Operating Systems Principles (SOSP), 2023, pp. 611–626, doi: 10.1145/3600006.3613165.
+[28] J. Gu et al., “A Survey on LLM-as-a-Judge,” The Innovation, 2026, doi:
+10.1016/j.xinn.2025.101253.
+[29] L. Zheng et al., “Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena,” in
+NeurIPS Datasets and Benchmarks, 2023, available: https://dblp.org/rec/
+conf/nips/ZhengC00WZL0LXZ23.
+[30] Y. Dubois et al., “Length-Controlled AlpacaEval: A Simple Way to Debias Automatic Evaluators,” arXiv preprint arXiv:2404.04475, 2024, available: https:
+//arxiv.org/abs/2404.04475.
+[31] Y. Liu, D. Iter, Y. Xu, S. Wang, R. Xu, and C. Zhu, “G-Eval: NLG Evaluation
+using GPT-4 with Better Human Alignment,” in Proc. 2023 Conf. on Empirical
+Methods in Natural Language Processing (EMNLP), pp. 2511–2522, 2023, doi:
+10.18653/v1/2023.emnlp-main.153.
+[32] P. Manakul, A. Liusie, and M. Gales, “SelfCheckGPT: Zero-Resource Black-Box
+Hallucination Detection for Generative Large Language Models,” in Proc. 2023
+Conf. on Empirical Methods in Natural Language Processing (EMNLP), pp. 9004–
+9017, 2023, doi: 10.18653/v1/2023.emnlp-main.557.
+
+69
+
+[33] P. Liang et al., “Holistic Evaluation of Language Models,” Trans. Mach.
+Learn. Res., 2023, available:
+
+https://dblp.org/rec/journals/tmlr/
+
+LiangBLTSYZNWKN23.
+[34] J. Pineau et al., “Improving Reproducibility in Machine Learning Research (A
+Report from the NeurIPS 2019 Reproducibility Program),” J. Mach. Learn. Res.,
+vol. 22, no. 164, pp. 1–20, 2021, available: https://jmlr.org/papers/v22/
+20-303.html.
+[35] X. Liu et al., “AgentBench: Evaluating LLMs as Agents,” in Proc. ICLR, 2024,
+available: https://dblp.org/rec/conf/iclr/0036YZXLL0DMYZ024.
+[36] Y. Bai et al., “LongBench: A Bilingual, Multitask Benchmark for Long Context Understanding,” in Proc. 62nd Annual Meeting of the Association for Computational Linguistics (ACL), 2024, pp. 3119–3137, doi: 10.18653/v1/2024.acllong.172.
+[37] R. Rafailov et al., “Direct Preference Optimization: Your Language Model Is Secretly a Reward Model,” in NeurIPS, 2023, available: https://dblp.org/rec/
+conf/nips/RafailovSMMEF23.
+[38] Y. Bai et al., “Constitutional AI: Harmlessness from AI Feedback,” arXiv preprint
+arXiv:2212.08073, 2022, available: https://arxiv.org/abs/2212.08073.
+[39] E. M. Bender, T. Gebru, A. McMillan-Major, and S. Shmitchell, “On the Dangers of
+Stochastic Parrots: Can Language Models Be Too Big?,” in Proc. ACM Conference
+on Fairness, Accountability, and Transparency (FAccT), 2021, pp. 610–623, doi:
+10.1145/3442188.3445922.
+[40] L. Weidinger et al., “Taxonomy of Risks Posed by Language Models,” in Proc.
+ACM Conference on Fairness, Accountability, and Transparency (FAccT), 2022,
+pp. 214–229, doi: 10.1145/3531146.3533088.
+
+70
+
+[41] P. Lewis et al., “Retrieval-Augmented Generation for Knowledge-Intensive NLP
+Tasks,” in NeurIPS, 2020, available: https://dblp.org/rec/conf/nips/
+LewisPPPKGKLYR020.
+[42] K. Greshake et al., “Not What You’ve Signed Up For: Compromising Real-World
+LLM-Integrated Applications with Indirect Prompt Injection,” in Proc. 16th ACM
+Workshop on Artificial Intelligence and Security (AISec@CCS), 2023, pp. 79–90,
+doi: 10.1145/3605764.3623985.
+[43] W. Zou et al., “PoisonedRAG: Knowledge Corruption Attacks to RetrievalAugmented Generation of Large Language Models,” in Proc. 34th USENIX Security Symposium (USENIX Security 25), pp. 3827–3844, 2025, available: https:
+//www.usenix.org/conference/usenixsecurity25/presentation/zou.
+[44] S. S. Chaturvedi, G. Bagwe, L. E. Zhang, and X. Yuan, “AIP: Subverting RetrievalAugmented Generation via Adversarial Instructional Prompt,” in Proc. 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP), pp.
+15861–15878, 2025, doi: 10.18653/v1/2025.emnlp-main.801.
+[45] D. Edge et al., “From Local to Global: A Graph RAG Approach to Query-Focused
+Summarization,” arXiv preprint arXiv:2404.16130, 2024, available: https://
+arxiv.org/abs/2404.16130.
+[46] P. Zhao et al., “Retrieval-Augmented Generation for AI-Generated Content: A Survey,” Data Sci. Eng., 2026, doi: 10.1007/s41019-025-00335-5.
+[47] J. Cohen, “A Coefficient of Agreement for Nominal Scales,” Educ. Psychol. Meas.,
+vol. 20, no. 1, pp. 37–46, 1960, doi: 10.1177/001316446002000104.
+[48] J. R. Landis and G. G. Koch, “The Measurement of Observer Agreement for Categorical Data,” Biometrics, vol. 33, no. 1, pp. 159–174, 1977, available: https:
+//www.jstor.org/stable/2529310.
+
+71
+
+[49] Epic Games, “Behavior Trees in Unreal Engine,” Unreal Engine Documentation, 2025, available: https://dev.epicgames.com/documentation/
+unreal-engine/behavior-trees-in-unreal-engine.
+[50] Epic Games, “FTaskGraphInterface::QueueTask,” Unreal Engine API Reference, 2025, available:
+
+https://dev.epicgames.com/documentation/
+
+en-us/unreal-engine/API/Runtime/Core/Async/FTaskGraphInterface/
+QueueTask.
+[51] Epic Games, “EAsyncExecution,” Unreal Engine API Reference, 2025, available:
+https://dev.epicgames.com/documentation/en-us/unreal-engine/
+API/Runtime/Core/EAsyncExecution.
+[52] M. J. Page et al., “The PRISMA 2020 statement: an updated guideline for reporting
+systematic reviews,” BMJ, vol. 372, n71, 2021, doi: 10.1136/bmj.n71.
+[53] B. Efron, “Bootstrap Methods: Another Look at the Jackknife,” Ann. Stat., vol. 7,
+no. 1, pp. 1–26, 1979, doi: 10.1214/aos/1176344552.
+[54] C. J. Clopper and E. S. Pearson, “The Use of Confidence or Fiducial Limits Illustrated in the Case of the Binomial,” Biometrika, vol. 26, no. 4, pp. 404–413, 1934,
+doi: 10.1093/biomet/26.4.404.
+[55] S. Holm, “A Simple Sequentially Rejective Multiple Test Procedure,” Scand.
+J. Stat., vol. 6, no. 2, pp. 65–70, 1979, available: https://www.jstor.org/
+stable/4615733.
+
+

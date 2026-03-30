@@ -1,0 +1,68 @@
+=== NPC AI Ablation Study Suite ===
+Model dir: models/phi3_onnx_real
+Runs per prompt: 1
+[1/8] Baseline
+
+=== Running Ablation: Baseline ===
+Initializing engine...
+[23:08:40.829] [INFO ] Initializing Global ONNX Runtime Environment...
+Initialization completed in 790ms
+  run 1: 0.0164 ms
+[2/8] No_RAG
+
+=== Running Ablation: No_RAG ===
+Initializing engine...
+Initialization completed in 753ms
+  run 1: 0.0109 ms
+[3/8] No_Graph
+
+=== Running Ablation: No_Graph ===
+Initializing engine...
+Initialization completed in 789ms
+  run 1: 0.0113 ms
+[4/8] No_Hybrid
+
+=== Running Ablation: No_Hybrid ===
+Initializing engine...
+Initialization completed in 760ms
+  run 1: 0.011 ms
+[5/8] No_Speculative
+
+=== Running Ablation: No_Speculative ===
+Initializing engine...
+Initialization completed in 741ms
+  run 1: 0.0173 ms
+[6/8] No_Reflection
+
+=== Running Ablation: No_Reflection ===
+Initializing engine...
+Initialization completed in 757ms
+  run 1: 0.0121 ms
+[7/8] No_Planner
+
+=== Running Ablation: No_Planner ===
+Initializing engine...
+Initialization completed in 735ms
+  run 1: 0.0183 ms
+[8/8] No_TruthGuard
+
+=== Running Ablation: No_TruthGuard ===
+Initializing engine...
+Initialization completed in 719ms
+  run 1: 0.0121 ms
+
+=== Ablation Summary ===
+Configuration000000000000p95(ms)000000000Tok/s00000Mem(MB)0000Runs
+------------------------------------------------------------------
+Baseline0000000000000000000000.0000000304878.00000000027.000000001
+No_RAG000000000000000000000000.0000000458715.60000000027.000000001
+No_Graph0000000000000000000000.0000000442477.90000000027.000000001
+No_Hybrid000000000000000000000.0000000454545.50000000027.000000001
+No_Speculative0000000000000000.0000000289017.30000000028.000000001
+No_Reflection00000000000000000.0000000413223.10000000029.000000001
+No_Planner00000000000000000000.0000000273224.00000000029.000000001
+No_TruthGuard00000000000000000.0000000413223.10000000029.000000001
+
+Results saved to ablation_test.json
+
+Ablation study complete.
